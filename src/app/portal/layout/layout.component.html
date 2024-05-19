@@ -1,0 +1,82 @@
+<section class="h-screen min-h-screen w-screen overflow-x-hidden">
+  <header
+    class="from-primary-400 to-secondary-400 bg-gradient-to-r text-gray-200 h-16 w-full flex justify-between items-center px-5 py-2"
+  >
+    <div class="flex justify-center items-center gap-3">
+      <button (click)="toggleSideBar()" class="px-1 rounded">
+        <fa-icon [icon]="faBars"></fa-icon>
+      </button>
+      <!-- <h1 class="text-2xl font-semibold relative bottom-0.5">My Logo</h1> -->
+      <a routerLink="/">
+        <img
+          src="../../../assets/logo.png"
+          alt="HR One"
+          class="max-h-10 bg-white border border-secondary-100 p-1 rounded-md"
+        />
+      </a>
+    </div>
+    <div class="flex justify-center items-center gap-3">
+      <!-- @if(selectedLang != 'en-US'){ -->
+      <button
+        *ngIf="selectedLang != 'en-US'"
+        class="px-2 border rounded"
+        (click)="changeLanguage('en-US')"
+      >
+        English
+      </button>
+      <!-- } @else { -->
+      <button
+        *ngIf="selectedLang != 'ar-JO'"
+        class="px-2 border rounded"
+        (click)="changeLanguage('ar-JO')"
+      >
+        العربية
+      </button>
+      <!-- } @if (isLoggedIn) { -->
+      <div *ngIf="isLoggedIn">
+        <button
+          class="w-9 h-9 border rounded-full text-xl"
+          (click)="toggleProfileMenuOpen()"
+        >
+          <fa-icon class="relative bottom-0.5" [icon]="faUser"></fa-icon>
+        </button>
+        <ul
+          class="from-secondary-400 to-primary-400 bg-gradient-to-bl w-52 py-1 px-2 border border-gray-400 absolute top-12 right-12 z-10 rounded flex-col hi"
+          ngClass="{{ isProfileMenuOpen ? 'flex' : 'hidden' }}"
+        >
+          <li class="text-white font-bold border-b mb-2 pb-2 capitalize">
+            {{ user.fullname }}
+          </li>
+          <li
+            (click)="logout()"
+            class="text-white cursor-pointer italic hover:text-gray-200 font-semibold"
+          >
+            Logout
+          </li>
+        </ul>
+      </div>
+      <!-- } -->
+    </div>
+  </header>
+  <div
+    class="w-full min-h-[calc(100%-48px)] grid grid-rows-11 lg:grid-cols-5 2xl:grid-cols-7 bg-gray-100"
+  >
+    <aside
+      class="z-50 bg-gray-50 overflow-y-auto fixed top-0 left-0 w-52 h-full lg:relative lg:row-span-full lg:w-auto lg:col-span-1"
+      [ngClass]="{ hidden: !isSideBarOpen }"
+    >
+      <app-side-bar-content [user]="user"></app-side-bar-content>
+    </aside>
+    <div
+      class="z-50 fixed top-0 left-52 w-full h-full bg-black opacity-40 lg:hidden"
+      [ngClass]="{ hidden: !isSideBarOpen }"
+      (click)="isSideBarOpen = false"
+    ></div>
+    <section
+      class="row-span-full lg:col-span-7 flex flex-col p-3"
+      [ngClass]="{ 'lg:col-span-6': isSideBarOpen }"
+    >
+      <router-outlet></router-outlet>
+    </section>
+  </div>
+</section>

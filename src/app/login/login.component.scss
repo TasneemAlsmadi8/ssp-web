@@ -1,0 +1,3 @@
+.ng-invalid.ng-dirty:not(form) {
+  @apply border-red-500
+}

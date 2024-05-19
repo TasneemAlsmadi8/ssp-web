@@ -1,0 +1,84 @@
+import { Component, OnInit } from '@angular/core';
+import { faUser, faUserGear } from '@fortawesome/free-solid-svg-icons';
+import { faBars } from '@fortawesome/free-solid-svg-icons';
+import { AuthService } from '../../shared/services/auth.service';
+import { User } from '../../shared/interfaces/user';
+import { LanguageService } from '../../shared/services/language.service';
+import {
+  Language,
+  languageCodeMapping,
+} from '../../shared/interfaces/language';
+import { LocalUserService } from '../../shared/services/local-user.service';
+
+@Component({
+  selector: 'app-layout',
+  // standalone: true,
+  // imports: [],
+  templateUrl: './layout.component.html',
+  styleUrls: ['./layout.component.scss'],
+})
+export class LayoutComponent implements OnInit {
+  faBars = faBars;
+  faUser = faUser;
+  faGears = faUserGear;
+  isSideBarOpen = true;
+  isProfileMenuOpen = false;
+
+  isLoggedIn = false;
+  user!: User;
+  selectedLang!: string;
+
+  constructor(
+    private authService: AuthService,
+    private languageService: LanguageService,
+    private localUserService: LocalUserService
+  ) {
+    this.selectedLang = this.languageService.selectedLanguage;
+    this.languageService
+      .onChange()
+      .subscribe(
+        (language: Language) => (this.selectedLang = language.code.toString())
+      );
+  }
+  ngOnInit(): void {
+    if (this.isUserLoggedIn()) {
+      this.isLoggedIn = true;
+      this.user = this.getUser();
+    } else {
+      this.isLoggedIn = false;
+      this.user = {
+        id: '',
+        code: '',
+        fullname: '',
+        position: '',
+      };
+    }
+  }
+
+  toggleSideBar() {
+    this.isSideBarOpen = !this.isSideBarOpen;
+  }
+
+  toggleProfileMenuOpen() {
+    this.isProfileMenuOpen = !this.isProfileMenuOpen;
+  }
+
+  logout() {
+    this.authService.logout();
+    window.location.reload();
+  }
+
+  getUser(): User {
+    return this.localUserService.getUser();
+  }
+
+  isUserLoggedIn(): boolean {
+    let isLoggedin = false;
+    this.authService.checkLogin().subscribe((value) => (isLoggedin = value));
+    return isLoggedin;
+  }
+
+  changeLanguage(lang: string) {
+    this.languageService.changeLanguage(languageCodeMapping[lang]);
+  }
+}

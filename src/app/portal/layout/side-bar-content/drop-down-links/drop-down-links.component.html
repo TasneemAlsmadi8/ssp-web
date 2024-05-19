@@ -1,0 +1,6 @@
+<div (click)="toggleMenu()">
+  <ng-content select="button" />
+</div>
+<ul id="dropdown-pages" class="border-b ps-4 py-2 space-y-2" [hidden]="!isOpen">
+  <ng-content />
+</ul>
