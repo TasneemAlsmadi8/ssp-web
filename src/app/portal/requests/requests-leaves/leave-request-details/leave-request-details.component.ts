@@ -91,7 +91,7 @@ export class LeaveRequestDetailsComponent
   ngOnInit(): void {
     this.setInputsDefaultValues();
     this.leaveRequestService
-      .getLeaveTypes()
+      .getTypes()
       .pipe(takeUntil(this.destroy$))
       .subscribe((value) => {
         this.leaveTypes = value;
@@ -138,7 +138,7 @@ export class LeaveRequestDetailsComponent
     };
     // console.log(data);
     this.leaveRequestService
-      .updateLeaveRequest(data)
+      .update(data)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {

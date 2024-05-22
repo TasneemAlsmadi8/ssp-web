@@ -37,14 +37,14 @@ export class LoanRequestService extends BaseService {
     return this.userService.getUser();
   }
 
-  getLoanRequests(): Observable<LoanRequest[]> {
+  getAll(): Observable<LoanRequest[]> {
     const url = `${this.url}/GetLoan?EmployeeId=${this.user.id}`;
     return this.http
       .get<LoanRequest[]>(url, this.httpOptions)
       .pipe(tap((loanRequests) => this.loanRequestsStore.update(loanRequests)));
   }
 
-  cancelLoanRequest(id: string): Observable<any> {
+  cancel(id: string): Observable<any> {
     const url = `${this.url}/UpdateLoanRequest`;
     const body = {
       docEntry: id,
@@ -67,7 +67,7 @@ export class LoanRequestService extends BaseService {
     );
   }
 
-  getLoanTypes(): Observable<LoanRequestType[]> {
+  getTypes(): Observable<LoanRequestType[]> {
     if (this.loanTypesStore.getValue().length == 0) {
       const url = this.url + '/GetLoanTypes';
       this.http
@@ -79,7 +79,7 @@ export class LoanRequestService extends BaseService {
     return this.loanTypesStore.observable$;
   }
 
-  updateLoanRequest(body: LoanRequestUpdateSchema): Observable<any> {
+  update(body: LoanRequestUpdateSchema): Observable<any> {
     const url = this.url + '/UpdateLoanRequest';
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(
@@ -103,14 +103,14 @@ export class LoanRequestService extends BaseService {
     );
   }
 
-  addLoanRequest(body: LoanRequestAddSchema): Observable<any> {
+  add(body: LoanRequestAddSchema): Observable<any> {
     const url = this.url + '/AddLoan';
 
     if (!body.u_EmployeeID) body.u_EmployeeID = parseInt(this.user.id);
 
     return this.http.post<any>(url, body, this.httpOptions).pipe(
       tap(() => {
-        this.getLoanRequests().subscribe();
+        this.getAll().subscribe();
       })
     );
   }
@@ -125,12 +125,12 @@ export class LoanRequestService extends BaseService {
   //   return this.http.get<LoanRequestBalance[]>(url, this.httpOptions);
   // }
 
-  getLoanTypeName(code: string): string {
-    return (
-      this.loanTypesStore.getValue().find((value) => value.code === code)
-        ?.name ?? ''
-    );
-  }
+  // getLoanTypeName(code: string): string {
+  //   return (
+  //     this.loanTypesStore.getValue().find((value) => value.code === code)
+  //       ?.name ?? ''
+  //   );
+  // }
 
   // sortByDate(ascending: boolean = true): void {
   //   this.loanRequestsStore.sortByKey('fromDate', ascending);

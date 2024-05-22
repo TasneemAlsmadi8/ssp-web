@@ -85,7 +85,7 @@ export class LoanRequestDetailsComponent
   ngOnInit(): void {
     this.setInputsDefaultValues();
     this.loanRequestService
-      .getLoanTypes()
+      .getTypes()
       .pipe(takeUntil(this.destroy$))
       .subscribe((value) => {
         this.loanTypes = value;
@@ -121,7 +121,7 @@ export class LoanRequestDetailsComponent
       u_Remarks: formValues.remarks ?? undefined,
     };
     this.loanRequestService
-      .updateLoanRequest(data)
+      .update(data)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {

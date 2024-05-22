@@ -37,7 +37,7 @@ export class OvertimeRequestService extends BaseService {
     return this.userService.getUser();
   }
 
-  getOvertimeRequests(): Observable<OvertimeRequest[]> {
+  getAll(): Observable<OvertimeRequest[]> {
     const url = `${this.url}/GetOverTime?EmployeeId=${this.user.id}`;
     return this.http
       .get<OvertimeRequest[]>(url, this.httpOptions)
@@ -48,7 +48,7 @@ export class OvertimeRequestService extends BaseService {
       );
   }
 
-  cancelOvertimeRequest(id: string): Observable<any> {
+  cancel(id: string): Observable<any> {
     const url = `${this.url}/UpdateOvertimeRequest`;
     const body = {
       docEntry: id,
@@ -71,7 +71,7 @@ export class OvertimeRequestService extends BaseService {
     );
   }
 
-  getOvertimeTypes(): Observable<OvertimeRequestType[]> {
+  getTypes(): Observable<OvertimeRequestType[]> {
     if (this.overtimeTypesStore.getValue().length == 0) {
       const url =
         this.url + `/GetEmployeeOvertimeType?EmployeeID=${this.user.id}`;
@@ -85,7 +85,7 @@ export class OvertimeRequestService extends BaseService {
     return this.overtimeTypesStore.observable$;
   }
 
-  updateOvertimeRequest(body: OvertimeRequestUpdateSchema): Observable<any> {
+  update(body: OvertimeRequestUpdateSchema): Observable<any> {
     const url = this.url + '/UpdateOvertimeRequest';
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(
@@ -116,39 +116,15 @@ export class OvertimeRequestService extends BaseService {
     );
   }
 
-  addOvertimeRequest(body: OvertimeRequestAddSchema): Observable<any> {
+  add(body: OvertimeRequestAddSchema): Observable<any> {
     const url = this.url + '/AddOvertimeRequest';
 
     if (!body.u_EmployeeID) body.u_EmployeeID = this.user.id;
 
     return this.http.post<any>(url, body, this.httpOptions).pipe(
       tap(() => {
-        this.getOvertimeRequests().subscribe();
+        this.getAll().subscribe();
       })
     );
   }
-
-  // getOvertimeBalance(
-  //   overtimeCode: string,
-  //   fromDate: string // yyyy-mm-dd
-  // ): Observable<OvertimeRequestBalance[]> {
-  //   const url =
-  //     this.url +
-  //     `/GetEmployeeOvertimeBalance?EmpCode=${this.user.code}&OvertimeCode=${overtimeCode}&Date=${fromDate}`;
-  //   return this.http.get<OvertimeRequestBalance[]>(url, this.httpOptions);
-  // }
-
-  // getOvertimeTypeName(code: string): string {
-  //   return (
-  //     this.overtimeTypesStore.getValue().find((value) => value.code === code)
-  //       ?.name ?? ''
-  //   );
-  // }
-
-  // sortByDate(ascending: boolean = true): void {
-  //   this.overtimeRequestsStore.sortByKey('fromDate', ascending);
-  // }
-  // sortById(ascending: boolean = true): void {
-  //   this.overtimeRequestsStore.sortByKey('overtimeID', ascending);
-  // }
 }

@@ -102,7 +102,7 @@ export class NewOvertimeRequestComponent
   ngOnInit(): void {
     this.setInputsDefaultValues();
     this.overtimeRequestService
-      .getOvertimeTypes()
+      .getTypes()
       .pipe(takeUntil(this.destroy$))
       .subscribe((value) => {
         this.overtimeTypes = value;
@@ -139,7 +139,7 @@ export class NewOvertimeRequestComponent
       u_Remarks: formValues.remarks ?? undefined,
     };
     this.overtimeRequestService
-      .addOvertimeRequest(data)
+      .add(data)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {

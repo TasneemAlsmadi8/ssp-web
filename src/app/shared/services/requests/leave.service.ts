@@ -41,7 +41,7 @@ export class LeaveRequestService extends BaseService {
     return this.userService.getUser();
   }
 
-  getLeaveRequests(): Observable<LeaveRequest[]> {
+  getAll(): Observable<LeaveRequest[]> {
     const url = `${this.url}/GetLeaveRequestsByEmployeeId?EmployeeId=${this.user.id}`;
     return this.http
       .get<LeaveRequest[]>(url, this.httpOptions)
@@ -50,7 +50,7 @@ export class LeaveRequestService extends BaseService {
       );
   }
 
-  cancelLeaveRequest(id: string): Observable<any> {
+  cancel(id: string): Observable<any> {
     const url = `${this.url}/UpdateLeaveRequest`;
     const body = {
       docEntry: id,
@@ -74,7 +74,7 @@ export class LeaveRequestService extends BaseService {
     );
   }
 
-  getLeaveTypes(): Observable<LeaveRequestType[]> {
+  getTypes(): Observable<LeaveRequestType[]> {
     if (this.leaveTypesStore.getValue().length == 0) {
       const url =
         this.url + `/GetEmployeeLeaveTypes?EmployeeID=${this.user.id}`;
@@ -87,7 +87,7 @@ export class LeaveRequestService extends BaseService {
     return this.leaveTypesStore.observable$;
   }
 
-  updateLeaveRequest(body: LeaveRequestUpdateSchema): Observable<any> {
+  update(body: LeaveRequestUpdateSchema): Observable<any> {
     const url = this.url + '/UpdateLeaveRequest';
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(
@@ -97,7 +97,7 @@ export class LeaveRequestService extends BaseService {
           .map((leaveRequest) => {
             if (leaveRequest.leaveID === body.docEntry) {
               leaveRequest.leaveType =
-                this.getLeaveTypeName(body.u_LeaveType ?? '') ||
+                this.getTypeName(body.u_LeaveType ?? '') ||
                 leaveRequest.leaveType;
               leaveRequest.fromTime = body.u_FromTime ?? leaveRequest.fromTime;
               leaveRequest.toTime = body.u_ToTime ?? leaveRequest.toTime;
@@ -112,19 +112,19 @@ export class LeaveRequestService extends BaseService {
     );
   }
 
-  addLeaveRequest(body: LeaveRequestAddSchema): Observable<any> {
+  add(body: LeaveRequestAddSchema): Observable<any> {
     const url = this.url + '/AddLeave';
 
     if (!body.u_EmployeeID) body.u_EmployeeID = this.user.id;
 
     return this.http.post<any>(url, body, this.httpOptions).pipe(
       tap(() => {
-        this.getLeaveRequests().subscribe();
+        this.getAll().subscribe();
       })
     );
   }
 
-  getLeaveBalance(
+  getBalance(
     leaveCode: string,
     fromDate: string // yyyy-mm-dd
   ): Observable<LeaveRequestBalance[]> {
@@ -134,7 +134,7 @@ export class LeaveRequestService extends BaseService {
     return this.http.get<LeaveRequestBalance[]>(url, this.httpOptions);
   }
 
-  private getLeaveTypeName(code: string): string {
+  private getTypeName(code: string): string {
     return (
       this.leaveTypesStore.getValue().find((value) => value.code === code)
         ?.name ?? ''

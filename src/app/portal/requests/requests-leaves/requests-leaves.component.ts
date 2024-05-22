@@ -43,7 +43,7 @@ export class RequestsLeavesComponent
 
   ngOnInit(): void {
     this.leaveService
-      .getLeaveRequests()
+      .getAll()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (value) => {
@@ -81,7 +81,7 @@ export class RequestsLeavesComponent
         });
 
         this.leaveService
-          .cancelLeaveRequest(req.leaveID)
+          .cancel(req.leaveID)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (value) => {

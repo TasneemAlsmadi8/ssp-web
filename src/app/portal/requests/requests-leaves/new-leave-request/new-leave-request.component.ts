@@ -104,7 +104,7 @@ export class NewLeaveRequestComponent
   ngOnInit(): void {
     this.setInputsDefaultValues();
     this.leaveRequestService
-      .getLeaveTypes()
+      .getTypes()
       .pipe(takeUntil(this.destroy$))
       .subscribe((value) => {
         this.leaveTypes = value;
@@ -117,7 +117,7 @@ export class NewLeaveRequestComponent
 
     if (fromDate && leaveType) {
       this.leaveRequestService
-        .getLeaveBalance(leaveType, fromDate)
+        .getBalance(leaveType, fromDate)
         .pipe(takeUntil(this.destroy$))
         .subscribe((value) => {
           this.leaveBalance = value[0];
@@ -126,7 +126,7 @@ export class NewLeaveRequestComponent
     if (leaveType) {
       const endOfYearDate = `${new Date().getFullYear()}-12-31`;
       this.leaveRequestService
-        .getLeaveBalance(leaveType, endOfYearDate)
+        .getBalance(leaveType, endOfYearDate)
         .pipe(takeUntil(this.destroy$))
         .subscribe((value) => {
           this.leaveBalanceEndOfYear = value[0];
@@ -170,7 +170,7 @@ export class NewLeaveRequestComponent
       u_EmployeeID: '',
     };
     this.leaveRequestService
-      .addLeaveRequest(data)
+      .add(data)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {

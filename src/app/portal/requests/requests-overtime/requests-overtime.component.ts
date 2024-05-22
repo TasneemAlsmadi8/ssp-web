@@ -43,7 +43,7 @@ export class RequestsOvertimeComponent
 
   ngOnInit(): void {
     this.overtimeService
-      .getOvertimeRequests()
+      .getAll()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (value) => {
@@ -80,7 +80,7 @@ export class RequestsOvertimeComponent
         });
 
         this.overtimeService
-          .cancelOvertimeRequest(req.overtimeID)
+          .cancel(req.overtimeID)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (value) => {

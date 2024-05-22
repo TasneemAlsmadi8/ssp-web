@@ -43,7 +43,7 @@ export class RequestsLoansComponent
 
   ngOnInit(): void {
     this.loanService
-      .getLoanRequests()
+      .getAll()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (value) => {
@@ -80,7 +80,7 @@ export class RequestsLoansComponent
         });
 
         this.loanService
-          .cancelLoanRequest(req.loanID)
+          .cancel(req.loanID)
           .pipe(takeUntil(this.destroy$))
           .subscribe({
             next: (value) => {
