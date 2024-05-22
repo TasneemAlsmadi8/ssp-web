@@ -1,7 +1,7 @@
 export interface User {
   id: string;
   code: string;
-  fullname: string;
+  fullName: string;
   position: string;
   // preferedLanguage: string;
 }

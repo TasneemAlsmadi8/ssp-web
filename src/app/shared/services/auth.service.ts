@@ -10,6 +10,8 @@ import { LocalUserService } from './local-user.service';
   providedIn: 'root',
 })
 export class AuthService extends BaseService {
+  endpoint = '/SSPLogin/SSPLogin';
+  url = this.baseUrl + this.endpoint;
   constructor(
     private http: HttpClient,
     private localUserService: LocalUserService
@@ -17,21 +19,7 @@ export class AuthService extends BaseService {
     super();
   }
 
-  endpoint = '/SSPLogin/SSPLogin';
-  url = this.baseUrl + this.endpoint;
-
   login(user: UserLogin): Observable<EmployeeResponse> {
-    // const success = user.username === 'moh' && user.password === '123';
-
-    // if (success) {
-    //   this.localUserService.setUser(user);
-    //   return of({ success }).pipe(delay(1000));
-    // }
-    // // Simulate a 1-second delay before emitting the error
-    // return new Observable<any>((subscriber) => {
-    //   setTimeout(() => subscriber.error('Invalid username or password'), 1000);
-    // });
-
     return this.http
       .post<EmployeeResponse>(this.url, user, this.httpOptions)
       .pipe(

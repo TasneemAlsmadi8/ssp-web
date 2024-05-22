@@ -17,11 +17,18 @@ import { DestroyBaseComponent } from '../shared/base/destroy-base.component';
 import { Router } from '@angular/router';
 import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 import Swal from 'sweetalert2';
+import { InputComponent } from '../shared/components/input/input.component';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, CommonModule, ReactiveFormsModule, FontAwesomeModule],
+  imports: [
+    FormsModule,
+    CommonModule,
+    ReactiveFormsModule,
+    FontAwesomeModule,
+    InputComponent,
+  ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
@@ -38,7 +45,10 @@ export class LoginComponent extends DestroyBaseComponent implements OnInit {
   }
   ngOnInit(): void {
     let isLoggedIn = false;
-    this.authService.checkLogin().subscribe((val) => (isLoggedIn = val));
+    this.authService
+      .checkLogin()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((val) => (isLoggedIn = val));
     if (isLoggedIn) {
       this.router.navigate(['/']);
     }
@@ -77,5 +87,12 @@ export class LoginComponent extends DestroyBaseComponent implements OnInit {
       .add(() => {
         this.isLoading = false;
       });
+  }
+
+  get usernameFormControl(): FormControl {
+    return this.loginForm.get('username') as FormControl;
+  }
+  get passwordFormControl(): FormControl {
+    return this.loginForm.get('password') as FormControl;
   }
 }

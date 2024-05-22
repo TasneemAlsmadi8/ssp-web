@@ -13,7 +13,7 @@ const routes: Routes = [
       {
         path: '',
         pathMatch: 'full',
-        redirectTo: 'requests/leaves',
+        redirectTo: 'employee-info',
       },
       {
         path: 'employee-info',

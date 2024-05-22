@@ -45,7 +45,7 @@
           ngClass="{{ isProfileMenuOpen ? 'flex' : 'hidden' }}"
         >
           <li class="text-white font-bold border-b mb-2 pb-2 capitalize">
-            {{ user.fullname }}
+            {{ user.fullName }}
           </li>
           <li
             (click)="logout()"
@@ -62,19 +62,19 @@
     class="w-full min-h-[calc(100%-48px)] grid grid-rows-11 lg:grid-cols-5 2xl:grid-cols-7 bg-gray-100"
   >
     <aside
-      class="z-50 bg-gray-50 overflow-y-auto fixed top-0 left-0 w-52 h-full lg:relative lg:row-span-full lg:w-auto lg:col-span-1"
-      [ngClass]="{ hidden: !isSideBarOpen }"
+      class="z-50 bg-gray-50 overflow-y-auto fixed top-0 left-0 w-52 h-full lg:block lg:relative lg:row-span-full lg:w-auto lg:col-span-1"
+      [ngClass]="{ hidden: !isSideBarDefault, 'lg:hidden': isSideBarDefault }"
     >
       <app-side-bar-content [user]="user"></app-side-bar-content>
     </aside>
     <div
       class="z-50 fixed top-0 left-52 w-full h-full bg-black opacity-40 lg:hidden"
-      [ngClass]="{ hidden: !isSideBarOpen }"
-      (click)="isSideBarOpen = false"
+      [ngClass]="{ hidden: !isSideBarDefault }"
+      (click)="isSideBarDefault = false"
     ></div>
     <section
       class="row-span-full lg:col-span-7 flex flex-col p-3"
-      [ngClass]="{ 'lg:col-span-6': isSideBarOpen }"
+      [ngClass]="{ 'lg:col-span-6': isSideBarDefault }"
     >
       <router-outlet></router-outlet>
     </section>

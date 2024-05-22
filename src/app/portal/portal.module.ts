@@ -8,13 +8,10 @@ import { HttpClient, HttpClientModule } from '@angular/common/http';
 import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { HttpLoaderFactory } from '../shared/shared/shared.module';
 import { SideBarContentComponent } from './layout/side-bar-content/side-bar-content.component';
-import { DropDownLinksComponent } from './layout/side-bar-content/drop-down-links/drop-down-links.component';
+import { DropDownItemsComponent } from './layout/side-bar-content/drop-down-links/drop-down-links.component';
 
 @NgModule({
-  declarations: [
-    LayoutComponent,
-    SideBarContentComponent,
-  ],
+  declarations: [LayoutComponent, SideBarContentComponent],
   imports: [
     CommonModule,
     RouterOutlet,
@@ -28,7 +25,7 @@ import { DropDownLinksComponent } from './layout/side-bar-content/drop-down-link
         deps: [HttpClient],
       },
     }),
-    DropDownLinksComponent,
+    DropDownItemsComponent,
   ],
 })
 export class PortalModule {}

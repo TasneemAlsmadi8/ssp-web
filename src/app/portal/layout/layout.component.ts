@@ -9,6 +9,8 @@ import {
   languageCodeMapping,
 } from '../../shared/interfaces/language';
 import { LocalUserService } from '../../shared/services/local-user.service';
+import { takeUntil } from 'rxjs';
+import { DestroyBaseComponent } from 'src/app/shared/base/destroy-base.component';
 
 @Component({
   selector: 'app-layout',
@@ -17,11 +19,11 @@ import { LocalUserService } from '../../shared/services/local-user.service';
   templateUrl: './layout.component.html',
   styleUrls: ['./layout.component.scss'],
 })
-export class LayoutComponent implements OnInit {
+export class LayoutComponent extends DestroyBaseComponent implements OnInit {
   faBars = faBars;
   faUser = faUser;
   faGears = faUserGear;
-  isSideBarOpen = true;
+  isSideBarDefault = false;
   isProfileMenuOpen = false;
 
   isLoggedIn = false;
@@ -33,6 +35,7 @@ export class LayoutComponent implements OnInit {
     private languageService: LanguageService,
     private localUserService: LocalUserService
   ) {
+    super();
     this.selectedLang = this.languageService.selectedLanguage;
     this.languageService
       .onChange()
@@ -49,14 +52,14 @@ export class LayoutComponent implements OnInit {
       this.user = {
         id: '',
         code: '',
-        fullname: '',
+        fullName: '',
         position: '',
       };
     }
   }
 
   toggleSideBar() {
-    this.isSideBarOpen = !this.isSideBarOpen;
+    this.isSideBarDefault = !this.isSideBarDefault;
   }
 
   toggleProfileMenuOpen() {
@@ -74,7 +77,10 @@ export class LayoutComponent implements OnInit {
 
   isUserLoggedIn(): boolean {
     let isLoggedin = false;
-    this.authService.checkLogin().subscribe((value) => (isLoggedin = value));
+    this.authService
+      .checkLogin()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((value) => (isLoggedin = value));
     return isLoggedin;
   }
 

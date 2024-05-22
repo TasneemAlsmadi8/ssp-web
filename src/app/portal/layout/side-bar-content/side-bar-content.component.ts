@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 import {
   faAngleDown,
+  faCaretDown,
   faUser,
   faUserGear,
 } from '@fortawesome/free-solid-svg-icons';
@@ -16,6 +17,7 @@ export class SideBarContentComponent {
   faGears = faUserGear;
   faUser = faUser;
   faDownArrow = faAngleDown;
+  faCaretDown = faCaretDown;
 
   @Input({ required: true }) user!: User;
 }

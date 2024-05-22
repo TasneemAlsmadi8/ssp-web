@@ -8,7 +8,7 @@ import { Subject } from 'rxjs';
   template: '',
 })
 export class DestroyBaseComponent implements OnDestroy {
-  public destroy$: Subject<boolean> = new Subject<boolean>();
+  protected destroy$: Subject<boolean> = new Subject<boolean>();
   ngOnDestroy(): void {
     this.destroy$.next(true);
     this.destroy$.unsubscribe();

@@ -5,8 +5,8 @@ import { environment } from 'environments/environments';
   providedIn: 'root',
 })
 export class BaseService {
-  baseUrl: string = '';
-  httpOptions: { headers: HttpHeaders };
+  protected baseUrl: string = '';
+  protected httpOptions: { headers: HttpHeaders };
 
   constructor() {
     this.baseUrl = environment.apiUrl;

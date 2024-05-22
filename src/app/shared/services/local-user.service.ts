@@ -17,7 +17,7 @@ export class LocalUserService {
     const user: User = {
       id: employee.employeeID ?? '',
       code: employee.u_EmpCode ?? '',
-      fullname: employee.u_FullName ?? '',
+      fullName: employee.u_FullName ?? '',
       position: employee.position ?? '',
     };
 
@@ -26,7 +26,7 @@ export class LocalUserService {
 
   getUser(): User {
     const user = JSON.parse(localStorage.getItem('user') ?? '{}');
-    if (!user?.id || !user?.code || !user?.fullname) {
+    if (!user?.id || !user?.code || !user?.fullName) {
       throw new Error('User not signed in!');
     }
     return user as User;

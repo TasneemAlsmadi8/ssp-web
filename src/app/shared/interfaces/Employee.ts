@@ -23,3 +23,13 @@ export interface EmployeeResponse {
   position?: string | null;
   terminationDate?: string | null;
 }
+
+export interface EmployeePatch {
+  employeeID: string;
+  homeBlock?: string;
+  homeZipCode?: string;
+  homeStreet?: string;
+  homeBuildingFloorRoom?: string;
+  mobilePhone?: string;
+  homePhone?: string;
+}
