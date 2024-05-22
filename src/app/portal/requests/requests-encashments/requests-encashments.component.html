@@ -1,1 +1,101 @@
-<p>requests-encashments works!</p>
+<div class="bg-white flex flex-col m-2 px-6 py-4 rounded-lg">
+  <h1 class="text-2xl font-semibold pb-2 mb-2 border-b">Encashment Requests</h1>
+  <div class="flex flex-col items-center">
+    <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+      <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+        <tr>
+          <th scope="col" class="px-6 py-3">{{ "ID" }}</th>
+          <th scope="col" class="px-6 py-3">{{ "Status" }}</th>
+          <!-- <th scope="col" class="px-6 py-3">{{ "Type" }}</th> -->
+          <th scope="col" class="px-6 py-3">{{ "Date" }}</th>
+          <th scope="col" class="px-6 py-3">{{ "Unit Price" }}</th>
+          <th scope="col" class="px-6 py-3">{{ "Unit Count" }}</th>
+          <th scope="col" class="px-6 py-3">{{ "Total Amount" }}</th>
+          <th scope="col" class="px-6 py-3"></th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- @for (bp of BP_list; track bp.CardCode) { -->
+
+        <tr
+          *ngFor="let req of encashmentRequests; trackBy: trackByRequestId"
+          class="odd:bg-white even:bg-gray-50 border-b"
+        >
+          <th
+            scope="row"
+            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+          >
+            {{ req.encashID }}
+          </th>
+          <td class="px-6 py-4">{{ req.status }}</td>
+          <td class="px-6 py-4">{{ req.date }}</td>
+          <td class="px-6 py-4">{{ formatFloat(req.unitPrice) }}</td>
+          <td class="px-6 py-4">{{ formatFloat(req.unitCount) }}</td>
+          <td class="px-6 py-4">{{ formatFloat(req.value) }}</td>
+          <td class="px-6 py-4 flex justify-center gap-2">
+            <app-encashment-request-details
+              [encashmentRequest]="req"
+              [isEditable]="req.status === 'Pending'"
+            />
+            <button
+              *ngIf="req.status === 'Pending'"
+              class="font-medium text-red-600 hover:underline"
+              (click)="cancelEncashmentRequest(req)"
+            >
+              <fa-icon [icon]="faCancel"></fa-icon>
+            </button>
+          </td>
+        </tr>
+        <!-- } -->
+      </tbody>
+    </table>
+    <nav
+      class="w-full flex justify-between items-center flex-col flex-wrap md:flex-row pt-4"
+      aria-label="Table navigation"
+    >
+      <span
+        class="text-sm font-normal text-gray-500 mb-4 md:mb-0 block w-full md:inline md:w-auto"
+        >Showing
+        <span class="font-semibold text-gray-900">{{
+          paginator.getActiveRange()
+        }}</span>
+        of
+        <span class="font-semibold text-gray-900">{{
+          paginator.totalItems
+        }}</span></span
+      >
+      <ul class="inline-flex rtl:space-x-reverse text-sm h-8">
+        <li>
+          <button
+            (click)="paginator.previousPage()"
+            class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700"
+          >
+            Previous
+          </button>
+        </li>
+        <li *ngFor="let pageNum of paginator.pageSequence()">
+          <button
+            (click)="paginator.setActivePageNumber(pageNum)"
+            class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
+            [ngClass]="{
+              'bg-blue-200': pageNum === paginator.activePageNumber
+            }"
+          >
+            {{ pageNum }}
+          </button>
+        </li>
+        <li>
+          <button
+            (click)="paginator.nextPage()"
+            class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700"
+          >
+            Next
+          </button>
+        </li>
+      </ul>
+    </nav>
+  </div>
+  <div class="fixed end-7 bottom-6 group">
+    <app-new-encashment-request />
+  </div>
+</div>

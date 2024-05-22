@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { EncashmentService } from './encashment.service';
+import { EncashmentRequestService } from './encashment.service';
 
 describe('EncashmentsService', () => {
-  let service: EncashmentService;
+  let service: EncashmentRequestService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(EncashmentService);
+    service = TestBed.inject(EncashmentRequestService);
   });
 
   it('should be created', () => {
