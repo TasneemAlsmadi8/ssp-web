@@ -26,6 +26,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { Project } from 'src/app/shared/interfaces/project';
 import { ProjectsService } from 'src/app/shared/services/projects.service';
+import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
 
 @Component({
   selector: 'app-overtime-request-details',
@@ -107,7 +108,7 @@ export class OvertimeRequestDetailsComponent
     this.form.get('overtimeType')?.setValue(this.overtimeRequest.overtimeCode);
     this.form
       .get('date')
-      ?.setValue(this.formatDate(this.overtimeRequest.fromDate));
+      ?.setValue(formatDateToISO(this.overtimeRequest.fromDate));
     this.form.get('hours')?.setValue(this.overtimeRequest.hour);
     this.form.get('minutes')?.setValue(this.overtimeRequest.minute);
     this.form.get('project')?.setValue(this.overtimeRequest.projectCode);

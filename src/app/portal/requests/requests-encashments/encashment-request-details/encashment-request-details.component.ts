@@ -29,6 +29,7 @@ import { Project } from 'src/app/shared/interfaces/project';
 import { ProjectsService } from 'src/app/shared/services/projects.service';
 import { LeaveRequestService } from 'src/app/shared/services/requests/leave.service';
 import { LeaveRequestBalance } from 'src/app/shared/interfaces/requests/leave';
+import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
 
 @Component({
   selector: 'app-encashment-request-details',
@@ -145,7 +146,7 @@ export class EncashmentRequestDetailsComponent
     this.form.get('unitCount')?.setValue(this.encashmentRequest.unitCount);
     this.form
       .get('date')
-      ?.setValue(this.formatDate(this.encashmentRequest.date));
+      ?.setValue(formatDateToISO(this.encashmentRequest.date));
     this.form.get('project')?.setValue(this.encashmentRequest.projectCode);
     this.form.get('remarks')?.setValue(this.encashmentRequest.remarks);
   }
@@ -201,10 +202,5 @@ export class EncashmentRequestDetailsComponent
       .add(() => {
         this.isLoading = false;
       });
-  }
-  /** change format from "dd/mm/yyyy" to standard "yyyy-mm-dd" */
-  private formatDate(dateString: string): string {
-    const [day, month, year] = dateString.split('/');
-    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
   }
 }

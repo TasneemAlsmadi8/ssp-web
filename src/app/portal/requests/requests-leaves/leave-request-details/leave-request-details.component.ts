@@ -29,6 +29,7 @@ import { LeaveRequestService } from 'src/app/shared/services/requests/leave.serv
 import { takeUntil } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
+import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
 
 @Component({
   selector: 'app-leave-request-details',
@@ -104,10 +105,10 @@ export class LeaveRequestDetailsComponent
     this.form.get('toTime')?.setValue(this.leaveRequest.toTime);
     this.form
       .get('fromDate')
-      ?.setValue(this.formatDate(this.leaveRequest.fromDate));
+      ?.setValue(formatDateToISO(this.leaveRequest.fromDate));
     this.form
       .get('toDate')
-      ?.setValue(this.formatDate(this.leaveRequest.toDate));
+      ?.setValue(formatDateToISO(this.leaveRequest.toDate));
     this.form.get('remarks')?.setValue(this.leaveRequest.remarks);
   }
 

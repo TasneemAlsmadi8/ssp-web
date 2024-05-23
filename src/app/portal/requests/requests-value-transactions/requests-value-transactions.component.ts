@@ -10,6 +10,7 @@ import { ValueTransactionRequestDetailsComponent } from './value-transaction-req
 import Swal from 'sweetalert2';
 import { ArrayPaginator } from 'src/app/shared/utils/array-paginator';
 import { NewValueTransactionRequestComponent } from './new-value-transaction-request/new-value-transaction-request.component';
+import { PaginatedTableComponent } from 'src/app/shared/components/paginated-table/paginated-table.component';
 
 @Component({
   selector: 'app-requests-value-transactions',
@@ -19,6 +20,7 @@ import { NewValueTransactionRequestComponent } from './new-value-transaction-req
     FontAwesomeModule,
     ValueTransactionRequestDetailsComponent,
     NewValueTransactionRequestComponent,
+    PaginatedTableComponent,
   ],
   templateUrl: './requests-value-transactions.component.html',
   styleUrls: ['./requests-value-transactions.component.scss'],
@@ -27,17 +29,14 @@ export class RequestsValueTransactionsComponent
   extends DestroyBaseComponent
   implements OnInit
 {
-  get valueTransactionRequests(): ValueTransactionRequest[] {
-    return this.paginator.page;
-  }
+  valueTransactionRequests: ValueTransactionRequest[] = [];
+  activePageItems: ValueTransactionRequest[] = [];
   faCancel = faBan;
-
-  paginator = new ArrayPaginator([]);
 
   constructor(private valueTransactionService: ValueTransactionRequestService) {
     super();
     valueTransactionService.valueTransactionRequests$.subscribe((value) => {
-      this.paginator.updateItems(value);
+      this.valueTransactionRequests = value;
     });
   }
 

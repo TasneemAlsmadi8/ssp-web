@@ -8,8 +8,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBan } from '@fortawesome/free-solid-svg-icons';
 import { LeaveRequestDetailsComponent } from './leave-request-details/leave-request-details.component';
 import Swal from 'sweetalert2';
-import { ArrayPaginator } from 'src/app/shared/utils/array-paginator';
 import { NewLeaveRequestComponent } from './new-leave-request/new-leave-request.component';
+import { PaginatedTableComponent } from 'src/app/shared/components/paginated-table/paginated-table.component';
 
 @Component({
   selector: 'app-requests-leaves',
@@ -19,6 +19,7 @@ import { NewLeaveRequestComponent } from './new-leave-request/new-leave-request.
     FontAwesomeModule,
     LeaveRequestDetailsComponent,
     NewLeaveRequestComponent,
+    PaginatedTableComponent,
   ],
   templateUrl: './requests-leaves.component.html',
   styleUrls: ['./requests-leaves.component.scss'],
@@ -27,17 +28,14 @@ export class RequestsLeavesComponent
   extends DestroyBaseComponent
   implements OnInit
 {
-  get leaveRequests(): LeaveRequest[] {
-    return this.paginator.page;
-  }
+  leaveRequests: LeaveRequest[] = [];
+  activePageItems: LeaveRequest[] = [];
   faCancel = faBan;
-
-  paginator = new ArrayPaginator([]);
 
   constructor(private leaveService: LeaveRequestService) {
     super();
     leaveService.leaveRequests$.subscribe((value) => {
-      this.paginator.updateItems(value);
+      this.leaveRequests = value;
     });
   }
 

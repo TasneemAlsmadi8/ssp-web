@@ -10,6 +10,7 @@ import { EncashmentRequestDetailsComponent } from './encashment-request-details/
 import Swal from 'sweetalert2';
 import { ArrayPaginator } from 'src/app/shared/utils/array-paginator';
 import { NewEncashmentRequestComponent } from './new-encashment-request/new-encashment-request.component';
+import { PaginatedTableComponent } from 'src/app/shared/components/paginated-table/paginated-table.component';
 
 @Component({
   selector: 'app-requests-encashments',
@@ -19,6 +20,7 @@ import { NewEncashmentRequestComponent } from './new-encashment-request/new-enca
     FontAwesomeModule,
     EncashmentRequestDetailsComponent,
     NewEncashmentRequestComponent,
+    PaginatedTableComponent,
   ],
   templateUrl: './requests-encashments.component.html',
   styleUrls: ['./requests-encashments.component.scss'],
@@ -27,17 +29,14 @@ export class RequestsEncashmentsComponent
   extends DestroyBaseComponent
   implements OnInit
 {
-  get encashmentRequests(): EncashmentRequest[] {
-    return this.paginator.page;
-  }
+  encashmentRequests: EncashmentRequest[] = [];
+  activePageItems: EncashmentRequest[] = [];
   faCancel = faBan;
-
-  paginator = new ArrayPaginator([]);
 
   constructor(private encashmentService: EncashmentRequestService) {
     super();
     encashmentService.encashmentRequests$.subscribe((value) => {
-      this.paginator.updateItems(value);
+      this.encashmentRequests = value;
     });
   }
 

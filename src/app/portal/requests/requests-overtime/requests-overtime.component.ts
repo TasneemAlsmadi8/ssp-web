@@ -10,6 +10,7 @@ import { OvertimeRequestDetailsComponent } from './overtime-request-details/over
 import Swal from 'sweetalert2';
 import { ArrayPaginator } from 'src/app/shared/utils/array-paginator';
 import { NewOvertimeRequestComponent } from './new-overtime-request/new-overtime-request.component';
+import { PaginatedTableComponent } from 'src/app/shared/components/paginated-table/paginated-table.component';
 
 @Component({
   selector: 'app-requests-overtime',
@@ -19,6 +20,7 @@ import { NewOvertimeRequestComponent } from './new-overtime-request/new-overtime
     FontAwesomeModule,
     OvertimeRequestDetailsComponent,
     NewOvertimeRequestComponent,
+    PaginatedTableComponent,
   ],
   templateUrl: './requests-overtime.component.html',
   styleUrls: ['./requests-overtime.component.scss'],
@@ -27,17 +29,14 @@ export class RequestsOvertimeComponent
   extends DestroyBaseComponent
   implements OnInit
 {
-  get overtimeRequests(): OvertimeRequest[] {
-    return this.paginator.page;
-  }
+  overtimeRequests: OvertimeRequest[] = [];
+  activePageItems: OvertimeRequest[] = [];
   faCancel = faBan;
-
-  paginator = new ArrayPaginator([]);
 
   constructor(private overtimeService: OvertimeRequestService) {
     super();
     overtimeService.overtimeRequests$.subscribe((value) => {
-      this.paginator.updateItems(value);
+      this.overtimeRequests = value;
     });
   }
 

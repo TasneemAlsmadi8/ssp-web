@@ -26,6 +26,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { Project } from 'src/app/shared/interfaces/project';
 import { ProjectsService } from 'src/app/shared/services/projects.service';
+import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
 
 @Component({
   selector: 'app-value-transaction-request-details',
@@ -109,7 +110,7 @@ export class ValueTransactionRequestDetailsComponent
       ?.setValue(this.valueTransactionRequest.valueTranCode);
     this.form
       .get('date')
-      ?.setValue(this.formatDate(this.valueTransactionRequest.date));
+      ?.setValue(formatDateToISO(this.valueTransactionRequest.date));
     this.form.get('value')?.setValue(this.valueTransactionRequest.value);
     this.form
       .get('project')

@@ -1,114 +1,70 @@
 <div class="bg-white flex flex-col m-2 px-6 py-4 rounded-lg">
   <h1 class="text-2xl font-semibold pb-2 mb-2 border-b">Overtime Requests</h1>
-  <div class="flex flex-col items-center">
-    <table class="w-full text-sm text-left rtl:text-right text-gray-500">
-      <thead class="text-xs text-gray-700 uppercase bg-gray-50">
-        <tr>
-          <th scope="col" class="px-6 py-3">{{ "ID" }}</th>
-          <th scope="col" class="px-6 py-3">{{ "Status" }}</th>
-          <th scope="col" class="px-6 py-3">{{ "Date" }}</th>
-          <!-- <th scope="col" class="px-6 py-3">{{ "From Date" }}</th> -->
-          <!-- <th scope="col" class="px-6 py-3">{{ "To Date" }}</th> -->
-          <th scope="col" class="px-6 py-3">{{ "Time" }}</th>
-          <!-- <th scope="col" class="px-6 py-3">{{ "Hours" }}</th> -->
-          <!-- <th scope="col" class="px-6 py-3">{{ "Minutes" }}</th> -->
-          <th scope="col" class="px-6 py-3">{{ "Project Name" }}</th>
-          <th scope="col" class="px-6 py-3">{{ "Overtime Hours" }}</th>
-          <th scope="col" class="px-6 py-3"></th>
-        </tr>
-      </thead>
-      <tbody>
-        <!-- @for (bp of BP_list; track bp.CardCode) { -->
+  <app-paginated-table
+    [items]="overtimeRequests"
+    (pageChange)="activePageItems = $event"
+  >
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+      <tr>
+        <th scope="col" class="px-6 py-3">{{ "ID" }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Status" }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Date" }}</th>
+        <!-- <th scope="col" class="px-6 py-3">{{ "From Date" }}</th> -->
+        <!-- <th scope="col" class="px-6 py-3">{{ "To Date" }}</th> -->
+        <th scope="col" class="px-6 py-3">{{ "Time" }}</th>
+        <!-- <th scope="col" class="px-6 py-3">{{ "Hours" }}</th> -->
+        <!-- <th scope="col" class="px-6 py-3">{{ "Minutes" }}</th> -->
+        <th scope="col" class="px-6 py-3">{{ "Project Name" }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Overtime Hours" }}</th>
+        <th scope="col" class="px-6 py-3"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- @for (bp of BP_list; track bp.CardCode) { -->
 
-        <tr
-          *ngFor="let req of overtimeRequests; trackBy: trackByRequestId"
-          class="odd:bg-white even:bg-gray-50 border-b"
-        >
-          <th
-            scope="row"
-            class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
-          >
-            {{ req.overtimeID }}
-          </th>
-          <td class="px-6 py-4">{{ req.status }}</td>
-          <td class="px-6 py-4">
-            {{
-              req.fromDate +
-                (req.toDate === req.fromDate ? "" : " - " + req.toDate)
-            }}
-          </td>
-          <td class="px-6 py-4">
-            {{
-              req.hour.toString().padStart(2, "0") +
-                ":" +
-                req.minute.toString().padStart(2, "0")
-            }}
-          </td>
-          <td class="px-6 py-4">{{ req.projectName || req.projectCode }}</td>
-          <td class="px-6 py-4">{{ req.ovHours }}</td>
-          <td class="px-6 py-4 flex justify-center gap-2">
-            <app-overtime-request-details
-              [overtimeRequest]="req"
-              [isEditable]="req.status === 'Pending'"
-            />
-            <button
-              *ngIf="req.status === 'Pending'"
-              class="font-medium text-red-600 hover:underline"
-              (click)="cancelOvertimeRequest(req)"
-            >
-              <fa-icon [icon]="faCancel"></fa-icon>
-            </button>
-          </td>
-        </tr>
-        <!-- } -->
-      </tbody>
-    </table>
-    <nav
-      class="w-full flex justify-between items-center flex-col flex-wrap md:flex-row pt-4"
-      aria-label="Table navigation"
-    >
-      <span
-        class="text-sm font-normal text-gray-500 mb-4 md:mb-0 block w-full md:inline md:w-auto"
-        >Showing
-        <span class="font-semibold text-gray-900">{{
-          paginator.getActiveRange()
-        }}</span>
-        of
-        <span class="font-semibold text-gray-900">{{
-          paginator.totalItems
-        }}</span></span
+      <tr
+        *ngFor="let req of activePageItems; trackBy: trackByRequestId"
+        class="odd:bg-white even:bg-gray-50 border-b"
       >
-      <ul class="inline-flex rtl:space-x-reverse text-sm h-8">
-        <li>
+        <th
+          scope="row"
+          class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+        >
+          {{ req.overtimeID }}
+        </th>
+        <td class="px-6 py-4">{{ req.status }}</td>
+        <td class="px-6 py-4">
+          {{
+            req.fromDate +
+              (req.toDate === req.fromDate ? "" : " - " + req.toDate)
+          }}
+        </td>
+        <td class="px-6 py-4">
+          {{
+            req.hour.toString().padStart(2, "0") +
+              ":" +
+              req.minute.toString().padStart(2, "0")
+          }}
+        </td>
+        <td class="px-6 py-4">{{ req.projectName || req.projectCode }}</td>
+        <td class="px-6 py-4">{{ req.ovHours }}</td>
+        <td class="px-6 py-4 flex justify-center gap-2">
+          <app-overtime-request-details
+            [overtimeRequest]="req"
+            [isEditable]="req.status === 'Pending'"
+          />
           <button
-            (click)="paginator.previousPage()"
-            class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700"
+            *ngIf="req.status === 'Pending'"
+            class="font-medium text-red-600 hover:underline"
+            (click)="cancelOvertimeRequest(req)"
           >
-            Previous
+            <fa-icon [icon]="faCancel"></fa-icon>
           </button>
-        </li>
-        <li *ngFor="let pageNum of paginator.pageSequence()">
-          <button
-            (click)="paginator.setActivePageNumber(pageNum)"
-            class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
-            [ngClass]="{
-              'bg-blue-200': pageNum === paginator.activePageNumber
-            }"
-          >
-            {{ pageNum }}
-          </button>
-        </li>
-        <li>
-          <button
-            (click)="paginator.nextPage()"
-            class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700"
-          >
-            Next
-          </button>
-        </li>
-      </ul>
-    </nav>
-  </div>
+        </td>
+      </tr>
+      <!-- } -->
+    </tbody>
+  </app-paginated-table>
   <div class="fixed end-7 bottom-6 group">
     <app-new-overtime-request />
   </div>

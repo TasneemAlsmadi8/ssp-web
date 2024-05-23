@@ -8,8 +8,8 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBan } from '@fortawesome/free-solid-svg-icons';
 import { LoanRequestDetailsComponent } from './loan-request-details/loan-request-details.component';
 import Swal from 'sweetalert2';
-import { ArrayPaginator } from 'src/app/shared/utils/array-paginator';
 import { NewLoanRequestComponent } from './new-loan-request/new-loan-request.component';
+import { PaginatedTableComponent } from 'src/app/shared/components/paginated-table/paginated-table.component';
 
 @Component({
   selector: 'app-requests-loans',
@@ -19,6 +19,7 @@ import { NewLoanRequestComponent } from './new-loan-request/new-loan-request.com
     FontAwesomeModule,
     LoanRequestDetailsComponent,
     NewLoanRequestComponent,
+    PaginatedTableComponent,
   ],
   templateUrl: './requests-loans.component.html',
   styleUrls: ['./requests-loans.component.scss'],
@@ -27,17 +28,14 @@ export class RequestsLoansComponent
   extends DestroyBaseComponent
   implements OnInit
 {
-  get loanRequests(): LoanRequest[] {
-    return this.paginator.page;
-  }
+  loanRequests: LoanRequest[] = [];
+  activePageItems: LoanRequest[] = [];
   faCancel = faBan;
-
-  paginator = new ArrayPaginator([]);
 
   constructor(private loanService: LoanRequestService) {
     super();
     loanService.loanRequests$.subscribe((value) => {
-      this.paginator.updateItems(value);
+      this.loanRequests = value;
     });
   }
 
