@@ -10,6 +10,7 @@ import { LeaveRequestDetailsComponent } from './leave-request-details/leave-requ
 import Swal from 'sweetalert2';
 import { NewLeaveRequestComponent } from './new-leave-request/new-leave-request.component';
 import { PaginatedTableComponent } from 'src/app/shared/components/paginated-table/paginated-table.component';
+import { CancelRequestPopupComponent } from 'src/app/shared/components/cancel-request-popup/cancel-request-popup.component';
 
 @Component({
   selector: 'app-requests-leaves',
@@ -20,6 +21,7 @@ import { PaginatedTableComponent } from 'src/app/shared/components/paginated-tab
     LeaveRequestDetailsComponent,
     NewLeaveRequestComponent,
     PaginatedTableComponent,
+    CancelRequestPopupComponent,
   ],
   templateUrl: './requests-leaves.component.html',
   styleUrls: ['./requests-leaves.component.scss'],
@@ -30,11 +32,10 @@ export class RequestsLeavesComponent
 {
   leaveRequests: LeaveRequest[] = [];
   activePageItems: LeaveRequest[] = [];
-  faCancel = faBan;
 
-  constructor(private leaveService: LeaveRequestService) {
+  constructor(protected leaveService: LeaveRequestService) {
     super();
-    leaveService.leaveRequests$.subscribe((value) => {
+    leaveService.items$.subscribe((value) => {
       this.leaveRequests = value;
     });
   }
@@ -53,58 +54,6 @@ export class RequestsLeavesComponent
           console.log(err);
         },
       });
-  }
-
-  cancelLeaveRequest(req: LeaveRequest) {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, cancel it!',
-      cancelButtonText: 'No',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: 'Canceling...',
-          text: 'Please wait while we cancel your request.',
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-          showConfirmButton: false,
-          willOpen: () => {
-            Swal.showLoading();
-          },
-        });
-
-        this.leaveService
-          .cancel(req.leaveID)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (value) => {
-              // req.status = 'Canceled';
-              // req.statusTypeId = req.u_Status =
-              //   LeaveRequestStatus.Canceled.toString();
-              // console.log(value);
-
-              Swal.fire({
-                title: 'Canceled!',
-                text: 'Your Leave Request has been canceled.',
-                icon: 'success',
-              });
-            },
-            error: (err) => {
-              console.log(err);
-              Swal.fire({
-                title: 'Error!',
-                text: 'There was an error canceling your leave request.',
-                icon: 'error',
-              });
-            },
-          });
-      }
-    });
   }
 
   trackByRequestId(index: number, item: LeaveRequest): number {

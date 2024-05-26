@@ -78,7 +78,6 @@ export class EncashmentRequestDetailsComponent
       project: [''],
       remarks: [''],
     });
-    this.setFormState();
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -86,6 +85,7 @@ export class EncashmentRequestDetailsComponent
       this.setFormState();
     }
   }
+
   ngOnInit(): void {
     this.setInputsDefaultValues();
     this.encashmentRequestService

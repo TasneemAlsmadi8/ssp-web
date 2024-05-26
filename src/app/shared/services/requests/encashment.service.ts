@@ -12,13 +12,24 @@ import {
 } from '../../interfaces/requests/encashment';
 import { Observable, tap } from 'rxjs';
 import { SharedArrayStore } from '../../utils/shared-array-store';
+import { GenericRequestService } from './generic-request.service';
+
+type iEncashmentRequestService = GenericRequestService<
+  EncashmentRequest,
+  EncashmentRequestUpdateSchema,
+  EncashmentRequestAddSchema,
+  EncashmentRequestType
+>;
 
 @Injectable({
   providedIn: 'root',
 })
-export class EncashmentRequestService extends BaseService {
+export class EncashmentRequestService
+  extends BaseService
+  implements iEncashmentRequestService
+{
   private encashmentRequestsStore = new SharedArrayStore<EncashmentRequest>();
-  get encashmentRequests$(): Observable<EncashmentRequest[]> {
+  get items$(): Observable<EncashmentRequest[]> {
     return this.encashmentRequestsStore.observable$;
   }
 

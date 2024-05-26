@@ -38,13 +38,11 @@
             [valueTransactionRequest]="req"
             [isEditable]="req.status === 'Pending' || !req.status"
           />
-          <button
-            *ngIf="req.status === 'Pending' || !req.status"
-            class="font-medium text-red-600 hover:underline"
-            (click)="cancelValueTransactionRequest(req)"
-          >
-            <fa-icon [icon]="faCancel"></fa-icon>
-          </button>
+          <app-cancel-request-popup
+            *ngIf="req.status === 'Pending'"
+            [service]="valueTransactionService"
+            [id]="req.valueTranID"
+          />
         </td>
       </tr>
       <!-- } -->

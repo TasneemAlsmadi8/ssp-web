@@ -11,13 +11,24 @@ import {
 } from '../../interfaces/requests/overtime';
 import { Observable, tap } from 'rxjs';
 import { SharedArrayStore } from '../../utils/shared-array-store';
+import { GenericRequestService } from './generic-request.service';
+
+type iOvertimeRequestService = GenericRequestService<
+  OvertimeRequest,
+  OvertimeRequestUpdateSchema,
+  OvertimeRequestAddSchema,
+  OvertimeRequestType
+>;
 
 @Injectable({
   providedIn: 'root',
 })
-export class OvertimeRequestService extends BaseService {
+export class OvertimeRequestService
+  extends BaseService
+  implements iOvertimeRequestService
+{
   private overtimeRequestsStore = new SharedArrayStore<OvertimeRequest>();
-  get overtimeRequests$(): Observable<OvertimeRequest[]> {
+  get items$(): Observable<OvertimeRequest[]> {
     return this.overtimeRequestsStore.observable$;
   }
 

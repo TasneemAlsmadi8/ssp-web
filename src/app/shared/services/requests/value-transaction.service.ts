@@ -11,14 +11,25 @@ import {
 } from '../../interfaces/requests/value-transaction';
 import { Observable, tap } from 'rxjs';
 import { SharedArrayStore } from '../../utils/shared-array-store';
+import { GenericRequestService } from './generic-request.service';
+
+type iValueTransactionRequestService = GenericRequestService<
+  ValueTransactionRequest,
+  ValueTransactionRequestUpdateSchema,
+  ValueTransactionRequestAddSchema,
+  ValueTransactionRequestType
+>;
 
 @Injectable({
   providedIn: 'root',
 })
-export class ValueTransactionRequestService extends BaseService {
+export class ValueTransactionRequestService
+  extends BaseService
+  implements iValueTransactionRequestService
+{
   private valueTransactionRequestsStore =
     new SharedArrayStore<ValueTransactionRequest>();
-  get valueTransactionRequests$(): Observable<ValueTransactionRequest[]> {
+  get items$(): Observable<ValueTransactionRequest[]> {
     return this.valueTransactionRequestsStore.observable$;
   }
 

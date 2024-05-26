@@ -56,13 +56,11 @@
             [leaveRequest]="req"
             [isEditable]="req.status === 'Pending'"
           />
-          <button
+          <app-cancel-request-popup
             *ngIf="req.status === 'Pending'"
-            class="font-medium text-red-600 hover:underline"
-            (click)="cancelLeaveRequest(req)"
-          >
-            <fa-icon [icon]="faCancel"></fa-icon>
-          </button>
+            [service]="leaveService"
+            [id]="req.leaveID"
+          />
         </td>
       </tr>
       <!-- } -->

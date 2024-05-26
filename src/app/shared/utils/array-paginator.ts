@@ -76,9 +76,17 @@ export class ArrayPaginator {
   }
 
   updateItems(newItems: any[]) {
+    const oldPage = this.activePageNumber;
     this.items = newItems;
     this._numOfPages = Math.ceil(newItems.length / this.pageSize);
+
     this.reset();
+
+    try {
+      this.setActivePageNumber(oldPage);
+    } catch (error) {
+      this.reset;
+    }
   }
   getActiveRange(): string {
     const start = this.index * this.pageSize + 1;

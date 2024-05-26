@@ -12,13 +12,25 @@ import {
 } from '../../interfaces/requests/leave';
 import { Observable, map, tap } from 'rxjs';
 import { SharedArrayStore } from '../../utils/shared-array-store';
+import { GenericRequestService } from './generic-request.service';
+import { ItemStatus } from '../../interfaces/requests/generic-request';
+
+type iLeaveRequestService = GenericRequestService<
+  LeaveRequest,
+  LeaveRequestUpdateSchema,
+  LeaveRequestAddSchema,
+  LeaveRequestType
+>;
 
 @Injectable({
   providedIn: 'root',
 })
-export class LeaveRequestService extends BaseService {
+export class LeaveRequestService
+  extends BaseService
+  implements iLeaveRequestService
+{
   private leaveRequestsStore = new SharedArrayStore<LeaveRequest>();
-  get leaveRequests$(): Observable<LeaveRequest[]> {
+  get items$(): Observable<LeaveRequest[]> {
     return this.leaveRequestsStore.observable$;
   }
 

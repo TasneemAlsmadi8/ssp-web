@@ -32,6 +32,10 @@ import { LeaveRequestService } from 'src/app/shared/services/requests/leave.serv
 import { takeUntil } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
+import {
+  GenericNewRequestComponent,
+  NewRequestModalComponent,
+} from 'src/app/shared/components/new-request-modal/new-request-modal.component';
 
 @Component({
   selector: 'app-new-leave-request',
@@ -41,6 +45,7 @@ import Swal from 'sweetalert2';
     FontAwesomeModule,
     ModalComponent,
     ReactiveFormsModule,
+    NewRequestModalComponent,
   ],
   templateUrl: './new-leave-request.component.html',
   styleUrls: ['./new-leave-request.component.scss'],
@@ -103,7 +108,7 @@ export class NewLeaveRequestComponent
     });
 
     this.form.valueChanges.subscribe(() => {
-      this.updateLeaveDays();
+      this.updateDynamicValues();
     });
   }
 
@@ -117,7 +122,12 @@ export class NewLeaveRequestComponent
       });
   }
 
-  updateLeaveBalance() {
+  updateDynamicValues() {
+    this.updateLeaveBalance();
+    this.updateLeaveDays();
+  }
+
+  private updateLeaveBalance() {
     const fromDate = this.form.get('fromDate')?.value;
     const leaveType = this.form.get('leaveType')?.value;
 
@@ -140,7 +150,7 @@ export class NewLeaveRequestComponent
     }
   }
 
-  updateLeaveDays() {
+  private updateLeaveDays() {
     const fromDate = this.form.get('fromDate')?.value;
     const toDate = this.form.get('toDate')?.value;
     const fromTime = this.form.get('fromTime')?.value;
@@ -158,7 +168,7 @@ export class NewLeaveRequestComponent
     }
   }
 
-  private setInputsDefaultValues() {
+  setInputsDefaultValues() {
     const today = new Date().toISOString().slice(0, 10);
     this.form.get('leaveType')?.setValue('');
     this.form.get('fromTime')?.setValue('08:00');

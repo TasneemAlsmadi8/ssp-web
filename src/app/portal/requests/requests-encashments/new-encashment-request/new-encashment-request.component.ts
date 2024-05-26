@@ -1,18 +1,9 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
-} from '@angular/core';
+import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   EncashmentRequest,
   EncashmentRequestAddSchema,
   EncashmentRequestType,
-  EncashmentRequestUpdateSchema,
   EncashmentValue,
 } from 'src/app/shared/interfaces/requests/encashment';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
@@ -30,6 +21,7 @@ import { Project } from 'src/app/shared/interfaces/project';
 import { ProjectsService } from 'src/app/shared/services/projects.service';
 import { LeaveRequestService } from 'src/app/shared/services/requests/leave.service';
 import { LeaveRequestBalance } from 'src/app/shared/interfaces/requests/leave';
+import { NewRequestModalComponent } from 'src/app/shared/components/new-request-modal/new-request-modal.component';
 
 @Component({
   selector: 'app-new-encashment-request',
@@ -39,6 +31,7 @@ import { LeaveRequestBalance } from 'src/app/shared/interfaces/requests/leave';
     FontAwesomeModule,
     ModalComponent,
     ReactiveFormsModule,
+    NewRequestModalComponent,
   ],
   templateUrl: './new-encashment-request.component.html',
   styleUrls: ['./new-encashment-request.component.scss'],
@@ -48,8 +41,6 @@ export class NewEncashmentRequestComponent
   implements OnInit
 {
   @Output() onSave = new EventEmitter<EncashmentRequest>();
-  faEdit = faPenToSquare;
-  faView = faEye;
 
   encashmentRequest: EncashmentRequest = {
     encashID: '',

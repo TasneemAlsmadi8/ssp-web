@@ -10,6 +10,7 @@ import { LoanRequestDetailsComponent } from './loan-request-details/loan-request
 import Swal from 'sweetalert2';
 import { NewLoanRequestComponent } from './new-loan-request/new-loan-request.component';
 import { PaginatedTableComponent } from 'src/app/shared/components/paginated-table/paginated-table.component';
+import { CancelRequestPopupComponent } from 'src/app/shared/components/cancel-request-popup/cancel-request-popup.component';
 
 @Component({
   selector: 'app-requests-loans',
@@ -20,6 +21,7 @@ import { PaginatedTableComponent } from 'src/app/shared/components/paginated-tab
     LoanRequestDetailsComponent,
     NewLoanRequestComponent,
     PaginatedTableComponent,
+    CancelRequestPopupComponent,
   ],
   templateUrl: './requests-loans.component.html',
   styleUrls: ['./requests-loans.component.scss'],
@@ -30,11 +32,10 @@ export class RequestsLoansComponent
 {
   loanRequests: LoanRequest[] = [];
   activePageItems: LoanRequest[] = [];
-  faCancel = faBan;
 
-  constructor(private loanService: LoanRequestService) {
+  constructor(protected loanService: LoanRequestService) {
     super();
-    loanService.loanRequests$.subscribe((value) => {
+    loanService.items$.subscribe((value) => {
       this.loanRequests = value;
     });
   }
@@ -53,57 +54,6 @@ export class RequestsLoansComponent
           console.log(err);
         },
       });
-  }
-
-  cancelLoanRequest(req: LoanRequest) {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, cancel it!',
-      cancelButtonText: 'No',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: 'Canceling...',
-          text: 'Please wait while we cancel your request.',
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-          willOpen: () => {
-            Swal.showLoading();
-          },
-        });
-
-        this.loanService
-          .cancel(req.loanID)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (value) => {
-              // req.status = 'Canceled';
-              // req.statusTypeId = req.u_Status =
-              //   LoanRequestStatus.Canceled.toString();
-              // console.log(value);
-
-              Swal.fire({
-                title: 'Canceled!',
-                text: 'Your Loan Request has been canceled.',
-                icon: 'success',
-              });
-            },
-            error: (err) => {
-              console.log(err);
-              Swal.fire({
-                title: 'Error!',
-                text: 'There was an error canceling your loan request.',
-                icon: 'error',
-              });
-            },
-          });
-      }
-    });
   }
 
   trackByRequestId(index: number, item: LoanRequest): number {

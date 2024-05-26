@@ -10,6 +10,7 @@ import { EncashmentRequestDetailsComponent } from './encashment-request-details/
 import Swal from 'sweetalert2';
 import { NewEncashmentRequestComponent } from './new-encashment-request/new-encashment-request.component';
 import { PaginatedTableComponent } from 'src/app/shared/components/paginated-table/paginated-table.component';
+import { CancelRequestPopupComponent } from 'src/app/shared/components/cancel-request-popup/cancel-request-popup.component';
 
 @Component({
   selector: 'app-requests-encashments',
@@ -20,6 +21,7 @@ import { PaginatedTableComponent } from 'src/app/shared/components/paginated-tab
     EncashmentRequestDetailsComponent,
     NewEncashmentRequestComponent,
     PaginatedTableComponent,
+    CancelRequestPopupComponent,
   ],
   templateUrl: './requests-encashments.component.html',
   styleUrls: ['./requests-encashments.component.scss'],
@@ -30,11 +32,10 @@ export class RequestsEncashmentsComponent
 {
   encashmentRequests: EncashmentRequest[] = [];
   activePageItems: EncashmentRequest[] = [];
-  faCancel = faBan;
 
-  constructor(private encashmentService: EncashmentRequestService) {
+  constructor(protected encashmentService: EncashmentRequestService) {
     super();
-    encashmentService.encashmentRequests$.subscribe((value) => {
+    encashmentService.items$.subscribe((value) => {
       this.encashmentRequests = value;
     });
   }
@@ -53,57 +54,6 @@ export class RequestsEncashmentsComponent
           console.log(err);
         },
       });
-  }
-
-  cancelEncashmentRequest(req: EncashmentRequest) {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, cancel it!',
-      cancelButtonText: 'No',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: 'Canceling...',
-          text: 'Please wait while we cancel your request.',
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-          willOpen: () => {
-            Swal.showLoading();
-          },
-        });
-
-        this.encashmentService
-          .cancel(req.encashID)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (value) => {
-              // req.status = 'Canceled';
-              // req.statusTypeId = req.u_Status =
-              //   EncashmentRequestStatus.Canceled.toString();
-              // console.log(value);
-
-              Swal.fire({
-                title: 'Canceled!',
-                text: 'Your Encashment Request has been canceled.',
-                icon: 'success',
-              });
-            },
-            error: (err) => {
-              console.log(err);
-              Swal.fire({
-                title: 'Error!',
-                text: 'There was an error canceling your encashment request.',
-                icon: 'error',
-              });
-            },
-          });
-      }
-    });
   }
 
   trackByRequestId(index: number, item: EncashmentRequest): number {

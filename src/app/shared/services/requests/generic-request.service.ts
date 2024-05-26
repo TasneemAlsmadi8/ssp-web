@@ -5,9 +5,7 @@ import {
   ItemType,
   UpdateSchema,
 } from '../../interfaces/requests/generic-request';
-import { Injectable } from '@angular/core';
 
-@Injectable({})
 export interface GenericRequestService<
   T extends Item,
   U extends UpdateSchema,

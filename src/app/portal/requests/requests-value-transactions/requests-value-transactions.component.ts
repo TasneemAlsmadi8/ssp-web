@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
 import { ArrayPaginator } from 'src/app/shared/utils/array-paginator';
 import { NewValueTransactionRequestComponent } from './new-value-transaction-request/new-value-transaction-request.component';
 import { PaginatedTableComponent } from 'src/app/shared/components/paginated-table/paginated-table.component';
+import { CancelRequestPopupComponent } from 'src/app/shared/components/cancel-request-popup/cancel-request-popup.component';
 
 @Component({
   selector: 'app-requests-value-transactions',
@@ -21,6 +22,7 @@ import { PaginatedTableComponent } from 'src/app/shared/components/paginated-tab
     ValueTransactionRequestDetailsComponent,
     NewValueTransactionRequestComponent,
     PaginatedTableComponent,
+    CancelRequestPopupComponent,
   ],
   templateUrl: './requests-value-transactions.component.html',
   styleUrls: ['./requests-value-transactions.component.scss'],
@@ -31,11 +33,12 @@ export class RequestsValueTransactionsComponent
 {
   valueTransactionRequests: ValueTransactionRequest[] = [];
   activePageItems: ValueTransactionRequest[] = [];
-  faCancel = faBan;
 
-  constructor(private valueTransactionService: ValueTransactionRequestService) {
+  constructor(
+    protected valueTransactionService: ValueTransactionRequestService
+  ) {
     super();
-    valueTransactionService.valueTransactionRequests$.subscribe((value) => {
+    valueTransactionService.items$.subscribe((value) => {
       this.valueTransactionRequests = value;
     });
   }
@@ -54,58 +57,6 @@ export class RequestsValueTransactionsComponent
           console.log(err);
         },
       });
-  }
-
-  cancelValueTransactionRequest(req: ValueTransactionRequest) {
-    Swal.fire({
-      title: 'Are you sure?',
-      text: "You won't be able to revert this!",
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes, cancel it!',
-      cancelButtonText: 'No',
-    }).then((result) => {
-      if (result.isConfirmed) {
-        Swal.fire({
-          title: 'Canceling...',
-          text: 'Please wait while we cancel your request.',
-          allowOutsideClick: false,
-          allowEscapeKey: false,
-          showConfirmButton: false,
-          willOpen: () => {
-            Swal.showLoading();
-          },
-        });
-
-        this.valueTransactionService
-          .cancel(req.valueTranID)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe({
-            next: (value) => {
-              // req.status = 'Canceled';
-              // req.statusTypeId = req.u_Status =
-              //   ValueTransactionRequestStatus.Canceled.toString();
-              // console.log(value);
-
-              Swal.fire({
-                title: 'Canceled!',
-                text: 'Your Value Transaction Request has been canceled.',
-                icon: 'success',
-              });
-            },
-            error: (err) => {
-              console.log(err);
-              Swal.fire({
-                title: 'Error!',
-                text: 'There was an error canceling your valueTransaction request.',
-                icon: 'error',
-              });
-            },
-          });
-      }
-    });
   }
 
   trackByRequestId(index: number, item: ValueTransactionRequest): number {

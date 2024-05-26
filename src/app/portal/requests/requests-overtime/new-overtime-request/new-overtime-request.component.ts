@@ -27,6 +27,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { Project } from 'src/app/shared/interfaces/project';
 import { ProjectsService } from 'src/app/shared/services/projects.service';
+import { NewRequestModalComponent } from 'src/app/shared/components/new-request-modal/new-request-modal.component';
 
 @Component({
   selector: 'app-new-overtime-request',
@@ -34,8 +35,8 @@ import { ProjectsService } from 'src/app/shared/services/projects.service';
   imports: [
     CommonModule,
     FontAwesomeModule,
-    ModalComponent,
     ReactiveFormsModule,
+    NewRequestModalComponent,
   ],
   templateUrl: './new-overtime-request.component.html',
   styleUrls: ['./new-overtime-request.component.scss'],

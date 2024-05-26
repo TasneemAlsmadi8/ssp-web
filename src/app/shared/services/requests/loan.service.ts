@@ -11,13 +11,24 @@ import {
 } from '../../interfaces/requests/loan';
 import { Observable, tap } from 'rxjs';
 import { SharedArrayStore } from '../../utils/shared-array-store';
+import { GenericRequestService } from './generic-request.service';
+
+type iLoanRequestService = GenericRequestService<
+  LoanRequest,
+  LoanRequestUpdateSchema,
+  LoanRequestAddSchema,
+  LoanRequestType
+>;
 
 @Injectable({
   providedIn: 'root',
 })
-export class LoanRequestService extends BaseService {
+export class LoanRequestService
+  extends BaseService
+  implements iLoanRequestService
+{
   private loanRequestsStore = new SharedArrayStore<LoanRequest>();
-  get loanRequests$(): Observable<LoanRequest[]> {
+  get items$(): Observable<LoanRequest[]> {
     return this.loanRequestsStore.observable$;
   }
 
@@ -104,7 +115,7 @@ export class LoanRequestService extends BaseService {
   }
 
   add(body: LoanRequestAddSchema): Observable<any> {
-    const url = this.url + '/AddLoan';
+    const url = this.url + '/AddLoanRequest';
 
     if (!body.u_EmployeeID) body.u_EmployeeID = parseInt(this.user.id);
 

@@ -53,13 +53,11 @@
             [overtimeRequest]="req"
             [isEditable]="req.status === 'Pending'"
           />
-          <button
+          <app-cancel-request-popup
             *ngIf="req.status === 'Pending'"
-            class="font-medium text-red-600 hover:underline"
-            (click)="cancelOvertimeRequest(req)"
-          >
-            <fa-icon [icon]="faCancel"></fa-icon>
-          </button>
+            [service]="overtimeService"
+            [id]="req.overtimeID"
+          />
         </td>
       </tr>
       <!-- } -->

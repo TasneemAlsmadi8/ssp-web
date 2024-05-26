@@ -80,6 +80,9 @@ export class LeaveRequestDetailsComponent
     if (changes['isEditable']) {
       this.setFormState();
     }
+    if (changes['leaveRequest']) {
+      this.setInputsDefaultValues();
+    }
   }
 
   private setFormState() {
