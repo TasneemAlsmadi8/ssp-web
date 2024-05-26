@@ -8,7 +8,6 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBan } from '@fortawesome/free-solid-svg-icons';
 import { EncashmentRequestDetailsComponent } from './encashment-request-details/encashment-request-details.component';
 import Swal from 'sweetalert2';
-import { ArrayPaginator } from 'src/app/shared/utils/array-paginator';
 import { NewEncashmentRequestComponent } from './new-encashment-request/new-encashment-request.component';
 import { PaginatedTableComponent } from 'src/app/shared/components/paginated-table/paginated-table.component';
 
@@ -109,10 +108,5 @@ export class RequestsEncashmentsComponent
 
   trackByRequestId(index: number, item: EncashmentRequest): number {
     return parseInt(item.encashID);
-  }
-
-  formatFloat(input: string | number, decimalPlaces: number = 2): string {
-    const number = typeof input === 'string' ? parseFloat(input) : input;
-    return number.toFixed(decimalPlaces);
   }
 }

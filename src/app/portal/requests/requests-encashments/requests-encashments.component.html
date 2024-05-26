@@ -31,9 +31,9 @@
         </th>
         <td class="px-6 py-4">{{ req.status }}</td>
         <td class="px-6 py-4">{{ req.date }}</td>
-        <td class="px-6 py-4">{{ formatFloat(req.unitPrice) }}</td>
-        <td class="px-6 py-4">{{ formatFloat(req.unitCount) }}</td>
-        <td class="px-6 py-4">{{ formatFloat(req.value) }}</td>
+        <td class="px-6 py-4">{{ req.unitPrice | number : "1.2-4" }}</td>
+        <td class="px-6 py-4">{{ req.unitCount  | number : "1.2-4" }}</td>
+        <td class="px-6 py-4">{{ req.value  | number : "1.2-4" }}</td>
         <td class="px-6 py-4 flex justify-center gap-2">
           <app-encashment-request-details
             [encashmentRequest]="req"

@@ -48,6 +48,7 @@ export class LeaveRequestDetailsComponent
   implements OnInit, OnChanges
 {
   @Input() isEditable: boolean = true;
+  @Input() isOpen: boolean = false;
   @Input({ required: true }) leaveRequest!: LeaveRequest;
   @Output() leaveRequestChange = new EventEmitter<LeaveRequest>();
   faEdit = faPenToSquare;

@@ -62,7 +62,7 @@
     class="w-full min-h-[calc(100%-48px)] grid grid-rows-11 lg:grid-cols-5 2xl:grid-cols-7 bg-gray-100"
   >
     <aside
-      class="z-50 bg-gray-50 overflow-y-auto fixed top-0 left-0 w-52 h-full lg:block lg:relative lg:row-span-full lg:w-auto lg:col-span-1"
+      class="z-50 bg-gray-50 overflow-y-auto fixed top-0 left-0 w-52 h-full lg:z-0 lg:block lg:relative lg:row-span-full lg:w-auto lg:col-span-1"
       [ngClass]="{ hidden: !isSideBarDefault, 'lg:hidden': isSideBarDefault }"
     >
       <app-side-bar-content [user]="user"></app-side-bar-content>

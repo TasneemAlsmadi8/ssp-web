@@ -47,7 +47,7 @@
           }}
         </td>
         <td class="px-6 py-4">{{ req.projectName || req.projectCode }}</td>
-        <td class="px-6 py-4">{{ req.ovHours }}</td>
+        <td class="px-6 py-4">{{ req.ovHours | number : "1.2-4" }}</td>
         <td class="px-6 py-4 flex justify-center gap-2">
           <app-overtime-request-details
             [overtimeRequest]="req"
