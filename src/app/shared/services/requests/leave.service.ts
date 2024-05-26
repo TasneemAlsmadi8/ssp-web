@@ -10,7 +10,7 @@ import {
   LeaveRequestAddSchema,
   LeaveRequestBalance,
 } from '../../interfaces/requests/leave';
-import { Observable, tap } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import { SharedArrayStore } from '../../utils/shared-array-store';
 
 @Injectable({
@@ -132,6 +132,29 @@ export class LeaveRequestService extends BaseService {
       this.url +
       `/GetEmployeeLeaveBalance?EmpCode=${this.user.code}&LeaveCode=${leaveCode}&Date=${fromDate}`;
     return this.http.get<LeaveRequestBalance[]>(url, this.httpOptions);
+  }
+
+  getLeaveDays(
+    leaveCode: string,
+    fromDate: string,
+    toDate: string,
+    fromTime: string,
+    toTime: string
+  ): Observable<number[]> {
+    fromDate = fromDate.replaceAll('-', '');
+    toDate = toDate.replaceAll('-', '');
+    fromTime = fromTime.replaceAll(':', '');
+    toTime = toTime.replaceAll(':', '');
+    const url = `${this.url}/GetLeaveDays?EmpCode=${
+      this.user.code
+    }&EmployeeID=${
+      this.user.id
+    }&LeaveCode=${leaveCode}&FromDate=${fromDate}&ToDate=${toDate}&FromTime=${encodeURIComponent(
+      fromTime
+    )}&ToTime=${encodeURIComponent(toTime)}`;
+    return this.http
+      .get(url, { responseType: 'text' })
+      .pipe(map((value) => value.split(',').map(Number)));
   }
 
   private getTypeName(code: string): string {
