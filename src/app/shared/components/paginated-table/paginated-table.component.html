@@ -21,7 +21,8 @@
       <li>
         <button
           (click)="paginator.previousPage()"
-          class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700"
+          [disabled]="paginator.isFirstPage"
+          class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 disabled:pointer-events-none disabled:opacity-60 disabled:shadow-none"
         >
           Previous
         </button>
@@ -31,7 +32,8 @@
           (click)="paginator.setActivePageNumber(pageNum)"
           class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700"
           [ngClass]="{
-            'bg-blue-200': pageNum === paginator.activePageNumber
+            ' border-primary-50 bottom-0.5':
+              pageNum === paginator.activePageNumber
           }"
         >
           {{ pageNum }}
@@ -40,7 +42,8 @@
       <li>
         <button
           (click)="paginator.nextPage()"
-          class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700"
+          [disabled]="paginator.isLastPage"
+          class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 disabled:pointer-events-none disabled:opacity-60 disabled:shadow-none"
         >
           Next
         </button>
