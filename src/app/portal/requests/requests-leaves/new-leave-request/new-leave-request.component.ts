@@ -28,14 +28,10 @@ import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/
   templateUrl: './new-leave-request.component.html',
   styleUrls: ['./new-leave-request.component.scss'],
 })
-export class NewLeaveRequestComponent
-  extends NewRequestComponentTemplate<LeaveRequest, LeaveRequestAddSchema>
-  implements OnInit
-{
-  @Output() onSave = new EventEmitter<LeaveRequest>();
-  faEdit = faPenToSquare;
-  faView = faEye;
-
+export class NewLeaveRequestComponent extends NewRequestComponentTemplate<
+  LeaveRequest,
+  LeaveRequestAddSchema
+> {
   item: LeaveRequest = {
     leaveID: '',
     u_EmployeeID: '',
@@ -78,7 +74,7 @@ export class NewLeaveRequestComponent
     });
   }
 
-  ngOnInit(): void {
+  override getDynamicValues(): void {
     this.setInputsDefaultValues();
     this.leaveRequestService
       .getTypes()
@@ -89,7 +85,7 @@ export class NewLeaveRequestComponent
       });
   }
 
-  override updateDynamicValues() {
+  override updateCalculatedValues() {
     this.updateLeaveBalance();
     this.updateLeaveDays();
   }

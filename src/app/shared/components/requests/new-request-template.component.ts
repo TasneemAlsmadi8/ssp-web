@@ -1,4 +1,11 @@
-import { EventEmitter, inject } from '@angular/core';
+import {
+  Component,
+  EventEmitter,
+  Inject,
+  OnInit,
+  Output,
+  inject,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { User } from '../../interfaces/user';
 import { DestroyBaseComponent } from 'src/app/shared/base/destroy-base.component';
@@ -12,35 +19,35 @@ import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { takeUntil } from 'rxjs';
 
-// @Component({
-//   selector: '',
-//   standalone: true,
-//   imports: [CommonModule, ModalComponent],
-//   template: '',
-// })
-
+@Component({
+  standalone: true,
+  template: '',
+})
 export abstract class NewRequestComponentTemplate<
-  T extends Item,
-  A extends AddSchema
-> extends DestroyBaseComponent {
+    T extends Item,
+    A extends AddSchema
+  >
+  extends DestroyBaseComponent
+  implements OnInit
+{
   isLoading: boolean = false;
   user: User;
   form: FormGroup;
 
-  abstract onSave: EventEmitter<T>;
+  @Output() onSave = new EventEmitter<T>();
+
   abstract item: T;
-  // formControls: { [key: string]: any[] };
-  // defaultValues: { [key: string]: any };
   abstract mapFormToAddRequest(formValues: any): A;
-  updateDynamicValues?(): void;
-  get?(): void;
+  updateCalculatedValues?(): void;
+  getDynamicValues?(): void;
 
   private fb: FormBuilder;
   private userService: LocalUserService;
 
+  // @Inject(null) -> to disable DI to provide values in child class
   constructor(
-    private requestService: GenericRequestService<T, any, A, any>,
-    public formControls: { [key: string]: any[] }
+    @Inject(null) private requestService: GenericRequestService<T, any, A, any>,
+    @Inject(null) public formControls: { [key: string]: any[] }
   ) {
     super();
     this.userService = inject(LocalUserService);
@@ -49,8 +56,13 @@ export abstract class NewRequestComponentTemplate<
     this.form = this.fb.group(this.formControls);
 
     this.form.valueChanges.subscribe(() => {
-      if (this.updateDynamicValues) this.updateDynamicValues();
+      if (this.updateCalculatedValues) this.updateCalculatedValues();
     });
+  }
+
+  ngOnInit(): void {
+    this.setInputsDefaultValues();
+    if (this.getDynamicValues) this.getDynamicValues();
   }
 
   setInputsDefaultValues(): void {
@@ -75,6 +87,8 @@ export abstract class NewRequestComponentTemplate<
             icon: 'success',
             confirmButtonText: 'Ok',
           });
+
+          this.onSave.emit(this.item);
         },
         error: (err: HttpErrorResponse) => {
           Swal.fire({

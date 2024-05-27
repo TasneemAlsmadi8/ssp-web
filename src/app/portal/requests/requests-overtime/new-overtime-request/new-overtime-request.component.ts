@@ -26,12 +26,10 @@ import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/
   templateUrl: './new-overtime-request.component.html',
   styleUrls: ['./new-overtime-request.component.scss'],
 })
-export class NewOvertimeRequestComponent
-  extends NewRequestComponentTemplate<OvertimeRequest, OvertimeRequestAddSchema>
-  implements OnInit
-{
-  @Output() onSave = new EventEmitter<OvertimeRequest>();
-
+export class NewOvertimeRequestComponent extends NewRequestComponentTemplate<
+  OvertimeRequest,
+  OvertimeRequestAddSchema
+> {
   item: OvertimeRequest = {
     overtimeID: '',
     u_EmployeeID: '',
@@ -76,7 +74,7 @@ export class NewOvertimeRequestComponent
     });
   }
 
-  ngOnInit(): void {
+  override getDynamicValues(): void {
     this.setInputsDefaultValues();
     this.overtimeRequestService
       .getTypes()

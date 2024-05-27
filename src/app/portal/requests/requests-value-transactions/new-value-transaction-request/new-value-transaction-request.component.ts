@@ -33,10 +33,7 @@ export class NewValueTransactionRequestComponent
     ValueTransactionRequest,
     ValueTransactionRequestAddSchema
   >
-  implements OnInit
 {
-  @Output() onSave = new EventEmitter<ValueTransactionRequest>();
-
   item: ValueTransactionRequest = {
     valueTranID: '',
     u_EmployeeID: '',
@@ -72,8 +69,7 @@ export class NewValueTransactionRequestComponent
     });
   }
 
-  ngOnInit(): void {
-    this.setInputsDefaultValues();
+  override getDynamicValues(): void {
     this.valueTransactionRequestService
       .getTypes()
       .pipe(takeUntil(this.destroy$))

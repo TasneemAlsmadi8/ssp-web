@@ -28,9 +28,7 @@ import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/
 })
 export class NewLoanRequestComponent
   extends NewRequestComponentTemplate<LoanRequest, LoanRequestAddSchema>
-  implements OnInit
 {
-  @Output() onSave = new EventEmitter<LoanRequest>();
 
   item: LoanRequest = {
     loanID: '',
@@ -62,8 +60,7 @@ export class NewLoanRequestComponent
     });
   }
 
-  ngOnInit(): void {
-    this.setInputsDefaultValues();
+  override getDynamicValues(): void {
     this.loanRequestService
       .getTypes()
       .pipe(takeUntil(this.destroy$))

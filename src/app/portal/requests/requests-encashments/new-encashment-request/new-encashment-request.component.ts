@@ -36,10 +36,7 @@ export class NewEncashmentRequestComponent
     EncashmentRequest,
     EncashmentRequestAddSchema
   >
-  implements OnInit
 {
-  @Output() onSave = new EventEmitter<EncashmentRequest>();
-
   item: EncashmentRequest = {
     encashID: '',
     u_EmployeeID: '',
@@ -99,8 +96,7 @@ export class NewEncashmentRequestComponent
     };
   }
 
-  ngOnInit(): void {
-    this.setInputsDefaultValues();
+  override getDynamicValues(): void {
     this.encashmentRequestService
       .getTypes()
       .pipe(takeUntil(this.destroy$))
@@ -119,7 +115,7 @@ export class NewEncashmentRequestComponent
       });
   }
 
-  override updateDynamicValues() {
+  override updateCalculatedValues() {
     const date = this.form.get('date')?.value;
     const encashmentType = this.form.get('encashmentType')?.value;
     const unitCount = this.form.get('unitCount')?.value;
