@@ -5,7 +5,7 @@
   </button>
   <h1 modalTitle class="text-xl font-semibold">
     {{ isEditable ? "Edit" : "" }} {{ requestType }} Request
-    {{ requestId ? "-" + requestId : "" }}
+    {{ requestId ? "- " + requestId : "" }}
   </h1>
   <div class="bg-white flex flex-col m-2 px-6 py-4 rounded-lg">
     <ng-content />

@@ -31,6 +31,7 @@ import { LeaveRequestService } from 'src/app/shared/services/requests/leave.serv
 import { LeaveRequestBalance } from 'src/app/shared/interfaces/requests/leave';
 import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
 import { RequestDetailsModalComponent } from 'src/app/shared/components/requests/request-details-modal/request-details-modal.component';
+import { RequestDetailsComponentTemplate } from 'src/app/shared/components/requests/request-details-template.component';
 
 @Component({
   selector: 'app-encashment-request-details',
@@ -45,34 +46,21 @@ import { RequestDetailsModalComponent } from 'src/app/shared/components/requests
   templateUrl: './encashment-request-details.component.html',
   styleUrls: ['./encashment-request-details.component.scss'],
 })
-export class EncashmentRequestDetailsComponent
-  extends DestroyBaseComponent
-  implements OnInit, OnChanges
-{
-  @Input() isEditable: boolean = true;
-  @Input({ required: true }) encashmentRequest!: EncashmentRequest;
-  // @Output() encashmentRequestChange = new EventEmitter<EncashmentRequest>();
-  faEdit = faPenToSquare;
-  faView = faEye;
-
-  isLoading = false;
-  user: User;
+export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTemplate<
+  EncashmentRequest,
+  EncashmentRequestUpdateSchema
+> {
   encashmentTypes: EncashmentRequestType[] = [];
   projects: Project[] = [];
   leaveBalance?: LeaveRequestBalance;
   encashValue?: EncashmentValue;
-  form: FormGroup;
 
   constructor(
-    private userService: LocalUserService,
     private encashmentRequestService: EncashmentRequestService,
     private leaveRequestService: LeaveRequestService,
-    private projectsService: ProjectsService,
-    private fb: FormBuilder
+    private projectsService: ProjectsService
   ) {
-    super();
-    this.user = this.userService.getUser();
-    this.form = this.fb.group({
+    super(encashmentRequestService, {
       encashmentType: [''],
       unitPrice: [''],
       date: [''],
@@ -82,14 +70,7 @@ export class EncashmentRequestDetailsComponent
     });
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['isEditable']) {
-      this.setFormState();
-    }
-  }
-
-  ngOnInit(): void {
-    this.setInputsDefaultValues();
+  override getDynamicValues(): void {
     this.encashmentRequestService
       .getTypes()
       .pipe(takeUntil(this.destroy$))
@@ -106,18 +87,9 @@ export class EncashmentRequestDetailsComponent
       .subscribe((value) => {
         this.projects = value;
       });
-    this.updateDynamicValues();
   }
 
-  private setFormState() {
-    if (this.isEditable) {
-      this.form.enable();
-    } else {
-      this.form.disable();
-    }
-  }
-
-  updateDynamicValues() {
+  override updateCalculatedValues() {
     const date = this.form.get('date')?.value;
     const encashmentType = this.form.get('encashmentType')?.value;
     const unitCount = this.form.get('unitCount')?.value;
@@ -140,33 +112,22 @@ export class EncashmentRequestDetailsComponent
     }
   }
 
-  private setInputsDefaultValues() {
-    this.form
-      .get('encashmentType')
-      ?.setValue(this.encashmentRequest.encashCode);
-    this.form.get('unitPrice')?.setValue(this.encashmentRequest.unitPrice);
-    this.form.get('unitCount')?.setValue(this.encashmentRequest.unitCount);
-    this.form
-      .get('date')
-      ?.setValue(formatDateToISO(this.encashmentRequest.date));
-    this.form.get('project')?.setValue(this.encashmentRequest.projectCode);
-    this.form.get('remarks')?.setValue(this.encashmentRequest.remarks);
+  override mapItemFieldsToForm() {
+    return {
+      encashmentType: this.item.encashCode,
+      unitPrice: this.item.unitPrice,
+      unitCount: this.item.unitCount,
+      date: formatDateToISO(this.item.date),
+      project: this.item.projectCode,
+      remarks: this.item.remarks,
+    };
   }
 
-  // private updateEncashmentRequestModel() {
-  //   const formValues = this.form.value;
-  //   this.encashmentRequest = {
-  //     ...this.encashmentRequest,
-  //     encashmentCode: formValues.encashmentType ?? this.encashmentRequest.encashmentCode,
-  //     remarks: formValues.toDate ?? this.encashmentRequest.remarks,
-  //   };
-  // }
-
-  onSubmit() {
-    this.isLoading = true;
-    const formValues = this.form.value;
+  override mapFormToUpdateRequest(
+    formValues: any
+  ): EncashmentRequestUpdateSchema {
     const data: EncashmentRequestUpdateSchema = {
-      docEntry: this.encashmentRequest.encashID,
+      docEntry: this.item.encashID,
       // u_EncashValue:
       // this.encashValue?.paidVacationValue.toString() ?? undefined,
       // TODO: should I send it?
@@ -177,32 +138,6 @@ export class EncashmentRequestDetailsComponent
       u_ProjectCode: formValues.project ?? undefined,
       u_Remarks: formValues.remarks ?? undefined,
     };
-    this.encashmentRequestService
-      .update(data)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res) => {
-          // this.updateEncashmentRequestModel();
-          Swal.fire({
-            title: 'Saved!',
-            text: 'Information updated successfully',
-            icon: 'success',
-            confirmButtonText: 'Ok',
-          });
-          console.log(res);
-        },
-        error: (err: HttpErrorResponse) => {
-          Swal.fire({
-            title: 'Error!',
-            // text: 'Unknown error: ' + err.status,
-            icon: 'error',
-            confirmButtonText: 'Ok',
-          });
-          console.log(err);
-        },
-      })
-      .add(() => {
-        this.isLoading = false;
-      });
+    return data;
   }
 }

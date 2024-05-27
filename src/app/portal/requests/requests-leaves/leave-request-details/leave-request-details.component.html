@@ -1,7 +1,7 @@
 <app-request-details-modal
   [isEditable]="isEditable"
   requestType="Leave"
-  [requestId]="leaveRequest.leaveID"
+  [requestId]="item.leaveID"
 >
   <form class="flex flex-col py-2" [formGroup]="form" (ngSubmit)="onSubmit()">
     <div class="grid gap-3 grid-cols-2 sm:grid-cols-4 md:grid-cols-6 pb-4">
@@ -114,7 +114,7 @@
         </h3>
         <div class="relative h-11 w-full min-w-[200px]">
           <input
-            [value]="leaveRequest.u_PaidDays"
+            [value]="item.u_PaidDays"
             disabled
             class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-base font-normal transition-all disabled:bg-gray-100"
           />
@@ -128,7 +128,7 @@
         </h3>
         <div class="relative h-11 w-full min-w-[200px]">
           <input
-            [value]="leaveRequest.u_UnpaidDays"
+            [value]="item.u_UnpaidDays"
             disabled
             class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-base font-normal transition-all disabled:bg-gray-100"
           />

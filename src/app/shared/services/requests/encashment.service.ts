@@ -13,6 +13,7 @@ import {
 import { Observable, tap } from 'rxjs';
 import { SharedArrayStore } from '../../utils/shared-array-store';
 import { GenericRequestService } from './generic-request.service';
+import { formatDateToDisplay } from '../../utils/data-formatter';
 
 type iEncashmentRequestService = GenericRequestService<
   EncashmentRequest,
@@ -61,6 +62,7 @@ export class EncashmentRequestService
   }
 
   cancel(id: string): Observable<any> {
+    //TODO: Check why does not work
     const url = `${this.url}/UpdateEncashRequest`;
     const body = {
       docEntry: id,
@@ -114,7 +116,6 @@ export class EncashmentRequestService
                 body.u_UnitPrice ?? encashmentRequest.unitPrice;
               encashmentRequest.unitCount =
                 body.u_UnitCount ?? encashmentRequest.unitCount;
-              encashmentRequest.date = body.u_Date ?? encashmentRequest.date;
               encashmentRequest.projectCode =
                 body.u_ProjectCode ?? encashmentRequest.projectCode;
               encashmentRequest.remarks =

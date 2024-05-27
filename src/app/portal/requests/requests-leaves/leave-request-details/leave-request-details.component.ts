@@ -32,6 +32,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
 import { RequestDetailsModalComponent } from 'src/app/shared/components/requests/request-details-modal/request-details-modal.component';
+import { RequestDetailsComponentTemplate } from 'src/app/shared/components/requests/request-details-template.component';
 
 @Component({
   selector: 'app-leave-request-details',
@@ -46,30 +47,19 @@ import { RequestDetailsModalComponent } from 'src/app/shared/components/requests
   templateUrl: './leave-request-details.component.html',
   styleUrls: ['./leave-request-details.component.scss'],
 })
-export class LeaveRequestDetailsComponent
-  extends DestroyBaseComponent
-  implements OnInit, OnChanges
-{
-  @Input() isEditable: boolean = true;
+export class LeaveRequestDetailsComponent extends RequestDetailsComponentTemplate<
+  LeaveRequest,
+  LeaveRequestUpdateSchema
+> {
   @Input() isOpen: boolean = false;
-  @Input({ required: true }) leaveRequest!: LeaveRequest;
   // @Output() leaveRequestChange = new EventEmitter<LeaveRequest>();
   faEdit = faPenToSquare;
   faView = faEye;
 
-  isLoading = false;
-  user: User;
   leaveTypes!: LeaveRequestType[];
-  form: FormGroup;
 
-  constructor(
-    private userService: LocalUserService,
-    private leaveRequestService: LeaveRequestService,
-    private fb: FormBuilder
-  ) {
-    super();
-    this.user = this.userService.getUser();
-    this.form = this.fb.group({
+  constructor(private leaveRequestService: LeaveRequestService) {
+    super(leaveRequestService, {
       leaveType: ['', [Validators.required]],
       fromTime: [''],
       toTime: [''],
@@ -77,27 +67,9 @@ export class LeaveRequestDetailsComponent
       toDate: [''],
       remarks: [''],
     });
-    this.setFormState();
-  }
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['isEditable']) {
-      this.setFormState();
-    }
-    if (changes['leaveRequest']) {
-      this.setInputsDefaultValues();
-    }
   }
 
-  private setFormState() {
-    if (this.isEditable) {
-      this.form.enable();
-    } else {
-      this.form.disable();
-    }
-  }
-
-  ngOnInit(): void {
-    this.setInputsDefaultValues();
+  override getDynamicValues(): void {
     this.leaveRequestService
       .getTypes()
       .pipe(takeUntil(this.destroy$))
@@ -105,19 +77,37 @@ export class LeaveRequestDetailsComponent
         this.leaveTypes = value;
       });
   }
-
-  private setInputsDefaultValues() {
-    this.form.get('leaveType')?.setValue(this.leaveRequest.leaveCode);
-    this.form.get('fromTime')?.setValue(this.leaveRequest.fromTime);
-    this.form.get('toTime')?.setValue(this.leaveRequest.toTime);
-    this.form
-      .get('fromDate')
-      ?.setValue(formatDateToISO(this.leaveRequest.fromDate));
-    this.form
-      .get('toDate')
-      ?.setValue(formatDateToISO(this.leaveRequest.toDate));
-    this.form.get('remarks')?.setValue(this.leaveRequest.remarks);
+  override mapFormToUpdateRequest(formValues: any): LeaveRequestUpdateSchema {
+    const data: LeaveRequestUpdateSchema = {
+      docEntry: this.item.leaveID,
+      u_LeaveType: formValues.leaveType ?? undefined,
+      u_FromDate: formValues.fromDate ?? undefined,
+      u_ToDate: formValues.toDate ?? undefined,
+      u_FromTime: formValues.fromTime ?? undefined,
+      u_ToTime: formValues.toTime ?? undefined,
+      u_Remarks: formValues.remarks ?? undefined,
+    };
+    return data;
   }
+  override mapItemFieldsToForm(): { [key: string]: string | number | null } {
+    return {
+      leaveType: this.item.leaveCode,
+      fromTime: this.item.fromTime,
+      toTime: this.item.toTime,
+      fromDate: formatDateToISO(this.item.fromDate),
+      toDate: formatDateToISO(this.item.toDate),
+      remarks: this.item.remarks,
+    };
+  }
+
+  // private setInputsDefaultValues() {
+  //   this.form.get('leaveType')?.setValue(this.item.leaveCode);
+  //   this.form.get('fromTime')?.setValue(this.item.fromTime);
+  //   this.form.get('toTime')?.setValue(this.item.toTime);
+  //   this.form.get('fromDate')?.setValue(formatDateToISO(this.item.fromDate));
+  //   this.form.get('toDate')?.setValue(formatDateToISO(this.item.toDate));
+  //   this.form.get('remarks')?.setValue(this.item.remarks);
+  // }
 
   // private updateLeaveRequestModel() {
   //   const formValues = this.form.value;
@@ -132,51 +122,51 @@ export class LeaveRequestDetailsComponent
   //   };
   // }
 
-  onSubmit() {
-    this.isLoading = true;
-    const formValues = this.form.value;
-    const data: LeaveRequestUpdateSchema = {
-      docEntry: this.leaveRequest.leaveID,
-      u_LeaveType: formValues.leaveType ?? undefined,
-      u_FromDate: formValues.fromDate ?? undefined,
-      u_ToDate: formValues.toDate ?? undefined,
-      u_FromTime: formValues.fromTime ?? undefined,
-      u_ToTime: formValues.toTime ?? undefined,
-      u_Remarks: formValues.remarks ?? undefined,
-    };
-    // console.log(data);
-    this.leaveRequestService
-      .update(data)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res) => {
-          // this.updateLeaveRequestModel();
-          Swal.fire({
-            title: 'Saved!',
-            text: 'Information updated successfully',
-            icon: 'success',
-            confirmButtonText: 'Ok',
-          });
-          console.log(res);
-        },
-        error: (err: HttpErrorResponse) => {
-          Swal.fire({
-            title: 'Error!',
-            // text: 'Unknown error: ' + err.status,
-            icon: 'error',
-            confirmButtonText: 'Ok',
-          });
-          console.log(err);
-        },
-      })
-      .add(() => {
-        this.isLoading = false;
-      });
-  }
+  // onSubmit() {
+  //   this.isLoading = true;
+  //   const formValues = this.form.value;
+  //   const data: LeaveRequestUpdateSchema = {
+  //     docEntry: this.item.leaveID,
+  //     u_LeaveType: formValues.leaveType ?? undefined,
+  //     u_FromDate: formValues.fromDate ?? undefined,
+  //     u_ToDate: formValues.toDate ?? undefined,
+  //     u_FromTime: formValues.fromTime ?? undefined,
+  //     u_ToTime: formValues.toTime ?? undefined,
+  //     u_Remarks: formValues.remarks ?? undefined,
+  //   };
+  //   // console.log(data);
+  //   this.leaveRequestService
+  //     .update(data)
+  //     .pipe(takeUntil(this.destroy$))
+  //     .subscribe({
+  //       next: (res) => {
+  //         // this.updateLeaveRequestModel();
+  //         Swal.fire({
+  //           title: 'Saved!',
+  //           text: 'Information updated successfully',
+  //           icon: 'success',
+  //           confirmButtonText: 'Ok',
+  //         });
+  //         console.log(res);
+  //       },
+  //       error: (err: HttpErrorResponse) => {
+  //         Swal.fire({
+  //           title: 'Error!',
+  //           // text: 'Unknown error: ' + err.status,
+  //           icon: 'error',
+  //           confirmButtonText: 'Ok',
+  //         });
+  //         console.log(err);
+  //       },
+  //     })
+  //     .add(() => {
+  //       this.isLoading = false;
+  //     });
+  // }
 
-  /** change format from "dd/mm/yyyy" to standard "yyyy-mm-dd" */
-  private formatDate(dateString: string): string {
-    const [day, month, year] = dateString.split('/');
-    return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
-  }
+  // /** change format from "dd/mm/yyyy" to standard "yyyy-mm-dd" */
+  // private formatDate(dateString: string): string {
+  //   const [day, month, year] = dateString.split('/');
+  //   return `${year}-${month.padStart(2, '0')}-${day.padStart(2, '0')}`;
+  // }
 }

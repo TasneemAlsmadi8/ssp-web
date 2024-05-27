@@ -53,7 +53,7 @@
         <td class="px-6 py-4 hidden xl:table-cell">{{ req.toTime }}</td>
         <td class="px-6 py-4 flex justify-center gap-2">
           <app-leave-request-details
-            [leaveRequest]="req"
+            [item]="req"
             [isEditable]="req.status === 'Pending'"
           />
           <app-cancel-request-popup
