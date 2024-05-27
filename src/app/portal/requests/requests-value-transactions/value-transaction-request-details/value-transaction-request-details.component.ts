@@ -27,6 +27,7 @@ import Swal from 'sweetalert2';
 import { Project } from 'src/app/shared/interfaces/project';
 import { ProjectsService } from 'src/app/shared/services/projects.service';
 import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
+import { RequestDetailsModalComponent } from 'src/app/shared/components/request-details-modal/request-details-modal.component';
 
 @Component({
   selector: 'app-value-transaction-request-details',
@@ -36,6 +37,7 @@ import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
     FontAwesomeModule,
     ModalComponent,
     ReactiveFormsModule,
+    RequestDetailsModalComponent,
   ],
   templateUrl: './value-transaction-request-details.component.html',
   styleUrls: ['./value-transaction-request-details.component.scss'],
@@ -46,8 +48,8 @@ export class ValueTransactionRequestDetailsComponent
 {
   @Input() isEditable: boolean = true;
   @Input({ required: true }) valueTransactionRequest!: ValueTransactionRequest;
-  @Output() valueTransactionRequestChange =
-    new EventEmitter<ValueTransactionRequest>();
+  // @Output() valueTransactionRequestChange =
+  //   new EventEmitter<ValueTransactionRequest>();
   faEdit = faPenToSquare;
   faView = faEye;
 

@@ -30,6 +30,7 @@ import { takeUntil } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
+import { RequestDetailsModalComponent } from 'src/app/shared/components/request-details-modal/request-details-modal.component';
 
 @Component({
   selector: 'app-leave-request-details',
@@ -39,6 +40,7 @@ import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
     FontAwesomeModule,
     ModalComponent,
     ReactiveFormsModule,
+    RequestDetailsModalComponent,
   ],
   templateUrl: './leave-request-details.component.html',
   styleUrls: ['./leave-request-details.component.scss'],
@@ -50,7 +52,7 @@ export class LeaveRequestDetailsComponent
   @Input() isEditable: boolean = true;
   @Input() isOpen: boolean = false;
   @Input({ required: true }) leaveRequest!: LeaveRequest;
-  @Output() leaveRequestChange = new EventEmitter<LeaveRequest>();
+  // @Output() leaveRequestChange = new EventEmitter<LeaveRequest>();
   faEdit = faPenToSquare;
   faView = faEye;
 

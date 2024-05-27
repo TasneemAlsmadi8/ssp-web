@@ -30,6 +30,7 @@ import { ProjectsService } from 'src/app/shared/services/projects.service';
 import { LeaveRequestService } from 'src/app/shared/services/requests/leave.service';
 import { LeaveRequestBalance } from 'src/app/shared/interfaces/requests/leave';
 import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
+import { RequestDetailsModalComponent } from 'src/app/shared/components/request-details-modal/request-details-modal.component';
 
 @Component({
   selector: 'app-encashment-request-details',
@@ -39,6 +40,7 @@ import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
     FontAwesomeModule,
     ModalComponent,
     ReactiveFormsModule,
+    RequestDetailsModalComponent
   ],
   templateUrl: './encashment-request-details.component.html',
   styleUrls: ['./encashment-request-details.component.scss'],
@@ -49,7 +51,7 @@ export class EncashmentRequestDetailsComponent
 {
   @Input() isEditable: boolean = true;
   @Input({ required: true }) encashmentRequest!: EncashmentRequest;
-  @Output() encashmentRequestChange = new EventEmitter<EncashmentRequest>();
+  // @Output() encashmentRequestChange = new EventEmitter<EncashmentRequest>();
   faEdit = faPenToSquare;
   faView = faEye;
 

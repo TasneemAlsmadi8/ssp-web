@@ -24,6 +24,7 @@ import { LoanRequestService } from 'src/app/shared/services/requests/loan.servic
 import { takeUntil } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
+import { RequestDetailsModalComponent } from 'src/app/shared/components/request-details-modal/request-details-modal.component';
 
 @Component({
   selector: 'app-loan-request-details',
@@ -33,6 +34,7 @@ import Swal from 'sweetalert2';
     FontAwesomeModule,
     ModalComponent,
     ReactiveFormsModule,
+    RequestDetailsModalComponent,
   ],
   templateUrl: './loan-request-details.component.html',
   styleUrls: ['./loan-request-details.component.scss'],
