@@ -21,6 +21,7 @@ import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
+  Validators,
 } from '@angular/forms';
 import { DestroyBaseComponent } from 'src/app/shared/base/destroy-base.component';
 import { LocalUserService } from 'src/app/shared/services/local-user.service';
@@ -69,7 +70,7 @@ export class LeaveRequestDetailsComponent
     super();
     this.user = this.userService.getUser();
     this.form = this.fb.group({
-      leaveType: [''],
+      leaveType: ['', [Validators.required]],
       fromTime: [''],
       toTime: [''],
       fromDate: [''],
