@@ -31,6 +31,7 @@ import { takeUntil } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { NewRequestModalComponent } from 'src/app/shared/components/requests/new-request-modal/new-request-modal.component';
+import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/generic-new-request.component';
 
 @Component({
   selector: 'app-new-loan-request',
@@ -46,14 +47,14 @@ import { NewRequestModalComponent } from 'src/app/shared/components/requests/new
   styleUrls: ['./new-loan-request.component.scss'],
 })
 export class NewLoanRequestComponent
-  extends DestroyBaseComponent
+  extends NewRequestComponentTemplate<LoanRequest, LoanRequestAddSchema>
   implements OnInit
 {
   @Output() onSave = new EventEmitter<LoanRequest>();
   faEdit = faPenToSquare;
   faView = faEye;
 
-  loanRequest: LoanRequest = {
+  item: LoanRequest = {
     loanID: '',
     dateSubmitted: null,
     empID: null,
@@ -70,23 +71,15 @@ export class NewLoanRequestComponent
     remarks: null,
   };
 
-  isLoading = false;
-  user: User;
   loanTypes!: LoanRequestType[];
-  form: FormGroup;
 
-  constructor(
-    private userService: LocalUserService,
-    private loanRequestService: LoanRequestService,
-    private fb: FormBuilder
-  ) {
-    super();
-    this.user = this.userService.getUser();
-    this.form = this.fb.group({
+  constructor(private loanRequestService: LoanRequestService) {
+    const today = new Date().toISOString().slice(0, 10);
+    super(loanRequestService, {
       loanType: [''],
-      installments: [''],
-      totalAmount: [''],
-      startDate: [''],
+      installments: [1],
+      totalAmount: [0],
+      startDate: [today],
       remarks: [''],
     });
   }
@@ -101,14 +94,26 @@ export class NewLoanRequestComponent
       });
   }
 
-  private setInputsDefaultValues() {
-    const today = new Date().toISOString().slice(0, 10);
-    this.form.get('loanType')?.setValue('');
-    this.form.get('installments')?.setValue(1);
-    this.form.get('totalAmount')?.setValue(0);
-    this.form.get('startDate')?.setValue(today);
-    this.form.get('remarks')?.setValue('');
+  override mapFormToAddRequest(formValues: any): LoanRequestAddSchema {
+    const data: LoanRequestAddSchema = {
+      u_EmployeeID: 0,
+      u_LoanType: formValues.loanType ?? undefined,
+      u_TotalAmount: formValues.totalAmount?.toString() ?? undefined,
+      u_InstallmentCount: formValues.installments?.toString() ?? undefined,
+      u_StartDate: formValues.startDate ?? undefined,
+      u_Remarks: formValues.remarks ?? undefined,
+    };
+    return data;
   }
+
+  // private setInputsDefaultValues() {
+  //   const today = new Date().toISOString().slice(0, 10);
+  //   this.form.get('loanType')?.setValue('');
+  //   this.form.get('installments')?.setValue(1);
+  //   this.form.get('totalAmount')?.setValue(0);
+  //   this.form.get('startDate')?.setValue(today);
+  //   this.form.get('remarks')?.setValue('');
+  // }
   // private updateLoanRequestModel() {
   //   const formValues = this.form.value;
   //   this.loanRequest = {
@@ -122,42 +127,42 @@ export class NewLoanRequestComponent
   //   };
   // }
 
-  onSubmit() {
-    this.isLoading = true;
-    const formValues = this.form.value;
-    const data: LoanRequestAddSchema = {
-      u_EmployeeID: 0,
-      u_LoanType: formValues.loanType ?? undefined,
-      u_TotalAmount: formValues.totalAmount ?? undefined,
-      u_InstallmentCount: formValues.installments ?? undefined,
-      u_StartDate: formValues.startDate ?? undefined,
-      u_Remarks: formValues.remarks ?? undefined,
-    };
-    this.loanRequestService
-      .add(data)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res) => {
-          // this.updateLoanRequestModel();
-          Swal.fire({
-            title: 'Saved!',
-            text: 'Information updated successfully',
-            icon: 'success',
-            confirmButtonText: 'Ok',
-          });
-        },
-        error: (err: HttpErrorResponse) => {
-          Swal.fire({
-            title: 'Error!',
-            // text: 'Unknown error: ' + err.status,
-            icon: 'error',
-            confirmButtonText: 'Ok',
-          });
-          console.log(err);
-        },
-      })
-      .add(() => {
-        this.isLoading = false;
-      });
-  }
+  // onSubmit() {
+  //   this.isLoading = true;
+  //   const formValues = this.form.value;
+  //   const data: LoanRequestAddSchema = {
+  //     u_EmployeeID: 0,
+  //     u_LoanType: formValues.loanType ?? undefined,
+  //     u_TotalAmount: formValues.totalAmount ?? undefined,
+  //     u_InstallmentCount: formValues.installments ?? undefined,
+  //     u_StartDate: formValues.startDate ?? undefined,
+  //     u_Remarks: formValues.remarks ?? undefined,
+  //   };
+  //   this.loanRequestService
+  //     .add(data)
+  //     .pipe(takeUntil(this.destroy$))
+  //     .subscribe({
+  //       next: (res) => {
+  //         // this.updateLoanRequestModel();
+  //         Swal.fire({
+  //           title: 'Saved!',
+  //           text: 'Information updated successfully',
+  //           icon: 'success',
+  //           confirmButtonText: 'Ok',
+  //         });
+  //       },
+  //       error: (err: HttpErrorResponse) => {
+  //         Swal.fire({
+  //           title: 'Error!',
+  //           // text: 'Unknown error: ' + err.status,
+  //           icon: 'error',
+  //           confirmButtonText: 'Ok',
+  //         });
+  //         console.log(err);
+  //       },
+  //     })
+  //     .add(() => {
+  //       this.isLoading = false;
+  //     });
+  // }
 }

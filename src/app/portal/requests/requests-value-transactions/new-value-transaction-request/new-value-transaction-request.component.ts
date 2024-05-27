@@ -11,6 +11,7 @@ import { CommonModule } from '@angular/common';
 import {
   ValueTransactionRequest,
   ValueTransactionRequestAddSchema,
+  ValueTransactionRequestStatus,
   ValueTransactionRequestType,
   ValueTransactionRequestUpdateSchema,
 } from 'src/app/shared/interfaces/requests/value-transaction';
@@ -28,6 +29,7 @@ import Swal from 'sweetalert2';
 import { Project } from 'src/app/shared/interfaces/project';
 import { ProjectsService } from 'src/app/shared/services/projects.service';
 import { NewRequestModalComponent } from 'src/app/shared/components/requests/new-request-modal/new-request-modal.component';
+import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/generic-new-request.component';
 
 @Component({
   selector: 'app-new-value-transaction-request',
@@ -43,14 +45,17 @@ import { NewRequestModalComponent } from 'src/app/shared/components/requests/new
   styleUrls: ['./new-value-transaction-request.component.scss'],
 })
 export class NewValueTransactionRequestComponent
-  extends DestroyBaseComponent
+  extends NewRequestComponentTemplate<
+    ValueTransactionRequest,
+    ValueTransactionRequestAddSchema
+  >
   implements OnInit
 {
   @Output() onSave = new EventEmitter<ValueTransactionRequest>();
   faEdit = faPenToSquare;
   faView = faEye;
 
-  valueTransactionRequest: ValueTransactionRequest = {
+  item: ValueTransactionRequest = {
     valueTranID: '',
     u_EmployeeID: '',
     valueTranName: '',
@@ -68,25 +73,18 @@ export class NewValueTransactionRequestComponent
     sortDate: '',
   };
 
-  isLoading = false;
-  user: User;
-
   valueTransactionTypes: ValueTransactionRequestType[] = [];
   projects: Project[] = [];
-  form: FormGroup;
 
   constructor(
-    private userService: LocalUserService,
     private valueTransactionRequestService: ValueTransactionRequestService,
-    private projectsService: ProjectsService,
-    private fb: FormBuilder
+    private projectsService: ProjectsService
   ) {
-    super();
-    this.user = this.userService.getUser();
-    this.form = this.fb.group({
+    const today = new Date().toISOString().slice(0, 10);
+    super(valueTransactionRequestService, {
       valueTransactionType: [''],
-      value: [''],
-      date: [''],
+      value: [0],
+      date: [today],
       project: [''],
       remarks: [''],
     });
@@ -108,18 +106,9 @@ export class NewValueTransactionRequestComponent
       });
   }
 
-  private setInputsDefaultValues() {
-    const today = new Date().toISOString().slice(0, 10);
-    this.form.get('valueTransactionType')?.setValue('');
-    this.form.get('date')?.setValue(today);
-    this.form.get('value')?.setValue(0);
-    this.form.get('project')?.setValue('');
-    this.form.get('remarks')?.setValue('');
-  }
-
-  onSubmit() {
-    this.isLoading = true;
-    const formValues = this.form.value;
+  override mapFormToAddRequest(
+    formValues: any
+  ): ValueTransactionRequestAddSchema {
     const data: ValueTransactionRequestAddSchema = {
       u_EmployeeID: '',
       u_ValueTranType: formValues.valueTransactionType ?? undefined,
@@ -128,31 +117,54 @@ export class NewValueTransactionRequestComponent
       u_ProjectCode: formValues.project ?? undefined,
       u_Remarks: formValues.remarks ?? undefined,
     };
-    this.valueTransactionRequestService
-      .add(data)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res) => {
-          // this.updateValueTransactionRequestModel();
-          Swal.fire({
-            title: 'Saved!',
-            text: 'Information updated successfully',
-            icon: 'success',
-            confirmButtonText: 'Ok',
-          });
-        },
-        error: (err: HttpErrorResponse) => {
-          Swal.fire({
-            title: 'Error!',
-            // text: 'Unknown error: ' + err.status,
-            icon: 'error',
-            confirmButtonText: 'Ok',
-          });
-          console.log(err);
-        },
-      })
-      .add(() => {
-        this.isLoading = false;
-      });
+    return data;
   }
+
+  // private setInputsDefaultValues() {
+  //   const today = new Date().toISOString().slice(0, 10);
+  //   this.form.get('valueTransactionType')?.setValue('');
+  //   this.form.get('date')?.setValue(today);
+  //   this.form.get('value')?.setValue(0);
+  //   this.form.get('project')?.setValue('');
+  //   this.form.get('remarks')?.setValue('');
+  // }
+
+  // onSubmit() {
+  //   this.isLoading = true;
+  //   const formValues = this.form.value;
+  //   const data: ValueTransactionRequestAddSchema = {
+  //     u_EmployeeID: '',
+  //     u_ValueTranType: formValues.valueTransactionType ?? undefined,
+  //     u_TranValue: formValues.value?.toString() ?? undefined,
+  //     u_Date: formValues.date ?? undefined,
+  //     u_ProjectCode: formValues.project ?? undefined,
+  //     u_Remarks: formValues.remarks ?? undefined,
+  //   };
+  //   this.valueTransactionRequestService
+  //     .add(data)
+  //     .pipe(takeUntil(this.destroy$))
+  //     .subscribe({
+  //       next: (res) => {
+  //         // this.updateValueTransactionRequestModel();
+  //         Swal.fire({
+  //           title: 'Saved!',
+  //           text: 'Information updated successfully',
+  //           icon: 'success',
+  //           confirmButtonText: 'Ok',
+  //         });
+  //       },
+  //       error: (err: HttpErrorResponse) => {
+  //         Swal.fire({
+  //           title: 'Error!',
+  //           // text: 'Unknown error: ' + err.status,
+  //           icon: 'error',
+  //           confirmButtonText: 'Ok',
+  //         });
+  //         console.log(err);
+  //       },
+  //     })
+  //     .add(() => {
+  //       this.isLoading = false;
+  //     });
+  // }
 }

@@ -32,10 +32,8 @@ import { LeaveRequestService } from 'src/app/shared/services/requests/leave.serv
 import { takeUntil } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
-import {
-  GenericNewRequestComponent,
-  NewRequestModalComponent,
-} from 'src/app/shared/components/requests/new-request-modal/new-request-modal.component';
+import { NewRequestModalComponent } from 'src/app/shared/components/requests/new-request-modal/new-request-modal.component';
+import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/generic-new-request.component';
 
 @Component({
   selector: 'app-new-leave-request',
@@ -51,14 +49,14 @@ import {
   styleUrls: ['./new-leave-request.component.scss'],
 })
 export class NewLeaveRequestComponent
-  extends DestroyBaseComponent
+  extends NewRequestComponentTemplate<LeaveRequest, LeaveRequestAddSchema>
   implements OnInit
 {
   @Output() onSave = new EventEmitter<LeaveRequest>();
   faEdit = faPenToSquare;
   faView = faEye;
 
-  leaveRequest: LeaveRequest = {
+  item: LeaveRequest = {
     leaveID: '',
     u_EmployeeID: '',
     leaveType: '',
@@ -86,29 +84,17 @@ export class NewLeaveRequestComponent
   leaveBalance?: LeaveRequestBalance;
   leaveBalanceEndOfYear?: LeaveRequestBalance;
 
-  isLoading = false;
-  user: User;
   leaveTypes!: LeaveRequestType[];
-  form: FormGroup;
 
-  constructor(
-    private userService: LocalUserService,
-    private leaveRequestService: LeaveRequestService,
-    private fb: FormBuilder
-  ) {
-    super();
-    this.user = this.userService.getUser();
-    this.form = this.fb.group({
-      leaveType: ['', Validators.required],
-      fromTime: ['', Validators.required],
-      toTime: ['', Validators.required],
-      fromDate: ['', Validators.required],
-      toDate: ['', Validators.required],
+  constructor(private leaveRequestService: LeaveRequestService) {
+    const today = new Date().toISOString().slice(0, 10);
+    super(leaveRequestService, {
+      leaveType: ['', [Validators.required]],
+      fromTime: ['08:00', [Validators.required]],
+      toTime: ['08:00', [Validators.required]],
+      fromDate: [today, [Validators.required]],
+      toDate: [today, [Validators.required]],
       remarks: [''],
-    });
-
-    this.form.valueChanges.subscribe(() => {
-      this.updateDynamicValues();
     });
   }
 
@@ -119,10 +105,11 @@ export class NewLeaveRequestComponent
       .pipe(takeUntil(this.destroy$))
       .subscribe((value) => {
         this.leaveTypes = value;
+        this.leaveTypes.unshift({ code: '', name: '' });
       });
   }
 
-  updateDynamicValues() {
+  override updateDynamicValues() {
     this.updateLeaveBalance();
     this.updateLeaveDays();
   }
@@ -138,6 +125,8 @@ export class NewLeaveRequestComponent
         .subscribe((value) => {
           this.leaveBalance = value[0];
         });
+    } else {
+      delete this.leaveBalance;
     }
     if (leaveType) {
       const endOfYearDate = `${new Date().getFullYear()}-12-31`;
@@ -147,6 +136,8 @@ export class NewLeaveRequestComponent
         .subscribe((value) => {
           this.leaveBalanceEndOfYear = value[0];
         });
+    } else {
+      delete this.leaveBalanceEndOfYear;
     }
   }
 
@@ -168,15 +159,29 @@ export class NewLeaveRequestComponent
     }
   }
 
-  setInputsDefaultValues() {
-    const today = new Date().toISOString().slice(0, 10);
-    this.form.get('leaveType')?.setValue('');
-    this.form.get('fromTime')?.setValue('08:00');
-    this.form.get('toTime')?.setValue('08:00');
-    this.form.get('fromDate')?.setValue(today);
-    this.form.get('toDate')?.setValue(today);
-    this.form.get('remarks')?.setValue('');
+  override mapFormToAddRequest(formValues: any): LeaveRequestAddSchema {
+    const data: LeaveRequestAddSchema = {
+      u_LeaveType: formValues.leaveType ?? undefined,
+      u_FromDate: formValues.fromDate ?? undefined,
+      u_ToDate: formValues.toDate ?? undefined,
+      u_FromTime: formValues.fromTime ?? undefined,
+      u_ToTime: formValues.toTime ?? undefined,
+      u_Remarks: formValues.remarks ?? undefined,
+      u_EmployeeID: '',
+    };
+
+    return data;
   }
+
+  // setInputsDefaultValues() {
+  //   const today = new Date().toISOString().slice(0, 10);
+  //   this.form.get('leaveType')?.setValue('');
+  //   this.form.get('fromTime')?.setValue('08:00');
+  //   this.form.get('toTime')?.setValue('08:00');
+  //   this.form.get('fromDate')?.setValue(today);
+  //   this.form.get('toDate')?.setValue(today);
+  //   this.form.get('remarks')?.setValue('');
+  // }
 
   // private updateLeaveRequestModel() {
   //   const formValues = this.form.value;
@@ -191,43 +196,43 @@ export class NewLeaveRequestComponent
   //   };
   // }
 
-  onSubmit() {
-    this.isLoading = true;
-    const formValues = this.form.value;
-    const data: LeaveRequestAddSchema = {
-      u_LeaveType: formValues.leaveType ?? undefined,
-      u_FromDate: formValues.fromDate ?? undefined,
-      u_ToDate: formValues.toDate ?? undefined,
-      u_FromTime: formValues.fromTime ?? undefined,
-      u_ToTime: formValues.toTime ?? undefined,
-      u_Remarks: formValues.remarks ?? undefined,
-      u_EmployeeID: '',
-    };
-    this.leaveRequestService
-      .add(data)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res) => {
-          // this.updateLeaveRequestModel();
-          Swal.fire({
-            title: 'Saved!',
-            text: 'Information updated successfully',
-            icon: 'success',
-            confirmButtonText: 'Ok',
-          });
-        },
-        error: (err: HttpErrorResponse) => {
-          Swal.fire({
-            title: 'Error!',
-            // text: 'Unknown error: ' + err.status,
-            icon: 'error',
-            confirmButtonText: 'Ok',
-          });
-          console.log(err);
-        },
-      })
-      .add(() => {
-        this.isLoading = false;
-      });
-  }
+  // onSubmit() {
+  //   this.isLoading = true;
+  //   const formValues = this.form.value;
+  //   const data: LeaveRequestAddSchema = {
+  //     u_LeaveType: formValues.leaveType ?? undefined,
+  //     u_FromDate: formValues.fromDate ?? undefined,
+  //     u_ToDate: formValues.toDate ?? undefined,
+  //     u_FromTime: formValues.fromTime ?? undefined,
+  //     u_ToTime: formValues.toTime ?? undefined,
+  //     u_Remarks: formValues.remarks ?? undefined,
+  //     u_EmployeeID: '',
+  //   };
+  //   this.leaveRequestService
+  //     .add(data)
+  //     .pipe(takeUntil(this.destroy$))
+  //     .subscribe({
+  //       next: (res) => {
+  //         // this.updateLeaveRequestModel();
+  //         Swal.fire({
+  //           title: 'Saved!',
+  //           text: 'Information updated successfully',
+  //           icon: 'success',
+  //           confirmButtonText: 'Ok',
+  //         });
+  //       },
+  //       error: (err: HttpErrorResponse) => {
+  //         Swal.fire({
+  //           title: 'Error!',
+  //           // text: 'Unknown error: ' + err.status,
+  //           icon: 'error',
+  //           confirmButtonText: 'Ok',
+  //         });
+  //         console.log(err);
+  //       },
+  //     })
+  //     .add(() => {
+  //       this.isLoading = false;
+  //     });
+  // }
 }

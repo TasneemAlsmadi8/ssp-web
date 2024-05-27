@@ -28,6 +28,7 @@ import Swal from 'sweetalert2';
 import { Project } from 'src/app/shared/interfaces/project';
 import { ProjectsService } from 'src/app/shared/services/projects.service';
 import { NewRequestModalComponent } from 'src/app/shared/components/requests/new-request-modal/new-request-modal.component';
+import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/generic-new-request.component';
 
 @Component({
   selector: 'app-new-overtime-request',
@@ -42,14 +43,14 @@ import { NewRequestModalComponent } from 'src/app/shared/components/requests/new
   styleUrls: ['./new-overtime-request.component.scss'],
 })
 export class NewOvertimeRequestComponent
-  extends DestroyBaseComponent
+  extends NewRequestComponentTemplate<OvertimeRequest, OvertimeRequestAddSchema>
   implements OnInit
 {
   @Output() onSave = new EventEmitter<OvertimeRequest>();
   faEdit = faPenToSquare;
   faView = faEye;
 
-  overtimeRequest: OvertimeRequest = {
+  item: OvertimeRequest = {
     overtimeID: '',
     u_EmployeeID: '',
     overtimeType: '',
@@ -75,26 +76,19 @@ export class NewOvertimeRequestComponent
     u_AttachFile: null,
   };
 
-  isLoading = false;
-  user: User;
-
   overtimeTypes: OvertimeRequestType[] = [];
   projects: Project[] = [];
-  form: FormGroup;
 
   constructor(
-    private userService: LocalUserService,
     private overtimeRequestService: OvertimeRequestService,
-    private projectsService: ProjectsService,
-    private fb: FormBuilder
+    private projectsService: ProjectsService
   ) {
-    super();
-    this.user = this.userService.getUser();
-    this.form = this.fb.group({
+    const today = new Date().toISOString().slice(0, 10);
+    super(overtimeRequestService, {
       overtimeType: [''],
-      date: [''],
-      hours: [''],
-      minutes: [''],
+      date: [today],
+      hours: [0],
+      minutes: [0],
       project: [''],
       remarks: [''],
     });
@@ -116,19 +110,7 @@ export class NewOvertimeRequestComponent
       });
   }
 
-  private setInputsDefaultValues() {
-    const today = new Date().toISOString().slice(0, 10);
-    this.form.get('overtimeType')?.setValue('');
-    this.form.get('date')?.setValue(today);
-    this.form.get('hours')?.setValue(0);
-    this.form.get('minutes')?.setValue(0);
-    this.form.get('project')?.setValue('');
-    this.form.get('remarks')?.setValue('');
-  }
-
-  onSubmit() {
-    this.isLoading = true;
-    const formValues = this.form.value;
+  override mapFormToAddRequest(formValues: any): OvertimeRequestAddSchema {
     const data: OvertimeRequestAddSchema = {
       u_EmployeeID: '',
       u_OvType: formValues.overtimeType ?? undefined,
@@ -139,31 +121,56 @@ export class NewOvertimeRequestComponent
       u_ProjectCode: formValues.project ?? undefined, // todo
       u_Remarks: formValues.remarks ?? undefined,
     };
-    this.overtimeRequestService
-      .add(data)
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (res) => {
-          // this.updateOvertimeRequestModel();
-          Swal.fire({
-            title: 'Saved!',
-            text: 'Information updated successfully',
-            icon: 'success',
-            confirmButtonText: 'Ok',
-          });
-        },
-        error: (err: HttpErrorResponse) => {
-          Swal.fire({
-            title: 'Error!',
-            // text: 'Unknown error: ' + err.status,
-            icon: 'error',
-            confirmButtonText: 'Ok',
-          });
-          console.log(err);
-        },
-      })
-      .add(() => {
-        this.isLoading = false;
-      });
+    return data;
   }
+  // private setInputsDefaultValues() {
+  //   const today = new Date().toISOString().slice(0, 10);
+  //   this.form.get('overtimeType')?.setValue('');
+  //   this.form.get('date')?.setValue(today);
+  //   this.form.get('hours')?.setValue(0);
+  //   this.form.get('minutes')?.setValue(0);
+  //   this.form.get('project')?.setValue('');
+  //   this.form.get('remarks')?.setValue('');
+  // }
+
+  // onSubmit() {
+  //   this.isLoading = true;
+  //   const formValues = this.form.value;
+  //   const data: OvertimeRequestAddSchema = {
+  //     u_EmployeeID: '',
+  //     u_OvType: formValues.overtimeType ?? undefined,
+  //     u_FromDate: formValues.date ?? undefined,
+  //     u_ToDate: formValues.date ?? undefined,
+  //     u_OvHour: formValues.hours?.toString() ?? undefined,
+  //     u_OvMin: formValues.minutes?.toString() ?? undefined,
+  //     u_ProjectCode: formValues.project ?? undefined, // todo
+  //     u_Remarks: formValues.remarks ?? undefined,
+  //   };
+  //   this.overtimeRequestService
+  //     .add(data)
+  //     .pipe(takeUntil(this.destroy$))
+  //     .subscribe({
+  //       next: (res) => {
+  //         // this.updateOvertimeRequestModel();
+  //         Swal.fire({
+  //           title: 'Saved!',
+  //           text: 'Information updated successfully',
+  //           icon: 'success',
+  //           confirmButtonText: 'Ok',
+  //         });
+  //       },
+  //       error: (err: HttpErrorResponse) => {
+  //         Swal.fire({
+  //           title: 'Error!',
+  //           // text: 'Unknown error: ' + err.status,
+  //           icon: 'error',
+  //           confirmButtonText: 'Ok',
+  //         });
+  //         console.log(err);
+  //       },
+  //     })
+  //     .add(() => {
+  //       this.isLoading = false;
+  //     });
+  // }
 }
