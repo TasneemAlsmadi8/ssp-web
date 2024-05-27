@@ -7,16 +7,10 @@ import {
   EncashmentValue,
 } from 'src/app/shared/interfaces/requests/encashment';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
-import { faEye, faPenToSquare } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { DestroyBaseComponent } from 'src/app/shared/base/destroy-base.component';
-import { LocalUserService } from 'src/app/shared/services/local-user.service';
-import { User } from 'src/app/shared/interfaces/user';
+import { ReactiveFormsModule } from '@angular/forms';
 import { EncashmentRequestService } from 'src/app/shared/services/requests/encashment.service';
 import { takeUntil } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
-import Swal from 'sweetalert2';
 import { Project } from 'src/app/shared/interfaces/project';
 import { ProjectsService } from 'src/app/shared/services/projects.service';
 import { LeaveRequestService } from 'src/app/shared/services/requests/leave.service';
@@ -90,7 +84,7 @@ export class NewEncashmentRequestComponent
     });
   }
 
-  mapFormToAddRequest(formValues: any): EncashmentRequestAddSchema {
+  override mapFormToAddRequest(formValues: any): EncashmentRequestAddSchema {
     return {
       u_EmployeeID: '',
       // u_EncashValue:
@@ -130,22 +124,34 @@ export class NewEncashmentRequestComponent
     const encashmentType = this.form.get('encashmentType')?.value;
     const unitCount = this.form.get('unitCount')?.value;
     if (date && encashmentType) {
-      this.leaveRequestService
-        .getBalance(encashmentType, date)
-        .pipe(takeUntil(this.destroy$))
-        .subscribe((value) => {
-          this.leaveBalance = value[0];
-          console.log(this.leaveBalance.leaveBalance + ' balance');
-        });
+      this.updateLeaveBalance(encashmentType, date);
       if (unitCount) {
-        this.encashmentRequestService
-          .getEncashValue(encashmentType, unitCount, date)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe((value) => {
-            this.encashValue = value[0];
-            console.log(this.encashValue);
-          });
+        this.updateEncashValue(encashmentType, unitCount, date);
       }
     }
+  }
+
+  private updateEncashValue(
+    encashmentType: string,
+    unitCount: string,
+    date: string
+  ) {
+    this.encashmentRequestService
+      .getEncashValue(encashmentType, unitCount, date)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((value) => {
+        this.encashValue = value[0];
+        console.log(this.encashValue);
+      });
+  }
+
+  private updateLeaveBalance(encashmentType: string, date: string) {
+    this.leaveRequestService
+      .getBalance(encashmentType, date)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe((value) => {
+        this.leaveBalance = value[0];
+        console.log(this.leaveBalance.leaveBalance + ' balance');
+      });
   }
 }
