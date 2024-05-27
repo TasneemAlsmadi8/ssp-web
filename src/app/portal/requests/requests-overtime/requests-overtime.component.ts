@@ -11,7 +11,7 @@ import Swal from 'sweetalert2';
 import { ArrayPaginator } from 'src/app/shared/utils/array-paginator';
 import { NewOvertimeRequestComponent } from './new-overtime-request/new-overtime-request.component';
 import { PaginatedTableComponent } from 'src/app/shared/components/paginated-table/paginated-table.component';
-import { CancelRequestPopupComponent } from 'src/app/shared/components/cancel-request-popup/cancel-request-popup.component';
+import { CancelRequestPopupComponent } from 'src/app/shared/components/requests/cancel-request-popup/cancel-request-popup.component';
 
 @Component({
   selector: 'app-requests-overtime',

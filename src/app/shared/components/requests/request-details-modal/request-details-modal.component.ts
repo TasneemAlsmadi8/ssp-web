@@ -1,6 +1,6 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ModalComponent } from '../modal/modal.component';
+import { ModalComponent } from '../../modal/modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faEye, faPenToSquare } from '@fortawesome/free-regular-svg-icons';
 

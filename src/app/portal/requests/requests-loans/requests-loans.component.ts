@@ -10,7 +10,7 @@ import { LoanRequestDetailsComponent } from './loan-request-details/loan-request
 import Swal from 'sweetalert2';
 import { NewLoanRequestComponent } from './new-loan-request/new-loan-request.component';
 import { PaginatedTableComponent } from 'src/app/shared/components/paginated-table/paginated-table.component';
-import { CancelRequestPopupComponent } from 'src/app/shared/components/cancel-request-popup/cancel-request-popup.component';
+import { CancelRequestPopupComponent } from 'src/app/shared/components/requests/cancel-request-popup/cancel-request-popup.component';
 
 @Component({
   selector: 'app-requests-loans',

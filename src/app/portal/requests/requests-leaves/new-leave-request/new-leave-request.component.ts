@@ -35,7 +35,7 @@ import Swal from 'sweetalert2';
 import {
   GenericNewRequestComponent,
   NewRequestModalComponent,
-} from 'src/app/shared/components/new-request-modal/new-request-modal.component';
+} from 'src/app/shared/components/requests/new-request-modal/new-request-modal.component';
 
 @Component({
   selector: 'app-new-leave-request',

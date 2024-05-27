@@ -1,9 +1,9 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { GenericRequestService } from '../../services/requests/generic-request.service';
+import { GenericRequestService } from '../../../services/requests/generic-request.service';
 import Swal from 'sweetalert2';
 import { takeUntil } from 'rxjs';
-import { DestroyBaseComponent } from '../../base/destroy-base.component';
+import { DestroyBaseComponent } from '../../../base/destroy-base.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBan } from '@fortawesome/free-solid-svg-icons';
 

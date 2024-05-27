@@ -10,7 +10,7 @@ import { EncashmentRequestDetailsComponent } from './encashment-request-details/
 import Swal from 'sweetalert2';
 import { NewEncashmentRequestComponent } from './new-encashment-request/new-encashment-request.component';
 import { PaginatedTableComponent } from 'src/app/shared/components/paginated-table/paginated-table.component';
-import { CancelRequestPopupComponent } from 'src/app/shared/components/cancel-request-popup/cancel-request-popup.component';
+import { CancelRequestPopupComponent } from 'src/app/shared/components/requests/cancel-request-popup/cancel-request-popup.component';
 
 @Component({
   selector: 'app-requests-encashments',
