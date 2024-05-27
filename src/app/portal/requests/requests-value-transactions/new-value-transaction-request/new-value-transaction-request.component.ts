@@ -29,7 +29,7 @@ import Swal from 'sweetalert2';
 import { Project } from 'src/app/shared/interfaces/project';
 import { ProjectsService } from 'src/app/shared/services/projects.service';
 import { NewRequestModalComponent } from 'src/app/shared/components/requests/new-request-modal/new-request-modal.component';
-import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/generic-new-request.component';
+import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/new-request-template.component';
 
 @Component({
   selector: 'app-new-value-transaction-request',

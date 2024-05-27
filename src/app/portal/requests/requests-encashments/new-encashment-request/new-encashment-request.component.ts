@@ -22,7 +22,7 @@ import { ProjectsService } from 'src/app/shared/services/projects.service';
 import { LeaveRequestService } from 'src/app/shared/services/requests/leave.service';
 import { LeaveRequestBalance } from 'src/app/shared/interfaces/requests/leave';
 import { NewRequestModalComponent } from 'src/app/shared/components/requests/new-request-modal/new-request-modal.component';
-import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/generic-new-request.component';
+import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/new-request-template.component';
 
 @Component({
   selector: 'app-new-encashment-request',

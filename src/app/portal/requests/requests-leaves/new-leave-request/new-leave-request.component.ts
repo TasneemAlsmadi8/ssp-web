@@ -33,7 +33,7 @@ import { takeUntil } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { NewRequestModalComponent } from 'src/app/shared/components/requests/new-request-modal/new-request-modal.component';
-import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/generic-new-request.component';
+import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/new-request-template.component';
 
 @Component({
   selector: 'app-new-leave-request',
