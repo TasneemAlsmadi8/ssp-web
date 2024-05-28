@@ -88,6 +88,7 @@ export abstract class NewRequestComponentTemplate<
             confirmButtonText: 'Ok',
           });
 
+          this.setInputsDefaultValues();
           this.onSave.emit(this.item);
         },
         error: (err: HttpErrorResponse) => {
@@ -102,7 +103,6 @@ export abstract class NewRequestComponentTemplate<
       })
       .add(() => {
         this.isLoading = false;
-        this.setInputsDefaultValues();
       });
   }
 }
