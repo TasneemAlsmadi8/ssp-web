@@ -1,9 +1,6 @@
 <div class="bg-white flex flex-col m-2 px-6 py-4 rounded-lg min-w-fit">
   <h1 class="text-2xl font-semibold pb-2 mb-2 border-b">Leave Requests</h1>
-  <app-paginated-table
-    [items]="leaveRequests"
-    (pageChange)="activePageItems = $event"
-  >
+  <app-paginated-table [items]="items" (pageChange)="activePageItems = $event">
     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
       <tr>
         <th scope="col" class="px-6 py-3">{{ "ID" }}</th>
@@ -52,8 +49,8 @@
         <td class="px-6 py-4 hidden xl:table-cell">{{ req.toDate }}</td>
         <td class="px-6 py-4 hidden xl:table-cell">{{ req.toTime }}</td>
         <td class="px-6 py-4 flex justify-center gap-2">
-          <app-leave-request-details
-            [item]="req"
+          <app-request-details-button
+            (click)="setActiveItemDetails(req)"
             [isEditable]="req.status === 'Pending'"
           />
           <app-cancel-request-popup
@@ -70,3 +67,9 @@
     <app-new-leave-request />
   </div>
 </div>
+<app-leave-request-details
+  *ngIf="activeItemDetails"
+  [(isOpen)]="ItemDetailsOpen"
+  [item]="activeItemDetails"
+  [isEditable]="activeItemDetails.status === 'Pending'"
+/>

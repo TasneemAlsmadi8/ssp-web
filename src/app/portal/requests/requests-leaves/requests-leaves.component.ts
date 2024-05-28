@@ -1,16 +1,14 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { DestroyBaseComponent } from 'src/app/shared/base/destroy-base.component';
 import { LeaveRequestService } from 'src/app/shared/services/requests/leave.service';
 import { LeaveRequest } from 'src/app/shared/interfaces/requests/leave';
-import { takeUntil } from 'rxjs';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faBan } from '@fortawesome/free-solid-svg-icons';
 import { LeaveRequestDetailsComponent } from './leave-request-details/leave-request-details.component';
-import Swal from 'sweetalert2';
 import { NewLeaveRequestComponent } from './new-leave-request/new-leave-request.component';
 import { PaginatedTableComponent } from 'src/app/shared/components/paginated-table/paginated-table.component';
 import { CancelRequestPopupComponent } from 'src/app/shared/components/requests/cancel-request-popup/cancel-request-popup.component';
+import { RequestPageComponentTemplate } from 'src/app/shared/components/requests/request-page-template.component';
+import { RequestDetailsButtonComponent } from 'src/app/shared/components/requests/request-details-button/request-details-button.component';
 
 @Component({
   selector: 'app-requests-leaves',
@@ -19,6 +17,7 @@ import { CancelRequestPopupComponent } from 'src/app/shared/components/requests/
     CommonModule,
     FontAwesomeModule,
     LeaveRequestDetailsComponent,
+    RequestDetailsButtonComponent,
     NewLeaveRequestComponent,
     PaginatedTableComponent,
     CancelRequestPopupComponent,
@@ -26,37 +25,12 @@ import { CancelRequestPopupComponent } from 'src/app/shared/components/requests/
   templateUrl: './requests-leaves.component.html',
   styleUrls: ['./requests-leaves.component.scss'],
 })
-export class RequestsLeavesComponent
-  extends DestroyBaseComponent
-  implements OnInit
-{
-  leaveRequests: LeaveRequest[] = [];
-  activePageItems: LeaveRequest[] = [];
-
+export class RequestsLeavesComponent extends RequestPageComponentTemplate<LeaveRequest> {
   constructor(protected leaveService: LeaveRequestService) {
-    super();
-    leaveService.items$.subscribe((value) => {
-      this.leaveRequests = value;
-    });
+    super(leaveService);
   }
 
-  ngOnInit(): void {
-    this.leaveService
-      .getAll()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe({
-        next: (value) => {
-          // this.leaveRequests = value;
-          // console.log(value);
-          // this.setInputsDefaultValues();
-        },
-        error: (err) => {
-          console.log(err);
-        },
-      });
-  }
-
-  trackByRequestId(index: number, item: LeaveRequest): number {
+  override trackByRequestId(index: number, item: LeaveRequest): number {
     return parseInt(item.leaveID);
   }
 }
