@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   LeaveRequestAddSchema,
@@ -7,7 +7,6 @@ import {
   LeaveRequestBalance,
 } from 'src/app/shared/interfaces/requests/leave';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
-import { faEye, faPenToSquare } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { LeaveRequestService } from 'src/app/shared/services/requests/leave.service';

@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   LoanRequestAddSchema,
@@ -26,10 +26,10 @@ import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/
   templateUrl: './new-loan-request.component.html',
   styleUrls: ['./new-loan-request.component.scss'],
 })
-export class NewLoanRequestComponent
-  extends NewRequestComponentTemplate<LoanRequest, LoanRequestAddSchema>
-{
-
+export class NewLoanRequestComponent extends NewRequestComponentTemplate<
+  LoanRequest,
+  LoanRequestAddSchema
+> {
   item: LoanRequest = {
     loanID: '',
     dateSubmitted: null,

@@ -31,12 +31,10 @@ import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/
   templateUrl: './new-encashment-request.component.html',
   styleUrls: ['./new-encashment-request.component.scss'],
 })
-export class NewEncashmentRequestComponent
-  extends NewRequestComponentTemplate<
-    EncashmentRequest,
-    EncashmentRequestAddSchema
-  >
-{
+export class NewEncashmentRequestComponent extends NewRequestComponentTemplate<
+  EncashmentRequest,
+  EncashmentRequestAddSchema
+> {
   item: EncashmentRequest = {
     encashID: '',
     u_EmployeeID: '',

@@ -1,11 +1,5 @@
 import {
   Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  OnInit,
-  Output,
-  SimpleChanges,
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -15,16 +9,10 @@ import {
   EncashmentValue,
 } from 'src/app/shared/interfaces/requests/encashment';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
-import { faEye, faPenToSquare } from '@fortawesome/free-regular-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
-import { DestroyBaseComponent } from 'src/app/shared/base/destroy-base.component';
-import { LocalUserService } from 'src/app/shared/services/local-user.service';
-import { User } from 'src/app/shared/interfaces/user';
+import { ReactiveFormsModule } from '@angular/forms';
 import { EncashmentRequestService } from 'src/app/shared/services/requests/encashment.service';
 import { takeUntil } from 'rxjs';
-import { HttpErrorResponse } from '@angular/common/http';
-import Swal from 'sweetalert2';
 import { Project } from 'src/app/shared/interfaces/project';
 import { ProjectsService } from 'src/app/shared/services/projects.service';
 import { LeaveRequestService } from 'src/app/shared/services/requests/leave.service';
@@ -76,10 +64,10 @@ export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTe
       .pipe(takeUntil(this.destroy$))
       .subscribe((value) => {
         this.encashmentTypes = value;
-        // this.encashmentTypes.unshift({
-        //   code: '',
-        //   name: '',
-        // });
+        this.encashmentTypes.unshift({
+          code: '',
+          name: '',
+        });
       });
     this.projectsService
       .getProjects()

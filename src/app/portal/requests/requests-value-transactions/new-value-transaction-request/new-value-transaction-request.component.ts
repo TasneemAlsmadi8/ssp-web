@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ValueTransactionRequest,
@@ -28,12 +28,10 @@ import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/
   templateUrl: './new-value-transaction-request.component.html',
   styleUrls: ['./new-value-transaction-request.component.scss'],
 })
-export class NewValueTransactionRequestComponent
-  extends NewRequestComponentTemplate<
-    ValueTransactionRequest,
-    ValueTransactionRequestAddSchema
-  >
-{
+export class NewValueTransactionRequestComponent extends NewRequestComponentTemplate<
+  ValueTransactionRequest,
+  ValueTransactionRequestAddSchema
+> {
   item: ValueTransactionRequest = {
     valueTranID: '',
     u_EmployeeID: '',
