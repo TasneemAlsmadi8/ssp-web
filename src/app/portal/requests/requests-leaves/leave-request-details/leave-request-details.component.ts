@@ -32,7 +32,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
 import { RequestDetailsModalComponent } from 'src/app/shared/components/requests/request-details-modal/request-details-modal.component';
-import { RequestDetailsComponentTemplate } from 'src/app/shared/components/requests/request-details-template.component';
+import { FormValues, RequestDetailsComponentTemplate } from 'src/app/shared/components/requests/request-details-template.component';
 
 @Component({
   selector: 'app-leave-request-details',
@@ -89,9 +89,7 @@ export class LeaveRequestDetailsComponent extends RequestDetailsComponentTemplat
     };
     return data;
   }
-  override mapItemFieldsToFormValues(item: LeaveRequest): {
-    [key: string]: string | number | null;
-  } {
+  override mapItemFieldsToFormValues(item: LeaveRequest): FormValues {
     return {
       leaveType: item.leaveCode,
       fromTime: item.fromTime,

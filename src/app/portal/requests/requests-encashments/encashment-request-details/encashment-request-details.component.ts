@@ -31,7 +31,7 @@ import { LeaveRequestService } from 'src/app/shared/services/requests/leave.serv
 import { LeaveRequestBalance } from 'src/app/shared/interfaces/requests/leave';
 import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
 import { RequestDetailsModalComponent } from 'src/app/shared/components/requests/request-details-modal/request-details-modal.component';
-import { RequestDetailsComponentTemplate } from 'src/app/shared/components/requests/request-details-template.component';
+import { FormValues, RequestDetailsComponentTemplate } from 'src/app/shared/components/requests/request-details-template.component';
 
 @Component({
   selector: 'app-encashment-request-details',
@@ -112,7 +112,7 @@ export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTe
     }
   }
 
-  override mapItemFieldsToFormValues(item: EncashmentRequest) {
+  override mapItemFieldsToFormValues(item: EncashmentRequest): FormValues {
     return {
       encashmentType: item.encashCode,
       unitPrice: item.unitPrice,

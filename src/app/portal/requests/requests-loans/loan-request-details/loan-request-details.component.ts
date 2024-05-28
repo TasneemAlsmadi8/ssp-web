@@ -25,7 +25,7 @@ import { takeUntil } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { RequestDetailsModalComponent } from 'src/app/shared/components/requests/request-details-modal/request-details-modal.component';
-import { RequestDetailsComponentTemplate } from 'src/app/shared/components/requests/request-details-template.component';
+import { FormValues, RequestDetailsComponentTemplate } from 'src/app/shared/components/requests/request-details-template.component';
 
 @Component({
   selector: 'app-loan-request-details',
@@ -76,9 +76,7 @@ export class LoanRequestDetailsComponent extends RequestDetailsComponentTemplate
     };
     return data;
   }
-  override mapItemFieldsToFormValues(item: LoanRequest): {
-    [key: string]: string | number | null;
-  } {
+  override mapItemFieldsToFormValues(item: LoanRequest): FormValues {
     return {
       loanType: item.loanCode,
       installments: item.installmentCount,

@@ -35,7 +35,7 @@
         <td class="px-6 py-4">{{ req.value }}</td>
         <td class="px-6 py-4 flex justify-center gap-2">
           <app-value-transaction-request-details
-            [valueTransactionRequest]="req"
+            [item]="req"
             [isEditable]="req.status === 'Pending' || !req.status"
           />
           <app-cancel-request-popup

@@ -23,6 +23,10 @@ import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { takeUntil } from 'rxjs';
 
+export type FormValues = {
+  [key: string]: string | number | null;
+};
+
 @Component({
   standalone: true,
   template: '',
@@ -44,9 +48,7 @@ export abstract class RequestDetailsComponentTemplate<
   form: FormGroup;
 
   abstract mapFormToUpdateRequest(formValues: any): U;
-  abstract mapItemFieldsToFormValues(item: T): {
-    [key: string]: string | number | null;
-  };
+  abstract mapItemFieldsToFormValues(item: T): FormValues;
   updateCalculatedValues?(): void;
   getDynamicValues?(): void;
 

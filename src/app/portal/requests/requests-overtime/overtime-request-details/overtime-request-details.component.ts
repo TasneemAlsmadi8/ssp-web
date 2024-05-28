@@ -28,7 +28,7 @@ import { Project } from 'src/app/shared/interfaces/project';
 import { ProjectsService } from 'src/app/shared/services/projects.service';
 import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
 import { RequestDetailsModalComponent } from 'src/app/shared/components/requests/request-details-modal/request-details-modal.component';
-import { RequestDetailsComponentTemplate } from 'src/app/shared/components/requests/request-details-template.component';
+import { FormValues, RequestDetailsComponentTemplate } from 'src/app/shared/components/requests/request-details-template.component';
 
 @Component({
   selector: 'app-overtime-request-details',
@@ -94,9 +94,7 @@ export class OvertimeRequestDetailsComponent extends RequestDetailsComponentTemp
     };
     return data;
   }
-  override mapItemFieldsToFormValues(item: OvertimeRequest): {
-    [key: string]: string | number | null;
-  } {
+  override mapItemFieldsToFormValues(item: OvertimeRequest): FormValues {
     return {
       overtimeType: item.overtimeCode,
       date: formatDateToISO(item.fromDate),
