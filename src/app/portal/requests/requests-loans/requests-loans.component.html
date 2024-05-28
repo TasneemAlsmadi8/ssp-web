@@ -38,7 +38,7 @@
         <td class="px-6 py-4">{{ req.installmentCount }}</td>
         <td class="px-6 py-4 flex justify-center gap-2">
           <app-loan-request-details
-            [loanRequest]="req"
+            [item]="req"
             [isEditable]="req.status === 'Pending'"
           />
           <app-cancel-request-popup

@@ -89,14 +89,16 @@ export class LeaveRequestDetailsComponent extends RequestDetailsComponentTemplat
     };
     return data;
   }
-  override mapItemFieldsToForm(): { [key: string]: string | number | null } {
+  override mapItemFieldsToFormValues(item: LeaveRequest): {
+    [key: string]: string | number | null;
+  } {
     return {
-      leaveType: this.item.leaveCode,
-      fromTime: this.item.fromTime,
-      toTime: this.item.toTime,
-      fromDate: formatDateToISO(this.item.fromDate),
-      toDate: formatDateToISO(this.item.toDate),
-      remarks: this.item.remarks,
+      leaveType: item.leaveCode,
+      fromTime: item.fromTime,
+      toTime: item.toTime,
+      fromDate: formatDateToISO(item.fromDate),
+      toDate: formatDateToISO(item.toDate),
+      remarks: item.remarks,
     };
   }
 

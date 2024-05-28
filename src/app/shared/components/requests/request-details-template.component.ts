@@ -44,7 +44,9 @@ export abstract class RequestDetailsComponentTemplate<
   form: FormGroup;
 
   abstract mapFormToUpdateRequest(formValues: any): U;
-  abstract mapItemFieldsToForm(): { [key: string]: string | number | null };
+  abstract mapItemFieldsToFormValues(item: T): {
+    [key: string]: string | number | null;
+  };
   updateCalculatedValues?(): void;
   getDynamicValues?(): void;
 
@@ -82,7 +84,7 @@ export abstract class RequestDetailsComponentTemplate<
   }
 
   setInputsDefaultValues(): void {
-    const defaultValues = this.mapItemFieldsToForm();
+    const defaultValues = this.mapItemFieldsToFormValues(this.item);
 
     for (const key in this.formControls) {
       this.form.get(key)?.setValue(defaultValues[key]);

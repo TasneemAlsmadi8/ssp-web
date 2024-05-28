@@ -112,14 +112,14 @@ export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTe
     }
   }
 
-  override mapItemFieldsToForm() {
+  override mapItemFieldsToFormValues(item: EncashmentRequest) {
     return {
-      encashmentType: this.item.encashCode,
-      unitPrice: this.item.unitPrice,
-      unitCount: this.item.unitCount,
-      date: formatDateToISO(this.item.date),
-      project: this.item.projectCode,
-      remarks: this.item.remarks,
+      encashmentType: item.encashCode,
+      unitPrice: item.unitPrice,
+      unitCount: item.unitCount,
+      date: formatDateToISO(item.date),
+      project: item.projectCode,
+      remarks: item.remarks,
     };
   }
 
