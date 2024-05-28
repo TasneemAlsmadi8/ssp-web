@@ -11,6 +11,7 @@ import Swal from 'sweetalert2';
 import { NewEncashmentRequestComponent } from './new-encashment-request/new-encashment-request.component';
 import { PaginatedTableComponent } from 'src/app/shared/components/paginated-table/paginated-table.component';
 import { CancelRequestPopupComponent } from 'src/app/shared/components/requests/cancel-request-popup/cancel-request-popup.component';
+import { RequestDetailsButtonComponent } from 'src/app/shared/components/requests/request-details-button/request-details-button.component';
 
 @Component({
   selector: 'app-requests-encashments',
@@ -19,6 +20,7 @@ import { CancelRequestPopupComponent } from 'src/app/shared/components/requests/
     CommonModule,
     FontAwesomeModule,
     EncashmentRequestDetailsComponent,
+    RequestDetailsButtonComponent,
     NewEncashmentRequestComponent,
     PaginatedTableComponent,
     CancelRequestPopupComponent,
@@ -32,6 +34,9 @@ export class RequestsEncashmentsComponent
 {
   encashmentRequests: EncashmentRequest[] = [];
   activePageItems: EncashmentRequest[] = [];
+
+  activeItemDetails?: EncashmentRequest;
+  ItemDetailsOpen = false;
 
   constructor(protected encashmentService: EncashmentRequestService) {
     super();
@@ -54,6 +59,11 @@ export class RequestsEncashmentsComponent
           console.log(err);
         },
       });
+  }
+
+  setActiveItemDetails(activeItemDetails: EncashmentRequest) {
+    this.activeItemDetails = activeItemDetails;
+    this.ItemDetailsOpen = true;
   }
 
   trackByRequestId(index: number, item: EncashmentRequest): number {

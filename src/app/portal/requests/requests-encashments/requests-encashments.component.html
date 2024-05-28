@@ -35,8 +35,8 @@
         <td class="px-6 py-4">{{ req.unitCount | number : "1.2-4" }}</td>
         <td class="px-6 py-4">{{ req.value | number : "1.2-4" }}</td>
         <td class="px-6 py-4 flex justify-center gap-2">
-          <app-encashment-request-details
-            [item]="req"
+          <app-request-details-button
+            (click)="setActiveItemDetails(req)"
             [isEditable]="req.status === 'Pending'"
           />
           <app-cancel-request-popup
@@ -53,3 +53,9 @@
     <app-new-encashment-request />
   </div>
 </div>
+<app-encashment-request-details
+  *ngIf="activeItemDetails"
+  [(isOpen)]="ItemDetailsOpen"
+  [item]="activeItemDetails"
+  [isEditable]="activeItemDetails.status === 'Pending'"
+/>

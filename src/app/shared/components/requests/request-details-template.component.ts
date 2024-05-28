@@ -40,8 +40,18 @@ export abstract class RequestDetailsComponentTemplate<
 {
   @Input() isEditable: boolean = true;
   @Input({ required: true }) item!: T;
+  @Input() set isOpen(value) {
+    this._isOpen = value;
+    this.isOpenChange.emit(value);
+  }
 
+  @Output() isOpenChange = new EventEmitter<boolean>();
   @Output() onSave = new EventEmitter<T>();
+
+  private _isOpen = false;
+  get isOpen() {
+    return this._isOpen;
+  }
 
   isLoading: boolean = false;
   user: User;
@@ -54,6 +64,7 @@ export abstract class RequestDetailsComponentTemplate<
 
   private fb: FormBuilder;
   private userService: LocalUserService;
+  private formValues: FormValues = {};
 
   // @Inject(null) -> to disable DI to provide values in child class
   constructor(
@@ -67,11 +78,21 @@ export abstract class RequestDetailsComponentTemplate<
     this.form = this.fb.group(this.formControls);
 
     this.form.valueChanges.subscribe(() => {
-      if (this.updateCalculatedValues) this.updateCalculatedValues();
+      const newValues = this.form.value;
+      // check if any value changed
+      for (const key in newValues) {
+        if (this.formValues[key] !== newValues[key]) {
+          this.formValues = { ...newValues };
+          if (this.updateCalculatedValues) this.updateCalculatedValues();
+        }
+      }
     });
   }
 
   ngOnChanges(changes: SimpleChanges) {
+    if (changes['isEditable']) {
+      this.setFormState();
+    }
     if (changes['item']) {
       this.setInputsDefaultValues();
       // console.log(this.item);
@@ -79,23 +100,23 @@ export abstract class RequestDetailsComponentTemplate<
   }
 
   ngOnInit(): void {
-    this.setFormState();
-    this.setInputsDefaultValues();
-    if (this.updateCalculatedValues) this.updateCalculatedValues();
+    // this.setFormState();
+    // this.setInputsDefaultValues();
+    // if (this.updateCalculatedValues) this.updateCalculatedValues();
     if (this.getDynamicValues) this.getDynamicValues();
   }
 
   setInputsDefaultValues(): void {
     const defaultValues = this.mapItemFieldsToFormValues(this.item);
 
-    for (const key in this.formControls) {
-      this.form.get(key)?.setValue(defaultValues[key]);
-    }
+    // for (const key in this.formControls) {
+    this.form.setValue(defaultValues);
+    // }
   }
 
   onSubmit() {
     this.isLoading = true;
-    const data = this.mapFormToUpdateRequest(this.form.value);
+    const data = this.mapFormToUpdateRequest(this.formValues);
     this.requestService
       .update(data)
       .pipe(takeUntil(this.destroy$))
