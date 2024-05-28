@@ -45,9 +45,6 @@
       <!-- } -->
     </tbody>
   </app-paginated-table>
-  <div class="fixed end-7 bottom-6 group">
-    <app-new-value-transaction-request />
-  </div>
 </div>
 <app-value-transaction-request-details
   *ngIf="activeItemDetails"
@@ -57,3 +54,4 @@
     activeItemDetails.status === 'Pending' || !activeItemDetails.status
   "
 />
+<app-new-value-transaction-request />

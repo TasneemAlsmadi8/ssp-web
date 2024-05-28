@@ -48,9 +48,6 @@
       <!-- } -->
     </tbody>
   </app-paginated-table>
-  <div class="fixed end-7 bottom-6 group">
-    <app-new-loan-request />
-  </div>
 </div>
 <app-loan-request-details
   *ngIf="activeItemDetails"
@@ -58,3 +55,4 @@
   [item]="activeItemDetails"
   [isEditable]="activeItemDetails.status === 'Pending'"
 />
+<app-new-loan-request />
