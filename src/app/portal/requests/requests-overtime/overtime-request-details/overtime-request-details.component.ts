@@ -13,7 +13,6 @@ import { takeUntil } from 'rxjs';
 import { Project } from 'src/app/shared/interfaces/project';
 import { ProjectsService } from 'src/app/shared/services/projects.service';
 import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
-import { RequestDetailsModalComponent } from 'src/app/shared/components/requests/request-details-modal/request-details-modal.component';
 import {
   FormValues,
   RequestDetailsComponentTemplate,
@@ -27,7 +26,6 @@ import {
     FontAwesomeModule,
     ModalComponent,
     ReactiveFormsModule,
-    RequestDetailsModalComponent,
   ],
   templateUrl: './overtime-request-details.component.html',
   styleUrls: ['./overtime-request-details.component.scss'],

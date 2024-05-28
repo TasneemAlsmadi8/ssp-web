@@ -10,7 +10,6 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LoanRequestService } from 'src/app/shared/services/requests/loan.service';
 import { takeUntil } from 'rxjs';
-import { RequestDetailsModalComponent } from 'src/app/shared/components/requests/request-details-modal/request-details-modal.component';
 import {
   FormValues,
   RequestDetailsComponentTemplate,
@@ -24,7 +23,6 @@ import {
     FontAwesomeModule,
     ModalComponent,
     ReactiveFormsModule,
-    RequestDetailsModalComponent,
   ],
   templateUrl: './loan-request-details.component.html',
   styleUrls: ['./loan-request-details.component.scss'],

@@ -18,7 +18,6 @@ import { ProjectsService } from 'src/app/shared/services/projects.service';
 import { LeaveRequestService } from 'src/app/shared/services/requests/leave.service';
 import { LeaveRequestBalance } from 'src/app/shared/interfaces/requests/leave';
 import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
-import { RequestDetailsModalComponent } from 'src/app/shared/components/requests/request-details-modal/request-details-modal.component';
 import { FormValues, RequestDetailsComponentTemplate } from 'src/app/shared/components/requests/request-details-template.component';
 
 @Component({
@@ -29,7 +28,6 @@ import { FormValues, RequestDetailsComponentTemplate } from 'src/app/shared/comp
     FontAwesomeModule,
     ModalComponent,
     ReactiveFormsModule,
-    RequestDetailsModalComponent,
   ],
   templateUrl: './encashment-request-details.component.html',
   styleUrls: ['./encashment-request-details.component.scss'],

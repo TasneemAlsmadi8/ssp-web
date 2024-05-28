@@ -16,7 +16,6 @@ import {
 import { LeaveRequestService } from 'src/app/shared/services/requests/leave.service';
 import { takeUntil } from 'rxjs';
 import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
-import { RequestDetailsModalComponent } from 'src/app/shared/components/requests/request-details-modal/request-details-modal.component';
 import {
   FormValues,
   RequestDetailsComponentTemplate,
@@ -30,7 +29,6 @@ import {
     FontAwesomeModule,
     ModalComponent,
     ReactiveFormsModule,
-    RequestDetailsModalComponent,
   ],
   templateUrl: './leave-request-details.component.html',
   styleUrls: ['./leave-request-details.component.scss'],
