@@ -77,6 +77,7 @@ export class EncashmentRequestService
             if (encashmentRequest.encashID === id) {
               encashmentRequest.status = 'Canceled';
               encashmentRequest.u_Status = body.u_Status;
+              encashmentRequest = { ...encashmentRequest };
             }
             return encashmentRequest;
           });
@@ -120,6 +121,7 @@ export class EncashmentRequestService
                 body.u_ProjectCode ?? encashmentRequest.projectCode;
               encashmentRequest.remarks =
                 body.u_Remarks ?? encashmentRequest.remarks;
+              encashmentRequest = { ...encashmentRequest };
             }
             return encashmentRequest;
           });

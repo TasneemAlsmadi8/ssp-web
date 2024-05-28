@@ -74,6 +74,7 @@ export class OvertimeRequestService
             if (overtimeRequest.overtimeID === id) {
               overtimeRequest.status = 'Canceled';
               overtimeRequest.statusTypeId = body.u_Status;
+              overtimeRequest = { ...overtimeRequest };
             }
             return overtimeRequest;
           });
@@ -119,6 +120,7 @@ export class OvertimeRequestService
                 body.u_ProjectCode ?? overtimeRequest.projectCode;
               overtimeRequest.remarks =
                 body.u_Remarks ?? overtimeRequest.remarks;
+              overtimeRequest = { ...overtimeRequest };
             }
             return overtimeRequest;
           });

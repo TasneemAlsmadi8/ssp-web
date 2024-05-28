@@ -78,6 +78,7 @@ export class LeaveRequestService
               leaveRequest.status = 'Canceled';
               leaveRequest.statusTypeId = body.u_Status;
               leaveRequest.u_Status = body.u_Status;
+              leaveRequest = { ...leaveRequest };
             }
             return leaveRequest;
           });
@@ -116,6 +117,8 @@ export class LeaveRequestService
               leaveRequest.fromDate = body.u_FromDate ?? leaveRequest.fromDate;
               leaveRequest.toDate = body.u_ToDate ?? leaveRequest.toDate;
               leaveRequest.remarks = body.u_Remarks ?? leaveRequest.remarks;
+
+              leaveRequest = { ...leaveRequest };
             }
             return leaveRequest;
           });

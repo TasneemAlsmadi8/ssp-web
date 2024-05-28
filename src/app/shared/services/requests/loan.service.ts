@@ -70,6 +70,7 @@ export class LoanRequestService
             if (loanRequest.loanID === id) {
               loanRequest.status = 'Canceled';
               loanRequest.statusID = body.u_Status;
+              loanRequest = { ...loanRequest };
             }
             return loanRequest;
           });
@@ -106,6 +107,7 @@ export class LoanRequestService
                 body.u_InstallmentCount ?? loanRequest.installmentCount;
               loanRequest.startDate = body.u_StartDate ?? loanRequest.startDate;
               loanRequest.remarks = body.u_Remarks ?? loanRequest.remarks;
+              loanRequest = { ...loanRequest };
             }
             return loanRequest;
           });

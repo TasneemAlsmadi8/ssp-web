@@ -79,6 +79,7 @@ export class ValueTransactionRequestService
               if (valueTransactionRequest.valueTranID === id) {
                 valueTransactionRequest.status = 'Canceled';
                 valueTransactionRequest.u_Status = body.u_Status;
+                valueTransactionRequest = { ...valueTransactionRequest };
               }
               return valueTransactionRequest;
             });
@@ -123,6 +124,7 @@ export class ValueTransactionRequestService
                   body.u_ProjectCode ?? valueTransactionRequest.projectCode;
                 valueTransactionRequest.remarks =
                   body.u_Remarks ?? valueTransactionRequest.remarks;
+                valueTransactionRequest = { ...valueTransactionRequest };
               }
               return valueTransactionRequest;
             });

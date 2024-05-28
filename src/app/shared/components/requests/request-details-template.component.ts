@@ -70,7 +70,7 @@ export abstract class RequestDetailsComponentTemplate<
   ngOnChanges(changes: SimpleChanges) {
     if (changes['item']) {
       this.setInputsDefaultValues();
-      console.log(changes['item']);
+      // console.log(this.item);
     }
   }
 
@@ -117,7 +117,6 @@ export abstract class RequestDetailsComponentTemplate<
       })
       .add(() => {
         this.isLoading = false;
-        this.setInputsDefaultValues();
       });
   }
 
