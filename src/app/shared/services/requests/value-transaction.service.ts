@@ -58,7 +58,9 @@ export class ValueTransactionRequestService
       .get<ValueTransactionRequest[]>(url, this.httpOptions)
       .pipe(
         tap((valueTransactionRequests) =>
-          this.valueTransactionRequestsStore.update(valueTransactionRequests)
+          this.valueTransactionRequestsStore.update(
+            this.fillNullStatus(valueTransactionRequests)
+          )
         )
       );
   }
@@ -145,6 +147,16 @@ export class ValueTransactionRequestService
         this.getAll().subscribe();
       })
     );
+  }
+
+  private fillNullStatus(valueTransactionRequests: ValueTransactionRequest[]) {
+    valueTransactionRequests.map((req) => {
+      if (!req.status) {
+        req.status = 'Pending';
+        req.u_Status = ValueTransactionRequestStatus.Pending.toString();
+      }
+    });
+    return valueTransactionRequests;
   }
 
   // getValueTransactionTypeName(code: string): string {
