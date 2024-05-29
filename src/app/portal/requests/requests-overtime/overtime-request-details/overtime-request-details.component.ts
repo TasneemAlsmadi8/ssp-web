@@ -7,7 +7,7 @@ import {
 } from 'src/app/shared/interfaces/requests/overtime';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { OvertimeRequestService } from 'src/app/shared/services/requests/overtime.service';
 import { takeUntil } from 'rxjs';
 import { Project } from 'src/app/shared/interfaces/project';
@@ -17,6 +17,7 @@ import {
   FormValues,
   RequestDetailsComponentTemplate,
 } from 'src/app/shared/components/requests/request-details-template.component';
+import { limitNumberInput } from 'src/app/shared/utils/form-utils';
 
 @Component({
   selector: 'app-overtime-request-details',
@@ -42,11 +43,14 @@ export class OvertimeRequestDetailsComponent extends RequestDetailsComponentTemp
     private projectsService: ProjectsService
   ) {
     super(overtimeRequestService, {
-      overtimeType: [''],
-      date: [''],
-      hours: [''],
-      minutes: [''],
-      project: [''],
+      overtimeType: ['', [Validators.required]],
+      date: ['', [Validators.required]],
+      hours: ['', [Validators.required, Validators.min(0)]],
+      minutes: [
+        '',
+        [Validators.required, Validators.min(0), Validators.max(59)],
+      ],
+      project: ['', [Validators.required]],
       remarks: [''],
     });
   }
@@ -90,5 +94,13 @@ export class OvertimeRequestDetailsComponent extends RequestDetailsComponentTemp
       project: item.projectCode,
       remarks: item.remarks,
     };
+  }
+  override resetInvalidInputs(): void {
+    const hours = this.form.get('hours');
+    const minutes = this.form.get('minutes');
+    if (!hours || !minutes) throw new Error('Invalid form Control');
+
+    limitNumberInput(hours);
+    limitNumberInput(minutes);
   }
 }

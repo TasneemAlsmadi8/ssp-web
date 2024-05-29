@@ -43,11 +43,20 @@
             <select
               formControlName="encashmentType"
               class="block w-full h-11 rounded-md border-2 border-gray-300 bg-white px-3 py-2 text-base font-normal text-blue-gray-900 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 disabled:bg-gray-100"
+              [ngClass]="{
+                'invalid-input': shouldDisplayError('encashmentType')
+              }"
             >
               <option *ngFor="let type of encashmentTypes" [value]="type.code">
                 {{ type.name }}
               </option>
             </select>
+            <span
+              *ngIf="shouldDisplayError('encashmentType')"
+              class="error-message"
+            >
+              {{ getErrorMessage("encashmentType") }}
+            </span>
           </div>
         </div>
         <div class="col-span-3 flex flex-col">
@@ -61,7 +70,13 @@
               formControlName="unitPrice"
               type="number"
               class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-base font-normal transition-all disabled:bg-gray-100"
+              [ngClass]="{
+                'invalid-input': shouldDisplayError('unitPrice')
+              }"
             />
+            <span *ngIf="shouldDisplayError('unitPrice')" class="error-message">
+              {{ getErrorMessage("unitPrice") }}
+            </span>
           </div>
         </div>
         <div class="col-span-3 flex flex-col">
@@ -75,7 +90,13 @@
               formControlName="date"
               type="date"
               class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-base font-normal transition-all disabled:bg-gray-100"
+              [ngClass]="{
+                'invalid-input': shouldDisplayError('date')
+              }"
             />
+            <span *ngIf="shouldDisplayError('date')" class="error-message">
+              {{ getErrorMessage("date") }}
+            </span>
           </div>
         </div>
         <div class="col-span-3 flex flex-col">
@@ -89,7 +110,11 @@
               formControlName="unitCount"
               type="number"
               class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-base font-normal transition-all disabled:bg-gray-100"
+              [ngClass]="{'invalid-input': shouldDisplayError('unitCount')}"
             />
+            <span *ngIf="shouldDisplayError('unitCount')" class="error-message">
+              {{ getErrorMessage("unitCount") }}
+            </span>
           </div>
         </div>
         <div class="col-span-2 flex flex-col">
@@ -131,7 +156,10 @@
               formControlName="project"
               class="block w-full h-11 rounded-md border-2 border-gray-300 bg-white px-3 py-2 text-base font-normal text-blue-gray-900 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 disabled:bg-gray-100"
             >
-            <option *ngFor="let project of projects" [value]="project.prjCode">
+              <option
+                *ngFor="let project of projects"
+                [value]="project.prjCode"
+              >
                 {{ project.prjName }}
               </option>
             </select>

@@ -7,13 +7,14 @@ import {
 } from 'src/app/shared/interfaces/requests/loan';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { LoanRequestService } from 'src/app/shared/services/requests/loan.service';
 import { takeUntil } from 'rxjs';
 import {
   FormValues,
   RequestDetailsComponentTemplate,
 } from 'src/app/shared/components/requests/request-details-template.component';
+import { limitNumberInput } from 'src/app/shared/utils/form-utils';
 
 @Component({
   selector: 'app-loan-request-details',
@@ -35,10 +36,10 @@ export class LoanRequestDetailsComponent extends RequestDetailsComponentTemplate
 
   constructor(private loanRequestService: LoanRequestService) {
     super(loanRequestService, {
-      loanType: [''],
-      installments: [''],
-      totalAmount: [''],
-      startDate: [''],
+      loanType: ['', [Validators.required]],
+      installments: ['', [Validators.required, Validators.min(1)]],
+      totalAmount: ['', [Validators.required, Validators.min(1)]],
+      startDate: ['', [Validators.required]],
       remarks: [''],
     });
   }
@@ -71,5 +72,15 @@ export class LoanRequestDetailsComponent extends RequestDetailsComponentTemplate
       startDate: item.startDate,
       remarks: item.remarks,
     };
+  }
+
+  override resetInvalidInputs(): void {
+    const installmentCount = this.form.get('installmentCount');
+    const totalAmount = this.form.get('totalAmount');
+    if (!installmentCount || !totalAmount)
+      throw new Error('Invalid form Control');
+
+    limitNumberInput(installmentCount);
+    limitNumberInput(totalAmount);
   }
 }

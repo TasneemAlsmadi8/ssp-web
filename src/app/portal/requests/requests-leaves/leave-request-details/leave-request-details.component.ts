@@ -42,10 +42,10 @@ export class LeaveRequestDetailsComponent extends RequestDetailsComponentTemplat
   constructor(private leaveRequestService: LeaveRequestService) {
     super(leaveRequestService, {
       leaveType: ['', [Validators.required]],
-      fromTime: [''],
-      toTime: [''],
-      fromDate: [''],
-      toDate: [''],
+      fromTime: ['', [Validators.required]],
+      toTime: ['', [Validators.required]],
+      fromDate: ['', [Validators.required]],
+      toDate: ['', [Validators.required]],
       remarks: [''],
     });
   }

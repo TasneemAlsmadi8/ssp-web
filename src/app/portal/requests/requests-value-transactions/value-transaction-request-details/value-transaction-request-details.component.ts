@@ -7,7 +7,7 @@ import {
 } from 'src/app/shared/interfaces/requests/value-transaction';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { ValueTransactionRequestService } from 'src/app/shared/services/requests/value-transaction.service';
 import { takeUntil } from 'rxjs';
 import { Project } from 'src/app/shared/interfaces/project';
@@ -17,6 +17,7 @@ import {
   FormValues,
   RequestDetailsComponentTemplate,
 } from 'src/app/shared/components/requests/request-details-template.component';
+import { limitNumberInput } from 'src/app/shared/utils/form-utils';
 
 @Component({
   selector: 'app-value-transaction-request-details',
@@ -42,10 +43,10 @@ export class ValueTransactionRequestDetailsComponent extends RequestDetailsCompo
     private projectsService: ProjectsService
   ) {
     super(valueTransactionRequestService, {
-      valueTransactionType: [''],
-      value: [''],
-      date: [''],
-      project: [''],
+      valueTransactionType: ['', [Validators.required]],
+      value: ['', [Validators.required, Validators.min(0)]],
+      date: ['', [Validators.required]],
+      project: ['', [Validators.required]],
       remarks: [''],
     });
   }
@@ -88,5 +89,12 @@ export class ValueTransactionRequestDetailsComponent extends RequestDetailsCompo
       project: item.projectCode,
       remarks: item.remarks,
     };
+  }
+
+  override resetInvalidInputs(): void {
+    const value = this.form.get('value');
+    if (!value) throw new Error('Invalid form Control');
+
+    limitNumberInput(value);
   }
 }

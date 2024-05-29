@@ -22,6 +22,7 @@ import {
 import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
+import { FormErrorMessageBehavior } from '../FormErrorMessage';
 
 export type FormValues = {
   [key: string]: string | number | null;
@@ -36,7 +37,7 @@ export abstract class RequestDetailsComponentTemplate<
     U extends UpdateSchema
   >
   extends DestroyBaseComponent
-  implements OnInit, OnChanges
+  implements OnInit, OnChanges, FormErrorMessageBehavior
 {
   @Input() isEditable: boolean = true;
   @Input({ required: true }) item!: T;
@@ -61,6 +62,11 @@ export abstract class RequestDetailsComponentTemplate<
   abstract mapItemFieldsToFormValues(item: T): FormValues;
   updateCalculatedValues?(): void;
   getDynamicValues?(): void;
+  resetInvalidInputs?(): void;
+  additionalErrorMessages?(
+    control: AbstractControl,
+    inputTitle: string
+  ): string;
 
   private fb: FormBuilder;
   private userService: LocalUserService;
@@ -77,6 +83,9 @@ export abstract class RequestDetailsComponentTemplate<
     this.user = this.userService.getUser();
     this.form = this.fb.group(this.formControls);
 
+    this.form.valueChanges.subscribe(() => {
+      if (this.resetInvalidInputs) this.resetInvalidInputs();
+    });
     this.form.valueChanges
       .pipe(
         debounceTime(300), // debounce time to prevent duplicate requests
@@ -117,10 +126,37 @@ export abstract class RequestDetailsComponentTemplate<
 
   setInputsDefaultValues(): void {
     const defaultValues = this.mapItemFieldsToFormValues(this.item);
+    this.form.reset(defaultValues, { emitEvent: false });
+  }
 
-    // for (const key in this.formControls) {
-    this.form.setValue(defaultValues, { emitEvent: false });
-    // }
+  shouldDisplayError(formControlName: string, onlyDirty = false): boolean {
+    const control = this.form.get(formControlName);
+    if (!control) throw new Error('Invalid form Control');
+
+    if (onlyDirty) return control.invalid && control.dirty;
+    return control.invalid && (control.dirty || control.touched);
+  }
+
+  getErrorMessage(formControlName: string, inputTitle = 'Value'): string {
+    const control = this.form.get(formControlName);
+    if (!control) throw new Error('Invalid form Control');
+
+    if (control.hasError('required')) {
+      return `${inputTitle} is required`;
+    }
+    if (control.hasError('min')) {
+      return `${inputTitle} must be at least ${control.getError('min')?.min}`;
+    }
+    if (control.hasError('max')) {
+      return `${inputTitle} must be at most ${control.getError('max')?.max}`;
+    }
+
+    if (this.additionalErrorMessages) {
+      const customMessage = this.additionalErrorMessages(control, inputTitle);
+      if (customMessage) return customMessage;
+    }
+
+    return '';
   }
 
   onSubmit() {

@@ -1,6 +1,4 @@
-import {
-  Component,
-} from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   EncashmentRequest,
@@ -10,7 +8,7 @@ import {
 } from 'src/app/shared/interfaces/requests/encashment';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { EncashmentRequestService } from 'src/app/shared/services/requests/encashment.service';
 import { takeUntil } from 'rxjs';
 import { Project } from 'src/app/shared/interfaces/project';
@@ -18,7 +16,11 @@ import { ProjectsService } from 'src/app/shared/services/projects.service';
 import { LeaveRequestService } from 'src/app/shared/services/requests/leave.service';
 import { LeaveRequestBalance } from 'src/app/shared/interfaces/requests/leave';
 import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
-import { FormValues, RequestDetailsComponentTemplate } from 'src/app/shared/components/requests/request-details-template.component';
+import {
+  FormValues,
+  RequestDetailsComponentTemplate,
+} from 'src/app/shared/components/requests/request-details-template.component';
+import { limitNumberInput } from 'src/app/shared/utils/form-utils';
 
 @Component({
   selector: 'app-encashment-request-details',
@@ -47,10 +49,10 @@ export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTe
     private projectsService: ProjectsService
   ) {
     super(encashmentRequestService, {
-      encashmentType: [''],
-      unitPrice: [''],
-      date: [''],
-      unitCount: [''],
+      encashmentType: ['', [Validators.required]],
+      unitPrice: ['', [Validators.min(0)]],
+      date: ['', [Validators.required]],
+      unitCount: ['', [Validators.required, Validators.min(1)]],
       project: [''],
       remarks: [''],
     });
@@ -125,5 +127,14 @@ export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTe
       u_Remarks: formValues.remarks ?? undefined,
     };
     return data;
+  }
+  override resetInvalidInputs(): void {
+    const unitCountControl = this.form.get('unitCount');
+    const unitPriceControl = this.form.get('unitPrice');
+    if (!unitCountControl || !unitPriceControl)
+      throw new Error('Invalid form Control');
+
+    limitNumberInput(unitCountControl);
+    limitNumberInput(unitPriceControl);
   }
 }
