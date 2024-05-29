@@ -39,6 +39,9 @@
           <select
             formControlName="valueTransactionType"
             class="block w-full h-11 rounded-md border-2 border-gray-300 bg-white px-3 py-2 text-base font-normal text-blue-gray-900 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 disabled:bg-gray-100"
+            [ngClass]="{
+              'invalid-input': shouldDisplayError('valueTransactionType')
+            }"
           >
             <option
               *ngFor="let type of valueTransactionTypes"
@@ -47,6 +50,12 @@
               {{ type.name }}
             </option>
           </select>
+          <span
+            *ngIf="shouldDisplayError('valueTransactionType')"
+            class="error-message"
+          >
+            {{ getErrorMessage("valueTransactionType") }}
+          </span>
         </div>
       </div>
       <div class="col-span-3 flex flex-col">
@@ -60,7 +69,13 @@
             formControlName="value"
             type="number"
             class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-base font-normal transition-all disabled:bg-gray-100"
+            [ngClass]="{
+              'invalid-input': shouldDisplayError('value')
+            }"
           />
+          <span *ngIf="shouldDisplayError('value')" class="error-message">
+            {{ getErrorMessage("value") }}
+          </span>
         </div>
       </div>
       <div class="col-span-3 flex flex-col">
@@ -74,7 +89,13 @@
             formControlName="date"
             type="date"
             class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-base font-normal transition-all disabled:bg-gray-100"
+            [ngClass]="{
+              'invalid-input': shouldDisplayError('date')
+            }"
           />
+          <span *ngIf="shouldDisplayError('date')" class="error-message">
+            {{ getErrorMessage("date") }}
+          </span>
         </div>
       </div>
       <div class="col-span-2 flex flex-col">

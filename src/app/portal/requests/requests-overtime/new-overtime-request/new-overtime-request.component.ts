@@ -6,13 +6,14 @@ import {
   OvertimeRequestType,
 } from 'src/app/shared/interfaces/requests/overtime';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { OvertimeRequestService } from 'src/app/shared/services/requests/overtime.service';
 import { takeUntil } from 'rxjs';
 import { Project } from 'src/app/shared/interfaces/project';
 import { ProjectsService } from 'src/app/shared/services/projects.service';
 import { NewRequestModalComponent } from 'src/app/shared/components/requests/new-request-modal/new-request-modal.component';
 import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/new-request-template.component';
+import { limitNumberInput } from 'src/app/shared/utils/form-utils';
 
 @Component({
   selector: 'app-new-overtime-request',
@@ -65,17 +66,19 @@ export class NewOvertimeRequestComponent extends NewRequestComponentTemplate<
   ) {
     const today = new Date().toISOString().slice(0, 10);
     super(overtimeRequestService, {
-      overtimeType: [''],
-      date: [today],
-      hours: [0],
-      minutes: [0],
-      project: [''],
+      overtimeType: ['', [Validators.required]],
+      date: [today, [Validators.required]],
+      hours: [0, [Validators.required, Validators.min(0)]],
+      minutes: [
+        0,
+        [Validators.required, Validators.min(0), Validators.max(59)],
+      ],
+      project: ['', [Validators.required]],
       remarks: [''],
     });
   }
 
   override getDynamicValues(): void {
-    this.setInputsDefaultValues();
     this.overtimeRequestService
       .getTypes()
       .pipe(takeUntil(this.destroy$))
@@ -102,5 +105,14 @@ export class NewOvertimeRequestComponent extends NewRequestComponentTemplate<
       u_Remarks: formValues.remarks ?? undefined,
     };
     return data;
+  }
+  override resetInvalidInputs(): void {
+    const hoursControl = this.form.get('hours');
+    const minutesControl = this.form.get('minutes');
+    if (!hoursControl || !minutesControl)
+      throw new Error('Invalid form control');
+
+    limitNumberInput(hoursControl);
+    limitNumberInput(minutesControl);
   }
 }

@@ -39,11 +39,17 @@
           <select
             formControlName="loanType"
             class="block w-full h-11 rounded-md border-2 border-gray-300 bg-white px-3 py-2 text-base font-normal text-blue-gray-900 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 disabled:bg-gray-100"
+            [ngClass]="{
+              'invalid-input': shouldDisplayError('loanType')
+            }"
           >
             <option *ngFor="let type of loanTypes" [value]="type.code">
               {{ type.name }}
             </option>
           </select>
+          <span *ngIf="shouldDisplayError('loanType')" class="error-message">
+            {{ getErrorMessage("loanType") }}
+          </span>
         </div>
       </div>
       <div class="col-span-3 flex flex-col">
@@ -71,7 +77,13 @@
             formControlName="totalAmount"
             type="number"
             class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-base font-normal transition-all disabled:bg-gray-100"
+            [ngClass]="{
+              'invalid-input': shouldDisplayError('totalAmount')
+            }"
           />
+          <span *ngIf="shouldDisplayError('totalAmount')" class="error-message">
+            {{ getErrorMessage("totalAmount") }}
+          </span>
         </div>
       </div>
       <div class="col-span-3 flex flex-col">
@@ -85,7 +97,16 @@
             formControlName="installments"
             type="number"
             class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-base font-normal transition-all disabled:bg-gray-100"
+            [ngClass]="{
+              'invalid-input': shouldDisplayError('installments')
+            }"
           />
+          <span
+            *ngIf="shouldDisplayError('installments')"
+            class="error-message"
+          >
+            {{ getErrorMessage("installments") }}
+          </span>
         </div>
       </div>
       <div class="col-span-3 flex flex-col">
@@ -99,7 +120,13 @@
             formControlName="startDate"
             type="date"
             class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-base font-normal transition-all disabled:bg-gray-100"
+            [ngClass]="{
+              'invalid-input': shouldDisplayError('startDate')
+            }"
           />
+          <span *ngIf="shouldDisplayError('startDate')" class="error-message">
+            {{ getErrorMessage("startDate") }}
+          </span>
         </div>
       </div>
       <div class="col-span-full flex flex-col">

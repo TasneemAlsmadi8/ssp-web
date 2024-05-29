@@ -8,7 +8,7 @@ import {
 } from 'src/app/shared/interfaces/requests/encashment';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { EncashmentRequestService } from 'src/app/shared/services/requests/encashment.service';
 import { takeUntil } from 'rxjs';
 import { Project } from 'src/app/shared/interfaces/project';
@@ -17,6 +17,7 @@ import { LeaveRequestService } from 'src/app/shared/services/requests/leave.serv
 import { LeaveRequestBalance } from 'src/app/shared/interfaces/requests/leave';
 import { NewRequestModalComponent } from 'src/app/shared/components/requests/new-request-modal/new-request-modal.component';
 import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/new-request-template.component';
+import { limitNumberInput } from 'src/app/shared/utils/form-utils';
 
 @Component({
   selector: 'app-new-encashment-request',
@@ -70,10 +71,10 @@ export class NewEncashmentRequestComponent extends NewRequestComponentTemplate<
   ) {
     const today = new Date().toISOString().slice(0, 10);
     super(encashmentRequestService, {
-      encashmentType: [''],
-      unitPrice: [0],
-      unitCount: [1],
-      date: [today],
+      encashmentType: ['', [Validators.required]],
+      unitPrice: [0, [Validators.min(0)]],
+      unitCount: [1, [Validators.required, Validators.min(1)]],
+      date: [today, [Validators.required]],
       project: [''],
       remarks: [''],
     });
@@ -121,8 +122,23 @@ export class NewEncashmentRequestComponent extends NewRequestComponentTemplate<
       this.updateLeaveBalance(encashmentType, date);
       if (unitCount) {
         this.updateEncashValue(encashmentType, unitCount, date);
+      } else {
+        delete this.encashValue;
       }
+    } else {
+      delete this.leaveBalance;
+      delete this.encashValue;
     }
+  }
+
+  override resetInvalidInputs(): void {
+    const unitCountControl = this.form.get('unitCount');
+    const unitPriceControl = this.form.get('unitPrice');
+    if (!unitCountControl || !unitPriceControl)
+      throw new Error('Invalid form Control');
+
+    limitNumberInput(unitCountControl);
+    limitNumberInput(unitPriceControl);
   }
 
   private updateEncashValue(

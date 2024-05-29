@@ -7,11 +7,12 @@ import {
 } from 'src/app/shared/interfaces/requests/loan';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { ReactiveFormsModule } from '@angular/forms';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { LoanRequestService } from 'src/app/shared/services/requests/loan.service';
 import { takeUntil } from 'rxjs';
 import { NewRequestModalComponent } from 'src/app/shared/components/requests/new-request-modal/new-request-modal.component';
 import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/new-request-template.component';
+import { limitNumberInput } from 'src/app/shared/utils/form-utils';
 
 @Component({
   selector: 'app-new-loan-request',
@@ -52,10 +53,10 @@ export class NewLoanRequestComponent extends NewRequestComponentTemplate<
   constructor(private loanRequestService: LoanRequestService) {
     const today = new Date().toISOString().slice(0, 10);
     super(loanRequestService, {
-      loanType: [''],
-      installments: [1],
-      totalAmount: [0],
-      startDate: [today],
+      loanType: ['', [Validators.required]],
+      installments: [1, [Validators.required, Validators.min(1)]],
+      totalAmount: [0, [Validators.required, Validators.min(1)]],
+      startDate: [today, [Validators.required]],
       remarks: [''],
     });
   }
@@ -79,5 +80,15 @@ export class NewLoanRequestComponent extends NewRequestComponentTemplate<
       u_Remarks: formValues.remarks ?? undefined,
     };
     return data;
+  }
+
+  override resetInvalidInputs(): void {
+    const totalAmountControl = this.form.get('totalAmount');
+    const installmentsControl = this.form.get('installments');
+    if (!totalAmountControl || !installmentsControl)
+      throw new Error('Invalid form control');
+
+    limitNumberInput(totalAmountControl);
+    limitNumberInput(installmentsControl);
   }
 }

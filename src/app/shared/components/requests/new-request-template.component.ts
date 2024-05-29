@@ -6,7 +6,7 @@ import {
   Output,
   inject,
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { User } from '../../interfaces/user';
 import { DestroyBaseComponent } from 'src/app/shared/base/destroy-base.component';
 import { LocalUserService } from 'src/app/shared/services/local-user.service';
@@ -18,6 +18,7 @@ import {
 import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
 import { debounceTime, distinctUntilChanged, switchMap, takeUntil } from 'rxjs';
+import { FormErrorMessageBehavior } from '../FormErrorMessage';
 
 @Component({
   standalone: true,
@@ -28,7 +29,7 @@ export abstract class NewRequestComponentTemplate<
     A extends AddSchema
   >
   extends DestroyBaseComponent
-  implements OnInit
+  implements OnInit, FormErrorMessageBehavior
 {
   isLoading: boolean = false;
   user: User;
@@ -40,6 +41,11 @@ export abstract class NewRequestComponentTemplate<
   abstract mapFormToAddRequest(formValues: any): A;
   updateCalculatedValues?(): void;
   getDynamicValues?(): void;
+  resetInvalidInputs?(): void;
+  additionalErrorMessages?(
+    control: AbstractControl,
+    inputTitle: string
+  ): string;
 
   private fb: FormBuilder;
   private userService: LocalUserService;
@@ -76,7 +82,7 @@ export abstract class NewRequestComponentTemplate<
       )
       .subscribe(() => {
         if (this.updateCalculatedValues) this.updateCalculatedValues();
-    });
+      });
   }
 
   ngOnInit(): void {
@@ -84,11 +90,42 @@ export abstract class NewRequestComponentTemplate<
     if (this.getDynamicValues) this.getDynamicValues();
   }
 
-  setInputsDefaultValues(): void {
+  private setInputsDefaultValues(): void {
+    const defaultValues = {};
     for (const key in this.formControls) {
-      const defaultValue = this.formControls[key]?.[0];
-      this.form.get(key)?.setValue(defaultValue, { emitEvent: false });
+      (defaultValues as any)[key] = this.formControls[key]?.[0];
     }
+    this.form.reset(defaultValues, { emitEvent: false });
+  }
+
+  shouldDisplayError(formControlName: string, onlyDirty = false): boolean {
+    const control = this.form.get(formControlName);
+    if (!control) throw new Error('Invalid form Control');
+
+    if (onlyDirty) return control.invalid && control.dirty;
+    return control.invalid && (control.dirty || control.touched);
+  }
+
+  getErrorMessage(formControlName: string, inputTitle = 'Value'): string {
+    const control = this.form.get(formControlName);
+    if (!control) throw new Error('Invalid form Control');
+
+    if (control.hasError('required')) {
+      return `${inputTitle} is required`;
+    }
+    if (control.hasError('min')) {
+      return `${inputTitle} must be at least ${control.getError('min')?.min}`;
+    }
+    if (control.hasError('max')) {
+      return `${inputTitle} must be at most ${control.getError('max')?.max}`;
+    }
+
+    if (this.additionalErrorMessages) {
+      const customMessage = this.additionalErrorMessages(control, inputTitle);
+      if (customMessage) return customMessage;
+    }
+
+    return '';
   }
 
   onSubmit() {

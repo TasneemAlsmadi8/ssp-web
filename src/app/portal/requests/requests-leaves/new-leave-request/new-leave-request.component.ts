@@ -74,7 +74,6 @@ export class NewLeaveRequestComponent extends NewRequestComponentTemplate<
   }
 
   override getDynamicValues(): void {
-    this.setInputsDefaultValues();
     this.leaveRequestService
       .getTypes()
       .pipe(takeUntil(this.destroy$))
