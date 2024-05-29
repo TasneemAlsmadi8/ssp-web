@@ -17,7 +17,7 @@ import {
 } from 'src/app/shared/interfaces/requests/generic-request';
 import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
-import { takeUntil } from 'rxjs';
+import { debounceTime, distinctUntilChanged, switchMap, takeUntil } from 'rxjs';
 
 @Component({
   standalone: true,
@@ -87,7 +87,7 @@ export abstract class NewRequestComponentTemplate<
   setInputsDefaultValues(): void {
     for (const key in this.formControls) {
       const defaultValue = this.formControls[key]?.[0];
-      this.form.get(key)?.setValue(defaultValue);
+      this.form.get(key)?.setValue(defaultValue, { emitEvent: false });
     }
   }
 
