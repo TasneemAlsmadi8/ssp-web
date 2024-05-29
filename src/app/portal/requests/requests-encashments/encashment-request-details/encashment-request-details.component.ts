@@ -96,7 +96,12 @@ export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTe
           .subscribe((value) => {
             this.encashValue = value[0];
           });
+      } else {
+        delete this.encashValue;
       }
+    } else {
+      delete this.leaveBalance;
+      delete this.encashValue;
     }
   }
 
