@@ -56,7 +56,26 @@ export abstract class NewRequestComponentTemplate<
     this.form = this.fb.group(this.formControls);
 
     this.form.valueChanges.subscribe(() => {
-      if (this.updateCalculatedValues) this.updateCalculatedValues();
+      if (this.resetInvalidInputs) this.resetInvalidInputs();
+    });
+    this.form.valueChanges
+      .pipe(
+        debounceTime(300), // debounce time to prevent duplicate requests
+        distinctUntilChanged((prev, curr) => {
+          for (const key in prev) {
+            if (
+              !Object.prototype.hasOwnProperty.call(prev, key) ||
+              curr[key] !== prev[key]
+            ) {
+              return false;
+            }
+          }
+          return true;
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        if (this.updateCalculatedValues) this.updateCalculatedValues();
     });
   }
 

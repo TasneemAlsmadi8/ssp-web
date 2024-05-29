@@ -9,7 +9,7 @@ import {
   SimpleChanges,
   inject,
 } from '@angular/core';
-import { FormBuilder, FormGroup } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
 import { User } from '../../interfaces/user';
 import { DestroyBaseComponent } from 'src/app/shared/base/destroy-base.component';
 import { LocalUserService } from 'src/app/shared/services/local-user.service';
@@ -21,7 +21,7 @@ import {
 } from 'src/app/shared/interfaces/requests/generic-request';
 import { HttpErrorResponse } from '@angular/common/http';
 import Swal from 'sweetalert2';
-import { takeUntil } from 'rxjs';
+import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 
 export type FormValues = {
   [key: string]: string | number | null;
@@ -64,7 +64,7 @@ export abstract class RequestDetailsComponentTemplate<
 
   private fb: FormBuilder;
   private userService: LocalUserService;
-  private formValues: FormValues = {};
+  // private formValues: FormValues = {};
 
   // @Inject(null) -> to disable DI to provide values in child class
   constructor(
@@ -77,16 +77,25 @@ export abstract class RequestDetailsComponentTemplate<
     this.user = this.userService.getUser();
     this.form = this.fb.group(this.formControls);
 
-    this.form.valueChanges.subscribe(() => {
-      const newValues = this.form.value;
-      // check if any value changed
-      for (const key in newValues) {
-        if (this.formValues[key] !== newValues[key]) {
-          this.formValues = { ...newValues };
-          if (this.updateCalculatedValues) this.updateCalculatedValues();
-        }
-      }
-    });
+    this.form.valueChanges
+      .pipe(
+        debounceTime(300), // debounce time to prevent duplicate requests
+        distinctUntilChanged((prev, curr) => {
+          for (const key in prev) {
+            if (
+              !Object.prototype.hasOwnProperty.call(prev, key) ||
+              curr[key] !== prev[key]
+            ) {
+              return false;
+            }
+          }
+          return true;
+        }),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => {
+        if (this.updateCalculatedValues) this.updateCalculatedValues();
+      });
   }
 
   ngOnChanges(changes: SimpleChanges) {
@@ -110,13 +119,13 @@ export abstract class RequestDetailsComponentTemplate<
     const defaultValues = this.mapItemFieldsToFormValues(this.item);
 
     // for (const key in this.formControls) {
-    this.form.setValue(defaultValues);
+    this.form.setValue(defaultValues, { emitEvent: false });
     // }
   }
 
   onSubmit() {
     this.isLoading = true;
-    const data = this.mapFormToUpdateRequest(this.formValues);
+    const data = this.mapFormToUpdateRequest(this.form.value);
     this.requestService
       .update(data)
       .pipe(takeUntil(this.destroy$))
