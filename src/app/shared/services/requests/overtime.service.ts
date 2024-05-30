@@ -28,7 +28,7 @@ export class OvertimeRequestService
   implements iOvertimeRequestService
 {
   private overtimeRequestsStore = new SharedArrayStore<OvertimeRequest>();
-  get items$(): Observable<OvertimeRequest[]> {
+  get list$(): Observable<OvertimeRequest[]> {
     return this.overtimeRequestsStore.observable$;
   }
 

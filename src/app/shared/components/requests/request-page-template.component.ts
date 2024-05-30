@@ -25,7 +25,7 @@ export abstract class RequestPageComponentTemplate<T extends Item>
     private requestService: GenericRequestService<T, any, any, any>
   ) {
     super();
-    requestService.items$.subscribe((value) => {
+    requestService.list$.subscribe((value) => {
       this.items = value;
     });
   }

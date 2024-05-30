@@ -30,7 +30,7 @@ export class EncashmentRequestService
   implements iEncashmentRequestService
 {
   private encashmentRequestsStore = new SharedArrayStore<EncashmentRequest>();
-  get items$(): Observable<EncashmentRequest[]> {
+  get list$(): Observable<EncashmentRequest[]> {
     return this.encashmentRequestsStore.observable$;
   }
 

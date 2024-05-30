@@ -76,3 +76,46 @@ export function formatDateToDisplay(dateString: string): string {
   // Return the date string in the display format
   return `${day}/${month}/${year}`;
 }
+
+/**
+ * Converts a time string to HH:mm format.
+ *
+ * This function takes a time string in various formats (HHmm, Hmm, mm, or m)
+ * and converts it to the standard HH:mm format.
+ *
+ * @param input - A string representing the time.
+ * @returns A string representing the time in HH:mm format.
+ * @throws Error if the input string is not in a valid format.
+ *
+ * @example
+ * ```
+ * formatTimeToHHmm("1234"); // Returns "12:34"
+ * formatTimeToHHmm("834");  // Returns "08:34"
+ * formatTimeToHHmm("34");   // Returns "00:34"
+ * formatTimeToHHmm("9");    // Returns "00:09"
+ * ```
+ */
+export function formatTimeToHHmm(input: string): string {
+  let hours: string = '00';
+  let minutes: string = '00';
+
+  if (input.length === 4) {
+    // HHmm format
+    hours = input.slice(0, 2);
+    minutes = input.slice(2);
+  } else if (input.length === 3) {
+    // Hmm format
+    hours = '0' + input.charAt(0);
+    minutes = input.slice(1);
+  } else if (input.length === 2) {
+    // mm format
+    minutes = input;
+  } else if (input.length === 1) {
+    // m format
+    minutes = '0' + input;
+  } else {
+    throw new Error('Invalid input format');
+  }
+
+  return `${hours}:${minutes}`;
+}

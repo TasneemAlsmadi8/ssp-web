@@ -28,7 +28,7 @@ export class LoanRequestService
   implements iLoanRequestService
 {
   private loanRequestsStore = new SharedArrayStore<LoanRequest>();
-  get items$(): Observable<LoanRequest[]> {
+  get list$(): Observable<LoanRequest[]> {
     return this.loanRequestsStore.observable$;
   }
 

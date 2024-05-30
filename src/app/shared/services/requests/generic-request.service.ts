@@ -5,16 +5,18 @@ import {
   ItemType,
   UpdateSchema,
 } from '../../interfaces/requests/generic-request';
+import { ListRetrievalService } from '../generic.service';
+import { User } from '../../interfaces/user';
 
 export interface GenericRequestService<
   T extends Item,
   U extends UpdateSchema,
   A extends AddSchema,
   V extends ItemType
-> {
-  items$: Observable<T[]>;
+> extends ListRetrievalService<T> {
+  list$: Observable<T[]>;
 
-  user: any; // Define the return type of userService.getUser()
+  user: User;
 
   getAll(): Observable<T[]>;
 

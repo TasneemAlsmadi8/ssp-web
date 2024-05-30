@@ -6,6 +6,7 @@ import { takeUntil } from 'rxjs';
 import { DestroyBaseComponent } from '../../../base/destroy-base.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBan } from '@fortawesome/free-solid-svg-icons';
+import { UserConfirmationService } from 'src/app/shared/services/user-confirmation.service';
 
 @Component({
   selector: 'app-cancel-request-popup',
@@ -33,6 +34,30 @@ export class CancelRequestPopupComponent extends DestroyBaseComponent {
 
   faCancel = faBan;
 
+    constructor(private confirmationService: UserConfirmationService) {
+      super();
+    }
+
+  cancelRequest() {
+    this.confirmationService.confirmAction('Are you sure?', "You won't be able to revert this!", 'Yes, cancel it!', 'No')
+      .subscribe((isConfirmed) => {
+        if (isConfirmed) {
+          this.confirmationService.showLoading('Canceling...', 'Please wait while we cancel your request.');
+
+          this.service.cancel(this.id)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe({
+              next: (value) => {
+                this.confirmationService.showSuccess('Canceled!', 'Your Leave Request has been canceled.');
+              },
+              error: (err) => {
+                console.log(err);
+                this.confirmationService.showError('Error!', 'There was an error canceling your leave request.');
+              },
+            });
+        }
+      });
+  }
   cancelLeaveRequest() {
     Swal.fire({
       title: 'Are you sure?',

@@ -30,7 +30,7 @@ export class LeaveRequestService
   implements iLeaveRequestService
 {
   private leaveRequestsStore = new SharedArrayStore<LeaveRequest>();
-  get items$(): Observable<LeaveRequest[]> {
+  get list$(): Observable<LeaveRequest[]> {
     return this.leaveRequestsStore.observable$;
   }
 

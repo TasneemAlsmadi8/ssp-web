@@ -29,7 +29,7 @@ export class ValueTransactionRequestService
 {
   private valueTransactionRequestsStore =
     new SharedArrayStore<ValueTransactionRequest>();
-  get items$(): Observable<ValueTransactionRequest[]> {
+  get list$(): Observable<ValueTransactionRequest[]> {
     return this.valueTransactionRequestsStore.observable$;
   }
 
