@@ -38,7 +38,7 @@ export class CancelRequestPopupComponent extends DestroyBaseComponent {
       super();
     }
 
-  cancelRequest() {
+  cancelLeaveRequest() {
     this.confirmationService.confirmAction('Are you sure?', "You won't be able to revert this!", 'Yes, cancel it!', 'No')
       .subscribe((isConfirmed) => {
         if (isConfirmed) {
@@ -58,7 +58,7 @@ export class CancelRequestPopupComponent extends DestroyBaseComponent {
         }
       });
   }
-  cancelLeaveRequest() {
+  cancelLeaveRequest2() {
     Swal.fire({
       title: 'Are you sure?',
       text: "You won't be able to revert this!",
