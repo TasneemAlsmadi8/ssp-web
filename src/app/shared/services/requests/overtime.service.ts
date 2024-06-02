@@ -63,7 +63,7 @@ export class OvertimeRequestService
     const url = `${this.url}/UpdateOvertimeRequest`;
     const body = {
       docEntry: id,
-      u_Status: OvertimeRequestStatus.Canceled.toString(),
+      u_Status: OvertimeRequestStatus.Canceled,
     };
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(

@@ -66,7 +66,7 @@ export class LeaveRequestService
     const url = `${this.url}/UpdateLeaveRequest`;
     const body = {
       docEntry: id,
-      u_Status: LeaveRequestStatus.Canceled.toString(),
+      u_Status: LeaveRequestStatus.Canceled,
     };
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(

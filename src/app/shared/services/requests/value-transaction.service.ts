@@ -69,7 +69,7 @@ export class ValueTransactionRequestService
     const url = `${this.url}/UpdateValueTranRequest`;
     const body = {
       docEntry: id,
-      u_Status: ValueTransactionRequestStatus.Canceled.toString(),
+      u_Status: ValueTransactionRequestStatus.Canceled,
     };
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(
@@ -153,7 +153,7 @@ export class ValueTransactionRequestService
     valueTransactionRequests.map((req) => {
       if (!req.status) {
         req.status = 'Pending';
-        req.u_Status = ValueTransactionRequestStatus.Pending.toString();
+        req.u_Status = ValueTransactionRequestStatus.Pending;
       }
     });
     return valueTransactionRequests;

@@ -66,7 +66,7 @@ export class EncashmentRequestService
     const url = `${this.url}/UpdateEncashRequest`;
     const body = {
       docEntry: id,
-      u_Status: EncashmentRequestStatus.Canceled.toString(),
+      u_Status: EncashmentRequestStatus.Canceled,
     };
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(

@@ -59,7 +59,7 @@ export class LoanRequestService
     const url = `${this.url}/UpdateLoanRequest`;
     const body = {
       docEntry: id,
-      u_Status: LoanRequestStatus.Canceled.toString(),
+      u_Status: LoanRequestStatus.Canceled,
     };
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(

@@ -22,10 +22,10 @@ export interface EncashmentRequest {
 }
 
 export enum EncashmentRequestStatus {
-  Pending = 0,
-  Rejected = 1,
-  Approved = 2,
-  Canceled = 3,
+  Pending = '0',
+  Rejected = '1',
+  Approved = '2',
+  Canceled = '3',
 }
 
 export interface EncashmentRequestType {

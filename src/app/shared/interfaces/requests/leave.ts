@@ -103,10 +103,10 @@ export interface LeaveRequestType {
 }
 
 export enum LeaveRequestStatus {
-  Pending = 0,
-  Rejected = 1,
-  Approved = 2,
-  Canceled = 3,
+  Pending = '0',
+  Rejected = '1',
+  Approved = '2',
+  Canceled = '3',
 }
 
 export interface LeaveRequestAddSchema {
