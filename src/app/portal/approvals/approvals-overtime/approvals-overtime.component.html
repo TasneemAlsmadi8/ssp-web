@@ -1,1 +1,93 @@
-<p>approvals-overtime works!</p>
+<div class="bg-white flex flex-col m-2 px-6 py-4 rounded-lg min-w-fit">
+  <h1 class="text-2xl font-semibold pb-2 mb-2 border-b">
+    Overtime Requests Approval
+  </h1>
+  <app-paginated-table [items]="items" (pageChange)="activePageItems = $event">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+      <tr>
+        <th scope="col" class="p-4">
+          <div class="flex items-center">
+            <input
+              id="checkbox-all-search"
+              type="checkbox"
+              [checked]="isAllSelected()"
+              (change)="onSelectAll($event)"
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+            />
+            <label for="checkbox-all-search" class="sr-only">checkbox</label>
+          </div>
+        </th>
+        <th scope="col" class="px-6 py-3">{{ "ID" }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Status" }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Employee Name" }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Submit Date" }}</th>
+        <th scope="col" class="px-6 py-3">{{ "From Date" }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Total Time" }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Project Name" }}</th>
+        <th scope="col" class="px-6 py-3"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- @for (bp of BP_list; track bp.CardCode) { -->
+      <tr
+        *ngFor="let req of activePageItems; trackBy: trackById"
+        class="odd:bg-white even:bg-gray-50 border-b"
+      >
+        <td class="w-4 p-4">
+          <div class="flex items-center">
+            <input
+              [checked]="isSelected(req)"
+              (change)="toggleItemSelection(req)"
+              type="checkbox"
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
+            />
+            <label for="checkbox-table-search-1" class="sr-only"
+              >checkbox</label
+            >
+          </div>
+        </td>
+        <th
+          scope="row"
+          class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+        >
+          {{ req.overtimeID }}
+        </th>
+        <td class="px-6 py-4">{{ req.status }}</td>
+        <td class="px-6 py-4">{{ req.fullName }}</td>
+        <td class="px-6 py-4">{{ req.dateSubmitted | date : "dd/MM/yyyy" }}</td>
+        <td class="px-6 py-4">
+          {{ req.fromDate | date : "dd/MM/yyyy" }}
+        </td>
+        <td class="px-6 py-4">
+          {{
+            (req.ovHour | number : "2.0") + ":" + (req.ovMin | number : "2.0")
+          }}
+        </td>
+        <td class="px-6 py-4">{{ req.projectName || req.projectCode }}</td>
+        <!-- <td class="px-6 py-4">{{ req.empCode }}</td> -->
+        <td class="px-6 py-4">
+          <div class="flex flex-col justify-center items-center gap-x-2">
+            <app-request-details-button
+              (click)="setActiveItemDetails(req)"
+              [isEditable]="req.status === 'Pending'"
+            />
+            <app-approval-accept-button
+              (click)="approveRequest(req.overtimeID)"
+            />
+            <app-approval-reject-button
+              (click)="rejectRequest(req.overtimeID)"
+            />
+          </div>
+        </td>
+      </tr>
+      <!-- } -->
+    </tbody>
+  </app-paginated-table>
+</div>
+<app-overtime-request-details
+  *ngIf="activeItemDetails"
+  [(isOpen)]="ItemDetailsOpen"
+  [item]="activeItemDetails"
+  (onSubmitSuccess)="refreshItems()"
+/>
+<app-approval-speed-dial />
