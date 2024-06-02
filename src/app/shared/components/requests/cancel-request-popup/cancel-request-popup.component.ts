@@ -14,7 +14,7 @@ import { UserConfirmationService } from 'src/app/shared/services/user-confirmati
   imports: [CommonModule, FontAwesomeModule],
   template: `
     <button
-      class="font-medium text-red-600 hover:underline"
+      class="font-medium text-red-600 hover:bg-blue-100 w-6 h-7 rounded"
       (click)="cancelLeaveRequest()"
       title="Cancel"
     >

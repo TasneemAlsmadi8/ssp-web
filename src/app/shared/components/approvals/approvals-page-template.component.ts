@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, inject } from '@angular/core';
 import { DestroyBaseComponent } from 'src/app/shared/base/destroy-base.component';
-import { Item } from 'src/app/shared/interfaces/requests/generic-request';
+import { Item, UpdateSchema } from 'src/app/shared/interfaces/requests/generic-request';
 import { takeUntil } from 'rxjs';
 import { GenericApprovalService } from '../../services/approvals/generic-approval.service';
 import { SelectedItems } from '../../utils/selected-items';
@@ -10,24 +10,25 @@ import { UserConfirmationService } from '../../services/user-confirmation.servic
   standalone: true,
   template: '',
 })
-export abstract class ApprovalPageComponentTemplate<T extends Item>
+export abstract class ApprovalPageComponentTemplate<Approval extends Item, Request extends Item>
   extends DestroyBaseComponent
   implements OnInit
 {
   private confirmationService: UserConfirmationService;
-  items: T[] = [];
-  activePageItems: T[] = [];
+  items: Approval[] = [];
+  activePageItems: Approval[] = [];
 
-  selectedItems: SelectedItems<T> = new SelectedItems();
+  selectedItems: SelectedItems<Approval> = new SelectedItems();
 
-  activeItemDetails?: T;
+  activeItemDetails?: Request;
   ItemDetailsOpen = false;
 
-  abstract getItemId(item: T): number;
+  abstract getItemId(item: Approval): number;
+  abstract mapApprovalToUpdateRequest(item: Approval): Request;
 
   constructor(
     @Inject(null)
-    private approvalService: GenericApprovalService<T>
+    private approvalService: GenericApprovalService<Approval>
   ) {
     super();
     this.confirmationService = inject(UserConfirmationService);
@@ -52,12 +53,7 @@ export abstract class ApprovalPageComponentTemplate<T extends Item>
 
   approveRequest(id: string): void {
     this.confirmationService
-      .confirmAction(
-        'Are you sure?',
-        // "You won't be able to revert this!",
-        'Yes, approve',
-        'No'
-      )
+      .confirmAction('Are you sure?', '', 'Yes, approve', 'No')
       .subscribe((isConfirmed) => {
         if (isConfirmed) {
           this.confirmationService.showLoading(
@@ -86,12 +82,7 @@ export abstract class ApprovalPageComponentTemplate<T extends Item>
 
   rejectRequest(id: string): void {
     this.confirmationService
-      .confirmAction(
-        'Are you sure?',
-        // "You won't be able to revert this!",
-        'Yes, reject',
-        'No'
-      )
+      .confirmAction('Are you sure?', '', 'Yes, reject', 'No')
       .subscribe((isConfirmed) => {
         if (isConfirmed) {
           this.confirmationService.showLoading(
@@ -118,21 +109,21 @@ export abstract class ApprovalPageComponentTemplate<T extends Item>
       });
   }
 
-  trackById = (index: number, item: T): number => {
+  trackById = (index: number, item: Approval): number => {
     return this.getItemId(item);
   };
 
-  setActiveItemDetails(activeItemDetails: T) {
-    this.activeItemDetails = activeItemDetails;
+  setActiveItemDetails(activeItemDetails: Approval) {
+    this.activeItemDetails = this.mapApprovalToUpdateRequest(activeItemDetails);
     this.ItemDetailsOpen = true;
   }
 
-  toggleItemSelection(item: T): void {
+  toggleItemSelection(item: Approval): void {
     const id = this.getItemId(item).toString();
     this.selectedItems.toggle(id, item);
   }
 
-  isSelected(item: T): boolean {
+  isSelected(item: Approval): boolean {
     const id = this.getItemId(item).toString();
     return this.selectedItems.has(id);
   }

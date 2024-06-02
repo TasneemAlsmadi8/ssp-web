@@ -1,4 +1,7 @@
-<button (click)="onClick()" class="font-medium text-blue-600 hover:underline">
+<button
+  (click)="onClick()"
+  class="font-medium text-blue-600 hover:bg-blue-100 w-6 h-7 rounded"
+>
   <fa-icon *ngIf="isEditable" [icon]="faEdit" title="Edit"></fa-icon>
   <fa-icon *ngIf="!isEditable" [icon]="faView" title="View"></fa-icon>
 </button>

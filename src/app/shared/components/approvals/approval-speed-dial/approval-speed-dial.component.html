@@ -1,0 +1,55 @@
+<div
+  class="fixed flex end-6 bottom-6 group hover:bg-purple-100 p-1 rounded-full"
+>
+  <div
+    id="speed-dial-menu-horizontal"
+    class="hidden group-hover:flex items-center me-4 space-x-3 rtl:space-x-reverse ps-1"
+  >
+    <button
+      type="button"
+      class="flex text-2xl justify-center items-center w-[52px] h-[52px] text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 shadow-sm hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 focus:outline-none"
+    >
+      <fa-icon [icon]="faAccept" title="Accept"></fa-icon>
+      <span class="sr-only">Share</span>
+    </button>
+    <div
+      class="absolute z-10 invisible inline-block w-auto px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip"
+    >
+      Share
+      <div class="tooltip-arrow" data-popper-arrow></div>
+    </div>
+    <button
+      type="button"
+      class="flex text-2xl justify-center items-center w-[52px] h-[52px] text-gray-500 hover:text-gray-900 bg-white rounded-full border border-gray-200 shadow-sm hover:bg-gray-50 focus:ring-4 focus:ring-gray-300 focus:outline-none"
+    >
+      <fa-icon [icon]="faReject" title="Reject"></fa-icon>
+      <span class="sr-only">Share</span>
+    </button>
+    <div
+      class="absolute z-10 invisible inline-block w-auto px-3 py-2 text-sm font-medium text-white transition-opacity duration-300 bg-gray-900 rounded-lg shadow-sm opacity-0 tooltip"
+    >
+      Share
+      <div class="tooltip-arrow" data-popper-arrow></div>
+    </div>
+  </div>
+  <button
+    type="button"
+    class="flex items-center justify-center text-white bg-primary-300 rounded-full w-14 h-14 hover:bg-primary-200 focus:ring-4 focus:ring-blue-300 focus:outline-none"
+  >
+    <svg
+      class="w-5 h-5 transition-transform group-hover:rotate-45"
+      xmlns="http://www.w3.org/2000/svg"
+      fill="none"
+      viewBox="0 0 18 18"
+    >
+      <path
+        stroke="currentColor"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        stroke-width="2"
+        d="M9 1v16M1 9h16"
+      />
+    </svg>
+    <span class="sr-only">Open actions menu</span>
+  </button>
+</div>

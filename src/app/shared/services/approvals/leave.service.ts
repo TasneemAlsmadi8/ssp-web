@@ -17,12 +17,12 @@ export class LeaveApprovalService
   extends BaseService
   implements GenericApprovalService<LeaveApproval>
 {
-  private leaveRequestsStore = new SharedArrayStore<LeaveApproval>();
+  private leaveApprovalsStore = new SharedArrayStore<LeaveApproval>();
   private endpoint = '/LeaveRequestApproval';
   private url = this.baseUrl + this.endpoint;
 
   get list$(): Observable<LeaveApproval[]> {
-    return this.leaveRequestsStore.observable$;
+    return this.leaveApprovalsStore.observable$;
   }
 
   get user(): User {
@@ -35,12 +35,12 @@ export class LeaveApprovalService
   getAll(): Observable<LeaveApproval[]> {
     const url = `${this.url}/GetLeaveRequestForApproval?EmployeeId=${this.user.id}&UILang=??`; //TODO: check the UILang param (note: this works)
     return this.http.get<LeaveApproval[]>(url, this.httpOptions).pipe(
-      tap((leaveRequests) => {
-        leaveRequests.map((value) => {
+      tap((leaveApprovals) => {
+        leaveApprovals.map((value) => {
           value.fromTime = formatTimeToHHmm(value.fromTime ?? '0000');
           value.toTime = formatTimeToHHmm(value.toTime ?? '0000');
         });
-        this.leaveRequestsStore.update(leaveRequests);
+        this.leaveApprovalsStore.update(leaveApprovals);
       })
     );
   }
@@ -48,16 +48,32 @@ export class LeaveApprovalService
     const url =
       `${this.url}/UpdateLeaveRequestByApprover?` +
       `ApproverID=${this.user.id}&LeaveID=${id}&ActionType=${ApprovalAction.Accepted}`;
-    return this.http
-      .get(url, { responseType: 'text' })
-      .pipe(map((value) => value === 'Request Approved'));
+    return this.http.post(url, '', { responseType: 'text' }).pipe(
+      map((value) => value === 'Request Approved'),
+      tap((value) => {
+        if (value) {
+          const updatedLeaveRequests = this.leaveApprovalsStore
+            .getValue()
+            .filter((req) => req.leaveID !== id);
+          this.leaveApprovalsStore.update(updatedLeaveRequests);
+        }
+      })
+    );
   }
   reject(id: string): Observable<boolean> {
     const url =
       `${this.url}/UpdateLeaveRequestByApprover?` +
       `ApproverID=${this.user.id}&LeaveID=${id}&ActionType=${ApprovalAction.Rejected}`;
-    return this.http
-      .get(url, { responseType: 'text' })
-      .pipe(map((value) => value === 'Request Rejected'));
+    return this.http.post(url, '', { responseType: 'text' }).pipe(
+      map((value) => value === 'Request Rejected'),
+      tap((value) => {
+        if (value) {
+          const updatedLeaveRequests = this.leaveApprovalsStore
+            .getValue()
+            .filter((req) => req.leaveID !== id);
+          this.leaveApprovalsStore.update(updatedLeaveRequests);
+        }
+      })
+    );
   }
 }

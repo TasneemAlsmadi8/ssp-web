@@ -12,7 +12,7 @@
               type="checkbox"
               [checked]="isAllSelected()"
               (change)="onSelectAll($event)"
-              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
             />
             <label for="checkbox-all-search" class="sr-only">checkbox</label>
           </div>
@@ -49,7 +49,7 @@
               [checked]="isSelected(req)"
               (change)="toggleItemSelection(req)"
               type="checkbox"
-              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 focus:ring-2"
             />
             <label for="checkbox-table-search-1" class="sr-only"
               >checkbox</label
@@ -85,25 +85,24 @@
           {{ req.toDate | date : "dd/MM/yyyy" }}
         </td>
         <td class="px-6 py-4 hidden xl:table-cell">{{ req.toTime }}</td>
-        <td class="px-6 py-4 flex justify-center gap-2">
-          <app-request-details-button
-            (click)="setActiveItemDetails(req)"
-            [isEditable]="req.status === 'Pending'"
-          />
-          <!-- <app-cancel-request-popup
-            *ngIf="req.status === 'Pending'"
-            [service]="leaveService"
-            [id]="req.leaveID"
-          /> -->
+        <td class="px-6 py-4">
+          <div class="flex justify-center items-center gap-x-2">
+            <app-request-details-button
+              (click)="setActiveItemDetails(req)"
+              [isEditable]="req.status === 'Pending'"
+            />
+            <app-approval-accept-button (click)="approveRequest(req.leaveID)" />
+            <app-approval-reject-button (click)="rejectRequest(req.leaveID)" />
+          </div>
         </td>
       </tr>
       <!-- } -->
     </tbody>
   </app-paginated-table>
 </div>
-<!-- <app-leave-request-details
+<app-leave-request-details
   *ngIf="activeItemDetails"
   [(isOpen)]="ItemDetailsOpen"
   [item]="activeItemDetails"
-  [isEditable]="activeItemDetails.status === 'Pending'"
-/> -->
+/>
+<app-approval-speed-dial />

@@ -2,12 +2,18 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { PaginatedTableComponent } from 'src/app/shared/components/paginated-table/paginated-table.component';
-import { CancelRequestPopupComponent } from 'src/app/shared/components/requests/cancel-request-popup/cancel-request-popup.component';
 import { RequestDetailsButtonComponent } from 'src/app/shared/components/requests/request-details-button/request-details-button.component';
 import { LeaveRequestDetailsComponent } from '../../requests/requests-leaves/leave-request-details/leave-request-details.component';
 import { ApprovalPageComponentTemplate } from 'src/app/shared/components/approvals/approvals-page-template.component';
 import { LeaveApprovalService } from 'src/app/shared/services/approvals/leave.service';
 import { LeaveApproval } from 'src/app/shared/interfaces/approvals/leave';
+import { ApprovalRejectButtonComponent } from 'src/app/shared/components/approvals/approval-reject-button/approval-reject-button.component';
+import { ApprovalAcceptButtonComponent } from 'src/app/shared/components/approvals/approval-accept-button/approval-accept-button.component';
+import {
+  LeaveRequest,
+  LeaveRequestStatus,
+} from 'src/app/shared/interfaces/requests/leave';
+import { ApprovalSpeedDialComponent } from 'src/app/shared/components/approvals/approval-speed-dial/approval-speed-dial.component';
 
 @Component({
   selector: 'app-approvals-leaves',
@@ -18,17 +24,48 @@ import { LeaveApproval } from 'src/app/shared/interfaces/approvals/leave';
     LeaveRequestDetailsComponent,
     RequestDetailsButtonComponent,
     PaginatedTableComponent,
-    CancelRequestPopupComponent,
+    ApprovalRejectButtonComponent,
+    ApprovalAcceptButtonComponent,
+    ApprovalSpeedDialComponent,
   ],
   templateUrl: './approvals-leaves.component.html',
   styleUrls: ['./approvals-leaves.component.scss'],
 })
-export class ApprovalsLeavesComponent extends ApprovalPageComponentTemplate<LeaveApproval> {
+export class ApprovalsLeavesComponent extends ApprovalPageComponentTemplate<
+  LeaveApproval,
+  LeaveRequest
+> {
   constructor(protected leaveService: LeaveApprovalService) {
     super(leaveService);
   }
 
   override getItemId(item: LeaveApproval): number {
     return parseInt(item.leaveID);
+  }
+  override mapApprovalToUpdateRequest(item: LeaveApproval): LeaveRequest {
+    const data: LeaveRequest = {
+      leaveID: item.leaveID,
+      leaveType: item.leaveType,
+      fromDate: item.fromDate,
+      toDate: item.toDate,
+      fromTime: item.fromTime,
+      toTime: item.toTime,
+      remarks: item.remarks,
+      u_EmployeeID: item.empID,
+      statusTypeId: LeaveRequestStatus.Pending,
+      status: 'Pending',
+      leaveCode: item.leaveCode,
+      u_Status: LeaveRequestStatus.Pending,
+
+      u_ApprStatus1: '',
+      u_ApprStatus2: null,
+      u_ApprStatus3: null,
+      u_PaidDays: '',
+      u_UnpaidDays: '',
+      u_AttachFile: '',
+      sortFromDate: '',
+      sortToDate: '',
+    };
+    return data;
   }
 }
