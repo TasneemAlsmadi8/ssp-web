@@ -48,6 +48,8 @@ export abstract class RequestDetailsComponentTemplate<
 
   @Output() isOpenChange = new EventEmitter<boolean>();
   @Output() onSave = new EventEmitter<T>();
+  @Output() onSubmitSuccess = new EventEmitter<T>();
+  @Output() onSubmitFail = new EventEmitter<T>();
 
   private _isOpen = false;
   get isOpen() {
@@ -163,6 +165,7 @@ export abstract class RequestDetailsComponentTemplate<
 
   onSubmit() {
     this.isLoading = true;
+    this.onSave.emit(this.item);
     const data = this.mapFormToUpdateRequest(this.form.value);
     this.requestService
       .update(data)
@@ -176,6 +179,7 @@ export abstract class RequestDetailsComponentTemplate<
             icon: 'success',
             confirmButtonText: 'Ok',
           });
+          this.onSubmitSuccess.emit(this.item);
         },
         error: (err: HttpErrorResponse) => {
           Swal.fire({
@@ -185,6 +189,7 @@ export abstract class RequestDetailsComponentTemplate<
             confirmButtonText: 'Ok',
           });
           console.log(err);
+          this.onSubmitFail.emit(this.item);
         },
       })
       .add(() => {

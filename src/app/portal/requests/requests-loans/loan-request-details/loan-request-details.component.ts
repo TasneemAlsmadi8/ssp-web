@@ -57,8 +57,8 @@ export class LoanRequestDetailsComponent extends RequestDetailsComponentTemplate
     const data: LoanRequestUpdateSchema = {
       docEntry: this.item.loanID,
       u_LoanType: formValues.loanType ?? undefined,
-      u_TotalAmount: formValues.totalAmount ?? undefined,
-      u_InstallmentCount: formValues.installments ?? undefined,
+      u_TotalAmount: formValues.totalAmount?.toString() ?? undefined,
+      u_InstallmentCount: formValues.installments?.toString() ?? undefined,
       u_StartDate: formValues.startDate ?? undefined,
       u_Remarks: formValues.remarks ?? undefined,
     };
@@ -77,7 +77,7 @@ export class LoanRequestDetailsComponent extends RequestDetailsComponentTemplate
   }
 
   override resetInvalidInputs(): void {
-    const installmentCount = this.form.get('installmentCount');
+    const installmentCount = this.form.get('installments');
     const totalAmount = this.form.get('totalAmount');
     if (!installmentCount || !totalAmount)
       throw new Error('Invalid form Control');

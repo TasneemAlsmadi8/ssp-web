@@ -31,6 +31,9 @@ export class LeaveApprovalService
 
   constructor(private http: HttpClient, private userService: LocalUserService) {
     super();
+    this.leaveApprovalsStore.setDefaultSortByKeys([
+      { key: 'leaveID', ascending: false },
+    ]);
   }
   getAll(): Observable<LeaveApproval[]> {
     const url = `${this.url}/GetLeaveRequestForApproval?EmployeeId=${this.user.id}&UILang=??`; //TODO: check the UILang param (note: this works)

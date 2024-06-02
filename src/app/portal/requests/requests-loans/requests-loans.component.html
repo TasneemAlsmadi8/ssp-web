@@ -29,7 +29,7 @@
           {{ req.loanID }}
         </th>
         <td class="px-6 py-4">{{ req.status }}</td>
-        <td class="px-6 py-4">{{ req.startDate }}</td>
+        <td class="px-6 py-4">{{ req.startDate | date : "dd/MM/yyyy" }}</td>
         <td class="px-6 py-4">{{ req.loanCode }}</td>
         <td class="px-6 py-4">{{ req.totalAmount | number : "1.2-4" }}</td>
         <td class="px-6 py-4">{{ req.installmentCount }}</td>

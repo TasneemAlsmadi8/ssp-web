@@ -9,14 +9,11 @@ import { faCheck } from '@fortawesome/free-solid-svg-icons';
   imports: [CommonModule, FontAwesomeModule],
   template: `
     <button
+      title="Accept"
       (click)="onClick()"
       class="font-bold text-lg text-green-600 hover:bg-blue-100 w-6 h-7 rounded relative"
     >
-      <fa-icon
-        [icon]="faAccept"
-        title="Accept"
-        class="relative bottom-0.5"
-      ></fa-icon>
+      <fa-icon [icon]="faAccept" class="relative bottom-0.5"></fa-icon>
     </button>
   `,
   styleUrls: ['./approval-accept-button.component.scss'],
@@ -29,5 +26,4 @@ export class ApprovalAcceptButtonComponent {
   }
 
   faAccept = faCheck;
-  
 }

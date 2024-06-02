@@ -1,6 +1,9 @@
 import { Component, Inject, OnInit, inject } from '@angular/core';
 import { DestroyBaseComponent } from 'src/app/shared/base/destroy-base.component';
-import { Item, UpdateSchema } from 'src/app/shared/interfaces/requests/generic-request';
+import {
+  Item,
+  UpdateSchema,
+} from 'src/app/shared/interfaces/requests/generic-request';
 import { takeUntil } from 'rxjs';
 import { GenericApprovalService } from '../../services/approvals/generic-approval.service';
 import { SelectedItems } from '../../utils/selected-items';
@@ -10,7 +13,10 @@ import { UserConfirmationService } from '../../services/user-confirmation.servic
   standalone: true,
   template: '',
 })
-export abstract class ApprovalPageComponentTemplate<Approval extends Item, Request extends Item>
+export abstract class ApprovalPageComponentTemplate<
+    Approval extends Item,
+    Request extends Item
+  >
   extends DestroyBaseComponent
   implements OnInit
 {
@@ -49,6 +55,10 @@ export abstract class ApprovalPageComponentTemplate<Approval extends Item, Reque
           console.log(err);
         },
       });
+  }
+
+  refreshItems() {
+    this.approvalService.getAll().pipe(takeUntil(this.destroy$)).subscribe();
   }
 
   approveRequest(id: string): void {
