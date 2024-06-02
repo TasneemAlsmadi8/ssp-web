@@ -1,1 +1,109 @@
-<p>approvals-leaves works!</p>
+<div class="bg-white flex flex-col m-2 px-6 py-4 rounded-lg min-w-fit">
+  <h1 class="text-2xl font-semibold pb-2 mb-2 border-b">
+    Leave Requests Approval
+  </h1>
+  <app-paginated-table [items]="items" (pageChange)="activePageItems = $event">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+      <tr>
+        <th scope="col" class="p-4">
+          <div class="flex items-center">
+            <input
+              id="checkbox-all-search"
+              type="checkbox"
+              [checked]="isAllSelected()"
+              (change)="onSelectAll($event)"
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            />
+            <label for="checkbox-all-search" class="sr-only">checkbox</label>
+          </div>
+        </th>
+        <th scope="col" class="px-6 py-3">{{ "ID" }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Status" }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Type" }}</th>
+        <th scope="col" class="px-6 py-3 xl:hidden">{{ "From" }}</th>
+        <th scope="col" class="px-6 py-3 hidden xl:table-cell">
+          {{ "From Date" }}
+        </th>
+        <th scope="col" class="px-6 py-3 hidden xl:table-cell">
+          {{ "From Time" }}
+        </th>
+        <th scope="col" class="px-6 py-3 xl:hidden">{{ "To" }}</th>
+        <th scope="col" class="px-6 py-3 hidden xl:table-cell">
+          {{ "To Date" }}
+        </th>
+        <th scope="col" class="px-6 py-3 hidden xl:table-cell">
+          {{ "To Time" }}
+        </th>
+        <th scope="col" class="px-6 py-3"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- @for (bp of BP_list; track bp.CardCode) { -->
+      <tr
+        *ngFor="let req of activePageItems; trackBy: trackById"
+        class="odd:bg-white even:bg-gray-50 border-b"
+      >
+        <td class="w-4 p-4">
+          <div class="flex items-center">
+            <input
+              [checked]="isSelected(req)"
+              (change)="toggleItemSelection(req)"
+              type="checkbox"
+              class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 dark:focus:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+            />
+            <label for="checkbox-table-search-1" class="sr-only"
+              >checkbox</label
+            >
+          </div>
+        </td>
+        <th
+          scope="row"
+          class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+        >
+          {{ req.leaveID }}
+        </th>
+
+        <td class="px-6 py-4">{{ req.status }}</td>
+        <td class="px-6 py-4">{{ req.leaveType }}</td>
+        <td class="px-6 py-4 xl:hidden">
+          {{
+            (req.fromTime ?? "00:00") +
+              " - " +
+              (req.fromDate | date : "dd/MM/yyyy")
+          }}
+        </td>
+        <td class="px-6 py-4 hidden xl:table-cell">
+          {{ req.fromDate | date : "dd/MM/yyyy" }}
+        </td>
+        <td class="px-6 py-4 hidden xl:table-cell">{{ req.fromTime }}</td>
+        <td class="px-6 py-4 xl:hidden">
+          {{
+            (req.toTime ?? "00:00") + " - " + (req.toDate | date : "dd/MM/yyyy")
+          }}
+        </td>
+        <td class="px-6 py-4 hidden xl:table-cell">
+          {{ req.toDate | date : "dd/MM/yyyy" }}
+        </td>
+        <td class="px-6 py-4 hidden xl:table-cell">{{ req.toTime }}</td>
+        <td class="px-6 py-4 flex justify-center gap-2">
+          <app-request-details-button
+            (click)="setActiveItemDetails(req)"
+            [isEditable]="req.status === 'Pending'"
+          />
+          <!-- <app-cancel-request-popup
+            *ngIf="req.status === 'Pending'"
+            [service]="leaveService"
+            [id]="req.leaveID"
+          /> -->
+        </td>
+      </tr>
+      <!-- } -->
+    </tbody>
+  </app-paginated-table>
+</div>
+<!-- <app-leave-request-details
+  *ngIf="activeItemDetails"
+  [(isOpen)]="ItemDetailsOpen"
+  [item]="activeItemDetails"
+  [isEditable]="activeItemDetails.status === 'Pending'"
+/> -->
