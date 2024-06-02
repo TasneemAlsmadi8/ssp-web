@@ -105,7 +105,9 @@ export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTe
     }
   }
 
-  override mapItemFieldsToFormValues(item: EncashmentRequest): FormValues {
+  override mapItemFieldsToFormValues(
+    item: EncashmentRequest
+  ): FormValues<typeof this.formControls> {
     return {
       encashmentType: item.encashCode,
       unitPrice: item.unitPrice,

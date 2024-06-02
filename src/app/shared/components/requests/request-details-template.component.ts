@@ -24,8 +24,8 @@ import Swal from 'sweetalert2';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { FormErrorMessageBehavior } from '../FormErrorMessage';
 
-export type FormValues = {
-  [key: string]: string | number | null;
+export type FormValues<T> = {
+  [key in keyof T]: string | number | null;
 };
 
 @Component({
@@ -59,7 +59,9 @@ export abstract class RequestDetailsComponentTemplate<
   form: FormGroup;
 
   abstract mapFormToUpdateRequest(formValues: any): U;
-  abstract mapItemFieldsToFormValues(item: T): FormValues;
+  abstract mapItemFieldsToFormValues(
+    item: T
+  ): FormValues<typeof this.formControls>;
   updateCalculatedValues?(): void;
   getDynamicValues?(): void;
   resetInvalidInputs?(): void;

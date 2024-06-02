@@ -1,6 +1,4 @@
-import {
-  Component,
-} from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   LeaveRequest,
@@ -9,10 +7,7 @@ import {
 } from 'src/app/shared/interfaces/requests/leave';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import {
-  ReactiveFormsModule,
-  Validators,
-} from '@angular/forms';
+import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { LeaveRequestService } from 'src/app/shared/services/requests/leave.service';
 import { takeUntil } from 'rxjs';
 import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
@@ -70,7 +65,9 @@ export class LeaveRequestDetailsComponent extends RequestDetailsComponentTemplat
     };
     return data;
   }
-  override mapItemFieldsToFormValues(item: LeaveRequest): FormValues {
+  override mapItemFieldsToFormValues(
+    item: LeaveRequest
+  ): FormValues<typeof this.formControls> {
     return {
       leaveType: item.leaveCode,
       fromTime: item.fromTime,

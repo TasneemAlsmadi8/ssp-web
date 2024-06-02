@@ -64,7 +64,9 @@ export class LoanRequestDetailsComponent extends RequestDetailsComponentTemplate
     };
     return data;
   }
-  override mapItemFieldsToFormValues(item: LoanRequest): FormValues {
+  override mapItemFieldsToFormValues(
+    item: LoanRequest
+  ): FormValues<typeof this.formControls> {
     return {
       loanType: item.loanCode,
       installments: item.installmentCount,

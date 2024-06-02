@@ -85,7 +85,9 @@ export class OvertimeRequestDetailsComponent extends RequestDetailsComponentTemp
     };
     return data;
   }
-  override mapItemFieldsToFormValues(item: OvertimeRequest): FormValues {
+  override mapItemFieldsToFormValues(
+    item: OvertimeRequest
+  ): FormValues<typeof this.formControls> {
     return {
       overtimeType: item.overtimeCode,
       date: formatDateToISO(item.fromDate),

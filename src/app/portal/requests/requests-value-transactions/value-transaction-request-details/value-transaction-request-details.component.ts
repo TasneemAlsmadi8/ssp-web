@@ -81,7 +81,7 @@ export class ValueTransactionRequestDetailsComponent extends RequestDetailsCompo
   }
   override mapItemFieldsToFormValues(
     item: ValueTransactionRequest
-  ): FormValues {
+  ): FormValues<typeof this.formControls> {
     return {
       valueTransactionType: item.valueTranCode,
       date: formatDateToISO(item.date),
