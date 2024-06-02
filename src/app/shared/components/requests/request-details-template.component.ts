@@ -194,6 +194,7 @@ export abstract class RequestDetailsComponentTemplate<
       })
       .add(() => {
         this.isLoading = false;
+        this.form.reset(this.form.value);
       });
   }
 
