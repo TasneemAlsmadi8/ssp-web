@@ -13,7 +13,7 @@ export class LocalUserService {
     localStorage.setItem('user', JSON.stringify(user));
   }
 
-  setUserFromEmplyee(employee: EmployeeResponse): void {
+  setUserFromEmployee(employee: EmployeeResponse): void {
     const user: User = {
       id: employee.employeeID ?? '',
       code: employee.u_EmpCode ?? '',

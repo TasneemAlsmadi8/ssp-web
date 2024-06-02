@@ -24,7 +24,7 @@ export class AuthService extends BaseService {
       .post<EmployeeResponse>(this.url, user, this.httpOptions)
       .pipe(
         tap((employee) => {
-          this.localUserService.setUserFromEmplyee(employee);
+          this.localUserService.setUserFromEmployee(employee);
         })
       );
   }
