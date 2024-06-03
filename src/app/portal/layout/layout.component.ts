@@ -29,6 +29,7 @@ export class LayoutComponent extends DestroyBaseComponent implements OnInit {
   isLoggedIn = false;
   user!: User;
   selectedLang!: string;
+  selectedLangDir!: 'ltr' | 'rtl';
 
   constructor(
     private authService: AuthService,
@@ -37,11 +38,11 @@ export class LayoutComponent extends DestroyBaseComponent implements OnInit {
   ) {
     super();
     this.selectedLang = this.languageService.selectedLanguage;
-    this.languageService
-      .onChange()
-      .subscribe(
-        (language: Language) => (this.selectedLang = language.code.toString())
-      );
+    this.selectedLangDir = this.languageService.dir;
+    this.languageService.onChange().subscribe((language: Language) => {
+      this.selectedLang = language.code.toString();
+      this.selectedLangDir = language.direction;
+    });
   }
   ngOnInit(): void {
     if (this.isUserLoggedIn()) {

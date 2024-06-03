@@ -34,25 +34,41 @@ export class CancelRequestPopupComponent extends DestroyBaseComponent {
 
   faCancel = faBan;
 
-    constructor(private confirmationService: UserConfirmationService) {
-      super();
-    }
+  constructor(private confirmationService: UserConfirmationService) {
+    super();
+  }
 
   cancelLeaveRequest() {
-    this.confirmationService.confirmAction('Are you sure?', "You won't be able to revert this!", 'Yes, cancel it!', 'No')
+    this.confirmationService
+      .confirmAction(
+        'Are you sure?',
+        "You won't be able to revert this!",
+        'Yes, cancel it!',
+        'No'
+      )
       .subscribe((isConfirmed) => {
         if (isConfirmed) {
-          this.confirmationService.showLoading('Canceling...', 'Please wait while we cancel your request.');
+          this.confirmationService.showLoading(
+            'Canceling...',
+            'Please wait while we cancel your request.'
+          );
 
-          this.service.cancel(this.id)
+          this.service
+            .cancel(this.id)
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: (value) => {
-                this.confirmationService.showSuccess('Canceled!', 'Your Leave Request has been canceled.');
+                this.confirmationService.showSuccess(
+                  'Canceled!',
+                  'Your Request has been canceled.'
+                );
               },
               error: (err) => {
                 console.log(err);
-                this.confirmationService.showError('Error!', 'There was an error canceling your leave request.');
+                this.confirmationService.showError(
+                  'Error!',
+                  'There was an error canceling your request.'
+                );
               },
             });
         }
@@ -93,7 +109,7 @@ export class CancelRequestPopupComponent extends DestroyBaseComponent {
 
               Swal.fire({
                 title: 'Canceled!',
-                text: 'Your Leave Request has been canceled.',
+                text: 'Your Request has been canceled.',
                 icon: 'success',
               });
             },

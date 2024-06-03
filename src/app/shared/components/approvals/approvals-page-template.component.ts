@@ -76,7 +76,7 @@ export abstract class ApprovalPageComponentTemplate<
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: (value) => {
-                this.confirmationService.showSuccess('Approve!', '');
+                this.confirmationService.showSuccess('Approved!', '');
               },
               error: (err) => {
                 console.log(err);
@@ -96,7 +96,7 @@ export abstract class ApprovalPageComponentTemplate<
       .subscribe((isConfirmed) => {
         if (isConfirmed) {
           this.confirmationService.showLoading(
-            'rejecting...',
+            'Rejecting...',
             'Please wait while we reject request.'
           );
 
@@ -105,7 +105,7 @@ export abstract class ApprovalPageComponentTemplate<
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: (value) => {
-                this.confirmationService.showSuccess('reject!', '');
+                this.confirmationService.showSuccess('Rejected!', '');
               },
               error: (err) => {
                 console.log(err);

@@ -35,6 +35,21 @@
   "Search": "ابحث عن",
   "More": "المزيد",
 
+  "Logout": "تسجيل الخروج",
+
+  "Requests": "الطلبات",
+  "Leaves": "المغادرات",
+  "Loans": "القروض",
+  "Overtime": "العمل الإضافي",
+  "Value Transactions": "الحركات النقدية",
+  "Encashments": "حركات التحصيل",
+  "Approvals": "طلبات الموافقة",
+
+  "Previous": "الصفحة السابقة",
+  "Next": "الصفحة التالية",
+  "Showing": "عرض",
+  "of": "من",
+
   "ID": "الرقم المرجعي",
   "Save": "حفظ",
   "From": "من",
@@ -61,6 +76,22 @@
   "Total Time": "الوقت الكلي",
   "Submitted Date": "تاريخ التقديم",
   "Project Name": "اسم المشروع",
+
+  "Employee Info": "معلومات الموظف",
+  "Direct Manager": "المدير المباشر",
+  "Employment Date": "تاريخ التوظيف",
+  "Login ID": "اسم المستخدم",
+  "Email": "البريد الإلكتروني",
+  "Mobile": "الهاتف",
+  "Home Phone": "رقم هاتف المنزل",
+  "Social Security Number": "رقم الضمان الاجتماعي",
+  "National ID": "الرقم الوطني",
+  "Tax Number": "الرقم الضريبي",
+  "Home Address": "عنوان المنزل",
+  "Street": "اسم الشارع",
+  "Building Number": "رقم المبنى",
+  "Block": "الحي",
+  "Zip Code": "الرمز البريدي",
 
   "Leave Requests": "طلبات المغادرة",
   "Leave Request": "طلب المغادرة",
@@ -107,5 +138,27 @@
   "Loan Requests Approval": "الموافقة على طلبات القروض",
   "Overtime Requests Approval": "الموافقة على ساعات العمل الإضافي",
   "Value Transactions Approval": "الموافقة على الحركات النقدية",
-  "Encashment Requests Approval": "الموافقة على حركات التحصيل"
+  "Encashment Requests Approval": "الموافقة على حركات التحصيل",
+
+  "Are you sure?": "هل أنت متأكد؟",
+  "You won't be able to revert this!": "!لا يمكنك التراجع عن هذا الإجراء",
+  "Yes, cancel it!": "!نعم، ألغ",
+  "No": "لا",
+  "Canceling...": "...جار الإلغاء",
+  "Please wait while we cancel your request.": "الرجاء الانتظار",
+  "Canceled!": "!تم الإلغاء",
+  "Your Request has been canceled.": "تم إلغاء طلبك بنجاح",
+  "Error!": "!حدث خلل ما",
+  "There was an error canceling your request.": "حدث خلل خلال عملية الإلغاء",
+
+  "Yes, approve": "نعم، وافق",
+  "Approving...": "....جارٍ الموافقة",
+  "Please wait while we approve request.": ".يرجى الانتظار أثناء الموافقة على الطلب",
+  "Approved!": "!تمت الموافقة",
+  "There was an error approving request.": ".حدث خطأ أثناء الموافقة على الطلب",
+  "Yes, reject": "نعم، ارفض",
+  "Rejecting...": "...جارٍ الرفض",
+  "Please wait while we reject request.": ".يرجى الانتظار أثناء رفض الطلب",
+  "Rejected!": "!تم الرفض",
+  "There was an error rejecting request.": ".حدث خطأ أثناء رفض الطلب"
 }

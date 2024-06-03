@@ -1,18 +1,19 @@
 <div class="flex flex-col items-center">
-  <table class="w-full text-sm text-left rtl:text-right text-gray-500">
+  <table
+    class="w-full text-sm text-left rtl:text-right text-gray-500"
+  >
     <ng-content />
   </table>
   <nav
     class="w-full flex justify-between items-center flex-col flex-wrap md:flex-row pt-4"
-    aria-label="Table navigation"
   >
     <span
       class="text-sm font-normal text-gray-500 mb-4 md:mb-0 block w-full md:inline md:w-auto"
-      >Showing
+      >{{ "Showing" | translate }}
       <span class="font-semibold text-gray-900">{{
         paginator.getActiveRange()
       }}</span>
-      of
+      {{ "of" | translate }}
       <span class="font-semibold text-gray-900">{{
         paginator.totalItems
       }}</span></span
@@ -24,7 +25,7 @@
           [disabled]="paginator.isFirstPage"
           class="flex items-center justify-center px-3 h-8 ms-0 leading-tight text-gray-500 bg-white border border-gray-300 rounded-s-lg hover:bg-gray-100 hover:text-gray-700 disabled:pointer-events-none disabled:opacity-60 disabled:shadow-none"
         >
-          Previous
+          {{ "Previous" | translate }}
         </button>
       </li>
       <li *ngFor="let pageNum of paginator.pageSequence()">
@@ -45,7 +46,7 @@
           [disabled]="paginator.isLastPage"
           class="flex items-center justify-center px-3 h-8 leading-tight text-gray-500 bg-white border border-gray-300 rounded-e-lg hover:bg-gray-100 hover:text-gray-700 disabled:pointer-events-none disabled:opacity-60 disabled:shadow-none"
         >
-          Next
+          {{ "Next" | translate }}
         </button>
       </li>
     </ul>

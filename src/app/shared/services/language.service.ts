@@ -15,7 +15,6 @@ import {
 export class LanguageService {
   private _selectedLanguage: LanguageCode = LanguageCode.English;
 
-
   private subject: Subject<Language> = new Subject<Language>();
 
   constructor(
@@ -53,5 +52,9 @@ export class LanguageService {
 
   onChange(): Observable<Language> {
     return this.subject.asObservable();
+  }
+
+  get dir(): 'ltr' | 'rtl' {
+    return availableLanguages.get(this.selectedLanguage)!.direction;
   }
 }
