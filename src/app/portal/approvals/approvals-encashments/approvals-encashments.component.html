@@ -1,6 +1,6 @@
 <div class="bg-white flex flex-col m-2 px-6 py-4 rounded-lg min-w-fit">
   <h1 class="text-2xl font-semibold pb-2 mb-2 border-b">
-    Encashment Requests Approval
+    {{ "Encashment Requests Approval" | translate }}
   </h1>
   <app-paginated-table [items]="items" (pageChange)="activePageItems = $event">
     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
@@ -17,17 +17,17 @@
             <label for="checkbox-all-search" class="sr-only">checkbox</label>
           </div>
         </th>
-        <th scope="col" class="px-6 py-3">{{ "ID" }}</th>
-        <th scope="col" class="px-6 py-3">{{ "Status" }}</th>
-        <th scope="col" class="px-6 py-3">{{ "Employee Name" }}</th>
+        <th scope="col" class="px-6 py-3">{{ "ID" | translate }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Status" | translate }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Employee Name" | translate }}</th>
         <th scope="col" class="px-6 py-3 hidden xl:table-cell">
-          {{ "Submit Date" }}
+          {{ "Submitted Date" | translate }}
         </th>
-        <!-- <th scope="col" class="px-6 py-3">{{ "Type" }}</th> -->
-        <th scope="col" class="px-6 py-3">{{ "Date" }}</th>
-        <th scope="col" class="px-6 py-3">{{ "Unit Count" }}</th>
-        <th scope="col" class="px-6 py-3">{{ "Total Amount" }}</th>
-        <!-- <th scope="col" class="px-6 py-3">{{ "Project Name" }}</th> -->
+        <!-- <th scope="col" class="px-6 py-3">{{ "Type" | translate }}</th> -->
+        <th scope="col" class="px-6 py-3">{{ "Date" | translate }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Unit Count" | translate }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Total Amount" | translate }}</th>
+        <!-- <th scope="col" class="px-6 py-3">{{ "Project Name" | translate }}</th> -->
         <th scope="col" class="px-6 py-3"></th>
       </tr>
     </thead>

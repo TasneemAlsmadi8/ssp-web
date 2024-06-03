@@ -1,6 +1,11 @@
 <app-modal [isFooterHidden]="true" [(isModalOpen)]="isOpen">
   <h1 modalTitle class="text-xl font-semibold">
-    {{ isEditable ? "Edit" : "" }} Encashment Request - {{ item.encashID }}
+    {{
+      (isEditable ? "Edit Encashment Request" : "Encashment Request")
+        | translate
+    }}
+    -
+    {{ item.encashID }}
   </h1>
   <div class="bg-white flex flex-col m-2 px-6 py-4 rounded-lg">
     <form class="flex flex-col py-2" [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -9,7 +14,7 @@
           <h3
             class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
           >
-            Employee Code
+            {{ "Employee Code" | translate }}
           </h3>
           <div class="relative h-11 w-full min-w-[200px]">
             <input
@@ -23,7 +28,7 @@
           <h3
             class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
           >
-            Employee Name
+            {{ "Employee Name" | translate }}
           </h3>
           <div class="relative h-11 w-full min-w-[200px]">
             <input
@@ -37,7 +42,7 @@
           <h3
             class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
           >
-            Encashment Type
+            {{ "Encashment Type" | translate }}
           </h3>
           <div class="relative h-11 w-full min-w-[200px]">
             <select
@@ -63,7 +68,7 @@
           <h3
             class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
           >
-            Unit Price
+            {{ "Unit Price" | translate }}
           </h3>
           <div class="relative h-11 w-full min-w-[200px]">
             <input
@@ -83,7 +88,7 @@
           <h3
             class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
           >
-            Date
+            {{ "Date" | translate }}
           </h3>
           <div class="relative h-11 w-full min-w-[200px]">
             <input
@@ -103,14 +108,14 @@
           <h3
             class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
           >
-            Unit Count
+            {{ "Unit Count" | translate }}
           </h3>
           <div class="relative h-11 w-full min-w-[200px]">
             <input
               formControlName="unitCount"
               type="number"
               class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-base font-normal transition-all disabled:bg-gray-100"
-              [ngClass]="{'invalid-input': shouldDisplayError('unitCount')}"
+              [ngClass]="{ 'invalid-input': shouldDisplayError('unitCount') }"
             />
             <span *ngIf="shouldDisplayError('unitCount')" class="error-message">
               {{ getErrorMessage("unitCount") }}
@@ -121,7 +126,7 @@
           <h3
             class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
           >
-            Leave Balance
+            {{ "Leave Balance" | translate }}
           </h3>
           <div class="relative h-11 w-full min-w-[200px]">
             <input
@@ -135,7 +140,7 @@
           <h3
             class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
           >
-            Encash Value
+            {{ "Encash Value" | translate }}
           </h3>
           <div class="relative h-11 w-full min-w-[200px]">
             <input
@@ -149,7 +154,7 @@
           <h3
             class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
           >
-            Project
+            {{ "Project Name" | translate }}
           </h3>
           <div class="relative h-11 w-full min-w-[200px]">
             <select
@@ -169,7 +174,7 @@
           <h3
             class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
           >
-            Remarks
+            {{ "Remarks" | translate }}
           </h3>
           <div class="relative h-11 w-full min-w-[200px]">
             <input
@@ -187,7 +192,7 @@
           type="submit"
           [disabled]="form.invalid || form.pristine"
         >
-          Save Changes
+          {{ "Save" | translate }}
           <div role="status" [hidden]="!isLoading">
             <svg
               aria-hidden="true"

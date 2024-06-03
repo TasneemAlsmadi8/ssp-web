@@ -25,6 +25,7 @@ import { TranslateModule } from '@ngx-translate/core';
     FontAwesomeModule,
     ModalComponent,
     ReactiveFormsModule,
+    NewRequestModalComponent,
     TranslateModule,
   ],
   templateUrl: './new-value-transaction-request.component.html',

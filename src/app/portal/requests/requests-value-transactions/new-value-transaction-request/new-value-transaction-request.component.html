@@ -5,7 +5,7 @@
         <h3
           class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
         >
-          Employee Code
+          {{ "Employee Code" | translate }}
         </h3>
         <div class="relative h-11 w-full min-w-[200px]">
           <input
@@ -19,7 +19,7 @@
         <h3
           class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
         >
-          Employee Name
+          {{ "Employee Name" | translate }}
         </h3>
         <div class="relative h-11 w-full min-w-[200px]">
           <input
@@ -33,7 +33,7 @@
         <h3
           class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
         >
-          Value Transaction Type
+          {{ "Value Transaction Type" | translate }}
         </h3>
         <div class="relative h-11 w-full min-w-[200px]">
           <select
@@ -62,7 +62,7 @@
         <h3
           class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
         >
-          Value
+          {{ "Value" | translate }}
         </h3>
         <div class="relative h-11 w-full min-w-[200px]">
           <input
@@ -82,7 +82,7 @@
         <h3
           class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
         >
-          Date
+          {{ "Date" | translate }}
         </h3>
         <div class="relative h-11 w-full min-w-[200px]">
           <input
@@ -102,7 +102,7 @@
         <h3
           class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
         >
-          Project
+          {{ "Project Name" | translate }}
         </h3>
         <div class="relative h-11 w-full min-w-[200px]">
           <select
@@ -119,7 +119,7 @@
         <h3
           class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
         >
-          Remarks
+          {{ "Remarks" | translate }}
         </h3>
         <div class="relative h-11 w-full min-w-[200px]">
           <input
@@ -136,7 +136,7 @@
         type="submit"
         [disabled]="form.invalid || form.pristine"
       >
-        Save Changes
+        {{ "Save" | translate }}
         <div role="status" [hidden]="!isLoading">
           <svg
             aria-hidden="true"

@@ -14,6 +14,8 @@ import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-employee-info',
+  standalone: true,
+  imports: [ReactiveFormsModule, TranslateModule],
   templateUrl: './employee-info.component.html',
   styleUrls: ['./employee-info.component.scss'],
 })

@@ -1,6 +1,7 @@
 <app-modal [isFooterHidden]="true" [(isModalOpen)]="isOpen">
   <h1 modalTitle class="text-xl font-semibold">
-    {{ isEditable ? "Edit" : "" }} Loan Request - {{ item.loanID }}
+    {{ (isEditable ? "Edit Loan Request" : "Loan Request") | translate }} -
+    {{ item.loanID }}
   </h1>
   <div class="bg-white flex flex-col m-2 px-6 py-4 rounded-lg">
     <form class="flex flex-col py-2" [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -9,7 +10,7 @@
           <h3
             class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
           >
-            Employee Code
+            {{ "Employee Code" | translate }}
           </h3>
           <div class="relative h-11 w-full min-w-[200px]">
             <input
@@ -23,7 +24,7 @@
           <h3
             class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
           >
-            Employee Name
+            {{ "Employee Name" | translate }}
           </h3>
           <div class="relative h-11 w-full min-w-[200px]">
             <input
@@ -58,7 +59,7 @@
           <h3
             class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
           >
-            Loan Balance
+            {{ "Loan Balance" | translate }}
           </h3>
           <div class="relative h-11 w-full min-w-[200px]">
             <input
@@ -72,7 +73,7 @@
           <h3
             class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
           >
-            Total Amount
+            {{ "Total Amount" | translate }}
           </h3>
           <div class="relative h-11 w-full min-w-[200px]">
             <input
@@ -93,7 +94,7 @@
           <h3
             class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
           >
-            No. Of Installments
+            {{ "No. Of Installments" | translate }}
           </h3>
           <div class="relative h-11 w-full min-w-[200px]">
             <input
@@ -116,7 +117,7 @@
           <h3
             class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
           >
-            Repayment Start Date
+            {{ "Repayment Start Date" | translate }}
           </h3>
           <div class="relative h-11 w-full min-w-[200px]">
             <input
@@ -130,7 +131,7 @@
           <h3
             class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
           >
-            Remarks
+            {{ "Remarks" | translate }}
           </h3>
           <div class="relative h-11 w-full min-w-[200px]">
             <input
@@ -148,7 +149,7 @@
           type="submit"
           [disabled]="form.invalid || form.pristine"
         >
-          Save Changes
+          {{ "Save" | translate }}
           <div role="status" [hidden]="!isLoading">
             <svg
               aria-hidden="true"

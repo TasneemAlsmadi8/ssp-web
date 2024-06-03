@@ -1,15 +1,17 @@
 <div class="bg-white flex flex-col m-2 px-6 py-4 rounded-lg min-w-fit">
-  <h1 class="text-2xl font-semibold pb-2 mb-2 border-b">Encashment Requests</h1>
+  <h1 class="text-2xl font-semibold pb-2 mb-2 border-b">
+    {{ "Encashment Requests" | translate }}
+  </h1>
   <app-paginated-table [items]="items" (pageChange)="activePageItems = $event">
     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
       <tr>
-        <th scope="col" class="px-6 py-3">{{ "ID" }}</th>
-        <th scope="col" class="px-6 py-3">{{ "Status" }}</th>
-        <!-- <th scope="col" class="px-6 py-3">{{ "Type" }}</th> -->
-        <th scope="col" class="px-6 py-3">{{ "Date" }}</th>
-        <th scope="col" class="px-6 py-3">{{ "Unit Price" }}</th>
-        <th scope="col" class="px-6 py-3">{{ "Unit Count" }}</th>
-        <th scope="col" class="px-6 py-3">{{ "Total Amount" }}</th>
+        <th scope="col" class="px-6 py-3">{{ "ID" | translate }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Status" | translate }}</th>
+        <!-- <th scope="col" class="px-6 py-3">{{ "Type" | translate }}</th> -->
+        <th scope="col" class="px-6 py-3">{{ "Date" | translate }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Unit Price" | translate }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Unit Count" | translate }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Total Amount" | translate }}</th>
         <th scope="col" class="px-6 py-3"></th>
       </tr>
     </thead>
