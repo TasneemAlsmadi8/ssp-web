@@ -9,6 +9,7 @@ import { PaginatedTableComponent } from 'src/app/shared/components/paginated-tab
 import { CancelRequestPopupComponent } from 'src/app/shared/components/requests/cancel-request-popup/cancel-request-popup.component';
 import { RequestDetailsButtonComponent } from 'src/app/shared/components/requests/request-details-button/request-details-button.component';
 import { RequestPageComponentTemplate } from 'src/app/shared/components/requests/request-page-template.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-requests-encashments',
@@ -21,6 +22,7 @@ import { RequestPageComponentTemplate } from 'src/app/shared/components/requests
     NewEncashmentRequestComponent,
     PaginatedTableComponent,
     CancelRequestPopupComponent,
+    TranslateModule,
   ],
   templateUrl: './requests-encashments.component.html',
   styleUrls: ['./requests-encashments.component.scss'],

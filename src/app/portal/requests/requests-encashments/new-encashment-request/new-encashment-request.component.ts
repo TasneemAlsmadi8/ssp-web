@@ -18,6 +18,7 @@ import { LeaveRequestBalance } from 'src/app/shared/interfaces/requests/leave';
 import { NewRequestModalComponent } from 'src/app/shared/components/requests/new-request-modal/new-request-modal.component';
 import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/new-request-template.component';
 import { limitNumberInput } from 'src/app/shared/utils/form-utils';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-new-encashment-request',
@@ -28,6 +29,7 @@ import { limitNumberInput } from 'src/app/shared/utils/form-utils';
     ModalComponent,
     ReactiveFormsModule,
     NewRequestModalComponent,
+    TranslateModule,
   ],
   templateUrl: './new-encashment-request.component.html',
   styleUrls: ['./new-encashment-request.component.scss'],

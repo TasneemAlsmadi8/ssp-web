@@ -15,6 +15,7 @@ import {
   FormValues,
   RequestDetailsComponentTemplate,
 } from 'src/app/shared/components/requests/request-details-template.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-leave-request-details',
@@ -24,6 +25,7 @@ import {
     FontAwesomeModule,
     ModalComponent,
     ReactiveFormsModule,
+    TranslateModule,
   ],
   templateUrl: './leave-request-details.component.html',
   styleUrls: ['./leave-request-details.component.scss'],

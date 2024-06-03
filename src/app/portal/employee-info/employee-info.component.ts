@@ -10,11 +10,10 @@ import { EmployeeInfoService } from 'src/app/shared/services/employee-info.servi
 import { ReactiveFormsModule } from '@angular/forms';
 import Swal from 'sweetalert2';
 import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-employee-info',
-  standalone: true,
-  imports: [ReactiveFormsModule],
   templateUrl: './employee-info.component.html',
   styleUrls: ['./employee-info.component.scss'],
 })
@@ -67,7 +66,7 @@ export class EmployeeInfoComponent
     this.isLoading = true;
     const formValues = this.form.value;
     const data: EmployeePatch = {
-      employeeID: "",
+      employeeID: '',
       homeBlock: formValues.homeBlock!,
       homeZipCode: formValues.homeZip!,
       homeStreet: formValues.homeStreet!,

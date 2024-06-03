@@ -21,6 +21,7 @@ import {
   RequestDetailsComponentTemplate,
 } from 'src/app/shared/components/requests/request-details-template.component';
 import { limitNumberInput } from 'src/app/shared/utils/form-utils';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-encashment-request-details',
@@ -30,6 +31,7 @@ import { limitNumberInput } from 'src/app/shared/utils/form-utils';
     FontAwesomeModule,
     ModalComponent,
     ReactiveFormsModule,
+    TranslateModule,
   ],
   templateUrl: './encashment-request-details.component.html',
   styleUrls: ['./encashment-request-details.component.scss'],

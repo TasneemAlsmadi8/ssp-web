@@ -14,6 +14,7 @@ import {
   LoanRequestStatus,
 } from 'src/app/shared/interfaces/requests/loan';
 import { ApprovalSpeedDialComponent } from 'src/app/shared/components/approvals/approval-speed-dial/approval-speed-dial.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-approvals-loans',
@@ -27,6 +28,7 @@ import { ApprovalSpeedDialComponent } from 'src/app/shared/components/approvals/
     ApprovalRejectButtonComponent,
     ApprovalAcceptButtonComponent,
     ApprovalSpeedDialComponent,
+    TranslateModule,
   ],
   templateUrl: './approvals-loans.component.html',
   styleUrls: ['./approvals-loans.component.scss'],

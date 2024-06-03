@@ -9,6 +9,7 @@ import { PaginatedTableComponent } from 'src/app/shared/components/paginated-tab
 import { CancelRequestPopupComponent } from 'src/app/shared/components/requests/cancel-request-popup/cancel-request-popup.component';
 import { RequestPageComponentTemplate } from 'src/app/shared/components/requests/request-page-template.component';
 import { RequestDetailsButtonComponent } from 'src/app/shared/components/requests/request-details-button/request-details-button.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-requests-value-transactions',
@@ -21,6 +22,7 @@ import { RequestDetailsButtonComponent } from 'src/app/shared/components/request
     NewValueTransactionRequestComponent,
     PaginatedTableComponent,
     CancelRequestPopupComponent,
+    TranslateModule,
   ],
   templateUrl: './requests-value-transactions.component.html',
   styleUrls: ['./requests-value-transactions.component.scss'],

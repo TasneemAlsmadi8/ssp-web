@@ -14,6 +14,7 @@ import {
   ValueTransactionRequestStatus,
 } from 'src/app/shared/interfaces/requests/value-transaction';
 import { ApprovalSpeedDialComponent } from 'src/app/shared/components/approvals/approval-speed-dial/approval-speed-dial.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-approvals-value-transactions',
@@ -27,6 +28,7 @@ import { ApprovalSpeedDialComponent } from 'src/app/shared/components/approvals/
     ApprovalRejectButtonComponent,
     ApprovalAcceptButtonComponent,
     ApprovalSpeedDialComponent,
+    TranslateModule,
   ],
   templateUrl: './approvals-value-transactions.component.html',
   styleUrls: ['./approvals-value-transactions.component.scss'],

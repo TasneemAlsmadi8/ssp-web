@@ -18,6 +18,7 @@ import { NewRequestModalComponent } from 'src/app/shared/components/requests/new
 import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/new-request-template.component';
 import { limitNumberInput } from 'src/app/shared/utils/form-utils';
 import { minDate } from 'src/app/shared/utils/date-validators';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-new-loan-request',
@@ -28,6 +29,7 @@ import { minDate } from 'src/app/shared/utils/date-validators';
     ModalComponent,
     ReactiveFormsModule,
     NewRequestModalComponent,
+    TranslateModule,
   ],
   templateUrl: './new-loan-request.component.html',
   styleUrls: ['./new-loan-request.component.scss'],

@@ -14,6 +14,7 @@ import {
 import { ApprovalSpeedDialComponent } from 'src/app/shared/components/approvals/approval-speed-dial/approval-speed-dial.component';
 import { OvertimeRequestDetailsComponent } from '../../requests/requests-overtime/overtime-request-details/overtime-request-details.component';
 import { OvertimeApprovalService } from 'src/app/shared/services/approvals/overtime.service';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-approvals-overtime',
@@ -27,7 +28,9 @@ import { OvertimeApprovalService } from 'src/app/shared/services/approvals/overt
     ApprovalRejectButtonComponent,
     ApprovalAcceptButtonComponent,
     ApprovalSpeedDialComponent,
+    TranslateModule,
   ],
+
   templateUrl: './approvals-overtime.component.html',
   styleUrls: ['./approvals-overtime.component.scss'],
 })

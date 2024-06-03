@@ -14,6 +14,7 @@ import { ProjectsService } from 'src/app/shared/services/projects.service';
 import { NewRequestModalComponent } from 'src/app/shared/components/requests/new-request-modal/new-request-modal.component';
 import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/new-request-template.component';
 import { limitNumberInput } from 'src/app/shared/utils/form-utils';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-new-overtime-request',
@@ -23,6 +24,7 @@ import { limitNumberInput } from 'src/app/shared/utils/form-utils';
     FontAwesomeModule,
     ReactiveFormsModule,
     NewRequestModalComponent,
+    TranslateModule,
   ],
   templateUrl: './new-overtime-request.component.html',
   styleUrls: ['./new-overtime-request.component.scss'],

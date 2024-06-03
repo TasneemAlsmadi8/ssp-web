@@ -14,6 +14,7 @@ import {
   LeaveRequestStatus,
 } from 'src/app/shared/interfaces/requests/leave';
 import { ApprovalSpeedDialComponent } from 'src/app/shared/components/approvals/approval-speed-dial/approval-speed-dial.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-approvals-leaves',
@@ -27,6 +28,7 @@ import { ApprovalSpeedDialComponent } from 'src/app/shared/components/approvals/
     ApprovalRejectButtonComponent,
     ApprovalAcceptButtonComponent,
     ApprovalSpeedDialComponent,
+    TranslateModule,
   ],
   templateUrl: './approvals-leaves.component.html',
   styleUrls: ['./approvals-leaves.component.scss'],

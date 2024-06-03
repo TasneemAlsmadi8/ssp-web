@@ -13,6 +13,7 @@ import { LeaveRequestService } from 'src/app/shared/services/requests/leave.serv
 import { takeUntil } from 'rxjs';
 import { NewRequestModalComponent } from 'src/app/shared/components/requests/new-request-modal/new-request-modal.component';
 import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/new-request-template.component';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-new-leave-request',
@@ -23,6 +24,7 @@ import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/
     ModalComponent,
     ReactiveFormsModule,
     NewRequestModalComponent,
+    TranslateModule,
   ],
   templateUrl: './new-leave-request.component.html',
   styleUrls: ['./new-leave-request.component.scss'],
