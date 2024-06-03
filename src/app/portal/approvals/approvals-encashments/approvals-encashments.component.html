@@ -20,7 +20,9 @@
         <th scope="col" class="px-6 py-3">{{ "ID" }}</th>
         <th scope="col" class="px-6 py-3">{{ "Status" }}</th>
         <th scope="col" class="px-6 py-3">{{ "Employee Name" }}</th>
-        <th scope="col" class="px-6 py-3">{{ "Submit Date" }}</th>
+        <th scope="col" class="px-6 py-3 hidden xl:table-cell">
+          {{ "Submit Date" }}
+        </th>
         <!-- <th scope="col" class="px-6 py-3">{{ "Type" }}</th> -->
         <th scope="col" class="px-6 py-3">{{ "Date" }}</th>
         <th scope="col" class="px-6 py-3">{{ "Unit Count" }}</th>
@@ -56,12 +58,16 @@
         </th>
         <td class="px-6 py-4">{{ req.status }}</td>
         <td class="px-6 py-4">{{ req.fullName }}</td>
-        <td class="px-6 py-4">{{ req.dateSubmitted | date : "dd/MM/yyyy" }}</td>
+        <td class="px-6 py-4 hidden xl:table-cell">
+          {{ req.dateSubmitted | date : "dd/MM/yyyy" }}
+        </td>
         <td class="px-6 py-4">{{ req.date | date : "dd/MM/yyyy" }}</td>
         <td class="px-6 py-4">{{ req.unitCount | number : "1.2-4" }}</td>
         <td class="px-6 py-4">{{ req.value | number : "1.2-4" }}</td>
         <td class="px-6 py-4">
-          <div class="flex flex-col justify-center items-center gap-x-2">
+          <div
+            class="flex flex-col xl:flex-row justify-center items-center gap-x-2"
+          >
             <app-request-details-button
               (click)="setActiveItemDetails(req)"
               [isEditable]="req.status === 'Pending'"

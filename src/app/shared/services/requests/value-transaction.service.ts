@@ -98,7 +98,7 @@ export class ValueTransactionRequestService
       this.http
         .get<ValueTransactionRequestType[]>(url, this.httpOptions)
         .subscribe((value) => {
-          console.log(value);
+          // console.log(value);
           this.valueTransactionTypesStore.update(value);
         });
     }
@@ -115,7 +115,6 @@ export class ValueTransactionRequestService
             .getValue()
             .map((valueTransactionRequest) => {
               if (valueTransactionRequest.valueTranID === body.docEntry) {
-                console.log('sync updated values');
                 valueTransactionRequest.valueTranCode =
                   body.u_ValueTranType ?? valueTransactionRequest.valueTranCode;
                 valueTransactionRequest.value =
