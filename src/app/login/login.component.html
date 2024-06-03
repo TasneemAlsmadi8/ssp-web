@@ -1,5 +1,6 @@
 <section
   class="w-screen h-screen bg-primary-300 flex justify-center items-center overflow-y-auto p-1"
+  [dir]="languageService.dir"
 >
   <div
     href="#"
@@ -26,11 +27,11 @@
           <h3
             class="block -mb-3 font-sans text-xl antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
           >
-            Username
+            {{ "Username" | translate }}
           </h3>
           <div class="relative h-11 w-full min-w-[200px]">
             <div
-              class="absolute grid w-5 h-5 place-items-center text-blue-gray-500 top-2/4 left-3 -translate-y-2/4"
+              class="absolute grid w-5 h-5 place-items-center text-blue-gray-500 top-2/4 left-3 rtl:right-3 -translate-y-2/4"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -54,17 +55,17 @@
                 loginForm.get('username')?.dirty
               "
               class="text-red-500 font-normal text-sm ml-1"
-              >username is required *</span
+              >{{ "Username is required" | translate }} *</span
             >
           </div>
           <h3
             class="block -mb-3 font-sans text-xl antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
           >
-            Password
+            {{ "Password" | translate }}
           </h3>
           <div class="relative h-11 w-full min-w-[200px]">
             <div
-              class="absolute grid w-5 h-5 place-items-center text-blue-gray-500 top-2/4 left-3 -translate-y-2/4"
+              class="absolute grid w-5 h-5 place-items-center text-blue-gray-500 top-2/4 left-3 rtl:right-3 rtl:-scale-x-100 -translate-y-2/4"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -88,16 +89,16 @@
                 loginForm.get('password')?.dirty
               "
               class="text-red-500 font-normal text-sm ml-1"
-              >password is required *</span
+              >{{ "Password is required" | translate }} *</span
             >
           </div>
         </div>
         <button
           class="mt-14 flex items-center justify-center gap-4 w-full select-none rounded-lg bg-primary-300 hover:bg-primary-200 py-3 px-6 text-center align-middle font-sans text-sm font-semibold capitalize text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
           type="submit"
-          [disabled]="!loginForm.valid"
+          [disabled]="!loginForm.valid || loginForm.pristine"
         >
-          Sign In
+          {{ "Sign In" | translate }}
 
           <div role="status" [hidden]="!isLoading">
             <svg

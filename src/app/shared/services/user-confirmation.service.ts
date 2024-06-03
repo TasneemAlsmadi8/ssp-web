@@ -51,23 +51,29 @@ export class UserConfirmationService {
     });
   }
 
-  showSuccess(title: string, text: string) {
-    this.translate.get([title, text]).subscribe((translations) => {
-      Swal.fire({
-        title: translations[title],
-        text: translations[text],
-        icon: 'success',
+  showSuccess(title: string, text: string, confirmButtonText: string = 'Ok') {
+    this.translate
+      .get([title, text, confirmButtonText])
+      .subscribe((translations) => {
+        Swal.fire({
+          title: translations[title],
+          text: translations[text],
+          icon: 'success',
+          confirmButtonText: translations[confirmButtonText],
+        });
       });
-    });
   }
 
-  showError(title: string, text: string) {
-    this.translate.get([title, text]).subscribe((translations) => {
-      Swal.fire({
-        title: translations[title],
-        text: translations[text],
-        icon: 'error',
+  showError(title: string, text: string, confirmButtonText: string = 'Ok') {
+    this.translate
+      .get([title, text, confirmButtonText])
+      .subscribe((translations) => {
+        Swal.fire({
+          title: translations[title],
+          text: translations[text],
+          icon: 'error',
+          confirmButtonText: translations[confirmButtonText],
+        });
       });
-    });
   }
 }

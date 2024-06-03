@@ -8,16 +8,17 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faCoffee, faKey } from '@fortawesome/free-solid-svg-icons';
-import { faKeybase, faKeycdn } from '@fortawesome/free-brands-svg-icons';
-import { User, UserLogin } from '../shared/interfaces/user';
+import { faKey } from '@fortawesome/free-solid-svg-icons';
+import { UserLogin } from '../shared/interfaces/user';
 import { AuthService } from '../shared/services/auth.service';
 import { takeUntil } from 'rxjs';
 import { DestroyBaseComponent } from '../shared/base/destroy-base.component';
 import { Router } from '@angular/router';
 import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
-import Swal from 'sweetalert2';
 import { InputComponent } from '../shared/components/input/input.component';
+import { TranslateModule } from '@ngx-translate/core';
+import { LanguageService } from '../shared/services/language.service';
+import { UserConfirmationService } from '../shared/services/user-confirmation.service';
 
 @Component({
   selector: 'app-login',
@@ -28,6 +29,7 @@ import { InputComponent } from '../shared/components/input/input.component';
     ReactiveFormsModule,
     FontAwesomeModule,
     InputComponent,
+    TranslateModule,
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
@@ -40,7 +42,12 @@ export class LoginComponent extends DestroyBaseComponent implements OnInit {
     password: new FormControl('', [Validators.required]),
   });
 
-  constructor(private authService: AuthService, private router: Router) {
+  constructor(
+    private authService: AuthService,
+    private router: Router,
+    public languageService: LanguageService,
+    private userConfirmationService: UserConfirmationService
+  ) {
     super();
   }
   ngOnInit(): void {
@@ -67,21 +74,20 @@ export class LoginComponent extends DestroyBaseComponent implements OnInit {
         },
         error: (err: HttpErrorResponse) => {
           if (err.status == HttpStatusCode.BadRequest) {
-            Swal.fire({
-              title: 'Error!',
-              text: 'Invalid username or password',
-              icon: 'error',
-              confirmButtonText: 'Retry',
-            });
+            this.userConfirmationService.showError(
+              'Error!',
+              'Invalid username or password',
+              'Retry'
+            );
           } else {
-            Swal.fire({
-              title: 'Error!',
-              text: 'Unknown error: ' + err.status,
-              icon: 'error',
-              confirmButtonText: 'Retry',
-            });
+            this.userConfirmationService.showError(
+              'Error!',
+              'Unknown error: ' + err.status,
+              'Retry'
+            );
             console.log(err);
           }
+          this.loginForm.reset(this.loginForm.value);
         },
       })
       .add(() => {
