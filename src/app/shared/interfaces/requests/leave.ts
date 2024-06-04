@@ -1,4 +1,39 @@
 export interface LeaveRequest {
+  id: string;
+  employeeId: string;
+  leaveType: string;
+  fromDate: string;
+  toDate: string;
+  fromTime: string | null;
+  toTime: string | null;
+  status: string;
+  remarks: string | null;
+  leaveCode: string;
+  paidDays: string;
+  unpaidDays: string;
+}
+
+export interface LeaveRequestUpdate {
+  id: string;
+
+  leaveCode?: string;
+  fromDate?: string;
+  toDate?: string;
+  fromTime?: string;
+  toTime?: string;
+  remarks?: string;
+}
+
+export interface LeaveRequestAdd {
+  leaveCode: string;
+  fromDate: string;
+  toDate: string;
+  fromTime: string;
+  toTime: string;
+  remarks?: string;
+}
+
+export interface LeaveRequestApi {
   leaveID: string;
   u_EmployeeID: string;
   leaveType: string;
@@ -64,7 +99,7 @@ export interface LeaveRequestGetById {
   u_ApprEmpID3: string;
 }
 
-export interface LeaveRequestUpdateSchema {
+export interface LeaveRequestUpdateApi {
   docEntry: string;
 
   //edit for pending
@@ -109,7 +144,7 @@ export enum LeaveRequestStatus {
   Canceled = '3',
 }
 
-export interface LeaveRequestAddSchema {
+export interface LeaveRequestAddApi {
   docEntry?: string;
   // actually used:
   u_EmployeeID: string;

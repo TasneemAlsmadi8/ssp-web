@@ -46,27 +46,19 @@ export class ApprovalsLeavesComponent extends ApprovalPageComponentTemplate<
   }
   override mapApprovalToUpdateRequest(item: LeaveApproval): LeaveRequest {
     const data: LeaveRequest = {
-      leaveID: item.leaveID,
+      id: item.leaveID,
       leaveType: item.leaveType,
       fromDate: item.fromDate,
       toDate: item.toDate,
       fromTime: item.fromTime,
       toTime: item.toTime,
       remarks: item.remarks,
-      u_EmployeeID: item.empID,
-      statusTypeId: LeaveRequestStatus.Pending,
+      employeeId: item.empID,
+      // statusTypeId: LeaveRequestStatus.Pending,
       status: 'Pending',
       leaveCode: item.leaveCode,
-      u_Status: LeaveRequestStatus.Pending,
-
-      u_ApprStatus1: '',
-      u_ApprStatus2: null,
-      u_ApprStatus3: null,
-      u_PaidDays: '',
-      u_UnpaidDays: '',
-      u_AttachFile: '',
-      sortFromDate: '',
-      sortToDate: '',
+      paidDays: '',
+      unpaidDays: '',
     };
     return data;
   }

@@ -37,7 +37,7 @@
           scope="row"
           class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
         >
-          {{ req.leaveID }}
+          {{ req.id }}
         </th>
 
         <td class="px-6 py-4">{{ req.status }}</td>
@@ -60,7 +60,7 @@
           <app-cancel-request-popup
             *ngIf="req.status === 'Pending'"
             [service]="leaveService"
-            [id]="req.leaveID"
+            [id]="req.id"
           />
         </td>
       </tr>

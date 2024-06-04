@@ -6,19 +6,22 @@ import {
   LeaveRequestStatus,
   LeaveRequest,
   LeaveRequestType,
-  LeaveRequestUpdateSchema,
-  LeaveRequestAddSchema,
+  LeaveRequestUpdate,
+  LeaveRequestAdd,
   LeaveRequestBalance,
+  LeaveRequestApi,
+  LeaveRequestAddApi,
+  LeaveRequestUpdateApi,
 } from '../../interfaces/requests/leave';
 import { Observable, map, tap } from 'rxjs';
 import { SharedArrayStore } from '../../utils/shared-array-store';
 import { GenericRequestService } from './generic-request.service';
-import { ItemStatus } from '../../interfaces/requests/generic-request';
+import { formatDateToISO } from '../../utils/data-formatter';
 
 type iLeaveRequestService = GenericRequestService<
   LeaveRequest,
-  LeaveRequestUpdateSchema,
-  LeaveRequestAddSchema,
+  LeaveRequestUpdate,
+  LeaveRequestAdd,
   LeaveRequestType
 >;
 
@@ -44,8 +47,8 @@ export class LeaveRequestService
     super();
 
     this.leaveRequestsStore.setDefaultSortByKeys([
-      { key: 'sortFromDate', ascending: false },
-      { key: 'leaveID', ascending: false },
+      { key: 'fromDate', ascending: false },
+      { key: 'id', ascending: false },
     ]);
   }
 
@@ -55,11 +58,10 @@ export class LeaveRequestService
 
   getAll(): Observable<LeaveRequest[]> {
     const url = `${this.url}/GetLeaveRequestsByEmployeeId?EmployeeId=${this.user.id}`;
-    return this.http
-      .get<LeaveRequest[]>(url, this.httpOptions)
-      .pipe(
-        tap((leaveRequests) => this.leaveRequestsStore.update(leaveRequests))
-      );
+    return this.http.get<LeaveRequestApi[]>(url, this.httpOptions).pipe(
+      map((response) => response.map(LeaveRequestAdapter.ApiToModel)),
+      tap((leaveRequests) => this.leaveRequestsStore.update(leaveRequests))
+    );
   }
 
   cancel(id: string): Observable<any> {
@@ -74,10 +76,10 @@ export class LeaveRequestService
         const updatedLeaveRequests = this.leaveRequestsStore
           .getValue()
           .map((leaveRequest) => {
-            if (leaveRequest.leaveID === id) {
+            if (leaveRequest.id === id) {
               leaveRequest.status = 'Canceled';
-              leaveRequest.statusTypeId = body.u_Status;
-              leaveRequest.u_Status = body.u_Status;
+              // leaveRequest.statusTypeId = body.u_Status;
+              // leaveRequest.u_Status = body.u_Status;
               leaveRequest = { ...leaveRequest };
             }
             return leaveRequest;
@@ -100,25 +102,24 @@ export class LeaveRequestService
     return this.leaveTypesStore.observable$;
   }
 
-  update(body: LeaveRequestUpdateSchema): Observable<any> {
+  update(data: LeaveRequestUpdate): Observable<any> {
     const url = this.url + '/UpdateLeaveRequest';
+    const body: LeaveRequestUpdateApi = LeaveRequestAdapter.updateToApi(data);
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(
       tap(() => {
         const updatedLeaveRequests = this.leaveRequestsStore
           .getValue()
           .map((leaveRequest) => {
-            if (leaveRequest.leaveID === body.docEntry) {
-              leaveRequest.leaveType =
-                this.getTypeName(body.u_LeaveType ?? '') ||
+            if (leaveRequest.id === data.id) {
+              const leaveType =
+                this.getTypeName(data.leaveCode ?? '') ||
                 leaveRequest.leaveType;
-              leaveRequest.fromTime = body.u_FromTime ?? leaveRequest.fromTime;
-              leaveRequest.toTime = body.u_ToTime ?? leaveRequest.toTime;
-              leaveRequest.fromDate = body.u_FromDate ?? leaveRequest.fromDate;
-              leaveRequest.toDate = body.u_ToDate ?? leaveRequest.toDate;
-              leaveRequest.remarks = body.u_Remarks ?? leaveRequest.remarks;
-
-              leaveRequest = { ...leaveRequest };
+              leaveRequest = {
+                ...leaveRequest,
+                ...data,
+                leaveType,
+              };
             }
             return leaveRequest;
           });
@@ -127,10 +128,13 @@ export class LeaveRequestService
     );
   }
 
-  add(body: LeaveRequestAddSchema): Observable<any> {
+  add(data: LeaveRequestAdd): Observable<any> {
     const url = this.url + '/AddLeave';
 
-    if (!body.u_EmployeeID) body.u_EmployeeID = this.user.id;
+    const body: LeaveRequestAddApi = LeaveRequestAdapter.AddToApi(
+      data,
+      this.user.id
+    );
 
     return this.http.post<any>(url, body, this.httpOptions).pipe(
       tap(() => {
@@ -183,6 +187,55 @@ export class LeaveRequestService
     this.leaveRequestsStore.sortByKey('fromDate', ascending);
   }
   sortById(ascending: boolean = true): void {
-    this.leaveRequestsStore.sortByKey('leaveID', ascending);
+    this.leaveRequestsStore.sortByKey('id', ascending);
+  }
+}
+
+class LeaveRequestAdapter {
+  static ApiToModel(apiSchema: LeaveRequestApi): LeaveRequest {
+    const obj: LeaveRequest = {
+      id: apiSchema.leaveID,
+      employeeId: apiSchema.u_EmployeeID,
+      leaveType: apiSchema.leaveType,
+      leaveCode: apiSchema.leaveCode,
+      fromDate: formatDateToISO(apiSchema.fromDate),
+      toDate: formatDateToISO(apiSchema.toDate),
+      fromTime: apiSchema.fromTime,
+      toTime: apiSchema.toTime,
+      status: apiSchema.status,
+      remarks: apiSchema.remarks,
+      paidDays: apiSchema.u_PaidDays,
+      unpaidDays: apiSchema.u_UnpaidDays,
+    };
+    return obj;
+  }
+
+  static AddToApi(
+    addSchema: LeaveRequestAdd,
+    employeeId: string
+  ): LeaveRequestAddApi {
+    const obj: LeaveRequestAddApi = {
+      u_EmployeeID: employeeId,
+      u_LeaveType: addSchema.leaveCode,
+      u_FromDate: addSchema.fromDate,
+      u_ToDate: addSchema.toDate,
+      u_FromTime: addSchema.fromTime,
+      u_ToTime: addSchema.toTime,
+      u_Remarks: addSchema.remarks,
+    };
+    return obj;
+  }
+
+  static updateToApi(updateSchema: LeaveRequestUpdate): LeaveRequestUpdateApi {
+    const obj: LeaveRequestUpdateApi = {
+      docEntry: updateSchema.id,
+      u_LeaveType: updateSchema.leaveCode,
+      u_FromDate: updateSchema.fromDate,
+      u_ToDate: updateSchema.toDate,
+      u_FromTime: updateSchema.fromTime,
+      u_ToTime: updateSchema.toTime,
+      u_Remarks: updateSchema.remarks,
+    };
+    return obj;
   }
 }

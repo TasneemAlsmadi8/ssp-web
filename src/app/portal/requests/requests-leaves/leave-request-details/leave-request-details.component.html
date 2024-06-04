@@ -1,7 +1,7 @@
 <app-modal [isFooterHidden]="true" [(isModalOpen)]="isOpen">
   <h1 modalTitle class="text-xl font-semibold">
     {{ (isEditable ? "Edit Leave Request" : "Leave Request") | translate }} -
-    {{ item.leaveID }}
+    {{ item.id }}
   </h1>
   <div class="bg-white flex flex-col m-2 px-6 py-4 rounded-lg">
     <form class="flex flex-col py-2" [formGroup]="form" (ngSubmit)="onSubmit()">
@@ -135,7 +135,7 @@
           </h3>
           <div class="relative h-11 w-full min-w-[200px]">
             <input
-              [value]="item.u_PaidDays"
+              [value]="item.paidDays"
               disabled
               class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-base font-normal transition-all disabled:bg-gray-100"
             />
@@ -149,7 +149,7 @@
           </h3>
           <div class="relative h-11 w-full min-w-[200px]">
             <input
-              [value]="item.u_UnpaidDays"
+              [value]="item.unpaidDays"
               disabled
               class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-base font-normal transition-all disabled:bg-gray-100"
             />

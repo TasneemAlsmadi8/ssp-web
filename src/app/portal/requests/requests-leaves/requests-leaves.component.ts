@@ -33,6 +33,6 @@ export class RequestsLeavesComponent extends RequestPageComponentTemplate<LeaveR
   }
 
   override trackByRequestId(index: number, item: LeaveRequest): number {
-    return parseInt(item.leaveID);
+    return parseInt(item.id);
   }
 }

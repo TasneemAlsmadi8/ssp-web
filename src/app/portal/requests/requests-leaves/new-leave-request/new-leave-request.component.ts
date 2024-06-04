@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  LeaveRequestAddSchema,
+  LeaveRequestAdd,
   LeaveRequest,
   LeaveRequestType,
   LeaveRequestBalance,
@@ -31,29 +31,21 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class NewLeaveRequestComponent extends NewRequestComponentTemplate<
   LeaveRequest,
-  LeaveRequestAddSchema
+  LeaveRequestAdd
 > {
   item: LeaveRequest = {
-    leaveID: '',
-    u_EmployeeID: '',
+    id: '',
+    employeeId: '',
     leaveType: '',
     fromDate: '',
     toDate: '',
-    statusTypeId: '',
     fromTime: null,
     toTime: null,
     status: '',
     remarks: null,
     leaveCode: '',
-    u_Status: '',
-    u_ApprStatus1: '',
-    u_ApprStatus2: null,
-    u_ApprStatus3: null,
-    u_PaidDays: '',
-    u_UnpaidDays: '',
-    u_AttachFile: '',
-    sortFromDate: '',
-    sortToDate: '',
+    paidDays: '',
+    unpaidDays: '',
   };
 
   paidDays: number = 1;
@@ -135,15 +127,14 @@ export class NewLeaveRequestComponent extends NewRequestComponentTemplate<
     }
   }
 
-  override mapFormToAddRequest(formValues: any): LeaveRequestAddSchema {
-    const data: LeaveRequestAddSchema = {
-      u_LeaveType: formValues.leaveType ?? undefined,
-      u_FromDate: formValues.fromDate ?? undefined,
-      u_ToDate: formValues.toDate ?? undefined,
-      u_FromTime: formValues.fromTime ?? undefined,
-      u_ToTime: formValues.toTime ?? undefined,
-      u_Remarks: formValues.remarks ?? undefined,
-      u_EmployeeID: '',
+  override mapFormToAddRequest(formValues: any): LeaveRequestAdd {
+    const data: LeaveRequestAdd = {
+      leaveCode: formValues.leaveType ?? undefined,
+      fromDate: formValues.fromDate ?? undefined,
+      toDate: formValues.toDate ?? undefined,
+      fromTime: formValues.fromTime ?? undefined,
+      toTime: formValues.toTime ?? undefined,
+      remarks: formValues.remarks ?? undefined,
     };
 
     return data;

@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import {
   LeaveRequest,
   LeaveRequestType,
-  LeaveRequestUpdateSchema,
+  LeaveRequestUpdate,
 } from 'src/app/shared/interfaces/requests/leave';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -32,7 +32,7 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class LeaveRequestDetailsComponent extends RequestDetailsComponentTemplate<
   LeaveRequest,
-  LeaveRequestUpdateSchema
+  LeaveRequestUpdate
 > {
   leaveTypes!: LeaveRequestType[];
 
@@ -55,15 +55,15 @@ export class LeaveRequestDetailsComponent extends RequestDetailsComponentTemplat
         this.leaveTypes = value;
       });
   }
-  override mapFormToUpdateRequest(formValues: any): LeaveRequestUpdateSchema {
-    const data: LeaveRequestUpdateSchema = {
-      docEntry: this.item.leaveID,
-      u_LeaveType: formValues.leaveType ?? undefined,
-      u_FromDate: formValues.fromDate ?? undefined,
-      u_ToDate: formValues.toDate ?? undefined,
-      u_FromTime: formValues.fromTime ?? undefined,
-      u_ToTime: formValues.toTime ?? undefined,
-      u_Remarks: formValues.remarks ?? undefined,
+  override mapFormToUpdateRequest(formValues: any): LeaveRequestUpdate {
+    const data: LeaveRequestUpdate = {
+      id: this.item.id,
+      leaveCode: formValues.leaveType ?? undefined,
+      fromDate: formValues.fromDate ?? undefined,
+      toDate: formValues.toDate ?? undefined,
+      fromTime: formValues.fromTime ?? undefined,
+      toTime: formValues.toTime ?? undefined,
+      remarks: formValues.remarks ?? undefined,
     };
     return data;
   }
