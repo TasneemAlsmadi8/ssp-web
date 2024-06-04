@@ -1,4 +1,42 @@
 export interface OvertimeRequest {
+  id: string;
+  overtimeType: string;
+  overtimeCode: string;
+  fromDate: string;
+  toDate: string;
+  fromTime: string | null;
+  toTime: string | null;
+  status: string;
+  overtimeHours: string;
+  hour: number;
+  minute: number;
+  remarks: string;
+  projectCode: string;
+  projectName: string;
+}
+
+export interface OvertimeRequestUpdate {
+  id: string;
+  overtimeCode?: string;
+  fromDate?: string;
+  toDate?: string;
+  hour?: number;
+  minute?: number;
+  projectCode?: string;
+  remarks?: string;
+}
+
+export interface OvertimeRequestAdd {
+  overtimeCode: string;
+  fromDate: string;
+  toDate: string;
+  hour: string;
+  minute: string;
+  projectCode: string;
+  remarks: string;
+}
+
+export interface OvertimeRequestApi {
   overtimeID: string;
   u_EmployeeID: string;
   overtimeType: string;
@@ -36,7 +74,7 @@ export interface OvertimeRequestType {
   name: string;
 }
 
-export interface OvertimeRequestUpdateSchema {
+export interface OvertimeRequestUpdateApi {
   docEntry: string;
   u_EmployeeID?: string;
   u_OvType?: string;
@@ -57,7 +95,7 @@ export interface OvertimeRequestUpdateSchema {
   u_ApprEmpID3?: string;
 }
 
-export interface OvertimeRequestAddSchema {
+export interface OvertimeRequestAddApi {
   docEntry?: string;
 
   u_EmployeeID: string;
@@ -67,7 +105,7 @@ export interface OvertimeRequestAddSchema {
   u_OvHour: string;
   u_OvMin: string;
   u_ProjectCode: string;
-  u_Remarks: string;
+  u_Remarks?: string;
 
   u_AttachFile?: string;
   u_HourTranDocEntry?: string;

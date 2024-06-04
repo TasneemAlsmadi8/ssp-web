@@ -47,16 +47,13 @@ export class ApprovalsOvertimeComponent extends ApprovalPageComponentTemplate<
   }
   override mapApprovalToUpdateRequest(item: OvertimeApproval): OvertimeRequest {
     const data: OvertimeRequest = {
-      overtimeID: item.overtimeID,
+      id: item.overtimeID,
       overtimeType: item.overtimeType,
       fromDate: item.fromDate,
       remarks: item.remarks,
-      u_EmployeeID: item.empID,
-      statusTypeId: OvertimeRequestStatus.Pending,
       status: 'Pending',
       overtimeCode: item.overtimeCode,
-      u_Status: OvertimeRequestStatus.Pending,
-      ovHours: (
+      overtimeHours: (
         parseFloat(item.ovHour) +
         parseFloat(item.ovMin) / 60
       ).toString(),
@@ -64,14 +61,6 @@ export class ApprovalsOvertimeComponent extends ApprovalPageComponentTemplate<
       minute: parseFloat(item.ovMin),
       projectCode: item.projectCode,
       projectName: item.projectName,
-
-      u_ApprStatus1: '',
-      u_ApprStatus2: null,
-      u_ApprStatus3: null,
-      u_AttachFile: '',
-
-      sortFromDate: '',
-      sortToDate: '',
 
       toDate: '',
       fromTime: null,

@@ -6,17 +6,21 @@ import {
   OvertimeRequestStatus,
   OvertimeRequest,
   OvertimeRequestType,
-  OvertimeRequestUpdateSchema,
-  OvertimeRequestAddSchema,
+  OvertimeRequestUpdate,
+  OvertimeRequestAdd,
+  OvertimeRequestUpdateApi,
+  OvertimeRequestAddApi,
+  OvertimeRequestApi,
 } from '../../interfaces/requests/overtime';
-import { Observable, tap } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import { SharedArrayStore } from '../../utils/shared-array-store';
 import { GenericRequestService } from './generic-request.service';
+import { formatDateToISO } from '../../utils/data-formatter';
 
 type iOvertimeRequestService = GenericRequestService<
   OvertimeRequest,
-  OvertimeRequestUpdateSchema,
-  OvertimeRequestAddSchema,
+  OvertimeRequestUpdate,
+  OvertimeRequestAdd,
   OvertimeRequestType
 >;
 
@@ -41,7 +45,7 @@ export class OvertimeRequestService
   constructor(private http: HttpClient, private userService: LocalUserService) {
     super();
 
-    this.overtimeRequestsStore.setDefaultSortByKey('overtimeID', false);
+    this.overtimeRequestsStore.setDefaultSortByKey('id', false);
   }
 
   get user() {
@@ -50,13 +54,12 @@ export class OvertimeRequestService
 
   getAll(): Observable<OvertimeRequest[]> {
     const url = `${this.url}/GetOverTime?EmployeeId=${this.user.id}`;
-    return this.http
-      .get<OvertimeRequest[]>(url, this.httpOptions)
-      .pipe(
-        tap((overtimeRequests) =>
-          this.overtimeRequestsStore.update(overtimeRequests)
-        )
-      );
+    return this.http.get<OvertimeRequestApi[]>(url, this.httpOptions).pipe(
+      map((response) => response.map(OvertimeRequestAdapter.ApiToModel)),
+      tap((overtimeRequests) =>
+        this.overtimeRequestsStore.update(overtimeRequests)
+      )
+    );
   }
 
   cancel(id: string): Observable<any> {
@@ -71,9 +74,9 @@ export class OvertimeRequestService
         const updatedOvertimeRequests = this.overtimeRequestsStore
           .getValue()
           .map((overtimeRequest) => {
-            if (overtimeRequest.overtimeID === id) {
+            if (overtimeRequest.id === id) {
               overtimeRequest.status = 'Canceled';
-              overtimeRequest.statusTypeId = body.u_Status;
+              // overtimeRequest.statusTypeId = body.u_Status;
               overtimeRequest = { ...overtimeRequest };
             }
             return overtimeRequest;
@@ -97,30 +100,20 @@ export class OvertimeRequestService
     return this.overtimeTypesStore.observable$;
   }
 
-  update(body: OvertimeRequestUpdateSchema): Observable<any> {
+  update(data: OvertimeRequestUpdate): Observable<any> {
     const url = this.url + '/UpdateOvertimeRequest';
 
+    const body: OvertimeRequestUpdateApi =
+      OvertimeRequestAdapter.updateToApi(data);
     return this.http.patch<any>(url, body, this.httpOptions).pipe(
       tap(() => {
         const updatedOvertimeRequests = this.overtimeRequestsStore
           .getValue()
           .map((overtimeRequest) => {
-            if (overtimeRequest.overtimeID === body.docEntry) {
+            if (overtimeRequest.id === data.id) {
               // console.log('sync updated values');
-              overtimeRequest.overtimeType =
-                body.u_OvType ?? overtimeRequest.overtimeType;
-              overtimeRequest.fromDate =
-                body.u_FromDate ?? overtimeRequest.fromDate;
-              overtimeRequest.toDate = body.u_ToDate ?? overtimeRequest.toDate;
-              overtimeRequest.hour =
-                parseInt(body.u_OvHour ?? '') || overtimeRequest.hour;
-              overtimeRequest.minute =
-                parseInt(body.u_OvMin ?? '') || overtimeRequest.minute;
-              overtimeRequest.projectCode =
-                body.u_ProjectCode ?? overtimeRequest.projectCode;
-              overtimeRequest.remarks =
-                body.u_Remarks ?? overtimeRequest.remarks;
-              overtimeRequest = { ...overtimeRequest };
+              // TODO: fix update project type (only code is updated)
+              overtimeRequest = { ...overtimeRequest, ...data };
             }
             return overtimeRequest;
           });
@@ -129,15 +122,72 @@ export class OvertimeRequestService
     );
   }
 
-  add(body: OvertimeRequestAddSchema): Observable<any> {
+  add(data: OvertimeRequestAdd): Observable<any> {
     const url = this.url + '/AddOvertimeRequest';
 
-    if (!body.u_EmployeeID) body.u_EmployeeID = this.user.id;
-
+    const body: OvertimeRequestAddApi = OvertimeRequestAdapter.AddToApi(
+      data,
+      this.user.id
+    );
     return this.http.post<any>(url, body, this.httpOptions).pipe(
       tap(() => {
         this.getAll().subscribe();
       })
     );
+  }
+}
+
+class OvertimeRequestAdapter {
+  static ApiToModel(apiSchema: OvertimeRequestApi): OvertimeRequest {
+    const obj: OvertimeRequest = {
+      id: apiSchema.overtimeID,
+      overtimeType: apiSchema.overtimeType,
+      overtimeCode: apiSchema.overtimeCode,
+      fromDate: formatDateToISO(apiSchema.fromDate),
+      toDate: formatDateToISO(apiSchema.toDate),
+      fromTime: apiSchema.fromDate,
+      toTime: apiSchema.toDate,
+      status: apiSchema.status,
+      overtimeHours: apiSchema.ovHours,
+      hour: apiSchema.hour,
+      minute: apiSchema.minute,
+      remarks: apiSchema.remarks,
+      projectCode: apiSchema.projectCode,
+      projectName: apiSchema.projectName,
+    };
+    return obj;
+  }
+
+  static AddToApi(
+    addSchema: OvertimeRequestAdd,
+    employeeId: string
+  ): OvertimeRequestAddApi {
+    const obj: OvertimeRequestAddApi = {
+      u_EmployeeID: employeeId,
+      u_OvType: addSchema.overtimeCode,
+      u_FromDate: addSchema.fromDate,
+      u_ToDate: addSchema.toDate,
+      u_OvHour: addSchema.hour,
+      u_OvMin: addSchema.minute,
+      u_ProjectCode: addSchema.projectCode,
+      u_Remarks: addSchema.remarks,
+    };
+    return obj;
+  }
+
+  static updateToApi(
+    updateSchema: OvertimeRequestUpdate
+  ): OvertimeRequestUpdateApi {
+    const obj: OvertimeRequestUpdateApi = {
+      docEntry: updateSchema.id,
+      u_OvType: updateSchema.overtimeCode,
+      u_FromDate: updateSchema.fromDate,
+      u_ToDate: updateSchema.toDate,
+      u_OvHour: updateSchema.hour?.toString(),
+      u_OvMin: updateSchema.minute?.toString(),
+      u_ProjectCode: updateSchema.projectCode,
+      u_Remarks: updateSchema.remarks,
+    };
+    return obj;
   }
 }

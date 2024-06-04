@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import {
   OvertimeRequest,
   OvertimeRequestType,
-  OvertimeRequestUpdateSchema,
+  OvertimeRequestUpdate,
 } from 'src/app/shared/interfaces/requests/overtime';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -35,7 +35,7 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class OvertimeRequestDetailsComponent extends RequestDetailsComponentTemplate<
   OvertimeRequest,
-  OvertimeRequestUpdateSchema
+  OvertimeRequestUpdate
 > {
   overtimeTypes: OvertimeRequestType[] = [];
   projects: Project[] = [];
@@ -72,18 +72,16 @@ export class OvertimeRequestDetailsComponent extends RequestDetailsComponentTemp
         this.projects = value;
       });
   }
-  override mapFormToUpdateRequest(
-    formValues: any
-  ): OvertimeRequestUpdateSchema {
-    const data: OvertimeRequestUpdateSchema = {
-      docEntry: this.item.overtimeID,
-      u_OvType: formValues.overtimeType ?? undefined,
-      u_FromDate: formValues.date ?? undefined,
-      u_ToDate: formValues.date ?? undefined,
-      u_OvHour: formValues.hours?.toString() ?? undefined,
-      u_OvMin: formValues.minutes?.toString() ?? undefined,
-      u_ProjectCode: formValues.project ?? undefined, // todo
-      u_Remarks: formValues.remarks ?? undefined,
+  override mapFormToUpdateRequest(formValues: any): OvertimeRequestUpdate {
+    const data: OvertimeRequestUpdate = {
+      id: this.item.id,
+      overtimeCode: formValues.overtimeType ?? undefined,
+      fromDate: formValues.date ?? undefined,
+      toDate: formValues.date ?? undefined,
+      hour: formValues.hours ?? undefined,
+      minute: formValues.minutes ?? undefined,
+      projectCode: formValues.project ?? undefined, // todo
+      remarks: formValues.remarks ?? undefined,
     };
     return data;
   }

@@ -33,6 +33,6 @@ export class RequestsOvertimeComponent extends RequestPageComponentTemplate<Over
   }
 
   override trackByRequestId(index: number, item: OvertimeRequest): number {
-    return parseInt(item.overtimeID);
+    return parseInt(item.id);
   }
 }
