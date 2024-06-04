@@ -36,7 +36,7 @@ export class UserAlertService {
     });
   }
 
-  showLoading(title: string, text: string) {
+  showLoading(title: string, text: string = '') {
     this.translate.get([title, text]).subscribe((translations) => {
       Swal.fire({
         title: translations[title],

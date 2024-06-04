@@ -161,6 +161,13 @@
   "must be at most": "يجب أن تكون على الأكثر",
   "does not match the required pattern": "لا تتطابق مع النمط المطلوب",
 
+  "Change Password": "تغيير كلمة السر",
+  "Current Password": "كلمة السر الحالية",
+  "New Password": "كلمة السر الجديدة",
+  "Confirm New Password": "تأكيد كلمة السر الجديدة",
+  "passwords do not match": "كلمتي السر غير متطابقتين",
+  "Password is too weak. (At least 8 chars, Contains: uppercase, lowercase, number, special char)": "كلمة المرور ضعيفة جدًا. (على الأقل 8 أحرف، تحتوي على: حرف كبير، حرف صغير، رقم، رمز خاص)",
+
   "Yes, approve": "نعم، وافق",
   "Approving...": "....جارٍ الموافقة",
   "Please wait while we approve request.": ".يرجى الانتظار أثناء الموافقة على الطلب",

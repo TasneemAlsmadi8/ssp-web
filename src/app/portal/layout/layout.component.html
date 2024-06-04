@@ -47,11 +47,18 @@
           <li class="text-white font-bold border-b mb-2 pb-2 capitalize">
             {{ user.fullName }}
           </li>
-          <li
-            (click)="logout()"
-            class="text-white cursor-pointer italic hover:text-gray-200 font-semibold"
-          >
-            {{ "Logout" | translate }}
+          <li>
+            <button
+              (click)="logout()"
+              class="text-white cursor-pointer hover:text-gray-200 font-semibold w-full text-left"
+            >
+              {{ "Logout" | translate }}
+            </button>
+          </li>
+          <li>
+            <app-change-password
+              class="text-white hover:text-gray-200 font-semibold w-full text-right"
+            />
           </li>
         </ul>
       </div>

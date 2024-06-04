@@ -9,6 +9,7 @@ import { TranslateLoader, TranslateModule } from '@ngx-translate/core';
 import { HttpLoaderFactory } from '../shared/shared/shared.module';
 import { SideBarContentComponent } from './layout/side-bar-content/side-bar-content.component';
 import { DropDownItemsComponent } from './layout/side-bar-content/drop-down-links/drop-down-links.component';
+import { ChangePasswordComponent } from './change-password/change-password.component';
 
 @NgModule({
   declarations: [LayoutComponent, SideBarContentComponent],
@@ -26,6 +27,7 @@ import { DropDownItemsComponent } from './layout/side-bar-content/drop-down-link
       },
     }),
     DropDownItemsComponent,
+    ChangePasswordComponent,
   ],
 })
 export class PortalModule {}

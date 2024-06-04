@@ -1,6 +1,13 @@
 import { NgClass, NgIf } from '@angular/common';
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 
+/**
+ * @slot openButton - The button that opens the modal.
+ * @slot modalTitle - The title of the modal.
+ * @slot acceptButton - The button to confirm or accept an action.
+ * @slot cancelButton - The button to cancel or close the modal.
+ * @slot any other (without selector) - The main content of the modal.
+ */
 @Component({
   selector: 'app-modal',
   standalone: true,

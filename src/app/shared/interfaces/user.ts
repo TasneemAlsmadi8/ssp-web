@@ -3,12 +3,19 @@ export interface User {
   code: string;
   fullName: string;
   position: string;
-  // preferedLanguage: string;
+  // preferredLanguage: string;
 }
 
 export interface UserLogin {
   username: string;
   password: string;
+}
+
+export interface ChangePassword {
+  employeeID: string;
+  oldPassword?: string;
+  newPassword: string;
+  confirmNewPassword?: string;
 }
 
 //example user
