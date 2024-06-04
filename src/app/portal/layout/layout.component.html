@@ -33,7 +33,7 @@
         العربية
       </button>
       <!-- } @if (isLoggedIn) { -->
-      <div *ngIf="isLoggedIn">
+      <div *ngIf="isLoggedIn" [dir]="selectedLangDir">
         <button
           class="w-9 h-9 border rounded-full text-xl"
           (click)="toggleProfileMenuOpen()"
@@ -50,14 +50,14 @@
           <li>
             <button
               (click)="logout()"
-              class="text-white cursor-pointer hover:text-gray-200 font-semibold w-full text-left"
+              class="text-white hover:text-gray-200 font-semibold w-fit"
             >
               {{ "Logout" | translate }}
             </button>
           </li>
           <li>
             <app-change-password
-              class="text-white hover:text-gray-200 font-semibold w-full text-right"
+              class="text-white hover:text-gray-200 font-semibold"
             />
           </li>
         </ul>
