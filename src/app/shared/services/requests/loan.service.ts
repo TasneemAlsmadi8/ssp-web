@@ -182,6 +182,7 @@ class LoanRequestAdapter {
       u_TotalAmount: addSchema.totalAmount,
       u_InstallmentCount: addSchema.installmentCount,
       u_StartDate: addSchema.startDate,
+      u_Remarks: addSchema.remarks,
     };
     return obj;
   }
