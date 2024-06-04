@@ -33,6 +33,6 @@ export class RequestsLoansComponent extends RequestPageComponentTemplate<LoanReq
   }
 
   override trackByRequestId(index: number, item: LoanRequest): number {
-    return parseInt(item.loanID);
+    return parseInt(item.id);
   }
 }

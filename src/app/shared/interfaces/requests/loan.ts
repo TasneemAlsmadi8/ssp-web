@@ -1,4 +1,34 @@
 export interface LoanRequest {
+  id: string;
+  dateSubmitted: string | null;
+  loanCode: string;
+  fullName: string | null;
+  fullNameF: string | null;
+  loanName: string | null;
+  totalAmount: string;
+  installmentCount: string;
+  startDate: string;
+  status: string;
+  remarks: string | null;
+}
+export interface LoanRequestUpdate {
+  id: string;
+  loanCode?: string;
+  totalAmount?: string;
+  installmentCount?: string;
+  startDate?: string;
+  remarks?: string;
+}
+
+export interface LoanRequestAdd {
+  loanCode: string;
+  totalAmount: string;
+  installmentCount: string;
+  startDate: string;
+  remarks?: string;
+}
+
+export interface LoanRequestApi {
   loanID: string;
   dateSubmitted: string | null;
   empID: string | null;
@@ -27,7 +57,7 @@ export enum LoanRequestStatus {
   Canceled = '3',
 }
 
-export interface LoanRequestUpdateSchema {
+export interface LoanRequestUpdateApi {
   docEntry: string;
   u_EmployeeID?: number;
   u_LoanType?: string;
@@ -46,7 +76,7 @@ export interface LoanRequestUpdateSchema {
   u_ApprEmpID3?: string;
 }
 
-export interface LoanRequestAddSchema {
+export interface LoanRequestAddApi {
   docEntry?: string;
 
   u_EmployeeID: number;

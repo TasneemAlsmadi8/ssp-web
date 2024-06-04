@@ -6,17 +6,21 @@ import {
   LoanRequestStatus,
   LoanRequest,
   LoanRequestType,
-  LoanRequestUpdateSchema,
-  LoanRequestAddSchema,
+  LoanRequestUpdate,
+  LoanRequestAdd,
+  LoanRequestApi,
+  LoanRequestAddApi,
+  LoanRequestUpdateApi,
 } from '../../interfaces/requests/loan';
-import { Observable, tap } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import { SharedArrayStore } from '../../utils/shared-array-store';
 import { GenericRequestService } from './generic-request.service';
+import { formatDateToISO } from '../../utils/data-formatter';
 
 type iLoanRequestService = GenericRequestService<
   LoanRequest,
-  LoanRequestUpdateSchema,
-  LoanRequestAddSchema,
+  LoanRequestUpdate,
+  LoanRequestAdd,
   LoanRequestType
 >;
 
@@ -41,7 +45,7 @@ export class LoanRequestService
   constructor(private http: HttpClient, private userService: LocalUserService) {
     super();
 
-    this.loanRequestsStore.setDefaultSortByKey('loanID', false);
+    this.loanRequestsStore.setDefaultSortByKey('id', false);
   }
 
   get user() {
@@ -50,9 +54,10 @@ export class LoanRequestService
 
   getAll(): Observable<LoanRequest[]> {
     const url = `${this.url}/GetLoan?EmployeeId=${this.user.id}`;
-    return this.http
-      .get<LoanRequest[]>(url, this.httpOptions)
-      .pipe(tap((loanRequests) => this.loanRequestsStore.update(loanRequests)));
+    return this.http.get<LoanRequestApi[]>(url, this.httpOptions).pipe(
+      map((response) => response.map(LoanRequestAdapter.ApiToModel)),
+      tap((loanRequests) => this.loanRequestsStore.update(loanRequests))
+    );
   }
 
   cancel(id: string): Observable<any> {
@@ -67,9 +72,9 @@ export class LoanRequestService
         const updatedLoanRequests = this.loanRequestsStore
           .getValue()
           .map((loanRequest) => {
-            if (loanRequest.loanID === id) {
+            if (loanRequest.id === id) {
               loanRequest.status = 'Canceled';
-              loanRequest.statusID = body.u_Status;
+              // loanRequest.statusID = body.u_Status;
               loanRequest = { ...loanRequest };
             }
             return loanRequest;
@@ -91,23 +96,17 @@ export class LoanRequestService
     return this.loanTypesStore.observable$;
   }
 
-  update(body: LoanRequestUpdateSchema): Observable<any> {
+  update(data: LoanRequestUpdate): Observable<any> {
     const url = this.url + '/UpdateLoanRequest';
+    const body: LoanRequestUpdateApi = LoanRequestAdapter.updateToApi(data);
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(
       tap(() => {
         const updatedLoanRequests = this.loanRequestsStore
           .getValue()
           .map((loanRequest) => {
-            if (loanRequest.loanID === body.docEntry) {
-              loanRequest.loanCode = body.u_LoanType ?? loanRequest.loanCode;
-              loanRequest.totalAmount =
-                body.u_TotalAmount ?? loanRequest.totalAmount;
-              loanRequest.installmentCount =
-                body.u_InstallmentCount ?? loanRequest.installmentCount;
-              loanRequest.startDate = body.u_StartDate ?? loanRequest.startDate;
-              loanRequest.remarks = body.u_Remarks ?? loanRequest.remarks;
-              loanRequest = { ...loanRequest };
+            if (loanRequest.id === data.id) {
+              loanRequest = { ...loanRequest, ...data };
             }
             return loanRequest;
           });
@@ -116,11 +115,12 @@ export class LoanRequestService
     );
   }
 
-  add(body: LoanRequestAddSchema): Observable<any> {
+  add(data: LoanRequestAdd): Observable<any> {
     const url = this.url + '/AddLoanRequest';
-
-    if (!body.u_EmployeeID) body.u_EmployeeID = parseInt(this.user.id);
-
+    const body: LoanRequestAddApi = LoanRequestAdapter.AddToApi(
+      data,
+      this.user.id
+    );
     return this.http.post<any>(url, body, this.httpOptions).pipe(
       tap(() => {
         this.getAll().subscribe();
@@ -149,6 +149,52 @@ export class LoanRequestService
   //   this.loanRequestsStore.sortByKey('fromDate', ascending);
   // }
   // sortById(ascending: boolean = true): void {
-  //   this.loanRequestsStore.sortByKey('loanID', ascending);
+  //   this.loanRequestsStore.sortByKey('id', ascending);
   // }
+}
+
+class LoanRequestAdapter {
+  static ApiToModel(apiSchema: LoanRequestApi): LoanRequest {
+    const obj: LoanRequest = {
+      id: apiSchema.loanID,
+      dateSubmitted:
+        apiSchema.dateSubmitted && formatDateToISO(apiSchema.dateSubmitted),
+      loanCode: apiSchema.loanCode,
+      fullName: apiSchema.fullName,
+      fullNameF: apiSchema.fullNameF,
+      loanName: apiSchema.loanName,
+      totalAmount: apiSchema.totalAmount,
+      installmentCount: apiSchema.installmentCount,
+      startDate: formatDateToISO(apiSchema.startDate),
+      status: apiSchema.status,
+      remarks: apiSchema.remarks,
+    };
+    return obj;
+  }
+
+  static AddToApi(
+    addSchema: LoanRequestAdd,
+    employeeId: string
+  ): LoanRequestAddApi {
+    const obj: LoanRequestAddApi = {
+      u_EmployeeID: parseInt(employeeId),
+      u_LoanType: addSchema.loanCode,
+      u_TotalAmount: addSchema.totalAmount,
+      u_InstallmentCount: addSchema.installmentCount,
+      u_StartDate: addSchema.startDate,
+    };
+    return obj;
+  }
+
+  static updateToApi(updateSchema: LoanRequestUpdate): LoanRequestUpdateApi {
+    const obj: LoanRequestUpdateApi = {
+      docEntry: updateSchema.id,
+      u_LoanType: updateSchema.loanCode,
+      u_TotalAmount: updateSchema.totalAmount,
+      u_InstallmentCount: updateSchema.installmentCount,
+      u_StartDate: updateSchema.startDate,
+      u_Remarks: updateSchema.remarks,
+    };
+    return obj;
+  }
 }

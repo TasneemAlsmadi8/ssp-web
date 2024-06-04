@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
-  LoanRequestAddSchema,
+  LoanRequestAdd,
   LoanRequest,
   LoanRequestType,
 } from 'src/app/shared/interfaces/requests/loan';
@@ -36,21 +36,18 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class NewLoanRequestComponent extends NewRequestComponentTemplate<
   LoanRequest,
-  LoanRequestAddSchema
+  LoanRequestAdd
 > {
   item: LoanRequest = {
-    loanID: '',
+    id: '',
     dateSubmitted: null,
-    empID: null,
     loanCode: '',
-    empCode: null,
     fullName: null,
     fullNameF: null,
     loanName: null,
     totalAmount: '',
     installmentCount: '',
     startDate: '',
-    statusID: null,
     status: '',
     remarks: null,
   };
@@ -77,14 +74,13 @@ export class NewLoanRequestComponent extends NewRequestComponentTemplate<
       });
   }
 
-  override mapFormToAddRequest(formValues: any): LoanRequestAddSchema {
-    const data: LoanRequestAddSchema = {
-      u_EmployeeID: 0,
-      u_LoanType: formValues.loanType ?? undefined,
-      u_TotalAmount: formValues.totalAmount?.toString() ?? undefined,
-      u_InstallmentCount: formValues.installments?.toString() ?? undefined,
-      u_StartDate: formValues.startDate ?? undefined,
-      u_Remarks: formValues.remarks ?? undefined,
+  override mapFormToAddRequest(formValues: any): LoanRequestAdd {
+    const data: LoanRequestAdd = {
+      loanCode: formValues.loanType ?? undefined,
+      totalAmount: formValues.totalAmount?.toString() ?? undefined,
+      installmentCount: formValues.installments?.toString() ?? undefined,
+      startDate: formValues.startDate ?? undefined,
+      remarks: formValues.remarks ?? undefined,
     };
     return data;
   }

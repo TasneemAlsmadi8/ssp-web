@@ -35,7 +35,6 @@ export class NewLeaveRequestComponent extends NewRequestComponentTemplate<
 > {
   item: LeaveRequest = {
     id: '',
-    employeeId: '',
     leaveType: '',
     fromDate: '',
     toDate: '',

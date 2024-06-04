@@ -28,7 +28,7 @@
           scope="row"
           class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
         >
-          {{ req.loanID }}
+          {{ req.id }}
         </th>
         <td class="px-6 py-4">{{ req.status }}</td>
         <td class="px-6 py-4">{{ req.startDate | date : "dd/MM/yyyy" }}</td>
@@ -43,7 +43,7 @@
           <app-cancel-request-popup
             *ngIf="req.status === 'Pending'"
             [service]="loanService"
-            [id]="req.loanID"
+            [id]="req.id"
           />
         </td>
       </tr>

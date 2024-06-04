@@ -53,7 +53,6 @@ export class ApprovalsLeavesComponent extends ApprovalPageComponentTemplate<
       fromTime: item.fromTime,
       toTime: item.toTime,
       remarks: item.remarks,
-      employeeId: item.empID,
       // statusTypeId: LeaveRequestStatus.Pending,
       status: 'Pending',
       leaveCode: item.leaveCode,

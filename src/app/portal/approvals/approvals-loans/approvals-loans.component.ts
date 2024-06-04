@@ -47,20 +47,17 @@ export class ApprovalsLoansComponent extends ApprovalPageComponentTemplate<
   override mapApprovalToUpdateRequest(item: LoanApproval): LoanRequest {
     // TODO: Check
     const data: LoanRequest = {
-      loanID: item.loanID,
+      id: item.loanID,
       remarks: item.remarks,
       status: 'Pending',
       loanCode: item.loanCode,
       dateSubmitted: item.dateSubmitted,
-      empID: item.empID,
-      empCode: item.empCode,
       fullName: item.fullName,
       fullNameF: item.fullNameF,
       loanName: item.loanName,
       totalAmount: item.totalAmount,
       installmentCount: item.installmentCount,
       startDate: item.startDate,
-      statusID: LoanRequestStatus.Pending,
     };
     return data;
   }

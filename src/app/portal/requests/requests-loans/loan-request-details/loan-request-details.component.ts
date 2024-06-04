@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import {
   LoanRequest,
   LoanRequestType,
-  LoanRequestUpdateSchema,
+  LoanRequestUpdate,
 } from 'src/app/shared/interfaces/requests/loan';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -32,7 +32,7 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class LoanRequestDetailsComponent extends RequestDetailsComponentTemplate<
   LoanRequest,
-  LoanRequestUpdateSchema
+  LoanRequestUpdate
 > {
   loanTypes!: LoanRequestType[];
 
@@ -55,14 +55,14 @@ export class LoanRequestDetailsComponent extends RequestDetailsComponentTemplate
       });
   }
 
-  override mapFormToUpdateRequest(formValues: any): LoanRequestUpdateSchema {
-    const data: LoanRequestUpdateSchema = {
-      docEntry: this.item.loanID,
-      u_LoanType: formValues.loanType ?? undefined,
-      u_TotalAmount: formValues.totalAmount?.toString() ?? undefined,
-      u_InstallmentCount: formValues.installments?.toString() ?? undefined,
-      u_StartDate: formValues.startDate ?? undefined,
-      u_Remarks: formValues.remarks ?? undefined,
+  override mapFormToUpdateRequest(formValues: any): LoanRequestUpdate {
+    const data: LoanRequestUpdate = {
+      id: this.item.id,
+      loanCode: formValues.loanType ?? undefined,
+      totalAmount: formValues.totalAmount?.toString() ?? undefined,
+      installmentCount: formValues.installments?.toString() ?? undefined,
+      startDate: formValues.startDate ?? undefined,
+      remarks: formValues.remarks ?? undefined,
     };
     return data;
   }
