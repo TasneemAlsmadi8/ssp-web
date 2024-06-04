@@ -31,6 +31,11 @@ export class EmployeeInfoComponent
   extends DestroyBaseComponent
   implements OnInit, FormErrorMessageBehavior
 {
+  form: FormGroup;
+
+  employee?: EmployeeResponse;
+  isLoading = false;
+
   constructor(
     private employeeInfoService: EmployeeInfoService,
     private userAlertService: UserAlertService,
@@ -78,11 +83,6 @@ export class EmployeeInfoComponent
     }
     return '';
   }
-
-  form: FormGroup;
-
-  employee?: EmployeeResponse;
-  isLoading = false;
 
   ngOnInit(): void {
     this.employeeInfoService
