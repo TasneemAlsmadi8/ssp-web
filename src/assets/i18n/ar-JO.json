@@ -153,6 +153,14 @@
   "Error!": "!حدث خلل ما",
   "There was an error canceling your request.": "حدث خلل خلال عملية الإلغاء",
 
+  "Saved!": "!تم الحفظ",
+  "Information updated successfully": "تم تحديث المعلومات بنجاح",
+
+  "is required": "مطلوبة",
+  "must be at least": "يجب أن تكون على الأقل",
+  "must be at most": "يجب أن تكون على الأكثر",
+  "does not match the required pattern": "لا تتطابق مع النمط المطلوب",
+
   "Yes, approve": "نعم، وافق",
   "Approving...": "....جارٍ الموافقة",
   "Please wait while we approve request.": ".يرجى الانتظار أثناء الموافقة على الطلب",

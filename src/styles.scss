@@ -6,14 +6,13 @@ button {
   @apply select-none;
 }
 
-input.required,
-select:required {
-  border-color: green !important;
-}
+// input.required,
+// select:required {
+//   border-color: green !important;
+// }
 .invalid-input {
   @apply border-red-500 text-red-600;
 }
-
 .error-message {
   @apply text-red-600 text-sm;
 }

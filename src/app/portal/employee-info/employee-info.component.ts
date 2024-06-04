@@ -1,5 +1,11 @@
 import { Component, OnInit } from '@angular/core';
-import { FormControl, FormGroup, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  FormGroup,
+  Validators,
+} from '@angular/forms';
 import { takeUntil } from 'rxjs';
 import { DestroyBaseComponent } from 'src/app/shared/base/destroy-base.component';
 import {
@@ -8,33 +14,72 @@ import {
 } from 'src/app/shared/interfaces/Employee';
 import { EmployeeInfoService } from 'src/app/shared/services/employee-info.service';
 import { ReactiveFormsModule } from '@angular/forms';
-import Swal from 'sweetalert2';
-import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
-import { TranslateModule } from '@ngx-translate/core';
+import { HttpErrorResponse } from '@angular/common/http';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { UserAlertService } from 'src/app/shared/services/user-alert.service';
+import { FormErrorMessageBehavior } from 'src/app/shared/components/FormErrorMessage';
+import { NgClass, NgIf } from '@angular/common';
 
 @Component({
   selector: 'app-employee-info',
   standalone: true,
-  imports: [ReactiveFormsModule, TranslateModule],
+  imports: [ReactiveFormsModule, TranslateModule, NgClass, NgIf],
   templateUrl: './employee-info.component.html',
   styleUrls: ['./employee-info.component.scss'],
 })
 export class EmployeeInfoComponent
   extends DestroyBaseComponent
-  implements OnInit
+  implements OnInit, FormErrorMessageBehavior
 {
-  constructor(private employeeInfoService: EmployeeInfoService) {
+  constructor(
+    private employeeInfoService: EmployeeInfoService,
+    private userAlertService: UserAlertService,
+    private formBuilder: FormBuilder,
+    private translate: TranslateService
+  ) {
     super();
+    this.form = this.formBuilder.group({
+      mobile: ['', [Validators.required, Validators.pattern('^[+]?[0-9]+$')]],
+      homeTel: ['', [Validators.pattern('^[+]?[0-9]+$')]],
+      homeStreet: ['', [Validators.required]],
+      homeBuild: ['', [Validators.required]],
+      homeBlock: [''],
+      homeZip: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
+    });
+  }
+  shouldDisplayError(formControlName: string, onlyDirty = false): boolean {
+    const control = this.form.get(formControlName);
+    if (!control) throw new Error('Invalid form Control');
+
+    if (onlyDirty) return control.invalid && control.dirty;
+    return control.invalid && (control.dirty || control.touched);
   }
 
-  form = new FormGroup({
-    mobile: new FormControl(''),
-    homeTel: new FormControl(''),
-    homeStreet: new FormControl(''),
-    homeBuild: new FormControl(''),
-    homeBlock: new FormControl(''),
-    homeZip: new FormControl(''),
-  });
+  getErrorMessage(
+    formControlName: string,
+    inputTitle: string = 'Value',
+    customMessage: string = ''
+  ): string {
+    const control = this.form.get(formControlName);
+    if (!control) throw new Error('Invalid form control');
+
+    inputTitle = this.translate.instant(inputTitle);
+    if (customMessage) customMessage = this.translate.instant(customMessage);
+
+    if (control.hasError('required')) {
+      return `${inputTitle} ${this.translate.instant(
+        'is required'
+      )}.${customMessage}`;
+    }
+    if (control.hasError('pattern')) {
+      return `${inputTitle} ${this.translate.instant(
+        'does not match the required pattern'
+      )}.${customMessage}`;
+    }
+    return '';
+  }
+
+  form: FormGroup;
 
   employee?: EmployeeResponse;
   isLoading = false;
@@ -81,21 +126,13 @@ export class EmployeeInfoComponent
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
-          Swal.fire({
-            title: 'Saved!',
-            text: 'Information updated successfuly',
-            icon: 'success',
-            confirmButtonText: 'Ok',
-          });
-          console.log(res);
+          this.userAlertService.showSuccess(
+            'Saved!',
+            'Information updated successfully'
+          );
         },
         error: (err: HttpErrorResponse) => {
-          Swal.fire({
-            title: 'Error!',
-            // text: 'Unknown error: ' + err.status,
-            icon: 'error',
-            confirmButtonText: 'Ok',
-          });
+          this.userAlertService.showError('Error!');
           console.log(err);
         },
       })

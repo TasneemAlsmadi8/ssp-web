@@ -16,9 +16,10 @@ import {
   Item,
 } from 'src/app/shared/interfaces/requests/generic-request';
 import { HttpErrorResponse } from '@angular/common/http';
-import Swal from 'sweetalert2';
 import { debounceTime, distinctUntilChanged, switchMap, takeUntil } from 'rxjs';
 import { FormErrorMessageBehavior } from '../FormErrorMessage';
+import { TranslateService } from '@ngx-translate/core';
+import { UserAlertService } from '../../services/user-alert.service';
 
 @Component({
   standalone: true,
@@ -49,6 +50,8 @@ export abstract class NewRequestComponentTemplate<
 
   private fb: FormBuilder;
   private userService: LocalUserService;
+  private translate: TranslateService;
+  private userAlertService: UserAlertService;
 
   // @Inject(null) -> to disable DI to provide values in child class
   constructor(
@@ -57,6 +60,8 @@ export abstract class NewRequestComponentTemplate<
   ) {
     super();
     this.userService = inject(LocalUserService);
+    this.translate = inject(TranslateService);
+    this.userAlertService = inject(UserAlertService);
     this.fb = inject(FormBuilder);
     this.user = this.userService.getUser();
     this.form = this.fb.group(this.formControls);
@@ -106,23 +111,33 @@ export abstract class NewRequestComponentTemplate<
     return control.invalid && (control.dirty || control.touched);
   }
 
-  getErrorMessage(formControlName: string, inputTitle = 'Value'): string {
+  getErrorMessage(
+    formControlName: string,
+    inputTitle: string = 'Value'
+  ): string {
     const control = this.form.get(formControlName);
-    if (!control) throw new Error('Invalid form Control');
+    if (!control) throw new Error('Invalid form control');
+
+    // Translate inputTitle
+    inputTitle = this.translate.instant(inputTitle);
 
     if (control.hasError('required')) {
-      return `${inputTitle} is required`;
+      return `${inputTitle} ${this.translate.instant('is required')}`;
     }
     if (control.hasError('min')) {
-      return `${inputTitle} must be at least ${control.getError('min')?.min}`;
+      return `${inputTitle} ${this.translate.instant('must be at least')} ${
+        control.getError('min')?.min
+      }`;
     }
     if (control.hasError('max')) {
-      return `${inputTitle} must be at most ${control.getError('max')?.max}`;
+      return `${inputTitle} ${this.translate.instant('must be at most')} ${
+        control.getError('max')?.max
+      }`;
     }
 
     if (this.additionalErrorMessages) {
       const customMessage = this.additionalErrorMessages(control, inputTitle);
-      if (customMessage) return customMessage;
+      if (customMessage) return this.translate.instant(customMessage);
     }
 
     return '';
@@ -137,23 +152,16 @@ export abstract class NewRequestComponentTemplate<
       .subscribe({
         next: (res) => {
           // this.updateEncashmentRequestModel();
-          Swal.fire({
-            title: 'Saved!',
-            text: 'Information updated successfully',
-            icon: 'success',
-            confirmButtonText: 'Ok',
-          });
+          this.userAlertService.showSuccess(
+            'Saved!',
+            'Information updated successfully'
+          );
 
           this.setInputsDefaultValues();
           this.onSave.emit(this.item);
         },
         error: (err: HttpErrorResponse) => {
-          Swal.fire({
-            title: 'Error!',
-            // text: 'Unknown error: ' + err.status,
-            icon: 'error',
-            confirmButtonText: 'Ok',
-          });
+          this.userAlertService.showError('Error!');
           console.log(err);
         },
       })

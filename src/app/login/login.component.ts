@@ -18,7 +18,7 @@ import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
 import { InputComponent } from '../shared/components/input/input.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { LanguageService } from '../shared/services/language.service';
-import { UserConfirmationService } from '../shared/services/user-confirmation.service';
+import { UserAlertService } from '../shared/services/user-alert.service';
 
 @Component({
   selector: 'app-login',
@@ -46,7 +46,7 @@ export class LoginComponent extends DestroyBaseComponent implements OnInit {
     private authService: AuthService,
     private router: Router,
     public languageService: LanguageService,
-    private userConfirmationService: UserConfirmationService
+    private userAlertService: UserAlertService
   ) {
     super();
   }
@@ -74,13 +74,13 @@ export class LoginComponent extends DestroyBaseComponent implements OnInit {
         },
         error: (err: HttpErrorResponse) => {
           if (err.status == HttpStatusCode.BadRequest) {
-            this.userConfirmationService.showError(
+            this.userAlertService.showError(
               'Error!',
               'Invalid username or password',
               'Retry'
             );
           } else {
-            this.userConfirmationService.showError(
+            this.userAlertService.showError(
               'Error!',
               'Unknown error: ' + err.status,
               'Retry'

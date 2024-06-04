@@ -101,7 +101,11 @@
             formControlName="mobile"
             type="tel"
             class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-sm font-normal transition-all disabled:bg-gray-100"
+            [ngClass]="{ 'invalid-input': shouldDisplayError('mobile') }"
           />
+          <span *ngIf="shouldDisplayError('mobile')" class="error-message">
+            {{ getErrorMessage("mobile") }}
+          </span>
         </div>
       </div>
       <div class="col-span-3 flex flex-col">
@@ -115,7 +119,11 @@
             formControlName="homeTel"
             type="tel"
             class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-sm font-normal transition-all disabled:bg-gray-100"
+            [ngClass]="{ 'invalid-input': shouldDisplayError('homeTel') }"
           />
+          <span *ngIf="shouldDisplayError('homeTel')" class="error-message">
+            {{ getErrorMessage("homeTel") }}
+          </span>
         </div>
       </div>
       <div class="col-span-2 flex flex-col">
@@ -175,7 +183,11 @@
           <input
             formControlName="homeStreet"
             class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-sm font-normal transition-all disabled:bg-gray-100"
+            [ngClass]="{ 'invalid-input': shouldDisplayError('homeStreet') }"
           />
+          <span *ngIf="shouldDisplayError('homeStreet')" class="error-message">
+            {{ getErrorMessage("homeStreet") }}
+          </span>
         </div>
       </div>
       <div class="col-span-3 flex flex-col">
@@ -188,7 +200,11 @@
           <input
             formControlName="homeBuild"
             class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-sm font-normal transition-all disabled:bg-gray-100"
+            [ngClass]="{ 'invalid-input': shouldDisplayError('homeBuild') }"
           />
+          <span *ngIf="shouldDisplayError('homeBuild')" class="error-message">
+            {{ getErrorMessage("homeBuild") }}
+          </span>
         </div>
       </div>
       <div class="col-span-3 flex flex-col">
@@ -201,7 +217,11 @@
           <input
             formControlName="homeBlock"
             class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-sm font-normal transition-all disabled:bg-gray-100"
+            [ngClass]="{ 'invalid-input': shouldDisplayError('homeBlock') }"
           />
+          <span *ngIf="shouldDisplayError('homeBlock')" class="error-message">
+            {{ getErrorMessage("homeBlock") }}
+          </span>
         </div>
       </div>
       <div class="col-span-3 flex flex-col">
@@ -214,7 +234,11 @@
           <input
             formControlName="homeZip"
             class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-sm font-normal transition-all disabled:bg-gray-100"
+            [ngClass]="{ 'invalid-input': shouldDisplayError('homeZip') }"
           />
+          <span *ngIf="shouldDisplayError('homeZip')" class="error-message">
+            {{ getErrorMessage("homeZip") }}
+          </span>
         </div>
       </div>
     </div>

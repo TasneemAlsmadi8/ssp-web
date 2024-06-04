@@ -6,7 +6,7 @@ import { TranslateService } from '@ngx-translate/core';
 @Injectable({
   providedIn: 'root',
 })
-export class UserConfirmationService {
+export class UserAlertService {
   constructor(private translate: TranslateService) {}
 
   confirmAction(
@@ -51,7 +51,11 @@ export class UserConfirmationService {
     });
   }
 
-  showSuccess(title: string, text: string, confirmButtonText: string = 'Ok') {
+  showSuccess(
+    title: string,
+    text: string = '',
+    confirmButtonText: string = 'Ok'
+  ) {
     this.translate
       .get([title, text, confirmButtonText])
       .subscribe((translations) => {
@@ -64,7 +68,11 @@ export class UserConfirmationService {
       });
   }
 
-  showError(title: string, text: string, confirmButtonText: string = 'Ok') {
+  showError(
+    title: string,
+    text: string = '',
+    confirmButtonText: string = 'Ok'
+  ) {
     this.translate
       .get([title, text, confirmButtonText])
       .subscribe((translations) => {

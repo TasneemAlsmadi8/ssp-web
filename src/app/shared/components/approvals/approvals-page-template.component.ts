@@ -7,7 +7,7 @@ import {
 import { takeUntil } from 'rxjs';
 import { GenericApprovalService } from '../../services/approvals/generic-approval.service';
 import { SelectedItems } from '../../utils/selected-items';
-import { UserConfirmationService } from '../../services/user-confirmation.service';
+import { UserAlertService } from '../../services/user-alert.service';
 
 @Component({
   standalone: true,
@@ -20,7 +20,7 @@ export abstract class ApprovalPageComponentTemplate<
   extends DestroyBaseComponent
   implements OnInit
 {
-  private confirmationService: UserConfirmationService;
+  private userAlertService: UserAlertService;
   items: Approval[] = [];
   activePageItems: Approval[] = [];
 
@@ -37,7 +37,7 @@ export abstract class ApprovalPageComponentTemplate<
     private approvalService: GenericApprovalService<Approval>
   ) {
     super();
-    this.confirmationService = inject(UserConfirmationService);
+    this.userAlertService = inject(UserAlertService);
     approvalService.list$.subscribe((value) => {
       this.items = value;
     });
@@ -62,11 +62,11 @@ export abstract class ApprovalPageComponentTemplate<
   }
 
   approveRequest(id: string): void {
-    this.confirmationService
+    this.userAlertService
       .confirmAction('Are you sure?', '', 'Yes, approve', 'No')
       .subscribe((isConfirmed) => {
         if (isConfirmed) {
-          this.confirmationService.showLoading(
+          this.userAlertService.showLoading(
             'Approving...',
             'Please wait while we approve request.'
           );
@@ -76,11 +76,11 @@ export abstract class ApprovalPageComponentTemplate<
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: (value) => {
-                this.confirmationService.showSuccess('Approved!', '');
+                this.userAlertService.showSuccess('Approved!', '');
               },
               error: (err) => {
                 console.log(err);
-                this.confirmationService.showError(
+                this.userAlertService.showError(
                   'Error!',
                   'There was an error approving request.'
                 );
@@ -91,11 +91,11 @@ export abstract class ApprovalPageComponentTemplate<
   }
 
   rejectRequest(id: string): void {
-    this.confirmationService
+    this.userAlertService
       .confirmAction('Are you sure?', '', 'Yes, reject', 'No')
       .subscribe((isConfirmed) => {
         if (isConfirmed) {
-          this.confirmationService.showLoading(
+          this.userAlertService.showLoading(
             'Rejecting...',
             'Please wait while we reject request.'
           );
@@ -105,11 +105,11 @@ export abstract class ApprovalPageComponentTemplate<
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: (value) => {
-                this.confirmationService.showSuccess('Rejected!', '');
+                this.userAlertService.showSuccess('Rejected!', '');
               },
               error: (err) => {
                 console.log(err);
-                this.confirmationService.showError(
+                this.userAlertService.showError(
                   'Error!',
                   'There was an error rejecting request.'
                 );

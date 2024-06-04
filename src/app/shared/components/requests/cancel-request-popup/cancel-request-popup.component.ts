@@ -5,7 +5,7 @@ import { takeUntil } from 'rxjs';
 import { DestroyBaseComponent } from '../../../base/destroy-base.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { faBan } from '@fortawesome/free-solid-svg-icons';
-import { UserConfirmationService } from 'src/app/shared/services/user-confirmation.service';
+import { UserAlertService } from 'src/app/shared/services/user-alert.service';
 
 @Component({
   selector: 'app-cancel-request-popup',
@@ -33,12 +33,12 @@ export class CancelRequestPopupComponent extends DestroyBaseComponent {
 
   faCancel = faBan;
 
-  constructor(private confirmationService: UserConfirmationService) {
+  constructor(private userAlertService: UserAlertService) {
     super();
   }
 
   cancelLeaveRequest() {
-    this.confirmationService
+    this.userAlertService
       .confirmAction(
         'Are you sure?',
         "You won't be able to revert this!",
@@ -47,7 +47,7 @@ export class CancelRequestPopupComponent extends DestroyBaseComponent {
       )
       .subscribe((isConfirmed) => {
         if (isConfirmed) {
-          this.confirmationService.showLoading(
+          this.userAlertService.showLoading(
             'Canceling...',
             'Please wait while we cancel your request.'
           );
@@ -57,14 +57,14 @@ export class CancelRequestPopupComponent extends DestroyBaseComponent {
             .pipe(takeUntil(this.destroy$))
             .subscribe({
               next: (value) => {
-                this.confirmationService.showSuccess(
+                this.userAlertService.showSuccess(
                   'Canceled!',
                   'Your Request has been canceled.'
                 );
               },
               error: (err) => {
                 console.log(err);
-                this.confirmationService.showError(
+                this.userAlertService.showError(
                   'Error!',
                   'There was an error canceling your request.'
                 );
