@@ -195,7 +195,6 @@ class LeaveRequestAdapter {
   static ApiToModel(apiSchema: LeaveRequestApi): LeaveRequest {
     const obj: LeaveRequest = {
       id: apiSchema.leaveID,
-      employeeId: apiSchema.u_EmployeeID,
       leaveType: apiSchema.leaveType,
       leaveCode: apiSchema.leaveCode,
       fromDate: formatDateToISO(apiSchema.fromDate),

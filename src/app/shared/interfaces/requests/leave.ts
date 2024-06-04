@@ -1,14 +1,13 @@
 export interface LeaveRequest {
   id: string;
-  employeeId: string;
   leaveType: string;
+  leaveCode: string;
   fromDate: string;
   toDate: string;
   fromTime: string | null;
   toTime: string | null;
   status: string;
   remarks: string | null;
-  leaveCode: string;
   paidDays: string;
   unpaidDays: string;
 }
