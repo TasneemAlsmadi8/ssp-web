@@ -111,5 +111,6 @@
   [(isOpen)]="ItemDetailsOpen"
   [item]="activeItemDetails"
   [employeeId]="activeItemEmployeeId"
+  (onSubmitSuccess)="refreshItems()"
 />
 <app-approval-speed-dial />
