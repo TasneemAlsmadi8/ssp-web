@@ -6,17 +6,21 @@ import {
   ValueTransactionRequestStatus,
   ValueTransactionRequest,
   ValueTransactionRequestType,
-  ValueTransactionRequestUpdateSchema,
-  ValueTransactionRequestAddSchema,
+  ValueTransactionRequestUpdate,
+  ValueTransactionRequestAdd,
+  ValueTransactionRequestApi,
+  ValueTransactionRequestAddApi,
+  ValueTransactionRequestUpdateApi,
 } from '../../interfaces/requests/value-transaction';
-import { Observable, tap } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import { SharedArrayStore } from '../../utils/shared-array-store';
 import { GenericRequestService } from './generic-request.service';
+import { formatDateToISO } from '../../utils/data-formatter';
 
 type iValueTransactionRequestService = GenericRequestService<
   ValueTransactionRequest,
-  ValueTransactionRequestUpdateSchema,
-  ValueTransactionRequestAddSchema,
+  ValueTransactionRequestUpdate,
+  ValueTransactionRequestAdd,
   ValueTransactionRequestType
 >;
 
@@ -42,10 +46,7 @@ export class ValueTransactionRequestService
   constructor(private http: HttpClient, private userService: LocalUserService) {
     super();
 
-    this.valueTransactionRequestsStore.setDefaultSortByKey(
-      'valueTranID',
-      false
-    );
+    this.valueTransactionRequestsStore.setDefaultSortByKey('id', false);
   }
 
   get user() {
@@ -55,8 +56,11 @@ export class ValueTransactionRequestService
   getAll(): Observable<ValueTransactionRequest[]> {
     const url = `${this.url}/GetValueTranRequestsByEmployeeID?EmployeeId=${this.user.id}`;
     return this.http
-      .get<ValueTransactionRequest[]>(url, this.httpOptions)
+      .get<ValueTransactionRequestApi[]>(url, this.httpOptions)
       .pipe(
+        map((response) =>
+          response.map(ValueTransactionRequestAdapter.apiToModel)
+        ),
         tap((valueTransactionRequests) =>
           this.valueTransactionRequestsStore.update(
             this.fillNullStatus(valueTransactionRequests)
@@ -78,9 +82,8 @@ export class ValueTransactionRequestService
           this.valueTransactionRequestsStore
             .getValue()
             .map((valueTransactionRequest) => {
-              if (valueTransactionRequest.valueTranID === id) {
+              if (valueTransactionRequest.id === id) {
                 valueTransactionRequest.status = 'Canceled';
-                valueTransactionRequest.u_Status = body.u_Status;
                 valueTransactionRequest = { ...valueTransactionRequest };
               }
               return valueTransactionRequest;
@@ -105,27 +108,31 @@ export class ValueTransactionRequestService
     return this.valueTransactionTypesStore.observable$;
   }
 
-  update(body: ValueTransactionRequestUpdateSchema): Observable<any> {
+  update(data: ValueTransactionRequestUpdate): Observable<any> {
     const url = this.url + '/UpdateValueTranRequest';
 
+    const body = ValueTransactionRequestAdapter.updateToApi(data);
     return this.http.patch<any>(url, body, this.httpOptions).pipe(
       tap(() => {
         const updatedValueTransactionRequests =
           this.valueTransactionRequestsStore
             .getValue()
             .map((valueTransactionRequest) => {
-              if (valueTransactionRequest.valueTranID === body.docEntry) {
-                valueTransactionRequest.valueTranCode =
-                  body.u_ValueTranType ?? valueTransactionRequest.valueTranCode;
-                valueTransactionRequest.value =
-                  body.u_TranValue ?? valueTransactionRequest.value;
-                valueTransactionRequest.date =
-                  body.u_Date ?? valueTransactionRequest.date;
-                valueTransactionRequest.projectCode =
-                  body.u_ProjectCode ?? valueTransactionRequest.projectCode;
-                valueTransactionRequest.remarks =
-                  body.u_Remarks ?? valueTransactionRequest.remarks;
-                valueTransactionRequest = { ...valueTransactionRequest };
+              if (valueTransactionRequest.id === data.id) {
+                // valueTransactionRequest.valueTranCode =
+                //   body.valueTranCode ?? valueTransactionRequest.valueTranCode;
+                // valueTransactionRequest.value =
+                //   body.value ?? valueTransactionRequest.value;
+                // valueTransactionRequest.date =
+                //   body.date ?? valueTransactionRequest.date;
+                // valueTransactionRequest.projectCode =
+                //   body.projectCode ?? valueTransactionRequest.projectCode;
+                // valueTransactionRequest.remarks =
+                //   body.remarks ?? valueTransactionRequest.remarks;
+                valueTransactionRequest = {
+                  ...valueTransactionRequest,
+                  ...data,
+                };
               }
               return valueTransactionRequest;
             });
@@ -136,11 +143,10 @@ export class ValueTransactionRequestService
     );
   }
 
-  add(body: ValueTransactionRequestAddSchema): Observable<any> {
+  add(data: ValueTransactionRequestAdd): Observable<any> {
     const url = this.url + '/AddValueTranRequest';
 
-    if (!body.u_EmployeeID) body.u_EmployeeID = this.user.id;
-
+    const body = ValueTransactionRequestAdapter.addToApi(data, this.user.id);
     return this.http.post<any>(url, body, this.httpOptions).pipe(
       tap(() => {
         this.getAll().subscribe();
@@ -152,7 +158,6 @@ export class ValueTransactionRequestService
     valueTransactionRequests.map((req) => {
       if (!req.status) {
         req.status = 'Pending';
-        req.u_Status = ValueTransactionRequestStatus.Pending;
       }
     });
     return valueTransactionRequests;
@@ -171,4 +176,51 @@ export class ValueTransactionRequestService
   // sortById(ascending: boolean = true): void {
   //   this.valueTransactionRequestsStore.sortByKey('valueTransactionID', ascending);
   // }
+}
+class ValueTransactionRequestAdapter {
+  static apiToModel(
+    apiSchema: ValueTransactionRequestApi
+  ): ValueTransactionRequest {
+    const obj: ValueTransactionRequest = {
+      id: apiSchema.valueTranID,
+      valueTranName: apiSchema.valueTranName,
+      valueTranCode: apiSchema.valueTranCode,
+      value: apiSchema.value,
+      date: formatDateToISO(apiSchema.date),
+      createDate: formatDateToISO(apiSchema.createDate),
+      projectCode: apiSchema.projectCode,
+      status: apiSchema.status,
+      remarks: apiSchema.remarks,
+    };
+    return obj;
+  }
+
+  static addToApi(
+    addSchema: ValueTransactionRequestAdd,
+    employeeId: string
+  ): ValueTransactionRequestAddApi {
+    const obj: ValueTransactionRequestAddApi = {
+      u_EmployeeID: employeeId,
+      u_ValueTranType: addSchema.valueTranCode,
+      u_TranValue: addSchema.value,
+      u_Date: addSchema.date,
+      u_ProjectCode: addSchema.projectCode,
+      u_Remarks: addSchema.remarks,
+    };
+    return obj;
+  }
+
+  static updateToApi(
+    updateSchema: ValueTransactionRequestUpdate
+  ): ValueTransactionRequestUpdateApi {
+    const obj: ValueTransactionRequestUpdateApi = {
+      docEntry: updateSchema.id,
+      u_ValueTranType: updateSchema.valueTranCode,
+      u_TranValue: updateSchema.value,
+      u_Date: updateSchema.date,
+      u_ProjectCode: updateSchema.projectCode,
+      u_Remarks: updateSchema.remarks,
+    };
+    return obj;
+  }
 }

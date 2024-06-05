@@ -38,6 +38,6 @@ export class RequestsValueTransactionsComponent extends RequestPageComponentTemp
     index: number,
     item: ValueTransactionRequest
   ): number {
-    return parseInt(item.valueTranID);
+    return parseInt(item.id);
   }
 }

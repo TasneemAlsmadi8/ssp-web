@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   ValueTransactionRequest,
-  ValueTransactionRequestAddSchema,
+  ValueTransactionRequestAdd,
   ValueTransactionRequestType,
 } from 'src/app/shared/interfaces/requests/value-transaction';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
@@ -33,24 +33,18 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class NewValueTransactionRequestComponent extends NewRequestComponentTemplate<
   ValueTransactionRequest,
-  ValueTransactionRequestAddSchema
+  ValueTransactionRequestAdd
 > {
   item: ValueTransactionRequest = {
-    valueTranID: '',
-    u_EmployeeID: '',
+    id: '',
     valueTranName: '',
     value: '',
     date: '',
     status: '',
     remarks: '',
     valueTranCode: '',
-    u_Status: null,
     createDate: '',
-    u_ApprStatus1: null,
-    u_ApprStatus2: null,
-    u_ApprStatus3: null,
     projectCode: '',
-    sortDate: '',
   };
 
   valueTransactionTypes: ValueTransactionRequestType[] = [];
@@ -85,16 +79,13 @@ export class NewValueTransactionRequestComponent extends NewRequestComponentTemp
       });
   }
 
-  override mapFormToAddRequest(
-    formValues: any
-  ): ValueTransactionRequestAddSchema {
-    const data: ValueTransactionRequestAddSchema = {
-      u_EmployeeID: '',
-      u_ValueTranType: formValues.valueTransactionType ?? undefined,
-      u_TranValue: formValues.value?.toString() ?? undefined,
-      u_Date: formValues.date ?? undefined,
-      u_ProjectCode: formValues.project ?? undefined,
-      u_Remarks: formValues.remarks ?? undefined,
+  override mapFormToAddRequest(formValues: any): ValueTransactionRequestAdd {
+    const data: ValueTransactionRequestAdd = {
+      valueTranCode: formValues.valueTransactionType ?? undefined,
+      value: formValues.value?.toString() ?? undefined,
+      date: formValues.date ?? undefined,
+      projectCode: formValues.project ?? undefined,
+      remarks: formValues.remarks ?? undefined,
     };
     return data;
   }

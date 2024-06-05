@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import {
   ValueTransactionRequest,
   ValueTransactionRequestType,
-  ValueTransactionRequestUpdateSchema,
+  ValueTransactionRequestUpdate,
 } from 'src/app/shared/interfaces/requests/value-transaction';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
@@ -35,7 +35,7 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class ValueTransactionRequestDetailsComponent extends RequestDetailsComponentTemplate<
   ValueTransactionRequest,
-  ValueTransactionRequestUpdateSchema
+  ValueTransactionRequestUpdate
 > {
   valueTransactionTypes: ValueTransactionRequestType[] = [];
   projects: Project[] = [];
@@ -70,14 +70,14 @@ export class ValueTransactionRequestDetailsComponent extends RequestDetailsCompo
 
   override mapFormToUpdateRequest(
     formValues: any
-  ): ValueTransactionRequestUpdateSchema {
-    const data: ValueTransactionRequestUpdateSchema = {
-      docEntry: this.item.valueTranID,
-      u_ValueTranType: formValues.valueTransactionType ?? undefined,
-      u_TranValue: formValues.value?.toString() ?? undefined,
-      u_Date: formValues.date ?? undefined,
-      u_ProjectCode: formValues.project ?? undefined,
-      u_Remarks: formValues.remarks ?? undefined,
+  ): ValueTransactionRequestUpdate {
+    const data: ValueTransactionRequestUpdate = {
+      id: this.item.id,
+      valueTranCode: formValues.valueTransactionType ?? undefined,
+      value: formValues.value?.toString() ?? undefined,
+      date: formValues.date ?? undefined,
+      projectCode: formValues.project ?? undefined,
+      remarks: formValues.remarks ?? undefined,
     };
     return data;
   }

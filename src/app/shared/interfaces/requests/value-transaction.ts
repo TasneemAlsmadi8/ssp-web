@@ -1,4 +1,33 @@
 export interface ValueTransactionRequest {
+  id: string;
+  valueTranName: string;
+  valueTranCode: string;
+  value: string;
+  date: string;
+  createDate: string;
+  projectCode: string;
+  status: string;
+  remarks: string;
+}
+
+export interface ValueTransactionRequestUpdate {
+  id: string;
+  valueTranCode?: string;
+  value?: string;
+  date?: string;
+  projectCode?: string;
+  remarks?: string;
+}
+
+export interface ValueTransactionRequestAdd {
+  valueTranCode: string;
+  value: string;
+  date: string;
+  projectCode: string;
+  remarks?: string;
+}
+
+export interface ValueTransactionRequestApi {
   valueTranID: string;
   u_EmployeeID: string;
   valueTranName: string;
@@ -28,7 +57,7 @@ export interface ValueTransactionRequestType {
   name: string;
 }
 
-export interface ValueTransactionRequestUpdateSchema {
+export interface ValueTransactionRequestUpdateApi {
   u_EmployeeID?: string;
 
   docEntry: string;
@@ -49,7 +78,7 @@ export interface ValueTransactionRequestUpdateSchema {
   u_ApprEmpID3?: string;
 }
 
-export interface ValueTransactionRequestAddSchema {
+export interface ValueTransactionRequestAddApi {
   docEntry?: string;
 
   u_EmployeeID: string;

@@ -51,23 +51,15 @@ export class ApprovalsValueTransactionsComponent extends ApprovalPageComponentTe
   ): ValueTransactionRequest {
     // TODO: Check
     const data: ValueTransactionRequest = {
-      valueTranID: item.valueTranID,
+      id: item.valueTranID,
       remarks: item.remarks,
       status: 'Pending',
       valueTranCode: item.valueTranCode,
-      u_EmployeeID: item.empID,
       valueTranName: item.valueTranName,
       value: item.value,
       date: item.date,
-      u_Status: ValueTransactionRequestStatus.Pending,
       createDate: item.dateSubmitted,
-
-      u_ApprStatus1: null,
-      u_ApprStatus2: null,
-      u_ApprStatus3: null,
-
       projectCode: item.projectCode,
-      sortDate: '',
     };
     return data;
   }
