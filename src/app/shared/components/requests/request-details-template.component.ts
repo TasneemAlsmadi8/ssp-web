@@ -46,6 +46,7 @@ export abstract class RequestDetailsComponentTemplate<
     this._isOpen = value;
     this.isOpenChange.emit(value);
   }
+  @Input() employeeId?: string;
 
   @Output() isOpenChange = new EventEmitter<boolean>();
   @Output() onSave = new EventEmitter<T>();

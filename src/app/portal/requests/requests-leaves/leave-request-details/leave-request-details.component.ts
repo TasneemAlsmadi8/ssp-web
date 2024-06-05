@@ -33,7 +33,6 @@ export class LeaveRequestDetailsComponent extends RequestDetailsComponentTemplat
   LeaveRequest,
   LeaveRequestUpdate
 > {
-  @Input() employeeId?: string;
   leaveTypes!: LeaveRequestType[];
 
   constructor(private leaveRequestService: LeaveRequestService) {

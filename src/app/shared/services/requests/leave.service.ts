@@ -91,13 +91,9 @@ export class LeaveRequestService
 
   getTypes(): Observable<LeaveRequestType[]> {
     if (this.leaveTypesStore.getValue().length == 0) {
-      const url =
-        this.url + `/GetEmployeeLeaveTypes?EmployeeID=${this.user.id}`;
-      this.http
-        .get<LeaveRequestType[]>(url, this.httpOptions)
-        .subscribe((value) => {
-          this.leaveTypesStore.update(value);
-        });
+      this.getTypesByEmployeeId(this.user.id).subscribe((value) => {
+        this.leaveTypesStore.update(value);
+      });
     }
     return this.leaveTypesStore.observable$;
   }

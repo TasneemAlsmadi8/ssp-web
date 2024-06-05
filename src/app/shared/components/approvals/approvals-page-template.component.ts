@@ -26,6 +26,7 @@ export abstract class ApprovalPageComponentTemplate<
 
   selectedItems: SelectedItems<Approval> = new SelectedItems();
 
+  activeItemEmployeeId?: string;
   activeItemDetails?: Request;
   ItemDetailsOpen = false;
 
@@ -125,6 +126,8 @@ export abstract class ApprovalPageComponentTemplate<
 
   setActiveItemDetails(activeItemDetails: Approval) {
     this.activeItemDetails = this.mapApprovalToUpdateRequest(activeItemDetails);
+    if ('employeeId' in activeItemDetails)
+      this.activeItemEmployeeId = activeItemDetails.employeeId as string;
     this.ItemDetailsOpen = true;
   }
 
