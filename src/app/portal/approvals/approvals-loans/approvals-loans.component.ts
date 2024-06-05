@@ -42,12 +42,12 @@ export class ApprovalsLoansComponent extends ApprovalPageComponentTemplate<
   }
 
   override getItemId(item: LoanApproval): number {
-    return parseInt(item.loanID);
+    return parseInt(item.id);
   }
   override mapApprovalToUpdateRequest(item: LoanApproval): LoanRequest {
     // TODO: Check
     const data: LoanRequest = {
-      id: item.loanID,
+      id: item.id,
       remarks: item.remarks,
       status: 'Pending',
       loanCode: item.loanCode,

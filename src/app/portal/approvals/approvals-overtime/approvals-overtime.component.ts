@@ -43,22 +43,22 @@ export class ApprovalsOvertimeComponent extends ApprovalPageComponentTemplate<
   }
 
   override getItemId(item: OvertimeApproval): number {
-    return parseInt(item.overtimeID);
+    return parseInt(item.id);
   }
   override mapApprovalToUpdateRequest(item: OvertimeApproval): OvertimeRequest {
     const data: OvertimeRequest = {
-      id: item.overtimeID,
+      id: item.id,
       overtimeType: item.overtimeType,
       fromDate: item.fromDate,
       remarks: item.remarks,
       status: 'Pending',
       overtimeCode: item.overtimeCode,
       overtimeHours: (
-        parseFloat(item.ovHour) +
-        parseFloat(item.ovMin) / 60
+        parseFloat(item.hour) +
+        parseFloat(item.minute) / 60
       ).toString(),
-      hour: parseFloat(item.ovHour),
-      minute: parseFloat(item.ovMin),
+      hour: parseFloat(item.hour),
+      minute: parseFloat(item.minute),
       projectCode: item.projectCode,
       projectName: item.projectName,
 

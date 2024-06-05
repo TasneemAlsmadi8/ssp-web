@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { GenericApprovalService } from './generic-approval.service';
-import { LoanApproval } from '../../interfaces/approvals/loan';
+import { LoanApproval, LoanApprovalApi } from '../../interfaces/approvals/loan';
 import { Observable, map, tap } from 'rxjs';
 import { User } from '../../interfaces/user';
 import { SharedArrayStore } from '../../utils/shared-array-store';
@@ -32,12 +32,13 @@ export class LoanApprovalService
   constructor(private http: HttpClient, private userService: LocalUserService) {
     super();
     this.loanApprovalsStore.setDefaultSortByKeys([
-      { key: 'loanID', ascending: false },
+      { key: 'id', ascending: false },
     ]);
   }
   getAll(): Observable<LoanApproval[]> {
     const url = `${this.url}/GetLoanRequestForApproval?EmployeeId=${this.user.id}&UILang=??`; //TODO: check the UILang param (note: this works)
-    return this.http.get<LoanApproval[]>(url, this.httpOptions).pipe(
+    return this.http.get<LoanApprovalApi[]>(url, this.httpOptions).pipe(
+      map((response) => response.map(LoanApprovalAdapter.apiToModel)),
       tap((loanApprovals) => {
         loanApprovals.map((value) => {
           value.startDate = value.startDate.slice(0, 10);
@@ -56,7 +57,7 @@ export class LoanApprovalService
         if (value) {
           const updatedLoanRequests = this.loanApprovalsStore
             .getValue()
-            .filter((req) => req.loanID !== id);
+            .filter((req) => req.id !== id);
           this.loanApprovalsStore.update(updatedLoanRequests);
         }
       })
@@ -72,10 +73,30 @@ export class LoanApprovalService
         if (value) {
           const updatedLoanRequests = this.loanApprovalsStore
             .getValue()
-            .filter((req) => req.loanID !== id);
+            .filter((req) => req.id !== id);
           this.loanApprovalsStore.update(updatedLoanRequests);
         }
       })
     );
+  }
+}
+class LoanApprovalAdapter {
+  static apiToModel(apiSchema: LoanApprovalApi): LoanApproval {
+    const obj: LoanApproval = {
+      dateSubmitted: apiSchema.dateSubmitted,
+      startDate: apiSchema.startDate,
+      id: apiSchema.loanID,
+      employeeId: apiSchema.empID,
+      employeeCode: apiSchema.empCode,
+      fullName: apiSchema.fullName,
+      fullNameF: apiSchema.fullNameF,
+      loanCode: apiSchema.loanCode,
+      loanName: apiSchema.loanName,
+      totalAmount: apiSchema.totalAmount,
+      installmentCount: apiSchema.installmentCount,
+      status: apiSchema.status,
+      remarks: apiSchema.remarks,
+    };
+    return obj;
   }
 }
