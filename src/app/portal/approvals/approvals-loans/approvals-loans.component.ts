@@ -9,10 +9,7 @@ import { LoanApprovalService } from 'src/app/shared/services/approvals/loan.serv
 import { LoanApproval } from 'src/app/shared/interfaces/approvals/loan';
 import { ApprovalRejectButtonComponent } from 'src/app/shared/components/approvals/approval-reject-button/approval-reject-button.component';
 import { ApprovalAcceptButtonComponent } from 'src/app/shared/components/approvals/approval-accept-button/approval-accept-button.component';
-import {
-  LoanRequest,
-  LoanRequestStatus,
-} from 'src/app/shared/interfaces/requests/loan';
+import { LoanRequest } from 'src/app/shared/interfaces/requests/loan';
 import { ApprovalSpeedDialComponent } from 'src/app/shared/components/approvals/approval-speed-dial/approval-speed-dial.component';
 import { TranslateModule } from '@ngx-translate/core';
 

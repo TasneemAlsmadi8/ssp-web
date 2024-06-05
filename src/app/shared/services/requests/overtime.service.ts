@@ -3,7 +3,6 @@ import { BaseService } from '../../base/base.service';
 import { HttpClient } from '@angular/common/http';
 import { LocalUserService } from '../local-user.service';
 import {
-  OvertimeRequestStatus,
   OvertimeRequest,
   OvertimeRequestType,
   OvertimeRequestUpdate,
@@ -17,6 +16,7 @@ import { SharedArrayStore } from '../../utils/shared-array-store';
 import { GenericRequestService } from './generic-request.service';
 import { formatDateToISO } from '../../utils/data-formatter';
 import { ProjectsService } from '../projects.service';
+import { ItemStatus } from '../../interfaces/requests/generic-request';
 
 type iOvertimeRequestService = GenericRequestService<
   OvertimeRequest,
@@ -71,7 +71,7 @@ export class OvertimeRequestService
     const url = `${this.url}/UpdateOvertimeRequest`;
     const body = {
       docEntry: id,
-      u_Status: OvertimeRequestStatus.Canceled,
+      u_Status: ItemStatus.Canceled,
     };
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(

@@ -3,7 +3,6 @@ import { BaseService } from '../../base/base.service';
 import { HttpClient } from '@angular/common/http';
 import { LocalUserService } from '../local-user.service';
 import {
-  LeaveRequestStatus,
   LeaveRequest,
   LeaveRequestType,
   LeaveRequestUpdate,
@@ -17,6 +16,7 @@ import { Observable, map, tap } from 'rxjs';
 import { SharedArrayStore } from '../../utils/shared-array-store';
 import { GenericRequestService } from './generic-request.service';
 import { formatDateToISO } from '../../utils/data-formatter';
+import { ItemStatus } from '../../interfaces/requests/generic-request';
 
 type iLeaveRequestService = GenericRequestService<
   LeaveRequest,
@@ -68,7 +68,7 @@ export class LeaveRequestService
     const url = `${this.url}/UpdateLeaveRequest`;
     const body = {
       docEntry: id,
-      u_Status: LeaveRequestStatus.Canceled,
+      u_Status: ItemStatus.Canceled,
     };
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(
@@ -202,7 +202,7 @@ class LeaveRequestAdapter {
       fromTime: apiSchema.fromTime,
       toTime: apiSchema.toTime,
       status: apiSchema.status,
-      remarks: apiSchema.remarks,
+      remarks: apiSchema.remarks ?? '',
       paidDays: apiSchema.u_PaidDays,
       unpaidDays: apiSchema.u_UnpaidDays,
     };

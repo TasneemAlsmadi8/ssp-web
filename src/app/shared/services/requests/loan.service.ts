@@ -3,7 +3,6 @@ import { BaseService } from '../../base/base.service';
 import { HttpClient } from '@angular/common/http';
 import { LocalUserService } from '../local-user.service';
 import {
-  LoanRequestStatus,
   LoanRequest,
   LoanRequestType,
   LoanRequestUpdate,
@@ -16,6 +15,7 @@ import { Observable, map, tap } from 'rxjs';
 import { SharedArrayStore } from '../../utils/shared-array-store';
 import { GenericRequestService } from './generic-request.service';
 import { formatDateToISO } from '../../utils/data-formatter';
+import { ItemStatus } from '../../interfaces/requests/generic-request';
 
 type iLoanRequestService = GenericRequestService<
   LoanRequest,
@@ -64,7 +64,7 @@ export class LoanRequestService
     const url = `${this.url}/UpdateLoanRequest`;
     const body = {
       docEntry: id,
-      u_Status: LoanRequestStatus.Canceled,
+      u_Status: ItemStatus.Canceled,
     };
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(
@@ -167,7 +167,7 @@ class LoanRequestAdapter {
       installmentCount: apiSchema.installmentCount,
       startDate: formatDateToISO(apiSchema.startDate),
       status: apiSchema.status,
-      remarks: apiSchema.remarks,
+      remarks: apiSchema.remarks ?? '',
     };
     return obj;
   }

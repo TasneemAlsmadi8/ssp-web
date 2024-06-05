@@ -1,3 +1,5 @@
+import { ItemType } from './generic-request';
+
 export interface EncashmentRequest {
   id: string;
   encashName: string;
@@ -59,14 +61,7 @@ export interface EncashmentRequestApi {
   u_AttachFile: string;
 }
 
-export enum EncashmentRequestStatus {
-  Pending = '0',
-  Rejected = '1',
-  Approved = '2',
-  Canceled = '3',
-}
-
-export interface EncashmentRequestType {
+export interface EncashmentRequestType extends ItemType {
   code: string;
   name: string;
 }

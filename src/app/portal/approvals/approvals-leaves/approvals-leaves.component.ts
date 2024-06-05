@@ -9,10 +9,7 @@ import { LeaveApprovalService } from 'src/app/shared/services/approvals/leave.se
 import { LeaveApproval } from 'src/app/shared/interfaces/approvals/leave';
 import { ApprovalRejectButtonComponent } from 'src/app/shared/components/approvals/approval-reject-button/approval-reject-button.component';
 import { ApprovalAcceptButtonComponent } from 'src/app/shared/components/approvals/approval-accept-button/approval-accept-button.component';
-import {
-  LeaveRequest,
-  LeaveRequestStatus,
-} from 'src/app/shared/interfaces/requests/leave';
+import { LeaveRequest } from 'src/app/shared/interfaces/requests/leave';
 import { ApprovalSpeedDialComponent } from 'src/app/shared/components/approvals/approval-speed-dial/approval-speed-dial.component';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -53,7 +50,6 @@ export class ApprovalsLeavesComponent extends ApprovalPageComponentTemplate<
       fromTime: item.fromTime,
       toTime: item.toTime,
       remarks: item.remarks,
-      // statusTypeId: LeaveRequestStatus.Pending,
       status: 'Pending',
       leaveCode: item.leaveCode,
       paidDays: '',

@@ -9,10 +9,7 @@ import { EncashmentApprovalService } from 'src/app/shared/services/approvals/enc
 import { EncashmentApproval } from 'src/app/shared/interfaces/approvals/encashment';
 import { ApprovalRejectButtonComponent } from 'src/app/shared/components/approvals/approval-reject-button/approval-reject-button.component';
 import { ApprovalAcceptButtonComponent } from 'src/app/shared/components/approvals/approval-accept-button/approval-accept-button.component';
-import {
-  EncashmentRequest,
-  EncashmentRequestStatus,
-} from 'src/app/shared/interfaces/requests/encashment';
+import { EncashmentRequest } from 'src/app/shared/interfaces/requests/encashment';
 import { ApprovalSpeedDialComponent } from 'src/app/shared/components/approvals/approval-speed-dial/approval-speed-dial.component';
 import { TranslateModule } from '@ngx-translate/core';
 

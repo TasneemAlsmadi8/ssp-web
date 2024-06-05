@@ -3,7 +3,6 @@ import { BaseService } from '../../base/base.service';
 import { HttpClient } from '@angular/common/http';
 import { LocalUserService } from '../local-user.service';
 import {
-  ValueTransactionRequestStatus,
   ValueTransactionRequest,
   ValueTransactionRequestType,
   ValueTransactionRequestUpdate,
@@ -16,6 +15,7 @@ import { Observable, map, tap } from 'rxjs';
 import { SharedArrayStore } from '../../utils/shared-array-store';
 import { GenericRequestService } from './generic-request.service';
 import { formatDateToISO } from '../../utils/data-formatter';
+import { ItemStatus } from '../../interfaces/requests/generic-request';
 
 type iValueTransactionRequestService = GenericRequestService<
   ValueTransactionRequest,
@@ -71,7 +71,7 @@ export class ValueTransactionRequestService
     const url = `${this.url}/UpdateValueTranRequest`;
     const body = {
       docEntry: id,
-      u_Status: ValueTransactionRequestStatus.Canceled,
+      u_Status: ItemStatus.Canceled,
     };
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(

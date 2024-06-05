@@ -3,7 +3,6 @@ import { BaseService } from '../../base/base.service';
 import { HttpClient } from '@angular/common/http';
 import { LocalUserService } from '../local-user.service';
 import {
-  EncashmentRequestStatus,
   EncashmentRequest,
   EncashmentRequestType,
   EncashmentRequestUpdate,
@@ -20,6 +19,7 @@ import {
   formatDateToDisplay,
   formatDateToISO,
 } from '../../utils/data-formatter';
+import { ItemStatus } from '../../interfaces/requests/generic-request';
 
 type iEncashmentRequestService = GenericRequestService<
   EncashmentRequest,
@@ -71,7 +71,7 @@ export class EncashmentRequestService
     const url = `${this.url}/UpdateEncashRequest`;
     const body = {
       docEntry: id,
-      u_Status: EncashmentRequestStatus.Canceled,
+      u_Status: ItemStatus.Canceled,
     };
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(

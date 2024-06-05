@@ -1,4 +1,6 @@
-export interface LeaveRequest {
+import { Item, ItemType } from './generic-request';
+
+export interface LeaveRequest extends Item {
   id: string;
   leaveType: string;
   leaveCode: string;
@@ -7,7 +9,7 @@ export interface LeaveRequest {
   fromTime: string | null;
   toTime: string | null;
   status: string;
-  remarks: string | null;
+  remarks?: string;
   paidDays: string;
   unpaidDays: string;
 }
@@ -131,16 +133,9 @@ export interface LeaveRequestUpdateApi {
   // u_ApprEmpID3?: string;
 }
 
-export interface LeaveRequestType {
+export interface LeaveRequestType extends ItemType{
   code: string;
   name: string;
-}
-
-export enum LeaveRequestStatus {
-  Pending = '0',
-  Rejected = '1',
-  Approved = '2',
-  Canceled = '3',
 }
 
 export interface LeaveRequestAddApi {

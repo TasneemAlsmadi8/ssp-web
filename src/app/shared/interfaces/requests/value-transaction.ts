@@ -1,3 +1,5 @@
+import { ItemType } from './generic-request';
+
 export interface ValueTransactionRequest {
   id: string;
   valueTranName: string;
@@ -45,14 +47,7 @@ export interface ValueTransactionRequestApi {
   sortDate: string;
 }
 
-export enum ValueTransactionRequestStatus {
-  Pending = '0',
-  Rejected = '1',
-  Approved = '2',
-  Canceled = '3',
-}
-
-export interface ValueTransactionRequestType {
+export interface ValueTransactionRequestType extends ItemType {
   code: string;
   name: string;
 }

@@ -41,7 +41,6 @@ export class NewLeaveRequestComponent extends NewRequestComponentTemplate<
     fromTime: null,
     toTime: null,
     status: '',
-    remarks: null,
     leaveCode: '',
     paidDays: '',
     unpaidDays: '',

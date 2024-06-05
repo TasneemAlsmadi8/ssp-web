@@ -9,10 +9,7 @@ import { ValueTransactionApprovalService } from 'src/app/shared/services/approva
 import { ValueTransactionApproval } from 'src/app/shared/interfaces/approvals/value-transaction';
 import { ApprovalRejectButtonComponent } from 'src/app/shared/components/approvals/approval-reject-button/approval-reject-button.component';
 import { ApprovalAcceptButtonComponent } from 'src/app/shared/components/approvals/approval-accept-button/approval-accept-button.component';
-import {
-  ValueTransactionRequest,
-  ValueTransactionRequestStatus,
-} from 'src/app/shared/interfaces/requests/value-transaction';
+import { ValueTransactionRequest } from 'src/app/shared/interfaces/requests/value-transaction';
 import { ApprovalSpeedDialComponent } from 'src/app/shared/components/approvals/approval-speed-dial/approval-speed-dial.component';
 import { TranslateModule } from '@ngx-translate/core';
 

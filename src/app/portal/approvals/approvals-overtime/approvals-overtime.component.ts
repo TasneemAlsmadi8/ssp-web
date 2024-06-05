@@ -7,10 +7,7 @@ import { ApprovalPageComponentTemplate } from 'src/app/shared/components/approva
 import { OvertimeApproval } from 'src/app/shared/interfaces/approvals/overtime';
 import { ApprovalRejectButtonComponent } from 'src/app/shared/components/approvals/approval-reject-button/approval-reject-button.component';
 import { ApprovalAcceptButtonComponent } from 'src/app/shared/components/approvals/approval-accept-button/approval-accept-button.component';
-import {
-  OvertimeRequest,
-  OvertimeRequestStatus,
-} from 'src/app/shared/interfaces/requests/overtime';
+import { OvertimeRequest } from 'src/app/shared/interfaces/requests/overtime';
 import { ApprovalSpeedDialComponent } from 'src/app/shared/components/approvals/approval-speed-dial/approval-speed-dial.component';
 import { OvertimeRequestDetailsComponent } from '../../requests/requests-overtime/overtime-request-details/overtime-request-details.component';
 import { OvertimeApprovalService } from 'src/app/shared/services/approvals/overtime.service';

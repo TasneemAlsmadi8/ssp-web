@@ -49,7 +49,6 @@ export class NewLoanRequestComponent extends NewRequestComponentTemplate<
     installmentCount: '',
     startDate: '',
     status: '',
-    remarks: null,
   };
 
   loanTypes!: LoanRequestType[];

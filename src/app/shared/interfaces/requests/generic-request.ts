@@ -1,6 +1,7 @@
 export interface Item {
-  // Define properties of Item here
-  // get id(): string;
+  id: string;
+  status: string;
+  remarks?: string;
 }
 
 export interface ItemType {
@@ -16,9 +17,10 @@ export enum ItemStatus {
 }
 
 export interface UpdateSchema {
-  // Define properties of UpdateSchema here
+  id: string;
+  remarks?: string;
 }
 
 export interface AddSchema {
-  // Define properties of AddSchema here
+  remarks?: string;
 }

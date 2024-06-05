@@ -26,7 +26,7 @@ import { TranslateService } from '@ngx-translate/core';
 import { UserAlertService } from '../../services/user-alert.service';
 
 export type FormValues<T> = {
-  [key in keyof T]: string | number | null;
+  [key in keyof T]?: string | number | null;
 };
 
 @Component({

@@ -1,4 +1,6 @@
-export interface LoanRequest {
+import { Item, ItemType } from './generic-request';
+
+export interface LoanRequest extends Item {
   id: string;
   dateSubmitted: string | null;
   loanCode: string;
@@ -9,7 +11,7 @@ export interface LoanRequest {
   installmentCount: string;
   startDate: string;
   status: string;
-  remarks: string | null;
+  remarks?: string;
 }
 export interface LoanRequestUpdate {
   id: string;
@@ -45,16 +47,9 @@ export interface LoanRequestApi {
   remarks: string | null;
 }
 
-export interface LoanRequestType {
+export interface LoanRequestType extends ItemType {
   code: string;
   name: string;
-}
-
-export enum LoanRequestStatus {
-  Pending = '0',
-  Rejected = '1',
-  Approved = '2',
-  Canceled = '3',
 }
 
 export interface LoanRequestUpdateApi {
