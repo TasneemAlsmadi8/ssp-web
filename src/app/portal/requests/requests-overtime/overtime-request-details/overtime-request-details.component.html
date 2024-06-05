@@ -133,11 +133,8 @@
               <span *ngIf="shouldDisplayError('project')" class="error-message">
                 {{ getErrorMessage("project") }}
               </span>
-              <option
-                *ngFor="let project of projects"
-                [value]="project.prjCode"
-              >
-                {{ project.prjName }}
+              <option *ngFor="let project of projects" [value]="project.code">
+                {{ project.name }}
               </option>
             </select>
           </div>

@@ -117,11 +117,8 @@
               class="block w-full h-11 rounded-md border-2 border-gray-300 bg-white px-3 py-2 text-base font-normal text-blue-gray-900 shadow-sm focus:border-blue-500 focus:ring focus:ring-blue-200 disabled:bg-gray-100"
               [ngClass]="{ 'invalid-input': shouldDisplayError('project') }"
             >
-              <option
-                *ngFor="let project of projects"
-                [value]="project.prjCode"
-              >
-                {{ project.prjName }}
+              <option *ngFor="let project of projects" [value]="project.code">
+                {{ project.name }}
               </option>
             </select>
             <span *ngIf="shouldDisplayError('project')" class="error-message">
