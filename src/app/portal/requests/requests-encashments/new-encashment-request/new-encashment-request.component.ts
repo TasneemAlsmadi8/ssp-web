@@ -51,7 +51,6 @@ export class NewEncashmentRequestComponent extends NewRequestComponentTemplate<
     unitPrice: 0,
     unitCount: 0,
     loanId: null,
-    installmentCount: 0,
   };
 
   encashmentTypes: EncashmentRequestType[] = [];

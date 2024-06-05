@@ -13,7 +13,6 @@ export interface EncashmentRequest {
   unitPrice: number;
   unitCount: number;
   loanId: string | null;
-  installmentCount: number;
 }
 
 export interface EncashmentRequestUpdate {

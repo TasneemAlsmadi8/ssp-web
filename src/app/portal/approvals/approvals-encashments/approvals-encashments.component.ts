@@ -58,7 +58,6 @@ export class ApprovalsEncashmentsComponent extends ApprovalPageComponentTemplate
       unitCount: item.unitCount,
       unitPrice: 0,
       loanId: null,
-      installmentCount: 0,
     };
     return data;
   }

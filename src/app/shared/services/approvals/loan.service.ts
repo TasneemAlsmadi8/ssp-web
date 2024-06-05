@@ -93,7 +93,7 @@ class LoanApprovalAdapter {
       loanCode: apiSchema.loanCode,
       loanName: apiSchema.loanName,
       totalAmount: parseFloat(apiSchema.totalAmount),
-      installmentCount: parseFloat(apiSchema.installmentCount),
+      installmentCount: parseInt(apiSchema.installmentCount),
       status: apiSchema.status,
       remarks: apiSchema.remarks,
     };

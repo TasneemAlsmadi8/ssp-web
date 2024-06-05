@@ -164,7 +164,7 @@ class LoanRequestAdapter {
       fullNameF: apiSchema.fullNameF,
       loanName: apiSchema.loanName,
       totalAmount: parseFloat(apiSchema.totalAmount),
-      installmentCount: parseFloat(apiSchema.installmentCount),
+      installmentCount: parseInt(apiSchema.installmentCount),
       startDate: formatDateToISO(apiSchema.startDate),
       status: apiSchema.status,
       remarks: apiSchema.remarks ?? '',
