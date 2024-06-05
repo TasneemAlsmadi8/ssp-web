@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import {
   EncashmentRequest,
   EncashmentRequestType,
-  EncashmentRequestUpdateSchema,
+  EncashmentRequestUpdate,
   EncashmentValue,
 } from 'src/app/shared/interfaces/requests/encashment';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
@@ -38,7 +38,7 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTemplate<
   EncashmentRequest,
-  EncashmentRequestUpdateSchema
+  EncashmentRequestUpdate
 > {
   encashmentTypes: EncashmentRequestType[] = [];
   projects: Project[] = [];
@@ -120,20 +120,18 @@ export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTe
     };
   }
 
-  override mapFormToUpdateRequest(
-    formValues: any
-  ): EncashmentRequestUpdateSchema {
-    const data: EncashmentRequestUpdateSchema = {
-      docEntry: this.item.encashID,
+  override mapFormToUpdateRequest(formValues: any): EncashmentRequestUpdate {
+    const data: EncashmentRequestUpdate = {
+      id: this.item.id,
       // u_EncashValue:
       // this.encashValue?.paidVacationValue.toString() ?? undefined,
       // TODO: should I send it?
-      u_EncashType: formValues.encashmentType ?? undefined,
-      u_Date: formValues.date ?? undefined,
-      u_UnitPrice: formValues.unitPrice?.toString() ?? undefined,
-      u_UnitCount: formValues.unitCount?.toString() ?? undefined,
-      u_ProjectCode: formValues.project ?? undefined,
-      u_Remarks: formValues.remarks ?? undefined,
+      encashCode: formValues.encashmentType ?? undefined,
+      date: formValues.date ?? undefined,
+      unitPrice: formValues.unitPrice?.toString() ?? undefined,
+      unitCount: formValues.unitCount?.toString() ?? undefined,
+      projectCode: formValues.project ?? undefined,
+      remarks: formValues.remarks ?? undefined,
     };
     return data;
   }

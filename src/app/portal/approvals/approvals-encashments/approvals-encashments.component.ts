@@ -49,28 +49,19 @@ export class ApprovalsEncashmentsComponent extends ApprovalPageComponentTemplate
   ): EncashmentRequest {
     // TODO: Check
     const data: EncashmentRequest = {
-      encashID: item.encashID,
+      id: item.encashID,
       remarks: item.remarks,
       status: 'Pending',
-      u_EmployeeID: item.empID,
       encashName: item.encashName,
       value: item.value,
       date: item.date,
       encashCode: item.encashCode,
-      u_Status: EncashmentRequestStatus.Pending,
       createDate: item.dateSubmitted,
       projectCode: item.projectCode,
       unitCount: item.unitCount,
-
-      u_ApprStatus1: null,
-      u_ApprStatus2: null,
-      u_ApprStatus3: null,
-
       unitPrice: '',
-      loanID: null,
+      loanId: null,
       installmentCount: null,
-      sortDate: '',
-      u_AttachFile: '',
     };
     return data;
   }

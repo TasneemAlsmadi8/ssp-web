@@ -33,6 +33,6 @@ export class RequestsEncashmentsComponent extends RequestPageComponentTemplate<E
   }
 
   override trackByRequestId(index: number, item: EncashmentRequest): number {
-    return parseInt(item.encashID);
+    return parseInt(item.id);
   }
 }

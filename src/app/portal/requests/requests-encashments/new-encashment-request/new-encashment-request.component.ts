@@ -2,7 +2,7 @@ import { Component, EventEmitter, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   EncashmentRequest,
-  EncashmentRequestAddSchema,
+  EncashmentRequestAdd,
   EncashmentRequestType,
   EncashmentValue,
 } from 'src/app/shared/interfaces/requests/encashment';
@@ -36,29 +36,22 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class NewEncashmentRequestComponent extends NewRequestComponentTemplate<
   EncashmentRequest,
-  EncashmentRequestAddSchema
+  EncashmentRequestAdd
 > {
   item: EncashmentRequest = {
-    encashID: '',
-    u_EmployeeID: '',
+    id: '',
     encashName: '',
     value: '',
     date: '',
     status: '',
     remarks: '',
     encashCode: '',
-    u_Status: null,
     createDate: '',
-    u_ApprStatus1: null,
-    u_ApprStatus2: null,
-    u_ApprStatus3: null,
     projectCode: '',
     unitPrice: '',
     unitCount: '',
-    loanID: null,
+    loanId: null,
     installmentCount: null,
-    sortDate: '',
-    u_AttachFile: '',
   };
 
   encashmentTypes: EncashmentRequestType[] = [];
@@ -82,18 +75,17 @@ export class NewEncashmentRequestComponent extends NewRequestComponentTemplate<
     });
   }
 
-  override mapFormToAddRequest(formValues: any): EncashmentRequestAddSchema {
+  override mapFormToAddRequest(formValues: any): EncashmentRequestAdd {
     return {
-      u_EmployeeID: '',
       // u_EncashValue:
       // this.encashValue?.paidVacationValue.toString() ?? undefined,
       // TODO: should I send it?
-      u_EncashType: formValues.encashmentType ?? undefined,
-      u_Date: formValues.date ?? undefined,
-      u_UnitPrice: formValues.unitPrice?.toString() ?? undefined,
-      u_UnitCount: formValues.unitCount?.toString() ?? undefined,
-      u_ProjectCode: formValues.project ?? undefined,
-      u_Remarks: formValues.remarks ?? undefined,
+      encashCode: formValues.encashmentType ?? undefined,
+      date: formValues.date ?? undefined,
+      unitPrice: formValues.unitPrice?.toString() ?? undefined,
+      unitCount: formValues.unitCount?.toString() ?? undefined,
+      projectCode: formValues.project ?? undefined,
+      remarks: formValues.remarks ?? undefined,
     };
   }
 

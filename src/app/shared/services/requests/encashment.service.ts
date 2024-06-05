@@ -6,19 +6,25 @@ import {
   EncashmentRequestStatus,
   EncashmentRequest,
   EncashmentRequestType,
-  EncashmentRequestUpdateSchema,
-  EncashmentRequestAddSchema,
+  EncashmentRequestUpdate,
+  EncashmentRequestAdd,
   EncashmentValue,
+  EncashmentRequestApi,
+  EncashmentRequestAddApi,
+  EncashmentRequestUpdateApi,
 } from '../../interfaces/requests/encashment';
-import { Observable, tap } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import { SharedArrayStore } from '../../utils/shared-array-store';
 import { GenericRequestService } from './generic-request.service';
-import { formatDateToDisplay } from '../../utils/data-formatter';
+import {
+  formatDateToDisplay,
+  formatDateToISO,
+} from '../../utils/data-formatter';
 
 type iEncashmentRequestService = GenericRequestService<
   EncashmentRequest,
-  EncashmentRequestUpdateSchema,
-  EncashmentRequestAddSchema,
+  EncashmentRequestUpdate,
+  EncashmentRequestAdd,
   EncashmentRequestType
 >;
 
@@ -43,7 +49,7 @@ export class EncashmentRequestService
   constructor(private http: HttpClient, private userService: LocalUserService) {
     super();
 
-    this.encashmentRequestsStore.setDefaultSortByKey('encashID', false);
+    this.encashmentRequestsStore.setDefaultSortByKey('id', false);
   }
 
   get user() {
@@ -52,13 +58,12 @@ export class EncashmentRequestService
 
   getAll(): Observable<EncashmentRequest[]> {
     const url = `${this.url}/GetEncash?EmployeeId=${this.user.id}`;
-    return this.http
-      .get<EncashmentRequest[]>(url, this.httpOptions)
-      .pipe(
-        tap((encashmentRequests) =>
-          this.encashmentRequestsStore.update(encashmentRequests)
-        )
-      );
+    return this.http.get<EncashmentRequestApi[]>(url, this.httpOptions).pipe(
+      map((response) => response.map(EncashmentRequestAdapter.apiToModel)),
+      tap((encashmentRequests) =>
+        this.encashmentRequestsStore.update(encashmentRequests)
+      )
+    );
   }
 
   cancel(id: string): Observable<any> {
@@ -74,9 +79,8 @@ export class EncashmentRequestService
         const updatedEncashmentRequests = this.encashmentRequestsStore
           .getValue()
           .map((encashmentRequest) => {
-            if (encashmentRequest.encashID === id) {
+            if (encashmentRequest.id === id) {
               encashmentRequest.status = 'Canceled';
-              encashmentRequest.u_Status = body.u_Status;
               encashmentRequest = { ...encashmentRequest };
             }
             return encashmentRequest;
@@ -100,28 +104,18 @@ export class EncashmentRequestService
     return this.encashmentTypesStore.observable$;
   }
 
-  update(body: EncashmentRequestUpdateSchema): Observable<any> {
+  update(data: EncashmentRequestUpdate): Observable<any> {
     const url = this.url + '/UpdateEncashRequest';
+    const body: EncashmentRequestUpdateApi =
+      EncashmentRequestAdapter.updateToApi(data);
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(
       tap(() => {
         const updatedEncashmentRequests = this.encashmentRequestsStore
           .getValue()
           .map((encashmentRequest) => {
-            if (encashmentRequest.encashID === body.docEntry) {
-              console.log('sync updated values');
-              encashmentRequest.encashCode =
-                body.u_EncashType ?? encashmentRequest.encashCode;
-              encashmentRequest.date = body.u_Date ?? encashmentRequest.date;
-              encashmentRequest.unitPrice =
-                body.u_UnitPrice ?? encashmentRequest.unitPrice;
-              encashmentRequest.unitCount =
-                body.u_UnitCount ?? encashmentRequest.unitCount;
-              encashmentRequest.projectCode =
-                body.u_ProjectCode ?? encashmentRequest.projectCode;
-              encashmentRequest.remarks =
-                body.u_Remarks ?? encashmentRequest.remarks;
-              encashmentRequest = { ...encashmentRequest };
+            if (encashmentRequest.id === data.id) {
+              encashmentRequest = { ...encashmentRequest, ...data };
             }
             return encashmentRequest;
           });
@@ -130,10 +124,12 @@ export class EncashmentRequestService
     );
   }
 
-  add(body: EncashmentRequestAddSchema): Observable<any> {
+  add(data: EncashmentRequestAdd): Observable<any> {
     const url = this.url + '/AddEncashRequest';
-
-    if (!body.u_EmployeeID) body.u_EmployeeID = this.user.id;
+    const body: EncashmentRequestAddApi = EncashmentRequestAdapter.addToApi(
+      data,
+      this.user.id
+    );
 
     return this.http.post<any>(url, body, this.httpOptions).pipe(
       tap(() => {
@@ -149,5 +145,59 @@ export class EncashmentRequestService
   ): Observable<EncashmentValue[]> {
     const url = `${this.url}/GetEmployeeEncashValue?EmployeeID=${this.user.id}&EncashDate=${date}&EncashCode=${encashCode}&EncashCount=${encashCount}`;
     return this.http.get<EncashmentValue[]>(url, this.httpOptions);
+  }
+}
+
+class EncashmentRequestAdapter {
+  static apiToModel(apiSchema: EncashmentRequestApi): EncashmentRequest {
+    const obj: EncashmentRequest = {
+      id: apiSchema.encashID,
+      encashName: apiSchema.encashName,
+      encashCode: apiSchema.encashCode,
+      value: apiSchema.value,
+      date: formatDateToISO(apiSchema.date),
+      status: apiSchema.status,
+      remarks: apiSchema.remarks,
+      createDate: formatDateToISO(apiSchema.createDate),
+      projectCode: apiSchema.projectCode,
+      unitPrice: apiSchema.unitPrice,
+      unitCount: apiSchema.unitCount,
+      loanId: apiSchema.loanID,
+      installmentCount: apiSchema.installmentCount,
+    };
+    return obj;
+  }
+
+  static addToApi(
+    addSchema: EncashmentRequestAdd,
+    employeeId: string
+  ): EncashmentRequestAddApi {
+    const obj: EncashmentRequestAddApi = {
+      u_EmployeeID: employeeId,
+      u_EncashType: addSchema.encashCode,
+      u_Date: addSchema.date,
+      u_UnitPrice: addSchema.unitPrice,
+      u_UnitCount: addSchema.unitCount,
+      u_ProjectCode: addSchema.projectCode,
+      u_Remarks: addSchema.remarks,
+      u_EncashValue: addSchema.value, //TODO
+    };
+    return obj;
+  }
+
+  static updateToApi(
+    updateSchema: EncashmentRequestUpdate
+  ): EncashmentRequestUpdateApi {
+    const obj: EncashmentRequestUpdateApi = {
+      docEntry: updateSchema.id,
+      u_EncashType: updateSchema.encashCode,
+      u_Date: updateSchema.date,
+      u_UnitPrice: updateSchema.unitPrice,
+      u_UnitCount: updateSchema.unitCount,
+      u_ProjectCode: updateSchema.projectCode,
+      u_Remarks: updateSchema.remarks,
+      u_EncashValue: updateSchema.value, //todo
+    };
+    return obj;
   }
 }

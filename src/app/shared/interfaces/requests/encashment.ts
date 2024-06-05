@@ -1,4 +1,42 @@
 export interface EncashmentRequest {
+  id: string;
+  encashName: string;
+  encashCode: string;
+  value: string;
+  date: string;
+  status: string;
+  remarks: string;
+  createDate: string;
+  projectCode: string;
+  unitPrice: string;
+  unitCount: string;
+  loanId: string | null;
+  installmentCount: string | null;
+}
+
+export interface EncashmentRequestUpdate {
+  id: string;
+  encashCode?: string;
+  date?: string;
+  unitPrice?: string;
+  unitCount?: string;
+  projectCode?: string;
+  remarks?: string;
+  value?: string;
+}
+
+export interface EncashmentRequestAdd {
+  encashCode: string;
+  date: string;
+  unitPrice: string;
+  unitCount: string;
+  projectCode: string;
+  remarks?: string;
+
+  value?: string;
+}
+
+export interface EncashmentRequestApi {
   encashID: string;
   u_EmployeeID: string;
   encashName: string;
@@ -33,7 +71,7 @@ export interface EncashmentRequestType {
   name: string;
 }
 
-export interface EncashmentRequestUpdateSchema {
+export interface EncashmentRequestUpdateApi {
   u_EmployeeID?: string;
 
   docEntry: string;
@@ -48,7 +86,7 @@ export interface EncashmentRequestUpdateSchema {
   u_AttachFile?: string;
 }
 
-export interface EncashmentRequestAddSchema {
+export interface EncashmentRequestAddApi {
   u_EmployeeID: string;
   u_EncashType: string;
   u_Date: string;
