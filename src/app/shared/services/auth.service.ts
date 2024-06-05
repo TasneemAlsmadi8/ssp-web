@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { ChangePassword, UserLogin } from '../interfaces/user';
-import { EmployeeResponse } from '../interfaces/Employee';
+import { EmployeeInfo } from '../interfaces/Employee';
 import { BaseService } from '../base/base.service';
 import { HttpClient } from '@angular/common/http';
 import { Observable, tap } from 'rxjs';
@@ -19,9 +19,9 @@ export class AuthService extends BaseService {
     super();
   }
 
-  login(user: UserLogin): Observable<EmployeeResponse> {
+  login(user: UserLogin): Observable<EmployeeInfo> {
     const url = `${this.url}/SSPLogin`;
-    return this.http.post<EmployeeResponse>(url, user, this.httpOptions).pipe(
+    return this.http.post<EmployeeInfo>(url, user, this.httpOptions).pipe(
       tap((employee) => {
         this.localUserService.setUserFromEmployee(employee);
       })

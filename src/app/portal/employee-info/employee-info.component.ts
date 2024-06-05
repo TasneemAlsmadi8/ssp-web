@@ -1,16 +1,10 @@
 import { Component, OnInit } from '@angular/core';
-import {
-  AbstractControl,
-  FormBuilder,
-  FormControl,
-  FormGroup,
-  Validators,
-} from '@angular/forms';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs';
 import { DestroyBaseComponent } from 'src/app/shared/base/destroy-base.component';
 import {
-  EmployeePatch,
-  EmployeeResponse,
+  EmployeeInfoUpdate,
+  EmployeeInfo,
 } from 'src/app/shared/interfaces/Employee';
 import { EmployeeInfoService } from 'src/app/shared/services/employee-info.service';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -33,7 +27,7 @@ export class EmployeeInfoComponent
 {
   form: FormGroup;
 
-  employee?: EmployeeResponse;
+  employee?: EmployeeInfo;
   isLoading = false;
 
   constructor(
@@ -101,19 +95,20 @@ export class EmployeeInfoComponent
   }
 
   setInputsDefaultValues() {
-    this.form.get('mobile')?.setValue(this.employee?.mobile ?? '');
-    this.form.get('homeTel')?.setValue(this.employee?.homeTel ?? '');
+    this.form.get('mobile')?.setValue(this.employee?.mobilePhone ?? '');
+    this.form.get('homeTel')?.setValue(this.employee?.homePhone ?? '');
     this.form.get('homeStreet')?.setValue(this.employee?.homeStreet ?? '');
-    this.form.get('homeBuild')?.setValue(this.employee?.homeBuild ?? '');
+    this.form
+      .get('homeBuild')
+      ?.setValue(this.employee?.homeBuildingFloorRoom ?? '');
     this.form.get('homeBlock')?.setValue(this.employee?.homeBlock ?? '');
-    this.form.get('homeZip')?.setValue(this.employee?.homeZip ?? '');
+    this.form.get('homeZip')?.setValue(this.employee?.homeZipCode ?? '');
   }
 
   onSubmit() {
     this.isLoading = true;
     const formValues = this.form.value;
-    const data: EmployeePatch = {
-      employeeID: '',
+    const data: EmployeeInfoUpdate = {
       homeBlock: formValues.homeBlock!,
       homeZipCode: formValues.homeZip!,
       homeStreet: formValues.homeStreet!,
