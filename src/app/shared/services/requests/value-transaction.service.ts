@@ -119,16 +119,6 @@ export class ValueTransactionRequestService
             .getValue()
             .map((valueTransactionRequest) => {
               if (valueTransactionRequest.id === data.id) {
-                // valueTransactionRequest.valueTranCode =
-                //   body.valueTranCode ?? valueTransactionRequest.valueTranCode;
-                // valueTransactionRequest.value =
-                //   body.value ?? valueTransactionRequest.value;
-                // valueTransactionRequest.date =
-                //   body.date ?? valueTransactionRequest.date;
-                // valueTransactionRequest.projectCode =
-                //   body.projectCode ?? valueTransactionRequest.projectCode;
-                // valueTransactionRequest.remarks =
-                //   body.remarks ?? valueTransactionRequest.remarks;
                 valueTransactionRequest = {
                   ...valueTransactionRequest,
                   ...data,
@@ -162,21 +152,8 @@ export class ValueTransactionRequestService
     });
     return valueTransactionRequests;
   }
-
-  // getValueTransactionTypeName(code: string): string {
-  //   return (
-  //     this.valueTransactionTypesStore.getValue().find((value) => value.code === code)
-  //       ?.name ?? ''
-  //   );
-  // }
-
-  // sortByDate(ascending: boolean = true): void {
-  //   this.valueTransactionRequestsStore.sortByKey('fromDate', ascending);
-  // }
-  // sortById(ascending: boolean = true): void {
-  //   this.valueTransactionRequestsStore.sortByKey('valueTransactionID', ascending);
-  // }
 }
+
 class ValueTransactionRequestAdapter {
   static apiToModel(
     apiSchema: ValueTransactionRequestApi
