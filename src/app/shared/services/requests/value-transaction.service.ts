@@ -62,9 +62,7 @@ export class ValueTransactionRequestService
           response.map(ValueTransactionRequestAdapter.apiToModel)
         ),
         tap((valueTransactionRequests) =>
-          this.valueTransactionRequestsStore.update(
-            this.fillNullStatus(valueTransactionRequests)
-          )
+          this.valueTransactionRequestsStore.update(valueTransactionRequests)
         )
       );
   }
@@ -143,15 +141,6 @@ export class ValueTransactionRequestService
       })
     );
   }
-
-  private fillNullStatus(valueTransactionRequests: ValueTransactionRequest[]) {
-    valueTransactionRequests.map((req) => {
-      if (!req.status) {
-        req.status = 'Pending';
-      }
-    });
-    return valueTransactionRequests;
-  }
 }
 
 class ValueTransactionRequestAdapter {
@@ -166,7 +155,7 @@ class ValueTransactionRequestAdapter {
       date: formatDateToISO(apiSchema.date),
       createDate: formatDateToISO(apiSchema.createDate),
       projectCode: apiSchema.projectCode,
-      status: apiSchema.status,
+      status: apiSchema.status || 'Pending',
       remarks: apiSchema.remarks,
     };
     return obj;
