@@ -16,6 +16,7 @@ import { Observable, map, tap } from 'rxjs';
 import { SharedArrayStore } from '../../utils/shared-array-store';
 import { GenericRequestService } from './generic-request.service';
 import { formatDateToISO } from '../../utils/data-formatter';
+import { ProjectsService } from '../projects.service';
 
 type iOvertimeRequestService = GenericRequestService<
   OvertimeRequest,
@@ -42,7 +43,11 @@ export class OvertimeRequestService
   private endpoint = '/OvertimeRequest';
   private url = this.baseUrl + this.endpoint;
 
-  constructor(private http: HttpClient, private userService: LocalUserService) {
+  constructor(
+    private http: HttpClient,
+    private userService: LocalUserService,
+    private projectService: ProjectsService
+  ) {
     super();
 
     this.overtimeRequestsStore.setDefaultSortByKey('id', false);
@@ -93,7 +98,6 @@ export class OvertimeRequestService
       this.http
         .get<OvertimeRequestType[]>(url, this.httpOptions)
         .subscribe((value) => {
-          console.log(value);
           this.overtimeTypesStore.update(value);
         });
     }
@@ -112,8 +116,19 @@ export class OvertimeRequestService
           .map((overtimeRequest) => {
             if (overtimeRequest.id === data.id) {
               // console.log('sync updated values');
-              // TODO: fix update project type (only code is updated)
-              overtimeRequest = { ...overtimeRequest, ...data };
+              let projectName: string;
+              if (data.projectCode) {
+                projectName = this.projectService.getProjectName(
+                  data.projectCode
+                );
+              } else {
+                projectName = overtimeRequest.projectName;
+              }
+              overtimeRequest = {
+                ...overtimeRequest,
+                ...data,
+                projectName,
+              };
             }
             return overtimeRequest;
           });
