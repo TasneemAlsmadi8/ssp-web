@@ -43,14 +43,24 @@
         <td class="px-6 py-4">{{ req.status }}</td>
         <td class="px-6 py-4">{{ req.leaveType }}</td>
         <td class="px-6 py-4 xl:hidden">
-          {{ (req.fromTime ?? "00:00") + " - " + req.fromDate }}
+          {{
+            (req.fromTime ?? "00:00") +
+              " - " +
+              (req.fromDate | date : "dd/MM/yyyy")
+          }}
         </td>
-        <td class="px-6 py-4 hidden xl:table-cell">{{ req.fromDate }}</td>
+        <td class="px-6 py-4 hidden xl:table-cell">
+          {{ req.fromDate | date : "dd/MM/yyyy" }}
+        </td>
         <td class="px-6 py-4 hidden xl:table-cell">{{ req.fromTime }}</td>
         <td class="px-6 py-4 xl:hidden">
-          {{ (req.toTime ?? "00:00") + " - " + req.toDate }}
+          {{
+            (req.toTime ?? "00:00") + " - " + (req.toDate | date : "dd/MM/yyyy")
+          }}
         </td>
-        <td class="px-6 py-4 hidden xl:table-cell">{{ req.toDate }}</td>
+        <td class="px-6 py-4 hidden xl:table-cell">
+          {{ req.toDate | date : "dd/MM/yyyy" }}
+        </td>
         <td class="px-6 py-4 hidden xl:table-cell">{{ req.toTime }}</td>
         <td class="px-6 py-4 flex justify-center gap-2">
           <app-request-details-button
