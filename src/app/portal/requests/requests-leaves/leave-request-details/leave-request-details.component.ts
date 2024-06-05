@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   LeaveRequest,
@@ -10,7 +10,6 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ReactiveFormsModule, Validators } from '@angular/forms';
 import { LeaveRequestService } from 'src/app/shared/services/requests/leave.service';
 import { takeUntil } from 'rxjs';
-import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
 import {
   FormValues,
   RequestDetailsComponentTemplate,
@@ -34,6 +33,7 @@ export class LeaveRequestDetailsComponent extends RequestDetailsComponentTemplat
   LeaveRequest,
   LeaveRequestUpdate
 > {
+  @Input() employeeId?: string;
   leaveTypes!: LeaveRequestType[];
 
   constructor(private leaveRequestService: LeaveRequestService) {
@@ -48,12 +48,21 @@ export class LeaveRequestDetailsComponent extends RequestDetailsComponentTemplat
   }
 
   override getDynamicValues(): void {
-    this.leaveRequestService
-      .getTypes()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((value) => {
-        this.leaveTypes = value;
-      });
+    if (!this.employeeId) {
+      this.leaveRequestService
+        .getTypes()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((value) => {
+          this.leaveTypes = value;
+        });
+    } else {
+      this.leaveRequestService
+        .getTypesByEmployeeId(this.employeeId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((value) => {
+          this.leaveTypes = value;
+        });
+    }
   }
   override mapFormToUpdateRequest(formValues: any): LeaveRequestUpdate {
     const data: LeaveRequestUpdate = {
@@ -74,8 +83,8 @@ export class LeaveRequestDetailsComponent extends RequestDetailsComponentTemplat
       leaveType: item.leaveCode,
       fromTime: item.fromTime,
       toTime: item.toTime,
-      fromDate: formatDateToISO(item.fromDate),
-      toDate: formatDateToISO(item.toDate),
+      fromDate: item.fromDate,
+      toDate: item.toDate,
       remarks: item.remarks,
     };
   }

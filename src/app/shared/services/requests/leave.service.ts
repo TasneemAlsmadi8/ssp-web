@@ -102,6 +102,11 @@ export class LeaveRequestService
     return this.leaveTypesStore.observable$;
   }
 
+  getTypesByEmployeeId(id: string): Observable<LeaveRequestType[]> {
+    const url = this.url + `/GetEmployeeLeaveTypes?EmployeeID=${id}`;
+    return this.http.get<LeaveRequestType[]>(url, this.httpOptions);
+  }
+
   update(data: LeaveRequestUpdate): Observable<any> {
     const url = this.url + '/UpdateLeaveRequest';
     const body: LeaveRequestUpdateApi = LeaveRequestAdapter.updateToApi(data);

@@ -37,6 +37,7 @@ export class ApprovalsLeavesComponent extends ApprovalPageComponentTemplate<
   LeaveApproval,
   LeaveRequest
 > {
+  activeItemEmployeeId?: string;
   constructor(protected leaveService: LeaveApprovalService) {
     super(leaveService);
   }
@@ -60,5 +61,10 @@ export class ApprovalsLeavesComponent extends ApprovalPageComponentTemplate<
       unpaidDays: '',
     };
     return data;
+  }
+
+  override setActiveItemDetails(activeItemDetails: LeaveApproval) {
+    super.setActiveItemDetails(activeItemDetails);
+    this.activeItemEmployeeId = activeItemDetails.employeeId;
   }
 }
