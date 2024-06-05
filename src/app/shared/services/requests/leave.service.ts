@@ -59,7 +59,7 @@ export class LeaveRequestService
   getAll(): Observable<LeaveRequest[]> {
     const url = `${this.url}/GetLeaveRequestsByEmployeeId?EmployeeId=${this.user.id}`;
     return this.http.get<LeaveRequestApi[]>(url, this.httpOptions).pipe(
-      map((response) => response.map(LeaveRequestAdapter.ApiToModel)),
+      map((response) => response.map(LeaveRequestAdapter.apiToModel)),
       tap((leaveRequests) => this.leaveRequestsStore.update(leaveRequests))
     );
   }
@@ -131,7 +131,7 @@ export class LeaveRequestService
   add(data: LeaveRequestAdd): Observable<any> {
     const url = this.url + '/AddLeave';
 
-    const body: LeaveRequestAddApi = LeaveRequestAdapter.AddToApi(
+    const body: LeaveRequestAddApi = LeaveRequestAdapter.addToApi(
       data,
       this.user.id
     );
@@ -177,10 +177,9 @@ export class LeaveRequestService
   }
 
   private getTypeName(code: string): string {
-    return (
-      this.leaveTypesStore.getValue().find((value) => value.code === code)
-        ?.name ?? ''
-    );
+    const type = this.leaveTypesStore.find((value) => value.code === code);
+    if (!type) throw new Error('Invalid leave type code');
+    return type?.name;
   }
 
   sortByDate(ascending: boolean = true): void {
@@ -192,7 +191,7 @@ export class LeaveRequestService
 }
 
 class LeaveRequestAdapter {
-  static ApiToModel(apiSchema: LeaveRequestApi): LeaveRequest {
+  static apiToModel(apiSchema: LeaveRequestApi): LeaveRequest {
     const obj: LeaveRequest = {
       id: apiSchema.leaveID,
       leaveType: apiSchema.leaveType,
@@ -209,7 +208,7 @@ class LeaveRequestAdapter {
     return obj;
   }
 
-  static AddToApi(
+  static addToApi(
     addSchema: LeaveRequestAdd,
     employeeId: string
   ): LeaveRequestAddApi {

@@ -43,6 +43,10 @@ export class SharedArrayStore<T> {
     this.subject.next(value);
   }
 
+  find(compareFn: (value: T) => boolean): T | undefined {
+    return this.subject.value.find(compareFn);
+  }
+
   sort(compareFn: (a: T, b: T) => number): void {
     const sortedValue = this._sort(compareFn);
     this.subject.next(sortedValue);

@@ -55,7 +55,7 @@ export class OvertimeRequestService
   getAll(): Observable<OvertimeRequest[]> {
     const url = `${this.url}/GetOverTime?EmployeeId=${this.user.id}`;
     return this.http.get<OvertimeRequestApi[]>(url, this.httpOptions).pipe(
-      map((response) => response.map(OvertimeRequestAdapter.ApiToModel)),
+      map((response) => response.map(OvertimeRequestAdapter.apiToModel)),
       tap((overtimeRequests) =>
         this.overtimeRequestsStore.update(overtimeRequests)
       )
@@ -125,7 +125,7 @@ export class OvertimeRequestService
   add(data: OvertimeRequestAdd): Observable<any> {
     const url = this.url + '/AddOvertimeRequest';
 
-    const body: OvertimeRequestAddApi = OvertimeRequestAdapter.AddToApi(
+    const body: OvertimeRequestAddApi = OvertimeRequestAdapter.addToApi(
       data,
       this.user.id
     );
@@ -138,7 +138,7 @@ export class OvertimeRequestService
 }
 
 class OvertimeRequestAdapter {
-  static ApiToModel(apiSchema: OvertimeRequestApi): OvertimeRequest {
+  static apiToModel(apiSchema: OvertimeRequestApi): OvertimeRequest {
     const obj: OvertimeRequest = {
       id: apiSchema.overtimeID,
       overtimeType: apiSchema.overtimeType,
@@ -158,7 +158,7 @@ class OvertimeRequestAdapter {
     return obj;
   }
 
-  static AddToApi(
+  static addToApi(
     addSchema: OvertimeRequestAdd,
     employeeId: string
   ): OvertimeRequestAddApi {

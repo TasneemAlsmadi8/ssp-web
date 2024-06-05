@@ -55,7 +55,7 @@ export class LoanRequestService
   getAll(): Observable<LoanRequest[]> {
     const url = `${this.url}/GetLoan?EmployeeId=${this.user.id}`;
     return this.http.get<LoanRequestApi[]>(url, this.httpOptions).pipe(
-      map((response) => response.map(LoanRequestAdapter.ApiToModel)),
+      map((response) => response.map(LoanRequestAdapter.apiToModel)),
       tap((loanRequests) => this.loanRequestsStore.update(loanRequests))
     );
   }
@@ -85,7 +85,7 @@ export class LoanRequestService
   }
 
   getTypes(): Observable<LoanRequestType[]> {
-    if (this.loanTypesStore.getValue().length == 0) {
+    if (this.loanTypesStore.isEmpty()) {
       const url = this.url + '/GetLoanTypes';
       this.http
         .get<LoanRequestType[]>(url, this.httpOptions)
@@ -117,7 +117,7 @@ export class LoanRequestService
 
   add(data: LoanRequestAdd): Observable<any> {
     const url = this.url + '/AddLoanRequest';
-    const body: LoanRequestAddApi = LoanRequestAdapter.AddToApi(
+    const body: LoanRequestAddApi = LoanRequestAdapter.addToApi(
       data,
       this.user.id
     );
@@ -154,7 +154,7 @@ export class LoanRequestService
 }
 
 class LoanRequestAdapter {
-  static ApiToModel(apiSchema: LoanRequestApi): LoanRequest {
+  static apiToModel(apiSchema: LoanRequestApi): LoanRequest {
     const obj: LoanRequest = {
       id: apiSchema.loanID,
       dateSubmitted:
@@ -172,7 +172,7 @@ class LoanRequestAdapter {
     return obj;
   }
 
-  static AddToApi(
+  static addToApi(
     addSchema: LoanRequestAdd,
     employeeId: string
   ): LoanRequestAddApi {
