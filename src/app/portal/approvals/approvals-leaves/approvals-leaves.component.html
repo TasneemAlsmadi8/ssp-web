@@ -63,7 +63,7 @@
           scope="row"
           class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
         >
-          {{ req.leaveID }}
+          {{ req.id }}
         </th>
 
         <td class="px-6 py-4">{{ req.status }}</td>
@@ -97,8 +97,8 @@
               (click)="setActiveItemDetails(req)"
               [isEditable]="req.status === 'Pending'"
             />
-            <app-approval-accept-button (click)="approveRequest(req.leaveID)" />
-            <app-approval-reject-button (click)="rejectRequest(req.leaveID)" />
+            <app-approval-accept-button (click)="approveRequest(req.id)" />
+            <app-approval-reject-button (click)="rejectRequest(req.id)" />
           </div>
         </td>
       </tr>

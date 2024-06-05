@@ -42,11 +42,11 @@ export class ApprovalsLeavesComponent extends ApprovalPageComponentTemplate<
   }
 
   override getItemId(item: LeaveApproval): number {
-    return parseInt(item.leaveID);
+    return parseInt(item.id);
   }
   override mapApprovalToUpdateRequest(item: LeaveApproval): LeaveRequest {
     const data: LeaveRequest = {
-      id: item.leaveID,
+      id: item.id,
       leaveType: item.leaveType,
       fromDate: item.fromDate,
       toDate: item.toDate,
