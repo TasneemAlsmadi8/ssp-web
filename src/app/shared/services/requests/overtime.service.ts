@@ -93,15 +93,16 @@ export class OvertimeRequestService
 
   getTypes(): Observable<OvertimeRequestType[]> {
     if (this.overtimeTypesStore.getValue().length == 0) {
-      const url =
-        this.url + `/GetEmployeeOvertimeType?EmployeeID=${this.user.id}`;
-      this.http
-        .get<OvertimeRequestType[]>(url, this.httpOptions)
-        .subscribe((value) => {
-          this.overtimeTypesStore.update(value);
-        });
+      this.getTypesByEmployeeId(this.user.id).subscribe((value) => {
+        this.overtimeTypesStore.update(value);
+      });
     }
     return this.overtimeTypesStore.observable$;
+  }
+
+  getTypesByEmployeeId(id: string): Observable<OvertimeRequestType[]> {
+    const url = this.url + `/GetEmployeeOvertimeType?EmployeeID=${id}`;
+    return this.http.get<OvertimeRequestType[]>(url, this.httpOptions);
   }
 
   update(data: OvertimeRequestUpdate): Observable<any> {

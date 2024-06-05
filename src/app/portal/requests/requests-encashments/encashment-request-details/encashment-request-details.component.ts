@@ -61,16 +61,29 @@ export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTe
   }
 
   override getDynamicValues(): void {
-    this.encashmentRequestService
-      .getTypes()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((value) => {
-        this.encashmentTypes = value;
-        this.encashmentTypes.unshift({
-          code: '',
-          name: '',
+    if (!this.employeeId) {
+      this.encashmentRequestService
+        .getTypes()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((value) => {
+          this.encashmentTypes = value;
+          this.encashmentTypes.unshift({
+            code: '',
+            name: '',
+          });
         });
-      });
+    } else {
+      this.encashmentRequestService
+        .getTypesByEmployeeId(this.employeeId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((value) => {
+          this.encashmentTypes = value;
+          this.encashmentTypes.unshift({
+            code: '',
+            name: '',
+          });
+        });
+    }
     this.projectsService
       .getProjects()
       .pipe(takeUntil(this.destroy$))
@@ -92,12 +105,26 @@ export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTe
           this.leaveBalance = value[0];
         });
       if (unitCount) {
-        this.encashmentRequestService
-          .getEncashValue(encashmentType, unitCount, date)
-          .pipe(takeUntil(this.destroy$))
-          .subscribe((value) => {
-            this.encashValue = value[0];
-          });
+        if (!this.employeeId) {
+          this.encashmentRequestService
+            .getEncashValue(encashmentType, unitCount, date)
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((value) => {
+              this.encashValue = value[0];
+            });
+        } else {
+          this.encashmentRequestService
+            .getEncashValueByEmployeeId(
+              this.employeeId,
+              encashmentType,
+              unitCount,
+              date
+            )
+            .pipe(takeUntil(this.destroy$))
+            .subscribe((value) => {
+              this.encashValue = value[0];
+            });
+        }
       } else {
         delete this.encashValue;
       }

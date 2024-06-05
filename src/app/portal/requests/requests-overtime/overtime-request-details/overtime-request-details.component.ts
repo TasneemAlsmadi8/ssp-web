@@ -58,13 +58,21 @@ export class OvertimeRequestDetailsComponent extends RequestDetailsComponentTemp
   }
 
   override getDynamicValues(): void {
-    this.setInputsDefaultValues();
-    this.overtimeRequestService
-      .getTypes()
-      .pipe(takeUntil(this.destroy$))
-      .subscribe((value) => {
-        this.overtimeTypes = value;
-      });
+    if (!this.employeeId) {
+      this.overtimeRequestService
+        .getTypes()
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((value) => {
+          this.overtimeTypes = value;
+        });
+    } else {
+      this.overtimeRequestService
+        .getTypesByEmployeeId(this.employeeId)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((value) => {
+          this.overtimeTypes = value;
+        });
+    }
     this.projectsService
       .getProjects()
       .pipe(takeUntil(this.destroy$))

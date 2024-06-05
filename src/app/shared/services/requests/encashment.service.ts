@@ -92,16 +92,17 @@ export class EncashmentRequestService
 
   getTypes(): Observable<EncashmentRequestType[]> {
     if (this.encashmentTypesStore.getValue().length == 0) {
-      const url =
-        this.url + `/GetEmployeeEncashTypes?EmployeeID=${this.user.id}`;
-      this.http
-        .get<EncashmentRequestType[]>(url, this.httpOptions)
-        .subscribe((value) => {
-          console.log(value);
-          this.encashmentTypesStore.update(value);
-        });
+      this.getTypesByEmployeeId(this.user.id).subscribe((value) => {
+        console.log(value);
+        this.encashmentTypesStore.update(value);
+      });
     }
     return this.encashmentTypesStore.observable$;
+  }
+
+  getTypesByEmployeeId(id: string): Observable<EncashmentRequestType[]> {
+    const url = this.url + `/GetEmployeeEncashTypes?EmployeeID=${id}`;
+    return this.http.get<EncashmentRequestType[]>(url, this.httpOptions);
   }
 
   update(data: EncashmentRequestUpdate): Observable<any> {
@@ -143,7 +144,20 @@ export class EncashmentRequestService
     encashCount: string,
     date: string // yyyy-mm-dd
   ): Observable<EncashmentValue[]> {
-    const url = `${this.url}/GetEmployeeEncashValue?EmployeeID=${this.user.id}&EncashDate=${date}&EncashCode=${encashCode}&EncashCount=${encashCount}`;
+    return this.getEncashValueByEmployeeId(
+      this.user.id,
+      encashCode,
+      encashCount,
+      date
+    );
+  }
+  getEncashValueByEmployeeId(
+    id: string,
+    encashCode: string,
+    encashCount: string,
+    date: string // yyyy-mm-dd
+  ): Observable<EncashmentValue[]> {
+    const url = `${this.url}/GetEmployeeEncashValue?EmployeeID=${id}&EncashDate=${date}&EncashCode=${encashCode}&EncashCount=${encashCount}`;
     return this.http.get<EncashmentValue[]>(url, this.httpOptions);
   }
 }
