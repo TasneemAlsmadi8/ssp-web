@@ -52,7 +52,7 @@
           scope="row"
           class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
         >
-          {{ req.valueTranID }}
+          {{ req.id }}
         </th>
         <td class="px-6 py-4">{{ req.status }}</td>
         <td class="px-6 py-4">{{ req.fullName }}</td>
@@ -69,10 +69,10 @@
               [isEditable]="req.status === 'Pending'"
             />
             <app-approval-accept-button
-              (click)="approveRequest(req.valueTranID)"
+              (click)="approveRequest(req.id)"
             />
             <app-approval-reject-button
-              (click)="rejectRequest(req.valueTranID)"
+              (click)="rejectRequest(req.id)"
             />
           </div>
         </td>

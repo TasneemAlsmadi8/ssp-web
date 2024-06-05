@@ -44,14 +44,14 @@ export class ApprovalsValueTransactionsComponent extends ApprovalPageComponentTe
   }
 
   override getItemId(item: ValueTransactionApproval): number {
-    return parseInt(item.valueTranID);
+    return parseInt(item.id);
   }
   override mapApprovalToUpdateRequest(
     item: ValueTransactionApproval
   ): ValueTransactionRequest {
     // TODO: Check
     const data: ValueTransactionRequest = {
-      id: item.valueTranID,
+      id: item.id,
       remarks: item.remarks,
       status: 'Pending',
       valueTranCode: item.valueTranCode,

@@ -1,4 +1,6 @@
-export interface OvertimeApproval {
+import { GenericApproval } from "./shared";
+
+export interface OvertimeApproval extends GenericApproval{
   dateSubmitted: string;
   fromDate: string;
   id: string;

@@ -124,6 +124,9 @@ export abstract class RequestDetailsComponentTemplate<
       this.setInputsDefaultValues();
       // console.log(this.item);
     }
+    if (this.employeeId && this.getDynamicValues && changes['employeeId']) {
+      this.getDynamicValues();
+    }
   }
 
   ngOnInit(): void {

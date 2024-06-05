@@ -42,14 +42,14 @@ export class ApprovalsEncashmentsComponent extends ApprovalPageComponentTemplate
   }
 
   override getItemId(item: EncashmentApproval): number {
-    return parseInt(item.encashID);
+    return parseInt(item.id);
   }
   override mapApprovalToUpdateRequest(
     item: EncashmentApproval
   ): EncashmentRequest {
     // TODO: Check
     const data: EncashmentRequest = {
-      id: item.encashID,
+      id: item.id,
       remarks: item.remarks,
       status: 'Pending',
       encashName: item.encashName,

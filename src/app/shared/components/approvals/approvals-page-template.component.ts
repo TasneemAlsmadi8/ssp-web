@@ -8,13 +8,14 @@ import { takeUntil } from 'rxjs';
 import { GenericApprovalService } from '../../services/approvals/generic-approval.service';
 import { SelectedItems } from '../../utils/selected-items';
 import { UserAlertService } from '../../services/user-alert.service';
+import { GenericApproval } from '../../interfaces/approvals/shared';
 
 @Component({
   standalone: true,
   template: '',
 })
 export abstract class ApprovalPageComponentTemplate<
-    Approval extends Item,
+    Approval extends GenericApproval,
     Request extends Item
   >
   extends DestroyBaseComponent
@@ -126,8 +127,7 @@ export abstract class ApprovalPageComponentTemplate<
 
   setActiveItemDetails(activeItemDetails: Approval) {
     this.activeItemDetails = this.mapApprovalToUpdateRequest(activeItemDetails);
-    if ('employeeId' in activeItemDetails)
-      this.activeItemEmployeeId = activeItemDetails.employeeId as string;
+    this.activeItemEmployeeId = activeItemDetails.employeeId;
     this.ItemDetailsOpen = true;
   }
 

@@ -1,4 +1,6 @@
-export interface LoanApproval {
+import { GenericApproval } from "./shared";
+
+export interface LoanApproval extends GenericApproval{
   dateSubmitted: string;
   startDate: string;
   id: string;

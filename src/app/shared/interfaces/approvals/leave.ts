@@ -1,4 +1,6 @@
-export interface LeaveApproval {
+import { GenericApproval } from "./shared";
+
+export interface LeaveApproval extends GenericApproval{
   id: string;
   dateSubmitted: string;
   fromDate: string;

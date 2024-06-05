@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { GenericApprovalService } from './generic-approval.service';
-import { EncashmentApproval } from '../../interfaces/approvals/encashment';
+import {
+  EncashmentApproval,
+  EncashmentApprovalApi,
+} from '../../interfaces/approvals/encashment';
 import { Observable, map, tap } from 'rxjs';
 import { User } from '../../interfaces/user';
 import { SharedArrayStore } from '../../utils/shared-array-store';
@@ -8,7 +11,7 @@ import { HttpClient } from '@angular/common/http';
 import { LocalUserService } from '../local-user.service';
 import { BaseService } from '../../base/base.service';
 import { ApprovalAction } from '../../interfaces/approvals/shared';
-import { formatTimeToHHmm } from '../../utils/data-formatter';
+import { formatDateToISO, formatTimeToHHmm } from '../../utils/data-formatter';
 
 @Injectable({
   providedIn: 'root',
@@ -32,12 +35,13 @@ export class EncashmentApprovalService
   constructor(private http: HttpClient, private userService: LocalUserService) {
     super();
     this.encashmentApprovalsStore.setDefaultSortByKeys([
-      { key: 'encashID', ascending: false },
+      { key: 'id', ascending: false },
     ]);
   }
   getAll(): Observable<EncashmentApproval[]> {
     const url = `${this.url}/GetEncashRequestForApproval?EmployeeId=${this.user.id}&UILang=??`; //TODO: check the UILang param (note: this works)
-    return this.http.get<EncashmentApproval[]>(url, this.httpOptions).pipe(
+    return this.http.get<EncashmentApprovalApi[]>(url, this.httpOptions).pipe(
+      map((response) => response.map(EncashmentApprovalAdapter.apiToModel)),
       tap((encashmentApprovals) => {
         // encashmentApprovals.map((value) => {
         //   value.startDate = value.startDate.slice(0, 10);
@@ -56,7 +60,7 @@ export class EncashmentApprovalService
         if (value) {
           const updatedEncashmentRequests = this.encashmentApprovalsStore
             .getValue()
-            .filter((req) => req.encashID !== id);
+            .filter((req) => req.id !== id);
           this.encashmentApprovalsStore.update(updatedEncashmentRequests);
         }
       })
@@ -72,10 +76,33 @@ export class EncashmentApprovalService
         if (value) {
           const updatedEncashmentRequests = this.encashmentApprovalsStore
             .getValue()
-            .filter((req) => req.encashID !== id);
+            .filter((req) => req.id !== id);
           this.encashmentApprovalsStore.update(updatedEncashmentRequests);
         }
       })
     );
+  }
+}
+
+class EncashmentApprovalAdapter {
+  static apiToModel(apiSchema: EncashmentApprovalApi): EncashmentApproval {
+    const obj: EncashmentApproval = {
+      dateSubmitted: formatDateToISO(apiSchema.dateSubmitted),
+      date: formatDateToISO(apiSchema.date),
+      id: apiSchema.encashID,
+      employeeId: apiSchema.empID,
+      employeeCode: apiSchema.empCode,
+      fullName: apiSchema.fullName,
+      fullNameF: apiSchema.fullNameF,
+      encashCode: apiSchema.encashCode,
+      encashName: apiSchema.encashName,
+      unitCount: apiSchema.unitCount,
+      value: apiSchema.value,
+      status: apiSchema.status,
+      remarks: apiSchema.remarks,
+      projectCode: apiSchema.projectCode,
+      projectName: apiSchema.projectName,
+    };
+    return obj;
   }
 }
