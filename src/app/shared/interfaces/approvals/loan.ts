@@ -1,6 +1,6 @@
-import { GenericApproval } from "./shared";
+import { GenericApproval } from './shared';
 
-export interface LoanApproval extends GenericApproval{
+export interface LoanApproval extends GenericApproval {
   dateSubmitted: string;
   startDate: string;
   id: string;
@@ -10,8 +10,8 @@ export interface LoanApproval extends GenericApproval{
   fullNameF: string;
   loanCode: string;
   loanName: string;
-  totalAmount: string;
-  installmentCount: string;
+  totalAmount: number;
+  installmentCount: number;
   status: string;
   remarks: string;
 }

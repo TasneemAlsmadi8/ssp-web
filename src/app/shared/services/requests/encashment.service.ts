@@ -15,10 +15,7 @@ import {
 import { Observable, map, tap } from 'rxjs';
 import { SharedArrayStore } from '../../utils/shared-array-store';
 import { GenericRequestService } from './generic-request.service';
-import {
-  formatDateToDisplay,
-  formatDateToISO,
-} from '../../utils/data-formatter';
+import { formatDateToISO } from '../../utils/data-formatter';
 import { ItemStatus } from '../../interfaces/requests/generic-request';
 
 type iEncashmentRequestService = GenericRequestService<
@@ -168,16 +165,16 @@ class EncashmentRequestAdapter {
       id: apiSchema.encashID,
       encashName: apiSchema.encashName,
       encashCode: apiSchema.encashCode,
-      value: apiSchema.value,
+      value: parseFloat(apiSchema.value),
       date: formatDateToISO(apiSchema.date),
       status: apiSchema.status,
       remarks: apiSchema.remarks,
       createDate: formatDateToISO(apiSchema.createDate),
       projectCode: apiSchema.projectCode,
-      unitPrice: apiSchema.unitPrice,
-      unitCount: apiSchema.unitCount,
+      unitPrice: parseFloat(apiSchema.unitPrice),
+      unitCount: parseFloat(apiSchema.unitCount),
       loanId: apiSchema.loanID,
-      installmentCount: apiSchema.installmentCount,
+      installmentCount: parseInt(apiSchema.installmentCount ?? '0'),
     };
     return obj;
   }
@@ -190,11 +187,11 @@ class EncashmentRequestAdapter {
       u_EmployeeID: employeeId,
       u_EncashType: addSchema.encashCode,
       u_Date: addSchema.date,
-      u_UnitPrice: addSchema.unitPrice,
-      u_UnitCount: addSchema.unitCount,
+      u_UnitPrice: addSchema.unitPrice.toString(),
+      u_UnitCount: addSchema.unitCount.toString(),
       u_ProjectCode: addSchema.projectCode,
       u_Remarks: addSchema.remarks,
-      u_EncashValue: addSchema.value, //TODO
+      u_EncashValue: addSchema.value?.toString(), //TODO
     };
     return obj;
   }
@@ -206,11 +203,11 @@ class EncashmentRequestAdapter {
       docEntry: updateSchema.id,
       u_EncashType: updateSchema.encashCode,
       u_Date: updateSchema.date,
-      u_UnitPrice: updateSchema.unitPrice,
-      u_UnitCount: updateSchema.unitCount,
+      u_UnitPrice: updateSchema.unitPrice?.toString(),
+      u_UnitCount: updateSchema.unitCount?.toString(),
       u_ProjectCode: updateSchema.projectCode,
       u_Remarks: updateSchema.remarks,
-      u_EncashValue: updateSchema.value, //todo
+      u_EncashValue: updateSchema.value?.toString(), //todo
     };
     return obj;
   }

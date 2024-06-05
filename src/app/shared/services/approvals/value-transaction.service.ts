@@ -106,7 +106,7 @@ class ValueTransactionApprovalAdapter {
       fullNameF: apiSchema.fullNameF,
       valueTranCode: apiSchema.valueTranCode,
       valueTranName: apiSchema.valueTranName,
-      value: apiSchema.value,
+      value: parseFloat(apiSchema.value),
       status: apiSchema.status,
       remarks: apiSchema.remarks,
       projectCode: apiSchema.projectCode,

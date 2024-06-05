@@ -151,7 +151,7 @@ class ValueTransactionRequestAdapter {
       id: apiSchema.valueTranID,
       valueTranName: apiSchema.valueTranName,
       valueTranCode: apiSchema.valueTranCode,
-      value: apiSchema.value,
+      value: parseFloat(apiSchema.value),
       date: formatDateToISO(apiSchema.date),
       createDate: formatDateToISO(apiSchema.createDate),
       projectCode: apiSchema.projectCode,
@@ -168,7 +168,7 @@ class ValueTransactionRequestAdapter {
     const obj: ValueTransactionRequestAddApi = {
       u_EmployeeID: employeeId,
       u_ValueTranType: addSchema.valueTranCode,
-      u_TranValue: addSchema.value,
+      u_TranValue: addSchema.value.toString(),
       u_Date: addSchema.date,
       u_ProjectCode: addSchema.projectCode,
       u_Remarks: addSchema.remarks,
@@ -182,7 +182,7 @@ class ValueTransactionRequestAdapter {
     const obj: ValueTransactionRequestUpdateApi = {
       docEntry: updateSchema.id,
       u_ValueTranType: updateSchema.valueTranCode,
-      u_TranValue: updateSchema.value,
+      u_TranValue: updateSchema.value?.toString(),
       u_Date: updateSchema.date,
       u_ProjectCode: updateSchema.projectCode,
       u_Remarks: updateSchema.remarks,

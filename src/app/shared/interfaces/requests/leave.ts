@@ -10,8 +10,8 @@ export interface LeaveRequest extends Item {
   toTime: string | null;
   status: string;
   remarks?: string;
-  paidDays: string;
-  unpaidDays: string;
+  paidDays: number;
+  unpaidDays: number;
 }
 
 export interface LeaveRequestUpdate {

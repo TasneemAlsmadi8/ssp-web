@@ -164,7 +164,7 @@ class OvertimeRequestAdapter {
       fromTime: apiSchema.fromDate,
       toTime: apiSchema.toDate,
       status: apiSchema.status,
-      overtimeHours: apiSchema.ovHours,
+      overtimeHours: parseFloat(apiSchema.ovHours),
       hour: apiSchema.hour,
       minute: apiSchema.minute,
       remarks: apiSchema.remarks,

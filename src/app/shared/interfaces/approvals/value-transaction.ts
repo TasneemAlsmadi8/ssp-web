@@ -10,7 +10,7 @@ export interface ValueTransactionApproval extends GenericApproval {
   fullNameF: string;
   valueTranCode: string;
   valueTranName: string;
-  value: string;
+  value: number;
   status: string;
   remarks: string;
   projectCode: string;

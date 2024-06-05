@@ -12,7 +12,6 @@ import { ValueTransactionRequestService } from 'src/app/shared/services/requests
 import { takeUntil } from 'rxjs';
 import { Project } from 'src/app/shared/interfaces/project';
 import { ProjectsService } from 'src/app/shared/services/projects.service';
-import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
 import {
   FormValues,
   RequestDetailsComponentTemplate,
@@ -86,7 +85,7 @@ export class ValueTransactionRequestDetailsComponent extends RequestDetailsCompo
   ): FormValues<typeof this.formControls> {
     return {
       valueTransactionType: item.valueTranCode,
-      date: formatDateToISO(item.date),
+      date: item.date,
       value: item.value,
       project: item.projectCode,
       remarks: item.remarks,

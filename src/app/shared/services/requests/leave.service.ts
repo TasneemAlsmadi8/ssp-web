@@ -203,8 +203,8 @@ class LeaveRequestAdapter {
       toTime: apiSchema.toTime,
       status: apiSchema.status,
       remarks: apiSchema.remarks ?? '',
-      paidDays: apiSchema.u_PaidDays,
-      unpaidDays: apiSchema.u_UnpaidDays,
+      paidDays: parseFloat(apiSchema.u_PaidDays),
+      unpaidDays: parseFloat(apiSchema.u_UnpaidDays),
     };
     return obj;
   }

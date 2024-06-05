@@ -4,38 +4,38 @@ export interface EncashmentRequest {
   id: string;
   encashName: string;
   encashCode: string;
-  value: string;
+  value: number;
   date: string;
   status: string;
   remarks: string;
   createDate: string;
   projectCode: string;
-  unitPrice: string;
-  unitCount: string;
+  unitPrice: number;
+  unitCount: number;
   loanId: string | null;
-  installmentCount: string | null;
+  installmentCount: number;
 }
 
 export interface EncashmentRequestUpdate {
   id: string;
   encashCode?: string;
   date?: string;
-  unitPrice?: string;
-  unitCount?: string;
+  unitPrice?: number;
+  unitCount?: number;
   projectCode?: string;
   remarks?: string;
-  value?: string;
+  value?: number;
 }
 
 export interface EncashmentRequestAdd {
   encashCode: string;
   date: string;
-  unitPrice: string;
-  unitCount: string;
+  unitPrice: number;
+  unitCount: number;
   projectCode: string;
   remarks?: string;
 
-  value?: string;
+  value?: number;
 }
 
 export interface EncashmentRequestApi {

@@ -10,8 +10,8 @@ export interface EncashmentApproval extends GenericApproval {
   fullNameF: string;
   encashCode: string;
   encashName: string;
-  unitCount: string;
-  value: string;
+  unitCount: number;
+  value: number;
   status: string;
   remarks: string;
   projectCode: string;

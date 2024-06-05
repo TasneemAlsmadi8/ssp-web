@@ -42,8 +42,8 @@ export class NewLeaveRequestComponent extends NewRequestComponentTemplate<
     toTime: null,
     status: '',
     leaveCode: '',
-    paidDays: '',
-    unpaidDays: '',
+    paidDays: 0,
+    unpaidDays: 0,
   };
 
   paidDays: number = 1;

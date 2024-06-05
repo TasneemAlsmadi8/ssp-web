@@ -38,7 +38,7 @@ export class NewValueTransactionRequestComponent extends NewRequestComponentTemp
   item: ValueTransactionRequest = {
     id: '',
     valueTranName: '',
-    value: '',
+    value: 0,
     date: '',
     status: '',
     remarks: '',

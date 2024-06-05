@@ -13,7 +13,7 @@ export interface LeaveApproval extends GenericApproval{
   leaveType: string;
   fromTime: string | null;
   toTime: string | null;
-  leaveBalance: string;
+  leaveBalance: number;
   status: string;
   remarks: string;
 }

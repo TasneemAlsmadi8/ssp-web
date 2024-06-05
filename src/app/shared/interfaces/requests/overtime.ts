@@ -9,7 +9,7 @@ export interface OvertimeRequest {
   fromTime: string | null;
   toTime: string | null;
   status: string;
-  overtimeHours: string;
+  overtimeHours: number;
   hour: number;
   minute: number;
   remarks: string;

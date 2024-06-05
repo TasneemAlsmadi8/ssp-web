@@ -47,7 +47,7 @@ export class NewOvertimeRequestComponent extends NewRequestComponentTemplate<
     remarks: '',
     projectCode: '',
     projectName: '',
-    overtimeHours: '',
+    overtimeHours: 0,
   };
 
   overtimeTypes: OvertimeRequestType[] = [];

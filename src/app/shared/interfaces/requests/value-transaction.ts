@@ -4,7 +4,7 @@ export interface ValueTransactionRequest {
   id: string;
   valueTranName: string;
   valueTranCode: string;
-  value: string;
+  value: number;
   date: string;
   createDate: string;
   projectCode: string;
@@ -15,7 +15,7 @@ export interface ValueTransactionRequest {
 export interface ValueTransactionRequestUpdate {
   id: string;
   valueTranCode?: string;
-  value?: string;
+  value?: number;
   date?: string;
   projectCode?: string;
   remarks?: string;
@@ -23,7 +23,7 @@ export interface ValueTransactionRequestUpdate {
 
 export interface ValueTransactionRequestAdd {
   valueTranCode: string;
-  value: string;
+  value: number;
   date: string;
   projectCode: string;
   remarks?: string;

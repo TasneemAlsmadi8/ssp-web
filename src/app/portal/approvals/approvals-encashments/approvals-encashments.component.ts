@@ -56,9 +56,9 @@ export class ApprovalsEncashmentsComponent extends ApprovalPageComponentTemplate
       createDate: item.dateSubmitted,
       projectCode: item.projectCode,
       unitCount: item.unitCount,
-      unitPrice: '',
+      unitPrice: 0,
       loanId: null,
-      installmentCount: null,
+      installmentCount: 0,
     };
     return data;
   }

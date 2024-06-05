@@ -12,7 +12,6 @@ import { OvertimeRequestService } from 'src/app/shared/services/requests/overtim
 import { takeUntil } from 'rxjs';
 import { Project } from 'src/app/shared/interfaces/project';
 import { ProjectsService } from 'src/app/shared/services/projects.service';
-import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
 import {
   FormValues,
   RequestDetailsComponentTemplate,
@@ -98,7 +97,7 @@ export class OvertimeRequestDetailsComponent extends RequestDetailsComponentTemp
   ): FormValues<typeof this.formControls> {
     return {
       overtimeType: item.overtimeCode,
-      date: formatDateToISO(item.fromDate),
+      date: item.fromDate,
       hours: item.hour,
       minutes: item.minute,
       project: item.projectCode,

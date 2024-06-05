@@ -41,17 +41,17 @@ export class NewEncashmentRequestComponent extends NewRequestComponentTemplate<
   item: EncashmentRequest = {
     id: '',
     encashName: '',
-    value: '',
+    value: 0,
     date: '',
     status: '',
     remarks: '',
     encashCode: '',
     createDate: '',
     projectCode: '',
-    unitPrice: '',
-    unitCount: '',
+    unitPrice: 0,
+    unitCount: 0,
     loanId: null,
-    installmentCount: null,
+    installmentCount: 0,
   };
 
   encashmentTypes: EncashmentRequestType[] = [];

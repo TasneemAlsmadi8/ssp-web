@@ -52,8 +52,8 @@ export class ApprovalsLeavesComponent extends ApprovalPageComponentTemplate<
       remarks: item.remarks,
       status: 'Pending',
       leaveCode: item.leaveCode,
-      paidDays: '',
-      unpaidDays: '',
+      paidDays: 0,
+      unpaidDays: 0,
     };
     return data;
   }

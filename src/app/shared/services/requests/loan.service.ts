@@ -163,8 +163,8 @@ class LoanRequestAdapter {
       fullName: apiSchema.fullName,
       fullNameF: apiSchema.fullNameF,
       loanName: apiSchema.loanName,
-      totalAmount: apiSchema.totalAmount,
-      installmentCount: apiSchema.installmentCount,
+      totalAmount: parseFloat(apiSchema.totalAmount),
+      installmentCount: parseFloat(apiSchema.installmentCount),
       startDate: formatDateToISO(apiSchema.startDate),
       status: apiSchema.status,
       remarks: apiSchema.remarks ?? '',
@@ -179,8 +179,8 @@ class LoanRequestAdapter {
     const obj: LoanRequestAddApi = {
       u_EmployeeID: parseInt(employeeId),
       u_LoanType: addSchema.loanCode,
-      u_TotalAmount: addSchema.totalAmount,
-      u_InstallmentCount: addSchema.installmentCount,
+      u_TotalAmount: addSchema.totalAmount.toString(),
+      u_InstallmentCount: addSchema.installmentCount.toString(),
       u_StartDate: addSchema.startDate,
       u_Remarks: addSchema.remarks,
     };
@@ -191,8 +191,8 @@ class LoanRequestAdapter {
     const obj: LoanRequestUpdateApi = {
       docEntry: updateSchema.id,
       u_LoanType: updateSchema.loanCode,
-      u_TotalAmount: updateSchema.totalAmount,
-      u_InstallmentCount: updateSchema.installmentCount,
+      u_TotalAmount: updateSchema.totalAmount?.toString(),
+      u_InstallmentCount: updateSchema.installmentCount?.toString(),
       u_StartDate: updateSchema.startDate,
       u_Remarks: updateSchema.remarks,
     };

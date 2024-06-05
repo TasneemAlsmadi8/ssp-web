@@ -7,8 +7,8 @@ export interface LoanRequest extends Item {
   fullName: string | null;
   fullNameF: string | null;
   loanName: string | null;
-  totalAmount: string;
-  installmentCount: string;
+  totalAmount: number;
+  installmentCount: number;
   startDate: string;
   status: string;
   remarks?: string;
@@ -16,16 +16,16 @@ export interface LoanRequest extends Item {
 export interface LoanRequestUpdate {
   id: string;
   loanCode?: string;
-  totalAmount?: string;
-  installmentCount?: string;
+  totalAmount?: number;
+  installmentCount?: number;
   startDate?: string;
   remarks?: string;
 }
 
 export interface LoanRequestAdd {
   loanCode: string;
-  totalAmount: string;
-  installmentCount: string;
+  totalAmount: number;
+  installmentCount: number;
   startDate: string;
   remarks?: string;
 }

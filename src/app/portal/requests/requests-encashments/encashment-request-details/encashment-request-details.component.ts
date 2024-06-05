@@ -15,7 +15,6 @@ import { Project } from 'src/app/shared/interfaces/project';
 import { ProjectsService } from 'src/app/shared/services/projects.service';
 import { LeaveRequestService } from 'src/app/shared/services/requests/leave.service';
 import { LeaveRequestBalance } from 'src/app/shared/interfaces/requests/leave';
-import { formatDateToISO } from 'src/app/shared/utils/data-formatter';
 import {
   FormValues,
   RequestDetailsComponentTemplate,
@@ -141,7 +140,7 @@ export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTe
       encashmentType: item.encashCode,
       unitPrice: item.unitPrice,
       unitCount: item.unitCount,
-      date: formatDateToISO(item.date),
+      date: item.date,
       project: item.projectCode,
       remarks: item.remarks,
     };

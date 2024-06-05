@@ -50,12 +50,9 @@ export class ApprovalsOvertimeComponent extends ApprovalPageComponentTemplate<
       remarks: item.remarks,
       status: 'Pending',
       overtimeCode: item.overtimeCode,
-      overtimeHours: (
-        parseFloat(item.hour) +
-        parseFloat(item.minute) / 60
-      ).toString(),
-      hour: parseFloat(item.hour),
-      minute: parseFloat(item.minute),
+      overtimeHours: item.hour + item.minute / 60,
+      hour: item.hour,
+      minute: item.minute,
       projectCode: item.projectCode,
       projectName: item.projectName,
 

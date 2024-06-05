@@ -98,7 +98,7 @@ class LeaveApprovalAdapter {
       employeeCode: apiSchema.empCode,
       fullName: apiSchema.fullName,
       fullNameF: apiSchema.fullName,
-      leaveBalance: apiSchema.leaveBalance,
+      leaveBalance: parseFloat(apiSchema.leaveBalance),
     };
     return obj;
   }
