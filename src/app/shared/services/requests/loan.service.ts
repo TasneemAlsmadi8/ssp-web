@@ -106,7 +106,7 @@ export class LoanRequestService
           .getValue()
           .map((loanRequest) => {
             if (loanRequest.id === data.id) {
-              loanRequest = { ...loanRequest, ...data };
+              loanRequest = { ...loanRequest, ...data, status: 'Pending' };
             }
             return loanRequest;
           });

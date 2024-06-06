@@ -113,7 +113,11 @@ export class EncashmentRequestService
           .getValue()
           .map((encashmentRequest) => {
             if (encashmentRequest.id === data.id) {
-              encashmentRequest = { ...encashmentRequest, ...data };
+              encashmentRequest = {
+                ...encashmentRequest,
+                ...data,
+                status: 'Pending',
+              };
             }
             return encashmentRequest;
           });

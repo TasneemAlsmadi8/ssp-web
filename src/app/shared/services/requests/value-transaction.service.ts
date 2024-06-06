@@ -120,6 +120,7 @@ export class ValueTransactionRequestService
                 valueTransactionRequest = {
                   ...valueTransactionRequest,
                   ...data,
+                  status: 'Pending',
                 };
               }
               return valueTransactionRequest;

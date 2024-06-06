@@ -129,6 +129,7 @@ export class OvertimeRequestService
                 ...overtimeRequest,
                 ...data,
                 projectName,
+                status: 'Pending',
               };
             }
             return overtimeRequest;

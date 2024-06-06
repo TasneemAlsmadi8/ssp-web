@@ -120,6 +120,7 @@ export class LeaveRequestService
                 ...leaveRequest,
                 ...data,
                 leaveType,
+                status: 'Pending',
               };
             }
             return leaveRequest;
