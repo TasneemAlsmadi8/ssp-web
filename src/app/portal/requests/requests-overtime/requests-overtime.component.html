@@ -35,12 +35,7 @@
         </th>
         <td class="px-6 py-4">{{ req.status }}</td>
         <td class="px-6 py-4">
-          {{
-            (req.fromDate | date : "dd/MM/yyyy") +
-              (req.toDate === req.fromDate
-                ? ""
-                : " - " + (req.toDate | date : "dd/MM/yyyy"))
-          }}
+          {{ req.date | date : "dd/MM/yyyy" }}
         </td>
         <td class="px-6 py-4">
           {{

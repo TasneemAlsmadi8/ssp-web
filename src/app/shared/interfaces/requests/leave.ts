@@ -6,8 +6,8 @@ export interface LeaveRequest extends Item {
   leaveCode: string;
   fromDate: string;
   toDate: string;
-  fromTime: string | null;
-  toTime: string | null;
+  fromTime: string;
+  toTime: string;
   remarks?: string;
   paidDays: number;
   unpaidDays: number;
@@ -150,7 +150,7 @@ export interface LeaveRequestAddApi {
 
   u_PaidDays?: number;
   u_UnpaidDays?: number;
-  
+
   u_LeaveBalance?: number;
   u_AttachFile?: string;
   u_LeaveTranDocEntry?: string;

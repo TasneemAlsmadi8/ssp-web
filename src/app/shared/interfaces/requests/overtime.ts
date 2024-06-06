@@ -1,13 +1,10 @@
 import { Item, ItemType } from '../generic-item';
 
-export interface OvertimeRequest extends Item{
+export interface OvertimeRequest extends Item {
   id: string;
   overtimeType: string;
   overtimeCode: string;
-  fromDate: string;
-  toDate: string;
-  fromTime: string | null;
-  toTime: string | null;
+  date: string;
   overtimeHours: number;
   hour: number;
   minute: number;

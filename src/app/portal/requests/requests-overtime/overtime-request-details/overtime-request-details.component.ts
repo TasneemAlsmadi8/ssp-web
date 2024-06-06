@@ -98,7 +98,7 @@ export class OvertimeRequestDetailsComponent extends RequestDetailsComponentTemp
   ): FormValues<typeof this.formControls> {
     return {
       overtimeType: item.overtimeCode,
-      date: item.fromDate,
+      date: item.date,
       hours: item.hour,
       minutes: item.minute,
       project: item.projectCode,

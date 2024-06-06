@@ -1,6 +1,6 @@
-import { GenericApproval } from "./shared";
+import { GenericApproval } from './shared';
 
-export interface LeaveApproval extends GenericApproval{
+export interface LeaveApproval extends GenericApproval {
   id: string;
   dateSubmitted: string;
   fromDate: string;
@@ -11,8 +11,8 @@ export interface LeaveApproval extends GenericApproval{
   fullNameF: string;
   leaveCode: string;
   leaveType: string;
-  fromTime: string | null;
-  toTime: string | null;
+  fromTime: string;
+  toTime: string;
   leaveBalance: number;
   remarks: string;
 }

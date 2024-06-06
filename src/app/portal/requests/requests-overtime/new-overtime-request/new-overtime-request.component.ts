@@ -36,10 +36,7 @@ export class NewOvertimeRequestComponent extends NewRequestComponentTemplate<
   item: OvertimeRequest = {
     id: '',
     overtimeType: '',
-    fromDate: '',
-    toDate: '',
-    fromTime: null,
-    toTime: null,
+    date: '',
     status: 'Pending',
     overtimeCode: '',
     hour: 0,

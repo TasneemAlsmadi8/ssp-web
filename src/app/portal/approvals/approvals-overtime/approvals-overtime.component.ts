@@ -46,7 +46,7 @@ export class ApprovalsOvertimeComponent extends ApprovalPageComponentTemplate<
     const data: OvertimeRequest = {
       id: item.id,
       overtimeType: item.overtimeType,
-      fromDate: item.fromDate,
+      date: item.fromDate,
       remarks: item.remarks,
       status: 'Pending',
       overtimeCode: item.overtimeCode,
@@ -55,10 +55,6 @@ export class ApprovalsOvertimeComponent extends ApprovalPageComponentTemplate<
       minute: item.minute,
       projectCode: item.projectCode,
       projectName: item.projectName,
-
-      toDate: '',
-      fromTime: null,
-      toTime: null,
 
       employeeId: item.employeeId,
       employeeCode: item.employeeCode,
