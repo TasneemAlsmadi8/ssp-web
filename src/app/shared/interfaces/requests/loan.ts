@@ -1,4 +1,4 @@
-import { Item, ItemType } from './generic-request';
+import { Item, ItemType } from '../generic-item';
 
 export interface LoanRequest extends Item {
   id: string;

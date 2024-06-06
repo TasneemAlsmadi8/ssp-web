@@ -1,4 +1,4 @@
-import { Item, ItemType } from './generic-request';
+import { Item, ItemType } from '../generic-item';
 
 export interface LeaveRequest extends Item {
   id: string;
@@ -133,7 +133,7 @@ export interface LeaveRequestUpdateApi {
   // u_ApprEmpID3?: string;
 }
 
-export interface LeaveRequestType extends ItemType{
+export interface LeaveRequestType extends ItemType {
   code: string;
   name: string;
 }

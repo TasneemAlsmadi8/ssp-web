@@ -1,4 +1,4 @@
-import { ItemType } from './generic-request';
+import { ItemType } from '../generic-item';
 
 export interface ValueTransactionRequest {
   id: string;

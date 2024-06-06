@@ -16,7 +16,7 @@ import { SharedArrayStore } from '../../utils/shared-array-store';
 import { GenericRequestService } from './generic-request.service';
 import { formatDateToISO } from '../../utils/data-formatter';
 import { ProjectsService } from '../projects.service';
-import { ItemStatus } from '../../interfaces/requests/generic-request';
+import { ItemStatus } from '../../interfaces/generic-item';
 
 type iOvertimeRequestService = GenericRequestService<
   OvertimeRequest,

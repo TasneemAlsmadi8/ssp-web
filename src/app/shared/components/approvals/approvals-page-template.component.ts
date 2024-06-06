@@ -1,9 +1,6 @@
 import { Component, Inject, OnInit, inject } from '@angular/core';
 import { DestroyBaseComponent } from 'src/app/shared/base/destroy-base.component';
-import {
-  Item,
-  UpdateSchema,
-} from 'src/app/shared/interfaces/requests/generic-request';
+import { Item, UpdateSchema } from 'src/app/shared/interfaces/generic-item';
 import { takeUntil } from 'rxjs';
 import { GenericApprovalService } from '../../services/approvals/generic-approval.service';
 import { SelectedItems } from '../../utils/selected-items';

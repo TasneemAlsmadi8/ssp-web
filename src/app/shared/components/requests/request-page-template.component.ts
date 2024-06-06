@@ -1,28 +1,28 @@
 import { Component, Inject, OnInit } from '@angular/core';
 import { DestroyBaseComponent } from 'src/app/shared/base/destroy-base.component';
 import { GenericRequestService } from 'src/app/shared/services/requests/generic-request.service';
-import { Item } from 'src/app/shared/interfaces/requests/generic-request';
+import { Item } from 'src/app/shared/interfaces/generic-item';
 import { takeUntil } from 'rxjs';
 
 @Component({
   standalone: true,
   template: '',
 })
-export abstract class RequestPageComponentTemplate<T extends Item>
+export abstract class RequestPageComponentTemplate<Request extends Item>
   extends DestroyBaseComponent
   implements OnInit
 {
-  items: T[] = [];
-  activePageItems: T[] = [];
+  items: Request[] = [];
+  activePageItems: Request[] = [];
 
-  activeItemDetails?: T;
+  activeItemDetails?: Request;
   ItemDetailsOpen = false;
 
-  abstract trackByRequestId(index: number, item: T): number;
+  abstract trackByRequestId(index: number, item: Request): number;
 
   constructor(
     @Inject(null)
-    private requestService: GenericRequestService<T, any, any, any>
+    private requestService: GenericRequestService<Request, any, any, any>
   ) {
     super();
     requestService.list$.subscribe((value) => {
@@ -44,7 +44,7 @@ export abstract class RequestPageComponentTemplate<T extends Item>
       });
   }
 
-  setActiveItemDetails(activeItemDetails: T) {
+  setActiveItemDetails(activeItemDetails: Request) {
     this.activeItemDetails = activeItemDetails;
     this.ItemDetailsOpen = true;
   }

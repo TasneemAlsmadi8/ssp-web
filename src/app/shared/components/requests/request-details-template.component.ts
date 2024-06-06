@@ -18,7 +18,7 @@ import {
   AddSchema,
   Item,
   UpdateSchema,
-} from 'src/app/shared/interfaces/requests/generic-request';
+} from 'src/app/shared/interfaces/generic-item';
 import { HttpErrorResponse } from '@angular/common/http';
 import { debounceTime, distinctUntilChanged, takeUntil } from 'rxjs';
 import { FormErrorMessageBehavior } from '../FormErrorMessage';

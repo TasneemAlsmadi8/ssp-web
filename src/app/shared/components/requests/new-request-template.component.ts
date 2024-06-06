@@ -11,10 +11,7 @@ import { User } from '../../interfaces/user';
 import { DestroyBaseComponent } from 'src/app/shared/base/destroy-base.component';
 import { LocalUserService } from 'src/app/shared/services/local-user.service';
 import { GenericRequestService } from 'src/app/shared/services/requests/generic-request.service';
-import {
-  AddSchema,
-  Item,
-} from 'src/app/shared/interfaces/requests/generic-request';
+import { AddSchema, Item } from 'src/app/shared/interfaces/generic-item';
 import { HttpErrorResponse } from '@angular/common/http';
 import { debounceTime, distinctUntilChanged, switchMap, takeUntil } from 'rxjs';
 import { FormErrorMessageBehavior } from '../FormErrorMessage';

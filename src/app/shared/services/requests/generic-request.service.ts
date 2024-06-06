@@ -4,7 +4,7 @@ import {
   Item,
   ItemType,
   UpdateSchema,
-} from '../../interfaces/requests/generic-request';
+} from '../../interfaces/generic-item';
 import { ListRetrievalService } from '../generic.service';
 import { User } from '../../interfaces/user';
 

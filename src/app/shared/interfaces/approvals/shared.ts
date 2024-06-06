@@ -1,10 +1,12 @@
+import { Item } from "../generic-item";
+
 export enum ApprovalAction {
   Rejected = '1',
   Accepted = '2',
 }
 
 
-export interface GenericApproval {
+export interface GenericApproval extends Item{
   id: string;
   dateSubmitted: string;
   employeeId: string;
