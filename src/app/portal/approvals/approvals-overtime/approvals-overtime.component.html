@@ -75,7 +75,7 @@
           >
             <app-request-details-button
               (click)="setActiveItemDetails(req)"
-              [isEditable]="req.status === 'Pending'"
+              [isEditable]="isEditable(req)"
             />
             <app-approval-accept-button (click)="approveRequest(req.id)" />
             <app-approval-reject-button (click)="rejectRequest(req.id)" />

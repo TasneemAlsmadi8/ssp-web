@@ -44,6 +44,10 @@ export abstract class RequestPageComponentTemplate<Request extends Item>
       });
   }
 
+  isEditable(item: Request): boolean {
+    return item.status === 'Pending' || item.status === 'Rejected';
+  }
+
   setActiveItemDetails(activeItemDetails: Request) {
     this.activeItemDetails = activeItemDetails;
     this.ItemDetailsOpen = true;

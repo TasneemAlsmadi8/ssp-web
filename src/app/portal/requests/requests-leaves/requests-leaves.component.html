@@ -65,10 +65,10 @@
         <td class="px-6 py-4 flex justify-center gap-2">
           <app-request-details-button
             (click)="setActiveItemDetails(req)"
-            [isEditable]="req.status === 'Pending'"
+            [isEditable]="isEditable(req)"
           />
           <app-cancel-request-popup
-            *ngIf="req.status === 'Pending'"
+            *ngIf="isEditable(req)"
             [service]="leaveService"
             [id]="req.id"
           />
@@ -82,6 +82,6 @@
   *ngIf="activeItemDetails"
   [(isOpen)]="ItemDetailsOpen"
   [item]="activeItemDetails"
-  [isEditable]="activeItemDetails.status === 'Pending'"
+  [isEditable]="isEditable(activeItemDetails)"
 />
 <app-new-leave-request />

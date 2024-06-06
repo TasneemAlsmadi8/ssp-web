@@ -122,6 +122,10 @@ export abstract class ApprovalPageComponentTemplate<
     return this.getItemId(item);
   };
 
+  isEditable(item: Approval): boolean {
+    return item.status === 'Pending' || item.status === 'Rejected';
+  }
+
   setActiveItemDetails(activeItemDetails: Approval) {
     this.activeItemDetails = this.mapApprovalToUpdateRequest(activeItemDetails);
     this.activeItemEmployeeId = activeItemDetails.employeeId;
