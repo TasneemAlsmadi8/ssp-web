@@ -103,6 +103,22 @@ const routes: Routes = [
             './approvals/approvals-encashments/approvals-encashments.component'
           ).then((m) => m.ApprovalsEncashmentsComponent),
       },
+      {
+        path: 'history/leaves',
+        title: 'history',
+        loadComponent: () =>
+          import(
+            './history/history-leaves/history-leaves.component'
+          ).then((m) => m.HistoryLeavesComponent),
+      },
+      {
+        path: 'history/loans',
+        title: 'history',
+        loadComponent: () =>
+          import(
+            './history/history-loans/history-loans.component'
+          ).then((m) => m.HistoryLoansComponent),
+      },
       { path: '**', component: PageNotFoundComponent },
     ],
   },
