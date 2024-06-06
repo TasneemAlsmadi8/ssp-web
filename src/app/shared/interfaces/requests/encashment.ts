@@ -22,7 +22,7 @@ export interface EncashmentRequestUpdate {
   unitCount?: number;
   projectCode?: string;
   remarks?: string;
-  value?: number;
+  value: number;
 }
 
 export interface EncashmentRequestAdd {
@@ -33,7 +33,7 @@ export interface EncashmentRequestAdd {
   projectCode: string;
   remarks?: string;
 
-  value?: number;
+  value: number;
 }
 
 export interface EncashmentRequestApi {

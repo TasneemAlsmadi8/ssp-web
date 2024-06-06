@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   EncashmentRequest,
@@ -76,8 +76,7 @@ export class NewEncashmentRequestComponent extends NewRequestComponentTemplate<
 
   override mapFormToAddRequest(formValues: any): EncashmentRequestAdd {
     return {
-      // u_EncashValue:
-      // this.encashValue?.paidVacationValue.toString() ?? undefined,
+      value: this.encashValue?.paidVacationValue ?? 0,
       // TODO: should I send it?
       encashCode: formValues.encashmentType ?? undefined,
       date: formValues.date ?? undefined,
@@ -144,7 +143,7 @@ export class NewEncashmentRequestComponent extends NewRequestComponentTemplate<
       .pipe(takeUntil(this.destroy$))
       .subscribe((value) => {
         this.encashValue = value[0];
-        console.log(this.encashValue);
+        // console.log(this.encashValue);
       });
   }
 
@@ -154,7 +153,7 @@ export class NewEncashmentRequestComponent extends NewRequestComponentTemplate<
       .pipe(takeUntil(this.destroy$))
       .subscribe((value) => {
         this.leaveBalance = value[0];
-        console.log(this.leaveBalance.leaveBalance + ' balance');
+        // console.log(this.leaveBalance.leaveBalance + ' balance');
       });
   }
 }

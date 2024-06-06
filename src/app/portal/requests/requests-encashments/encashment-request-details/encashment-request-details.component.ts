@@ -158,6 +158,7 @@ export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTe
       unitCount: formValues.unitCount?.toString() ?? undefined,
       projectCode: formValues.project ?? undefined,
       remarks: formValues.remarks ?? undefined,
+      value: this.encashValue?.paidVacationValue ?? 0,
     };
     return data;
   }
