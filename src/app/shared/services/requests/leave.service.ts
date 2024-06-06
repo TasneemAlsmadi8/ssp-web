@@ -234,6 +234,7 @@ class LeaveRequestAdapter {
       u_FromTime: updateSchema.fromTime,
       u_ToTime: updateSchema.toTime,
       u_Remarks: updateSchema.remarks,
+      u_Status: ItemStatus.Pending,
     };
     return obj;
   }

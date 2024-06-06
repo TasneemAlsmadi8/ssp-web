@@ -203,6 +203,7 @@ class OvertimeRequestAdapter {
       u_OvMin: updateSchema.minute?.toString(),
       u_ProjectCode: updateSchema.projectCode,
       u_Remarks: updateSchema.remarks,
+      u_Status: ItemStatus.Pending,
     };
     return obj;
   }

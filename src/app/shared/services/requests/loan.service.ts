@@ -195,6 +195,7 @@ class LoanRequestAdapter {
       u_InstallmentCount: updateSchema.installmentCount?.toString(),
       u_StartDate: updateSchema.startDate,
       u_Remarks: updateSchema.remarks,
+      u_Status: ItemStatus.Pending,
     };
     return obj;
   }

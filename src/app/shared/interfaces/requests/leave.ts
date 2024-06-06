@@ -111,25 +111,25 @@ export interface LeaveRequestUpdateApi {
   u_Remarks?: string;
 
   // //static
-  // u_EmployeeID?: string;
-  // u_PaidDays?: number;
-  // u_UnpaidDays?: number;
+  u_EmployeeID?: string;
+  u_PaidDays?: number;
+  u_UnpaidDays?: number;
 
   // // static
-  // u_LeaveBalance?: number;
+  u_LeaveBalance?: number;
 
   // //edit on cancel
-  // u_Status?: string;
+  u_Status?: string;
 
   //unused
-  // u_AttachFile?: string;
-  // u_LeaveTranDocEntry?: string;
-  // u_ApprStatus1?: string;
-  // u_ApprStatus2?: string;
-  // u_ApprStatus3?: string;
-  // u_ApprEmpID1?: string;
-  // u_ApprEmpID2?: string;
-  // u_ApprEmpID3?: string;
+  u_AttachFile?: string;
+  u_LeaveTranDocEntry?: string;
+  u_ApprStatus1?: string;
+  u_ApprStatus2?: string;
+  u_ApprStatus3?: string;
+  u_ApprEmpID1?: string;
+  u_ApprEmpID2?: string;
+  u_ApprEmpID3?: string;
 }
 
 export interface LeaveRequestType extends ItemType {

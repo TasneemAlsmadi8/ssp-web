@@ -186,6 +186,7 @@ class ValueTransactionRequestAdapter {
       u_Date: updateSchema.date,
       u_ProjectCode: updateSchema.projectCode,
       u_Remarks: updateSchema.remarks,
+      u_Status: ItemStatus.Pending,
     };
     return obj;
   }

@@ -207,6 +207,7 @@ class EncashmentRequestAdapter {
       u_ProjectCode: updateSchema.projectCode,
       u_Remarks: updateSchema.remarks,
       u_EncashValue: updateSchema.value?.toString(), //todo
+      // u_Status: ItemStatus.Pending, //TODO: ask about patch api
     };
     return obj;
   }
