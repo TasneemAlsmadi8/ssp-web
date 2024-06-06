@@ -14,7 +14,6 @@ export interface LeaveApproval extends GenericApproval{
   fromTime: string | null;
   toTime: string | null;
   leaveBalance: number;
-  status: string;
   remarks: string;
 }
 

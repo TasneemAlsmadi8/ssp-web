@@ -15,7 +15,7 @@ import { Observable, map, tap } from 'rxjs';
 import { SharedArrayStore } from '../../utils/shared-array-store';
 import { GenericRequestService } from './generic-request.service';
 import { formatDateToISO } from '../../utils/data-formatter';
-import { ItemStatus } from '../../interfaces/generic-item';
+import { ItemStatus, ItemStatusString } from '../../interfaces/generic-item';
 
 type iLoanRequestService = GenericRequestService<
   LoanRequest,
@@ -166,7 +166,7 @@ class LoanRequestAdapter {
       totalAmount: parseFloat(apiSchema.totalAmount),
       installmentCount: parseInt(apiSchema.installmentCount),
       startDate: formatDateToISO(apiSchema.startDate),
-      status: apiSchema.status,
+      status: apiSchema.status as ItemStatusString,
       remarks: apiSchema.remarks ?? '',
     };
     return obj;

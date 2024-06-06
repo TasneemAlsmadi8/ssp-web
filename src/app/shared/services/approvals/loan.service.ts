@@ -9,6 +9,7 @@ import { LocalUserService } from '../local-user.service';
 import { BaseService } from '../../base/base.service';
 import { ApprovalAction } from '../../interfaces/approvals/shared';
 import { formatTimeToHHmm } from '../../utils/data-formatter';
+import { ItemStatusString } from '../../interfaces/generic-item';
 
 @Injectable({
   providedIn: 'root',
@@ -94,7 +95,7 @@ class LoanApprovalAdapter {
       loanName: apiSchema.loanName,
       totalAmount: parseFloat(apiSchema.totalAmount),
       installmentCount: parseInt(apiSchema.installmentCount),
-      status: apiSchema.status,
+      status: apiSchema.status as ItemStatusString,
       remarks: apiSchema.remarks,
     };
     return obj;

@@ -12,6 +12,7 @@ import { LocalUserService } from '../local-user.service';
 import { BaseService } from '../../base/base.service';
 import { ApprovalAction } from '../../interfaces/approvals/shared';
 import { formatDateToISO, formatTimeToHHmm } from '../../utils/data-formatter';
+import { ItemStatusString } from '../../interfaces/generic-item';
 
 @Injectable({
   providedIn: 'root',
@@ -107,7 +108,7 @@ class ValueTransactionApprovalAdapter {
       valueTranCode: apiSchema.valueTranCode,
       valueTranName: apiSchema.valueTranName,
       value: parseFloat(apiSchema.value),
-      status: apiSchema.status,
+      status: apiSchema.status as ItemStatusString,
       remarks: apiSchema.remarks,
       projectCode: apiSchema.projectCode,
       projectName: apiSchema.projectName,

@@ -1,6 +1,6 @@
 export interface Item {
   id: string;
-  status: string;
+  status: ItemStatusString;
   remarks?: string;
 }
 
@@ -15,6 +15,8 @@ export enum ItemStatus {
   Approved = '2',
   Canceled = '3',
 }
+
+export type ItemStatusString = keyof typeof ItemStatus;
 
 export interface UpdateSchema {
   id: string;

@@ -43,7 +43,7 @@ export class NewEncashmentRequestComponent extends NewRequestComponentTemplate<
     encashName: '',
     value: 0,
     date: '',
-    status: '',
+    status: 'Pending',
     remarks: '',
     encashCode: '',
     createDate: '',

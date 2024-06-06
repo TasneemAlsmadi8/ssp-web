@@ -1,12 +1,11 @@
-import { ItemType } from '../generic-item';
+import { Item, ItemType } from '../generic-item';
 
-export interface EncashmentRequest {
+export interface EncashmentRequest extends Item{
   id: string;
   encashName: string;
   encashCode: string;
   value: number;
   date: string;
-  status: string;
   remarks: string;
   createDate: string;
   projectCode: string;

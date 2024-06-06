@@ -12,7 +12,6 @@ export interface OvertimeApproval extends GenericApproval{
   overtimeType: string;
   hour: number;
   minute: number;
-  status: string;
   remarks: string;
   projectCode: string;
   projectName: string;

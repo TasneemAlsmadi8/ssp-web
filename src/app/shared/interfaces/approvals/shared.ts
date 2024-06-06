@@ -13,6 +13,5 @@ export interface GenericApproval extends Item{
   employeeCode: string;
   fullName: string;
   fullNameF: string;
-  status: string;
   remarks: string;
 }

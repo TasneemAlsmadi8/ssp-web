@@ -16,7 +16,7 @@ import { Observable, map, tap } from 'rxjs';
 import { SharedArrayStore } from '../../utils/shared-array-store';
 import { GenericRequestService } from './generic-request.service';
 import { formatDateToISO } from '../../utils/data-formatter';
-import { ItemStatus } from '../../interfaces/generic-item';
+import { ItemStatus, ItemStatusString } from '../../interfaces/generic-item';
 
 type iEncashmentRequestService = GenericRequestService<
   EncashmentRequest,
@@ -167,7 +167,7 @@ class EncashmentRequestAdapter {
       encashCode: apiSchema.encashCode,
       value: parseFloat(apiSchema.value),
       date: formatDateToISO(apiSchema.date),
-      status: apiSchema.status,
+      status: apiSchema.status as ItemStatusString,
       remarks: apiSchema.remarks,
       createDate: formatDateToISO(apiSchema.createDate),
       projectCode: apiSchema.projectCode,

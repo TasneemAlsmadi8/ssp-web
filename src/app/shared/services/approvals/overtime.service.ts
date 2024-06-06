@@ -12,6 +12,7 @@ import { LocalUserService } from '../local-user.service';
 import { BaseService } from '../../base/base.service';
 import { ApprovalAction } from '../../interfaces/approvals/shared';
 import { formatDateToISO } from '../../utils/data-formatter';
+import { ItemStatusString } from '../../interfaces/generic-item';
 
 @Injectable({
   providedIn: 'root',
@@ -99,7 +100,7 @@ class OvertimeApprovalAdapter {
       overtimeType: apiSchema.overtimeType,
       hour: parseFloat(apiSchema.ovHour),
       minute: parseFloat(apiSchema.ovMin),
-      status: apiSchema.status,
+      status: apiSchema.status as ItemStatusString,
       remarks: apiSchema.remarks,
       projectCode: apiSchema.projectCode,
       projectName: apiSchema.projectName,

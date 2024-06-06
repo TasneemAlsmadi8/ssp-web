@@ -15,7 +15,7 @@ import { Observable, map, tap } from 'rxjs';
 import { SharedArrayStore } from '../../utils/shared-array-store';
 import { GenericRequestService } from './generic-request.service';
 import { formatDateToISO } from '../../utils/data-formatter';
-import { ItemStatus } from '../../interfaces/generic-item';
+import { ItemStatus, ItemStatusString } from '../../interfaces/generic-item';
 
 type iValueTransactionRequestService = GenericRequestService<
   ValueTransactionRequest,
@@ -155,7 +155,7 @@ class ValueTransactionRequestAdapter {
       date: formatDateToISO(apiSchema.date),
       createDate: formatDateToISO(apiSchema.createDate),
       projectCode: apiSchema.projectCode,
-      status: apiSchema.status || 'Pending',
+      status: (apiSchema.status as ItemStatusString) || 'Pending',
       remarks: apiSchema.remarks,
     };
     return obj;

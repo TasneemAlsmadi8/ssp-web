@@ -40,7 +40,7 @@ export class NewLeaveRequestComponent extends NewRequestComponentTemplate<
     toDate: '',
     fromTime: null,
     toTime: null,
-    status: '',
+    status: 'Pending',
     leaveCode: '',
     paidDays: 0,
     unpaidDays: 0,

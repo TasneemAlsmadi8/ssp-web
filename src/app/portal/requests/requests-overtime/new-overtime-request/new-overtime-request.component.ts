@@ -40,7 +40,7 @@ export class NewOvertimeRequestComponent extends NewRequestComponentTemplate<
     toDate: '',
     fromTime: null,
     toTime: null,
-    status: '',
+    status: 'Pending',
     overtimeCode: '',
     hour: 0,
     minute: 0,

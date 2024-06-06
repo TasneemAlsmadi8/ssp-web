@@ -12,7 +12,6 @@ export interface LoanApproval extends GenericApproval {
   loanName: string;
   totalAmount: number;
   installmentCount: number;
-  status: string;
   remarks: string;
 }
 

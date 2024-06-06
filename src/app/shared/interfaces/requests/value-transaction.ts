@@ -1,6 +1,6 @@
-import { ItemType } from '../generic-item';
+import { Item, ItemType } from '../generic-item';
 
-export interface ValueTransactionRequest {
+export interface ValueTransactionRequest extends Item {
   id: string;
   valueTranName: string;
   valueTranCode: string;
@@ -8,7 +8,6 @@ export interface ValueTransactionRequest {
   date: string;
   createDate: string;
   projectCode: string;
-  status: string;
   remarks: string;
 }
 

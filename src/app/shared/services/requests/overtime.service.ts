@@ -16,7 +16,7 @@ import { SharedArrayStore } from '../../utils/shared-array-store';
 import { GenericRequestService } from './generic-request.service';
 import { formatDateToISO } from '../../utils/data-formatter';
 import { ProjectsService } from '../projects.service';
-import { ItemStatus } from '../../interfaces/generic-item';
+import { ItemStatus, ItemStatusString } from '../../interfaces/generic-item';
 
 type iOvertimeRequestService = GenericRequestService<
   OvertimeRequest,
@@ -163,7 +163,7 @@ class OvertimeRequestAdapter {
       toDate: formatDateToISO(apiSchema.toDate),
       fromTime: apiSchema.fromDate,
       toTime: apiSchema.toDate,
-      status: apiSchema.status,
+      status: apiSchema.status as ItemStatusString,
       overtimeHours: parseFloat(apiSchema.ovHours),
       hour: apiSchema.hour,
       minute: apiSchema.minute,

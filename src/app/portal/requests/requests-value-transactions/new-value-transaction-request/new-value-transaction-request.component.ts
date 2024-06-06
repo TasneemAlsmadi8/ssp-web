@@ -40,7 +40,7 @@ export class NewValueTransactionRequestComponent extends NewRequestComponentTemp
     valueTranName: '',
     value: 0,
     date: '',
-    status: '',
+    status: 'Pending',
     remarks: '',
     valueTranCode: '',
     createDate: '',

@@ -1,6 +1,6 @@
-import { ItemType } from '../generic-item';
+import { Item, ItemType } from '../generic-item';
 
-export interface OvertimeRequest {
+export interface OvertimeRequest extends Item{
   id: string;
   overtimeType: string;
   overtimeCode: string;
@@ -8,7 +8,6 @@ export interface OvertimeRequest {
   toDate: string;
   fromTime: string | null;
   toTime: string | null;
-  status: string;
   overtimeHours: number;
   hour: number;
   minute: number;

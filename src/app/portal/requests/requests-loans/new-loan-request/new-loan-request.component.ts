@@ -48,7 +48,7 @@ export class NewLoanRequestComponent extends NewRequestComponentTemplate<
     totalAmount: 0,
     installmentCount: 0,
     startDate: '',
-    status: '',
+    status: 'Pending',
   };
 
   loanTypes!: LoanRequestType[];

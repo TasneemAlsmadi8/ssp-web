@@ -12,6 +12,7 @@ import { LocalUserService } from '../local-user.service';
 import { BaseService } from '../../base/base.service';
 import { ApprovalAction } from '../../interfaces/approvals/shared';
 import { formatDateToISO, formatTimeToHHmm } from '../../utils/data-formatter';
+import { ItemStatusString } from '../../interfaces/generic-item';
 
 @Injectable({
   providedIn: 'root',
@@ -91,7 +92,7 @@ class LeaveApprovalAdapter {
       toDate: formatDateToISO(apiSchema.toDate),
       fromTime: formatTimeToHHmm(apiSchema.fromTime ?? '0000'),
       toTime: formatTimeToHHmm(apiSchema.toTime ?? '0000'),
-      status: apiSchema.status,
+      status: apiSchema.status as ItemStatusString,
       remarks: apiSchema.remarks,
       dateSubmitted: formatDateToISO(apiSchema.dateSubmitted),
       employeeId: apiSchema.empID,

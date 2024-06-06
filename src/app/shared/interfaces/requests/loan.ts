@@ -10,7 +10,6 @@ export interface LoanRequest extends Item {
   totalAmount: number;
   installmentCount: number;
   startDate: string;
-  status: string;
   remarks?: string;
 }
 export interface LoanRequestUpdate {
