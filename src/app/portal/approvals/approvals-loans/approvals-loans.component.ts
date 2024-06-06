@@ -49,12 +49,15 @@ export class ApprovalsLoansComponent extends ApprovalPageComponentTemplate<
       status: 'Pending',
       loanCode: item.loanCode,
       dateSubmitted: item.dateSubmitted,
-      fullName: item.fullName,
-      fullNameF: item.fullNameF,
       loanName: item.loanName,
       totalAmount: item.totalAmount,
       installmentCount: item.installmentCount,
       startDate: item.startDate,
+
+      employeeId: item.employeeId,
+      employeeCode: item.employeeCode,
+      fullName: item.fullName,
+      fullNameF: item.fullNameF,
     };
     return data;
   }

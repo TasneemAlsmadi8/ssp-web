@@ -59,6 +59,11 @@ export class ApprovalsOvertimeComponent extends ApprovalPageComponentTemplate<
       toDate: '',
       fromTime: null,
       toTime: null,
+
+      employeeId: item.employeeId,
+      employeeCode: item.employeeCode,
+      fullName: item.fullName,
+      fullNameF: item.fullNameF,
     };
     return data;
   }

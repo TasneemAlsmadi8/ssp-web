@@ -57,7 +57,7 @@ export class OvertimeRequestDetailsComponent extends RequestDetailsComponentTemp
   }
 
   override getDynamicValues(): void {
-    if (!this.employeeId) {
+    if (this.isCurrentEmployee) {
       this.overtimeRequestService
         .getTypes()
         .pipe(takeUntil(this.destroy$))
@@ -65,8 +65,9 @@ export class OvertimeRequestDetailsComponent extends RequestDetailsComponentTemp
           this.overtimeTypes = value;
         });
     } else {
+      if (!this.item.employeeId) throw new Error('employee id not specified');
       this.overtimeRequestService
-        .getTypesByEmployeeId(this.employeeId)
+        .getTypesByEmployeeId(this.item.employeeId)
         .pipe(takeUntil(this.destroy$))
         .subscribe((value) => {
           this.overtimeTypes = value;

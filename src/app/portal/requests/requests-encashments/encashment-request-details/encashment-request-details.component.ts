@@ -60,7 +60,7 @@ export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTe
   }
 
   override getDynamicValues(): void {
-    if (!this.employeeId) {
+    if (this.isCurrentEmployee) {
       this.encashmentRequestService
         .getTypes()
         .pipe(takeUntil(this.destroy$))
@@ -72,8 +72,9 @@ export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTe
           });
         });
     } else {
+      if (!this.item.employeeId) throw new Error('employee id not specified');
       this.encashmentRequestService
-        .getTypesByEmployeeId(this.employeeId)
+        .getTypesByEmployeeId(this.item.employeeId)
         .pipe(takeUntil(this.destroy$))
         .subscribe((value) => {
           this.encashmentTypes = value;
@@ -104,7 +105,7 @@ export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTe
           this.leaveBalance = value[0];
         });
       if (unitCount) {
-        if (!this.employeeId) {
+        if (this.isCurrentEmployee) {
           this.encashmentRequestService
             .getEncashValue(encashmentType, unitCount, date)
             .pipe(takeUntil(this.destroy$))
@@ -112,9 +113,11 @@ export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTe
               this.encashValue = value[0];
             });
         } else {
+          if (!this.item.employeeId)
+            throw new Error('employee id not specified');
           this.encashmentRequestService
             .getEncashValueByEmployeeId(
-              this.employeeId,
+              this.item.employeeId,
               encashmentType,
               unitCount,
               date

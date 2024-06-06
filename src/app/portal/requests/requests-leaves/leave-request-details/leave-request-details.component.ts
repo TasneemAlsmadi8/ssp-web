@@ -47,7 +47,7 @@ export class LeaveRequestDetailsComponent extends RequestDetailsComponentTemplat
   }
 
   override getDynamicValues(): void {
-    if (!this.employeeId) {
+    if (this.isCurrentEmployee) {
       this.leaveRequestService
         .getTypes()
         .pipe(takeUntil(this.destroy$))
@@ -55,8 +55,9 @@ export class LeaveRequestDetailsComponent extends RequestDetailsComponentTemplat
           this.leaveTypes = value;
         });
     } else {
+      if (!this.item.employeeId) throw new Error('employee id not specified');
       this.leaveRequestService
-        .getTypesByEmployeeId(this.employeeId)
+        .getTypesByEmployeeId(this.item.employeeId)
         .pipe(takeUntil(this.destroy$))
         .subscribe((value) => {
           this.leaveTypes = value;

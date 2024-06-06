@@ -4,8 +4,6 @@ export interface LoanRequest extends Item {
   id: string;
   dateSubmitted: string | null;
   loanCode: string;
-  fullName: string | null;
-  fullNameF: string | null;
   loanName: string | null;
   totalAmount: number;
   installmentCount: number;

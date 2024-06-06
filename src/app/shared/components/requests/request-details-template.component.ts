@@ -46,7 +46,7 @@ export abstract class RequestDetailsComponentTemplate<
     this._isOpen = value;
     this.isOpenChange.emit(value);
   }
-  @Input() employeeId?: string;
+  @Input() isCurrentEmployee = true;
 
   @Output() isOpenChange = new EventEmitter<boolean>();
   @Output() onSave = new EventEmitter<T>();
@@ -124,7 +124,11 @@ export abstract class RequestDetailsComponentTemplate<
       this.setInputsDefaultValues();
       // console.log(this.item);
     }
-    if (this.employeeId && this.getDynamicValues && changes['employeeId']) {
+    if (
+      !this.isCurrentEmployee &&
+      this.getDynamicValues &&
+      changes['employeeId']
+    ) {
       this.getDynamicValues();
     }
   }

@@ -2,6 +2,11 @@ export interface Item {
   id: string;
   status: ItemStatusString;
   remarks?: string;
+
+  employeeId?: string;
+  employeeCode?: string;
+  fullName?: string;
+  fullNameF?: string;
 }
 
 export interface ItemType {

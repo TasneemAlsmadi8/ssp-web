@@ -110,7 +110,7 @@
   *ngIf="activeItemDetails"
   [(isOpen)]="ItemDetailsOpen"
   [item]="activeItemDetails"
-  [employeeId]="activeItemEmployeeId"
+  [isCurrentEmployee]="false"
   (onSubmitSuccess)="refreshItems()"
 />
 <app-approval-speed-dial />

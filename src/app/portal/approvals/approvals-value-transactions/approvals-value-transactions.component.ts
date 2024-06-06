@@ -57,6 +57,11 @@ export class ApprovalsValueTransactionsComponent extends ApprovalPageComponentTe
       date: item.date,
       createDate: item.dateSubmitted,
       projectCode: item.projectCode,
+
+      employeeId: item.employeeId,
+      employeeCode: item.employeeCode,
+      fullName: item.fullName,
+      fullNameF: item.fullNameF,
     };
     return data;
   }

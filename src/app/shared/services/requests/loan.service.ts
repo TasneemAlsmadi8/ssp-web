@@ -160,8 +160,6 @@ class LoanRequestAdapter {
       dateSubmitted:
         apiSchema.dateSubmitted && formatDateToISO(apiSchema.dateSubmitted),
       loanCode: apiSchema.loanCode,
-      fullName: apiSchema.fullName,
-      fullNameF: apiSchema.fullNameF,
       loanName: apiSchema.loanName,
       totalAmount: parseFloat(apiSchema.totalAmount),
       installmentCount: parseInt(apiSchema.installmentCount),

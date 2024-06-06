@@ -54,6 +54,11 @@ export class ApprovalsLeavesComponent extends ApprovalPageComponentTemplate<
       leaveCode: item.leaveCode,
       paidDays: 0,
       unpaidDays: 0,
+
+      employeeId: item.employeeId,
+      employeeCode: item.employeeCode,
+      fullName: item.fullName,
+      fullNameF: item.fullNameF,
     };
     return data;
   }

@@ -42,8 +42,6 @@ export class NewLoanRequestComponent extends NewRequestComponentTemplate<
     id: '',
     dateSubmitted: null,
     loanCode: '',
-    fullName: null,
-    fullNameF: null,
     loanName: null,
     totalAmount: 0,
     installmentCount: 0,
