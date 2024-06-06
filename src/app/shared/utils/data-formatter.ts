@@ -54,7 +54,6 @@ export function formatDateToISO(dateString: string): string {
   );
 }
 
-
 /**
  * Converts a time string to HH:mm format.
  *
@@ -74,6 +73,8 @@ export function formatDateToISO(dateString: string): string {
  * ```
  */
 export function formatTimeToHHmm(input: string): string {
+  if (input.indexOf(':') !== -1) return input;
+
   let hours: string = '00';
   let minutes: string = '00';
 

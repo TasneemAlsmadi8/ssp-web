@@ -15,7 +15,7 @@ import {
 import { Observable, map, tap } from 'rxjs';
 import { SharedArrayStore } from '../../utils/shared-array-store';
 import { GenericRequestService } from './generic-request.service';
-import { formatDateToISO } from '../../utils/data-formatter';
+import { formatDateToISO, formatTimeToHHmm } from '../../utils/data-formatter';
 import { ItemStatus, ItemStatusString } from '../../interfaces/generic-item';
 
 type iLeaveRequestService = GenericRequestService<
@@ -200,8 +200,8 @@ class LeaveRequestAdapter {
       leaveCode: apiSchema.leaveCode,
       fromDate: formatDateToISO(apiSchema.fromDate),
       toDate: formatDateToISO(apiSchema.toDate),
-      fromTime: apiSchema.fromTime,
-      toTime: apiSchema.toTime,
+      fromTime: formatTimeToHHmm(apiSchema.fromTime ?? '00:00'),
+      toTime: formatTimeToHHmm(apiSchema.toTime ?? '00:00'),
       status: apiSchema.status as ItemStatusString,
       remarks: apiSchema.remarks ?? '',
       paidDays: parseFloat(apiSchema.u_PaidDays),

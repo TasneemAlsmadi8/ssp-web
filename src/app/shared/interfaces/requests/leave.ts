@@ -150,6 +150,7 @@ export interface LeaveRequestAddApi {
 
   u_PaidDays?: number;
   u_UnpaidDays?: number;
+  
   u_LeaveBalance?: number;
   u_AttachFile?: string;
   u_LeaveTranDocEntry?: string;
