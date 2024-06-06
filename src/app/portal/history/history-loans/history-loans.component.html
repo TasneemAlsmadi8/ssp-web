@@ -1,1 +1,64 @@
-<p>history-loans works!</p>
+<div class="bg-white flex flex-col m-2 px-6 py-4 rounded-lg min-w-fit">
+  <h1 class="text-2xl font-semibold pb-2 mb-2 border-b">
+    {{ "Leave Requests Approval" | translate }}
+  </h1>
+  <app-paginated-table [items]="items" (pageChange)="activePageItems = $event">
+    <thead class="text-xs text-gray-700 uppercase bg-gray-50">
+      <tr>
+        <th scope="col" class="px-6 py-3">{{ "ID" | translate }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Status" | translate }}</th>
+        <!-- <th scope="col" class="px-6 py-3">{{ "Submitted Date" | translate }}</th> -->
+        <th scope="col" class="px-6 py-3">{{ "Employee Name" | translate }}</th>
+        <!-- <th scope="col" class="px-6 py-3">{{ "Employee Code" | translate }}</th> -->
+        <th scope="col" class="px-6 py-3">{{ "Start Date" | translate }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Loan Code" | translate }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Total Amount" | translate }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Installments" | translate }}</th>
+        <!-- <th scope="col" class="px-6 py-3">{{ "Balance" | translate }}</th> -->
+        <!-- <th scope="col" class="px-6 py-3">{{ "Loan Type" | translate }}</th> -->
+        <!-- <th scope="col" class="px-6 py-3">{{ "Remarks" | translate }}</th> -->
+        <th scope="col" class="px-6 py-3"></th>
+      </tr>
+    </thead>
+    <tbody>
+      <!-- @for (bp of BP_list; track bp.CardCode) { -->
+      <tr
+        *ngFor="let req of activePageItems; trackBy: trackById"
+        class="odd:bg-white even:bg-gray-50 border-b"
+      >
+        <th
+          scope="row"
+          class="px-6 py-4 font-medium text-gray-900 whitespace-nowrap"
+        >
+          {{ req.id }}
+        </th>
+
+        <td class="px-6 py-4">{{ req.status }}</td>
+        <td class="px-6 py-4">{{ req.fullName }}</td>
+        <td class="px-6 py-4">{{ req.startDate | date : "dd/MM/yyyy" }}</td>
+        <td class="px-6 py-4">{{ req.loanCode }}</td>
+        <td class="px-6 py-4">{{ req.totalAmount | number : "1.2-4" }}</td>
+        <td class="px-6 py-4">{{ req.installmentCount }}</td>
+        <td class="px-6 py-4">
+          <div
+            class="flex flex-col xl:flex-row justify-center items-center gap-x-2"
+          >
+            <app-request-details-button
+              (click)="setActiveItemDetails(req)"
+              [isEditable]="false"
+            />
+          </div>
+        </td>
+      </tr>
+      <!-- } -->
+    </tbody>
+  </app-paginated-table>
+</div>
+<app-loan-request-details
+  *ngIf="activeItemDetails"
+  [(isOpen)]="ItemDetailsOpen"
+  [item]="activeItemDetails"
+  [isCurrentEmployee]="false"
+  [isEditable]="false"
+  (onSubmitSuccess)="refreshItems()"
+/>
