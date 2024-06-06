@@ -62,7 +62,7 @@ class LeaveHistoryAdapter {
       toDate: formatDateToISO(apiSchema.toDate),
       fromTime: formatTimeToHHmm(apiSchema.fromTime ?? '0000'),
       toTime: formatTimeToHHmm(apiSchema.toTime ?? '0000'),
-      status: (apiSchema.status as ItemStatusString) || 'Pending',
+      status: (apiSchema.status || 'Pending') as ItemStatusString,
       remarks: apiSchema.remarks,
       dateSubmitted: formatDateToISO(apiSchema.dateSubmitted),
       employeeId: apiSchema.empID,

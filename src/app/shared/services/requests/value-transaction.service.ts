@@ -156,7 +156,7 @@ class ValueTransactionRequestAdapter {
       date: formatDateToISO(apiSchema.date),
       createDate: formatDateToISO(apiSchema.createDate),
       projectCode: apiSchema.projectCode,
-      status: (apiSchema.status as ItemStatusString) || 'Pending',
+      status: (apiSchema.status || 'Pending') as ItemStatusString,
       remarks: apiSchema.remarks,
     };
     return obj;
