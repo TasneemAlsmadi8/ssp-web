@@ -73,10 +73,10 @@ export class NewLoanRequestComponent extends NewRequestComponentTemplate<
 
   override mapFormToAddRequest(formValues: any): LoanRequestAdd {
     const data: LoanRequestAdd = {
-      loanCode: formValues.loanType ?? undefined,
-      totalAmount: formValues.totalAmount?.toString() ?? undefined,
-      installmentCount: formValues.installments?.toString() ?? undefined,
-      startDate: formValues.startDate ?? undefined,
+      loanCode: formValues.loanType,
+      totalAmount: formValues.totalAmount,
+      installmentCount: formValues.installments,
+      startDate: formValues.startDate,
       remarks: formValues.remarks ?? undefined,
     };
     return data;

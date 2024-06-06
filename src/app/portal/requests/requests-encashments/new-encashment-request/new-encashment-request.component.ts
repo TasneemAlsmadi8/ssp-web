@@ -78,11 +78,11 @@ export class NewEncashmentRequestComponent extends NewRequestComponentTemplate<
     return {
       value: this.encashValue?.paidVacationValue ?? 0,
       // TODO: should I send it?
-      encashCode: formValues.encashmentType ?? undefined,
-      date: formValues.date ?? undefined,
-      unitPrice: formValues.unitPrice?.toString() ?? undefined,
-      unitCount: formValues.unitCount?.toString() ?? undefined,
-      projectCode: formValues.project ?? undefined,
+      encashCode: formValues.encashmentType,
+      date: formValues.date,
+      unitPrice: formValues.unitPrice,
+      unitCount: formValues.unitCount,
+      projectCode: formValues.project,
       remarks: formValues.remarks ?? undefined,
     };
   }

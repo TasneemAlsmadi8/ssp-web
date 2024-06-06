@@ -85,11 +85,11 @@ export class NewOvertimeRequestComponent extends NewRequestComponentTemplate<
 
   override mapFormToAddRequest(formValues: any): OvertimeRequestAdd {
     const data: OvertimeRequestAdd = {
-      overtimeCode: formValues.overtimeType ?? undefined,
-      fromDate: formValues.date ?? undefined,
-      toDate: formValues.date ?? undefined,
-      hour: formValues.hours?.toString() ?? undefined,
-      minute: formValues.minutes?.toString() ?? undefined,
+      overtimeCode: formValues.overtimeType,
+      fromDate: formValues.date,
+      toDate: formValues.date,
+      hour: formValues.hours,
+      minute: formValues.minutes,
       projectCode: formValues.project ?? undefined, // todo
       remarks: formValues.remarks ?? undefined,
     };

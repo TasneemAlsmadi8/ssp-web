@@ -81,10 +81,10 @@ export class NewValueTransactionRequestComponent extends NewRequestComponentTemp
 
   override mapFormToAddRequest(formValues: any): ValueTransactionRequestAdd {
     const data: ValueTransactionRequestAdd = {
-      valueTranCode: formValues.valueTransactionType ?? undefined,
-      value: formValues.value?.toString() ?? undefined,
-      date: formValues.date ?? undefined,
-      projectCode: formValues.project ?? undefined,
+      valueTranCode: formValues.valueTransactionType,
+      value: formValues.value,
+      date: formValues.date,
+      projectCode: formValues.project,
       remarks: formValues.remarks ?? undefined,
     };
     return data;

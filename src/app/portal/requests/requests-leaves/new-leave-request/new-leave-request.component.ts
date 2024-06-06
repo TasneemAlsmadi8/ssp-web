@@ -127,11 +127,11 @@ export class NewLeaveRequestComponent extends NewRequestComponentTemplate<
 
   override mapFormToAddRequest(formValues: any): LeaveRequestAdd {
     const data: LeaveRequestAdd = {
-      leaveCode: formValues.leaveType ?? undefined,
-      fromDate: formValues.fromDate ?? undefined,
-      toDate: formValues.toDate ?? undefined,
-      fromTime: formValues.fromTime ?? undefined,
-      toTime: formValues.toTime ?? undefined,
+      leaveCode: formValues.leaveType,
+      fromDate: formValues.fromDate,
+      toDate: formValues.toDate,
+      fromTime: formValues.fromTime,
+      toTime: formValues.toTime,
       remarks: formValues.remarks ?? undefined,
     };
 

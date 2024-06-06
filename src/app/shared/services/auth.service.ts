@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { ChangePassword, UserLogin } from '../interfaces/user';
-import { EmployeeInfo } from '../interfaces/Employee';
+import { EmployeeInfo, EmployeeInfoApi } from '../interfaces/Employee';
 import { BaseService } from '../base/base.service';
 import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import { LocalUserService } from './local-user.service';
+import { EmployeeInfoAdapter } from './employee-info.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,7 +22,8 @@ export class AuthService extends BaseService {
 
   login(user: UserLogin): Observable<EmployeeInfo> {
     const url = `${this.url}/SSPLogin`;
-    return this.http.post<EmployeeInfo>(url, user, this.httpOptions).pipe(
+    return this.http.post<EmployeeInfoApi>(url, user, this.httpOptions).pipe(
+      map(EmployeeInfoAdapter.apiToModel),
       tap((employee) => {
         this.localUserService.setUserFromEmployee(employee);
       })

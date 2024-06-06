@@ -181,8 +181,8 @@ class OvertimeRequestAdapter {
       u_OvType: addSchema.overtimeCode,
       u_FromDate: addSchema.fromDate,
       u_ToDate: addSchema.toDate,
-      u_OvHour: addSchema.hour,
-      u_OvMin: addSchema.minute,
+      u_OvHour: addSchema.hour.toString(),
+      u_OvMin: addSchema.minute.toString(),
       u_ProjectCode: addSchema.projectCode,
       u_Remarks: addSchema.remarks,
     };

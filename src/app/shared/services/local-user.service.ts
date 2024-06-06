@@ -15,10 +15,10 @@ export class LocalUserService {
 
   setUserFromEmployee(employee: EmployeeInfo): void {
     const user: User = {
-      id: employee.id ?? '',
-      code: employee.code ?? '',
-      fullName: employee.fullName ?? '',
-      position: employee.position ?? '',
+      id: employee.id,
+      code: employee.code,
+      fullName: employee.fullName,
+      position: employee.position,
     };
 
     this.setUser(user);

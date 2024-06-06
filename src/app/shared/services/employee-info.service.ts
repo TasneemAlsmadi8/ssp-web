@@ -36,7 +36,7 @@ export class EmployeeInfoService extends BaseService {
   }
 }
 
-class EmployeeInfoAdapter {
+export class EmployeeInfoAdapter {
   static apiToModel(apiSchema: EmployeeInfoApi): EmployeeInfo {
     const obj: EmployeeInfo = {
       isActive: apiSchema.isActive,
