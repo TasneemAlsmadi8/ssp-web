@@ -57,7 +57,7 @@
             [isEditable]="isEditable(req)"
           />
           <app-cancel-request-popup
-            *ngIf="isEditable(req)"
+            *ngIf="isCancelable(req)"
             [service]="overtimeService"
             [id]="req.id"
           />

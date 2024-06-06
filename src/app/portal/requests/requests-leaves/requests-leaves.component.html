@@ -68,7 +68,7 @@
             [isEditable]="isEditable(req)"
           />
           <app-cancel-request-popup
-            *ngIf="isEditable(req)"
+            *ngIf="isCancelable(req)"
             [service]="leaveService"
             [id]="req.id"
           />

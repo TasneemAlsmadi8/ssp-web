@@ -48,6 +48,10 @@ export abstract class RequestPageComponentTemplate<Request extends Item>
     return item.status === 'Pending' || item.status === 'Rejected';
   }
 
+  isCancelable(item: Request): boolean {
+    return item.status === 'Pending';
+  }
+
   setActiveItemDetails(activeItemDetails: Request) {
     this.activeItemDetails = activeItemDetails;
     this.ItemDetailsOpen = true;
