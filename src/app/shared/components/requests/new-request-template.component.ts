@@ -112,7 +112,7 @@ export abstract class NewRequestComponentTemplate<
   getErrorMessage(
     formControlName: string,
     inputTitle: string = 'Value',
-    customMessage?: string
+    customMessage: string = ''
   ): string {
     const control = this.form.get(formControlName);
     if (!control) throw new Error('Invalid form control');
@@ -137,7 +137,10 @@ export abstract class NewRequestComponentTemplate<
     }
 
     if (this.additionalErrorMessages) {
-      const additionalMessage = this.additionalErrorMessages(control, inputTitle);
+      const additionalMessage = this.additionalErrorMessages(
+        control,
+        inputTitle
+      );
       if (additionalMessage)
         return this.translate.instant(additionalMessage) + ' ' + customMessage;
     }

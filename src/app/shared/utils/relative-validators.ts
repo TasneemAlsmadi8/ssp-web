@@ -50,12 +50,16 @@ const extractCompareValue = (value: string | number): CompareValue => {
  * Validator function to check if the control value is smaller than the value of another control.
  *
  * @param otherControlName The name of the other control to compare against.
+ * @param otherControlTitle The title of the other control to compare against.
  * @returns A validation error if the value is not smaller, otherwise null.
  * @throws If values are not comparable or have different types.
  * @supportedTypes number, date, and valid time string (HH:mm).
 .
  */
-export function smallerThan(otherControlName: string): ValidatorFn {
+export function smallerThan(
+  otherControlName: string,
+  otherControlTitle: string
+): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     if (!control.parent) {
       return null; // Control is not yet associated with a parent.
@@ -80,6 +84,7 @@ export function smallerThan(otherControlName: string): ValidatorFn {
           smallerThan: {
             requiredValue: otherValue.value,
             actualValue: thisValue.value,
+            otherControlTitle,
           },
         };
   };
@@ -89,12 +94,16 @@ export function smallerThan(otherControlName: string): ValidatorFn {
  * Validator function to check if the control value is greater than the value of another control.
  *
  * @param otherControlName The name of the other control to compare against.
+ * @param otherControlTitle The title of the other control to compare against.
  * @returns A validation error if the value is not greater, otherwise null.
  * @throws If values are not comparable or have different types.
  * @supportedTypes number, date, and valid time string (HH:mm).
 .
  */
-export function greaterThan(otherControlName: string): ValidatorFn {
+export function greaterThan(
+  otherControlName: string,
+  otherControlTitle: string
+): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     if (!control.parent) {
       return null; // Control is not yet associated with a parent.
@@ -119,6 +128,7 @@ export function greaterThan(otherControlName: string): ValidatorFn {
           greaterThan: {
             requiredValue: otherValue.value,
             actualValue: thisValue.value,
+            otherControlTitle,
           },
         };
   };
@@ -128,12 +138,16 @@ export function greaterThan(otherControlName: string): ValidatorFn {
  * Validator function to check if the control value is smaller than or equal to the value of another control.
  *
  * @param otherControlName The name of the other control to compare against.
+ * @param otherControlTitle The title of the other control to compare against.
  * @returns A validation error if the value is not smaller or equal, otherwise null.
  * @throws If values are not comparable or have different types.
  * @supportedTypes number, date, and valid time string (HH:mm).
 .
  */
-export function smallerThanOrEqual(otherControlName: string): ValidatorFn {
+export function smallerThanOrEqual(
+  otherControlName: string,
+  otherControlTitle: string
+): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     if (!control.parent) {
       return null; // Control is not yet associated with a parent.
@@ -158,6 +172,7 @@ export function smallerThanOrEqual(otherControlName: string): ValidatorFn {
           smallerThanOrEqual: {
             requiredValue: otherValue.value,
             actualValue: thisValue.value,
+            otherControlTitle,
           },
         };
   };
@@ -167,12 +182,16 @@ export function smallerThanOrEqual(otherControlName: string): ValidatorFn {
  * Validator function to check if the control value is greater than or equal to the value of another control.
  *
  * @param otherControlName The name of the other control to compare against.
+ * @param otherControlTitle The title of the other control to compare against.
  * @returns A validation error if the value is not greater or equal, otherwise null.
  * @throws If values are not comparable or have different types.
  * @supportedTypes number, date, and valid time string (HH:mm).
 .
  */
-export function greaterThanOrEqual(otherControlName: string): ValidatorFn {
+export function greaterThanOrEqual(
+  otherControlName: string,
+  otherControlTitle: string
+): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     if (!control.parent) {
       return null; // Control is not yet associated with a parent.
@@ -197,6 +216,7 @@ export function greaterThanOrEqual(otherControlName: string): ValidatorFn {
           greaterThanOrEqual: {
             requiredValue: otherValue.value,
             actualValue: thisValue.value,
+            otherControlTitle,
           },
         };
   };
@@ -206,12 +226,16 @@ export function greaterThanOrEqual(otherControlName: string): ValidatorFn {
  * Validator function to check if the control value is equal to the value of another control.
  *
  * @param otherControlName The name of the other control to compare against.
+ * @param otherControlTitle The title of the other control to compare against.
  * @returns A validation error if the value is not equal, otherwise null.
  * @throws If values are not comparable or have different types.
  * @supportedTypes number, date, and valid time string (HH:mm).
 .
  */
-export function equal(otherControlName: string): ValidatorFn {
+export function equal(
+  otherControlName: string,
+  otherControlTitle: string
+): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     if (!control.parent) {
       return null; // Control is not yet associated with a parent.
@@ -236,6 +260,7 @@ export function equal(otherControlName: string): ValidatorFn {
           equal: {
             requiredValue: otherValue.value,
             actualValue: thisValue.value,
+            otherControlTitle,
           },
         };
   };
@@ -245,12 +270,16 @@ export function equal(otherControlName: string): ValidatorFn {
  * Validator function to check if the control value is not equal to the value of another control.
  *
  * @param otherControlName The name of the other control to compare against.
+ * @param otherControlTitle The title of the other control to compare against.
  * @returns A validation error if the value is equal, otherwise null.
  * @throws If values are not comparable or have different types.
  * @supportedTypes number, date, and valid time string (HH:mm).
 .
  */
-export function notEqual(otherControlName: string): ValidatorFn {
+export function notEqual(
+  otherControlName: string,
+  otherControlTitle: string
+): ValidatorFn {
   return (control: AbstractControl): ValidationErrors | null => {
     if (!control.parent) {
       return null; // Control is not yet associated with a parent.
@@ -275,6 +304,7 @@ export function notEqual(otherControlName: string): ValidatorFn {
           notEqual: {
             requiredValue: otherValue.value,
             actualValue: thisValue.value,
+            otherControlTitle,
           },
         };
   };

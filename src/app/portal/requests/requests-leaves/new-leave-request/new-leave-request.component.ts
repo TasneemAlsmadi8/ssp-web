@@ -68,10 +68,22 @@ export class NewLeaveRequestComponent extends NewRequestComponentTemplate<
     const today = new Date().toISOString().slice(0, 10);
     super(leaveRequestService, {
       leaveType: ['', [Validators.required]],
-      fromTime: ['08:00', [Validators.required, smallerThanOrEqual('toTime')]],
-      toTime: ['08:00', [Validators.required, greaterThanOrEqual('fromTime')]],
-      fromDate: [today, [Validators.required, smallerThanOrEqual('toDate')]],
-      toDate: [today, [Validators.required, greaterThanOrEqual('fromDate')]],
+      fromTime: [
+        '08:00',
+        [Validators.required, smallerThanOrEqual('toTime', 'To Time')],
+      ],
+      toTime: [
+        '08:00',
+        [Validators.required, greaterThanOrEqual('fromTime', 'From Time')],
+      ],
+      fromDate: [
+        today,
+        [Validators.required, smallerThanOrEqual('toDate', 'To Time')],
+      ],
+      toDate: [
+        today,
+        [Validators.required, greaterThanOrEqual('fromDate', 'To Time')],
+      ],
       remarks: [''],
     });
   }
@@ -157,7 +169,7 @@ export class NewLeaveRequestComponent extends NewRequestComponentTemplate<
       if (control.hasError(error))
         return `${inputTitle} ${this.translate.instant(
           relativeErrorMessages[error]
-        )}`;
+        )} ${control.getError(error)?.otherControlTitle}`;
     }
 
     return null;
