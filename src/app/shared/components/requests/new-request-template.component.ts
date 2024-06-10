@@ -93,7 +93,7 @@ export abstract class NewRequestComponentTemplate<
     if (this.getDynamicValues) this.getDynamicValues();
   }
 
-  private setInputsDefaultValues(): void {
+  setInputsDefaultValues(): void {
     const defaultValues = {};
     for (const key in this.formControls) {
       (defaultValues as any)[key] = this.formControls[key]?.[0];

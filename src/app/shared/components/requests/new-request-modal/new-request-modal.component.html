@@ -1,5 +1,5 @@
 <div class="fixed end-7 bottom-6 group">
-  <app-modal [isFooterHidden]="true">
+  <app-modal [isFooterHidden]="true" (onCancel)="onCancel.emit()">
     <button
       openButton
       title="New"

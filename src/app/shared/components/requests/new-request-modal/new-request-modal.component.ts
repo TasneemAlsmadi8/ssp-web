@@ -1,4 +1,4 @@
-import { Component, Input, Output } from '@angular/core';
+import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ModalComponent } from '../../modal/modal.component';
 import { TranslateModule } from '@ngx-translate/core';
@@ -12,4 +12,5 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class NewRequestModalComponent {
   @Input({ required: true }) title!: string;
+  @Output() onCancel: EventEmitter<any> = new EventEmitter();
 }
