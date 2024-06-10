@@ -127,7 +127,7 @@ export class NewOvertimeRequestComponent extends NewRequestComponentTemplate<
       toDate: formValues.date,
       hour: formValues.hours,
       minute: formValues.minutes,
-      projectCode: formValues.project ?? undefined, // todo: adk if change to name
+      projectCode: formValues.project ?? undefined, // todo: ask if change to name
       remarks: formValues.remarks ?? undefined,
     };
     return data;
