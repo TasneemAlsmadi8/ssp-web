@@ -107,18 +107,27 @@ const routes: Routes = [
         path: 'history/leaves',
         title: 'history',
         loadComponent: () =>
-          import(
-            './history/history-leaves/history-leaves.component'
-          ).then((m) => m.HistoryLeavesComponent),
+          import('./history/history-leaves/history-leaves.component').then(
+            (m) => m.HistoryLeavesComponent
+          ),
       },
       {
         path: 'history/loans',
         title: 'history',
         loadComponent: () =>
-          import(
-            './history/history-loans/history-loans.component'
-          ).then((m) => m.HistoryLoansComponent),
+          import('./history/history-loans/history-loans.component').then(
+            (m) => m.HistoryLoansComponent
+          ),
       },
+      {
+        path: 'shift-system',
+        title: 'Shift System',
+        loadComponent: () =>
+          import('./shift-system/shift-system.component').then(
+            (m) => m.ShiftSystemComponent
+          ),
+      },
+
       { path: '**', component: PageNotFoundComponent },
     ],
   },

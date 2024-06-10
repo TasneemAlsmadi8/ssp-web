@@ -10,6 +10,8 @@ import { HttpLoaderFactory } from '../shared/shared/shared.module';
 import { SideBarContentComponent } from './layout/side-bar-content/side-bar-content.component';
 import { DropDownItemsComponent } from './layout/side-bar-content/drop-down-links/drop-down-links.component';
 import { ChangePasswordComponent } from './change-password/change-password.component';
+import { CalendarModule, DateAdapter } from 'angular-calendar';
+import { adapterFactory } from 'angular-calendar/date-adapters/date-fns';
 
 @NgModule({
   declarations: [LayoutComponent, SideBarContentComponent],
@@ -28,6 +30,10 @@ import { ChangePasswordComponent } from './change-password/change-password.compo
     }),
     DropDownItemsComponent,
     ChangePasswordComponent,
+    CalendarModule.forRoot({
+      provide: DateAdapter,
+      useFactory: adapterFactory,
+    }),
   ],
 })
 export class PortalModule {}
