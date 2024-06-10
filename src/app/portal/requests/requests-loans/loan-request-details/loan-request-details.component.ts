@@ -7,7 +7,11 @@ import {
 } from 'src/app/shared/interfaces/requests/loan';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { LoanRequestService } from 'src/app/shared/services/requests/loan.service';
 import { takeUntil } from 'rxjs';
 import {
@@ -16,6 +20,7 @@ import {
 } from 'src/app/shared/components/requests/request-details-template.component';
 import { limitNumberInput } from 'src/app/shared/utils/form-utils';
 import { TranslateModule } from '@ngx-translate/core';
+import { minDate } from 'src/app/shared/utils/date-validators';
 
 @Component({
   selector: 'app-loan-request-details',
@@ -37,11 +42,12 @@ export class LoanRequestDetailsComponent extends RequestDetailsComponentTemplate
   loanTypes!: LoanRequestType[];
 
   constructor(private loanRequestService: LoanRequestService) {
+    const today = new Date().toISOString().slice(0, 10);
     super(loanRequestService, {
       loanType: ['', [Validators.required]],
       installments: ['', [Validators.required, Validators.min(1)]],
       totalAmount: ['', [Validators.required, Validators.min(1)]],
-      startDate: ['', [Validators.required]],
+      startDate: ['', [Validators.required, minDate(new Date(today))]],
       remarks: [''],
     });
   }
@@ -86,5 +92,16 @@ export class LoanRequestDetailsComponent extends RequestDetailsComponentTemplate
 
     limitNumberInput(installmentCount);
     limitNumberInput(totalAmount);
+  }
+  override additionalErrorMessages(
+    control: AbstractControl<any, any>,
+    inputTitle: string
+  ): string | null {
+    if (control.hasError('minDate')) {
+      const date: Date = control.getError('minDate');
+      return `Start date can not be in the past`;
+    }
+
+    return null;
   }
 }

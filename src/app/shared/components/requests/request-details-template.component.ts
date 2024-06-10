@@ -9,7 +9,12 @@ import {
   SimpleChanges,
   inject,
 } from '@angular/core';
-import { AbstractControl, FormBuilder, FormGroup } from '@angular/forms';
+import {
+  AbstractControl,
+  AbstractControlOptions,
+  FormBuilder,
+  FormGroup,
+} from '@angular/forms';
 import { User } from '../../interfaces/user';
 import { DestroyBaseComponent } from 'src/app/shared/base/destroy-base.component';
 import { LocalUserService } from 'src/app/shared/services/local-user.service';
@@ -76,13 +81,14 @@ export abstract class RequestDetailsComponentTemplate<
 
   private fb: FormBuilder;
   private userService: LocalUserService;
-  private translate: TranslateService;
+  protected translate: TranslateService;
   private userAlertService: UserAlertService;
 
   // @Inject(null) -> to disable DI to provide values in child class
   constructor(
     @Inject(null) private requestService: GenericRequestService<T, U, any, any>,
-    @Inject(null) public formControls: { [key: string]: any[] }
+    @Inject(null) public formControls: { [key: string]: any[] },
+    @Inject(null) formControlOptions: AbstractControlOptions = {}
   ) {
     super();
     this.userService = inject(LocalUserService);
@@ -90,7 +96,7 @@ export abstract class RequestDetailsComponentTemplate<
     this.userAlertService = inject(UserAlertService);
     this.fb = inject(FormBuilder);
     this.user = this.userService.getUser();
-    this.form = this.fb.group(this.formControls);
+    this.form = this.fb.group(this.formControls, formControlOptions);
 
     this.form.valueChanges.subscribe(() => {
       if (this.resetInvalidInputs) this.resetInvalidInputs();

@@ -6,7 +6,13 @@ import {
   OvertimeRequestType,
 } from 'src/app/shared/interfaces/requests/overtime';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from '@angular/forms';
 import { OvertimeRequestService } from 'src/app/shared/services/requests/overtime.service';
 import { takeUntil } from 'rxjs';
 import { Project } from 'src/app/shared/interfaces/project';
@@ -55,17 +61,48 @@ export class NewOvertimeRequestComponent extends NewRequestComponentTemplate<
     private projectsService: ProjectsService
   ) {
     const today = new Date().toISOString().slice(0, 10);
-    super(overtimeRequestService, {
-      overtimeType: ['', [Validators.required]],
-      date: [today, [Validators.required]],
-      hours: [0, [Validators.required, Validators.min(0)]],
-      minutes: [
-        0,
-        [Validators.required, Validators.min(0), Validators.max(59)],
-      ],
-      project: ['', [Validators.required]],
-      remarks: [''],
-    });
+    super(
+      overtimeRequestService,
+      {
+        overtimeType: ['', [Validators.required]],
+        date: [today, [Validators.required]],
+        hours: [1, [Validators.required, Validators.min(0)]],
+        minutes: [
+          0,
+          [Validators.required, Validators.min(0), Validators.max(59)],
+        ],
+        project: ['', [Validators.required]],
+        remarks: [''],
+      },
+      {
+        validators: [
+          (control: AbstractControl): ValidationErrors | null => {
+            const hoursControl = control.get('hours');
+            const minutesControl = control.get('minutes');
+
+            if (hoursControl && minutesControl) {
+              const hours = hoursControl.value;
+              const minutes = minutesControl.value;
+
+              if (hours === 0 && minutes === 0) {
+                hoursControl.setErrors({ invalidTime: true });
+                minutesControl.setErrors({ invalidTime: true });
+                return { invalidTime: true };
+              } else {
+                if (hoursControl.hasError('invalidTime')) {
+                  hoursControl.updateValueAndValidity({ onlySelf: true });
+                }
+                if (minutesControl.hasError('invalidTime')) {
+                  minutesControl.updateValueAndValidity({ onlySelf: true });
+                }
+              }
+            }
+
+            return null;
+          },
+        ],
+      }
+    );
   }
 
   override getDynamicValues(): void {
@@ -90,7 +127,7 @@ export class NewOvertimeRequestComponent extends NewRequestComponentTemplate<
       toDate: formValues.date,
       hour: formValues.hours,
       minute: formValues.minutes,
-      projectCode: formValues.project ?? undefined, // todo
+      projectCode: formValues.project ?? undefined, // todo: adk if change to name
       remarks: formValues.remarks ?? undefined,
     };
     return data;
@@ -103,5 +140,16 @@ export class NewOvertimeRequestComponent extends NewRequestComponentTemplate<
 
     limitNumberInput(hoursControl);
     limitNumberInput(minutesControl);
+  }
+
+  override additionalErrorMessages(
+    control: AbstractControl<any, any>,
+    inputTitle: string
+  ): string | null {
+    if (control.hasError('invalidTime')) {
+      return `both hours and minutes cannot be zero simultaneously`;
+    }
+
+    return null;
   }
 }

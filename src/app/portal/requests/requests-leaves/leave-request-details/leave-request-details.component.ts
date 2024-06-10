@@ -7,7 +7,7 @@ import {
 } from 'src/app/shared/interfaces/requests/leave';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, ReactiveFormsModule, Validators } from '@angular/forms';
 import { LeaveRequestService } from 'src/app/shared/services/requests/leave.service';
 import { takeUntil } from 'rxjs';
 import {
@@ -15,6 +15,11 @@ import {
   RequestDetailsComponentTemplate,
 } from 'src/app/shared/components/requests/request-details-template.component';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  greaterThanOrEqual,
+  relativeErrorMessages,
+  smallerThanOrEqual,
+} from 'src/app/shared/utils/relative-validators';
 
 @Component({
   selector: 'app-leave-request-details',
@@ -38,10 +43,22 @@ export class LeaveRequestDetailsComponent extends RequestDetailsComponentTemplat
   constructor(private leaveRequestService: LeaveRequestService) {
     super(leaveRequestService, {
       leaveType: ['', [Validators.required]],
-      fromTime: ['', [Validators.required]],
-      toTime: ['', [Validators.required]],
-      fromDate: ['', [Validators.required]],
-      toDate: ['', [Validators.required]],
+      fromTime: [
+        '',
+        [Validators.required, smallerThanOrEqual('toTime', 'To Time')],
+      ],
+      toTime: [
+        '',
+        [Validators.required, greaterThanOrEqual('fromTime', 'From Time')],
+      ],
+      fromDate: [
+        '',
+        [Validators.required, smallerThanOrEqual('toDate', 'To Time')],
+      ],
+      toDate: [
+        '',
+        [Validators.required, greaterThanOrEqual('fromDate', 'To Time')],
+      ],
       remarks: [''],
     });
   }
@@ -87,5 +104,18 @@ export class LeaveRequestDetailsComponent extends RequestDetailsComponentTemplat
       toDate: item.toDate,
       remarks: item.remarks,
     };
+  }
+  override additionalErrorMessages(
+    control: AbstractControl<any, any>,
+    inputTitle: string
+  ): string | null {
+    for (let error in relativeErrorMessages) {
+      if (control.hasError(error))
+        return `${inputTitle} ${this.translate.instant(
+          relativeErrorMessages[error]
+        )} ${control.getError(error)?.otherControlTitle}`;
+    }
+
+    return null;
   }
 }
