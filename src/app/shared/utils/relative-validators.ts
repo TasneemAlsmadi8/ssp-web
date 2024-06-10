@@ -47,19 +47,21 @@ const extractCompareValue = (value: string | number): CompareValue => {
 };
 
 /**
- * Validator function to check if the control value is smaller than the value of another control.
+ * Creates a validator function to compare control values.
  *
+ * @param errorKey The key for the validation error.
+ * @param comparisonFn The function to compare the control values.
  * @param otherControlName The name of the other control to compare against.
  * @param otherControlTitle The title of the other control to compare against.
- * @returns A validation error if the value is not smaller, otherwise null.
- * @throws If values are not comparable or have different types.
- * @supportedTypes number, date, and valid time string (HH:mm).
-.
+ * @returns A validator function.
  */
-export function smallerThan(
+const createComparatorValidator = (
+  errorKey: string,
+  comparisonFn: (a: number | string, b: number | string) => boolean,
   otherControlName: string,
   otherControlTitle: string
-): ValidatorFn {
+): ValidatorFn => {
+  let errorsOnChangeSynced = false;
   return (control: AbstractControl): ValidationErrors | null => {
     if (!control.parent) {
       return null; // Control is not yet associated with a parent.
@@ -77,238 +79,91 @@ export function smallerThan(
     if (thisValue.type !== otherValue.type) {
       throw new Error('Values are not comparable. Expected matching types.');
     }
+    // TODO: find better way
+    if (!errorsOnChangeSynced) {
+      otherControl.valueChanges.subscribe(() =>
+        control.updateValueAndValidity({ onlySelf: true, emitEvent: false })
+      );
+      errorsOnChangeSynced = true;
+    }
 
-    return thisValue.value < otherValue.value
+    return comparisonFn(thisValue.value, otherValue.value)
       ? null
       : {
-          smallerThan: {
+          [errorKey]: {
             requiredValue: otherValue.value,
             actualValue: thisValue.value,
             otherControlTitle,
           },
         };
   };
-}
+};
 
-/**
- * Validator function to check if the control value is greater than the value of another control.
- *
- * @param otherControlName The name of the other control to compare against.
- * @param otherControlTitle The title of the other control to compare against.
- * @returns A validation error if the value is not greater, otherwise null.
- * @throws If values are not comparable or have different types.
- * @supportedTypes number, date, and valid time string (HH:mm).
-.
- */
-export function greaterThan(
+export const smallerThan = (
   otherControlName: string,
   otherControlTitle: string
-): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    if (!control.parent) {
-      return null; // Control is not yet associated with a parent.
-    }
+): ValidatorFn =>
+  createComparatorValidator(
+    'smallerThan',
+    (a, b) => a < b,
+    otherControlName,
+    otherControlTitle
+  );
 
-    const thisValue: CompareValue = extractCompareValue(control.value);
-    const otherControl = control.parent.get(otherControlName);
-
-    if (!otherControl) {
-      return null; // Other control not found.
-    }
-
-    const otherValue: CompareValue = extractCompareValue(otherControl.value);
-
-    if (thisValue.type !== otherValue.type) {
-      throw new Error('Values are not comparable. Expected matching types.');
-    }
-
-    return thisValue.value > otherValue.value
-      ? null
-      : {
-          greaterThan: {
-            requiredValue: otherValue.value,
-            actualValue: thisValue.value,
-            otherControlTitle,
-          },
-        };
-  };
-}
-
-/**
- * Validator function to check if the control value is smaller than or equal to the value of another control.
- *
- * @param otherControlName The name of the other control to compare against.
- * @param otherControlTitle The title of the other control to compare against.
- * @returns A validation error if the value is not smaller or equal, otherwise null.
- * @throws If values are not comparable or have different types.
- * @supportedTypes number, date, and valid time string (HH:mm).
-.
- */
-export function smallerThanOrEqual(
+export const greaterThan = (
   otherControlName: string,
   otherControlTitle: string
-): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    if (!control.parent) {
-      return null; // Control is not yet associated with a parent.
-    }
+): ValidatorFn =>
+  createComparatorValidator(
+    'greaterThan',
+    (a, b) => a > b,
+    otherControlName,
+    otherControlTitle
+  );
 
-    const thisValue: CompareValue = extractCompareValue(control.value);
-    const otherControl = control.parent.get(otherControlName);
-
-    if (!otherControl) {
-      return null; // Other control not found.
-    }
-
-    const otherValue: CompareValue = extractCompareValue(otherControl.value);
-
-    if (thisValue.type !== otherValue.type) {
-      throw new Error('Values are not comparable. Expected matching types.');
-    }
-
-    return thisValue.value <= otherValue.value
-      ? null
-      : {
-          smallerThanOrEqual: {
-            requiredValue: otherValue.value,
-            actualValue: thisValue.value,
-            otherControlTitle,
-          },
-        };
-  };
-}
-
-/**
- * Validator function to check if the control value is greater than or equal to the value of another control.
- *
- * @param otherControlName The name of the other control to compare against.
- * @param otherControlTitle The title of the other control to compare against.
- * @returns A validation error if the value is not greater or equal, otherwise null.
- * @throws If values are not comparable or have different types.
- * @supportedTypes number, date, and valid time string (HH:mm).
-.
- */
-export function greaterThanOrEqual(
+export const smallerThanOrEqual = (
   otherControlName: string,
   otherControlTitle: string
-): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    if (!control.parent) {
-      return null; // Control is not yet associated with a parent.
-    }
+): ValidatorFn =>
+  createComparatorValidator(
+    'smallerThanOrEqual',
+    (a, b) => a <= b,
+    otherControlName,
+    otherControlTitle
+  );
 
-    const thisValue: CompareValue = extractCompareValue(control.value);
-    const otherControl = control.parent.get(otherControlName);
-
-    if (!otherControl) {
-      return null; // Other control not found.
-    }
-
-    const otherValue: CompareValue = extractCompareValue(otherControl.value);
-
-    if (thisValue.type !== otherValue.type) {
-      throw new Error('Values are not comparable. Expected matching types.');
-    }
-
-    return thisValue.value >= otherValue.value
-      ? null
-      : {
-          greaterThanOrEqual: {
-            requiredValue: otherValue.value,
-            actualValue: thisValue.value,
-            otherControlTitle,
-          },
-        };
-  };
-}
-
-/**
- * Validator function to check if the control value is equal to the value of another control.
- *
- * @param otherControlName The name of the other control to compare against.
- * @param otherControlTitle The title of the other control to compare against.
- * @returns A validation error if the value is not equal, otherwise null.
- * @throws If values are not comparable or have different types.
- * @supportedTypes number, date, and valid time string (HH:mm).
-.
- */
-export function equal(
+export const greaterThanOrEqual = (
   otherControlName: string,
   otherControlTitle: string
-): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    if (!control.parent) {
-      return null; // Control is not yet associated with a parent.
-    }
+): ValidatorFn =>
+  createComparatorValidator(
+    'greaterThanOrEqual',
+    (a, b) => a >= b,
+    otherControlName,
+    otherControlTitle
+  );
 
-    const thisValue: CompareValue = extractCompareValue(control.value);
-    const otherControl = control.parent.get(otherControlName);
-
-    if (!otherControl) {
-      return null; // Other control not found.
-    }
-
-    const otherValue: CompareValue = extractCompareValue(otherControl.value);
-
-    if (thisValue.type !== otherValue.type) {
-      throw new Error('Values are not comparable. Expected matching types.');
-    }
-
-    return thisValue.value === otherValue.value
-      ? null
-      : {
-          equal: {
-            requiredValue: otherValue.value,
-            actualValue: thisValue.value,
-            otherControlTitle,
-          },
-        };
-  };
-}
-
-/**
- * Validator function to check if the control value is not equal to the value of another control.
- *
- * @param otherControlName The name of the other control to compare against.
- * @param otherControlTitle The title of the other control to compare against.
- * @returns A validation error if the value is equal, otherwise null.
- * @throws If values are not comparable or have different types.
- * @supportedTypes number, date, and valid time string (HH:mm).
-.
- */
-export function notEqual(
+export const equal = (
   otherControlName: string,
   otherControlTitle: string
-): ValidatorFn {
-  return (control: AbstractControl): ValidationErrors | null => {
-    if (!control.parent) {
-      return null; // Control is not yet associated with a parent.
-    }
+): ValidatorFn =>
+  createComparatorValidator(
+    'equal',
+    (a, b) => a === b,
+    otherControlName,
+    otherControlTitle
+  );
 
-    const thisValue: CompareValue = extractCompareValue(control.value);
-    const otherControl = control.parent.get(otherControlName);
-
-    if (!otherControl) {
-      return null; // Other control not found.
-    }
-
-    const otherValue: CompareValue = extractCompareValue(otherControl.value);
-
-    if (thisValue.type !== otherValue.type) {
-      throw new Error('Values are not comparable. Expected matching types.');
-    }
-
-    return thisValue.value !== otherValue.value
-      ? null
-      : {
-          notEqual: {
-            requiredValue: otherValue.value,
-            actualValue: thisValue.value,
-            otherControlTitle,
-          },
-        };
-  };
-}
+export const notEqual = (
+  otherControlName: string,
+  otherControlTitle: string
+): ValidatorFn =>
+  createComparatorValidator(
+    'notEqual',
+    (a, b) => a !== b,
+    otherControlName,
+    otherControlTitle
+  );
 
 export const relativeErrorMessages: { [key: string]: string } = {
   smallerThan: 'must be smaller than',
