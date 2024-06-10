@@ -12,7 +12,7 @@ export interface FormErrorMessageBehavior {
     control: AbstractControl,
     inputTitle: string,
     customMessage?: string
-  ): string;
+  ): string | null;
 
   resetInvalidInputs?(): void;
 }

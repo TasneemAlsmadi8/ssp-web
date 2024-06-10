@@ -85,13 +85,13 @@ export class NewLoanRequestComponent extends NewRequestComponentTemplate<
   override additionalErrorMessages(
     control: AbstractControl<any, any>,
     inputTitle: string
-  ): string {
+  ): string | null {
     if (control.hasError('minDate')) {
       const date: Date = control.getError('minDate');
       return `Start date can not be in the past`;
     }
 
-    return '';
+    return null;
   }
 
   override resetInvalidInputs(): void {

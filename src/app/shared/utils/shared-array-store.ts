@@ -88,7 +88,7 @@ export class SharedArrayStore<T> {
             if (!isNaN(numberValue)) return numberValue;
 
             const date = new Date(value);
-            if (!isNaN(date.getTime())) return date;
+            if (!isNaN(date.getTime())) return date.getTime();
           }
 
           return value;

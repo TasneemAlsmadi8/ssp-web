@@ -92,7 +92,7 @@
             [ngClass]="{ 'invalid-input': shouldDisplayError('fromTime') }"
           />
           <span *ngIf="shouldDisplayError('fromTime')" class="error-message">
-            {{ getErrorMessage("fromTime") }}
+            {{ getErrorMessage("fromTime", "'From Time'", "'To Time'") }}
           </span>
         </div>
       </div>
@@ -110,7 +110,7 @@
             [ngClass]="{ 'invalid-input': shouldDisplayError('toTime') }"
           />
           <span *ngIf="shouldDisplayError('toTime')" class="error-message">
-            {{ getErrorMessage("toTime") }}
+            {{ getErrorMessage("toTime", "'To Time'", "'From Time'") }}
           </span>
         </div>
       </div>
@@ -128,7 +128,7 @@
             [ngClass]="{ 'invalid-input': shouldDisplayError('fromDate') }"
           />
           <span *ngIf="shouldDisplayError('fromDate')" class="error-message">
-            {{ getErrorMessage("fromDate") }}
+            {{ getErrorMessage("fromDate", "'From Date'", "'To Date'") }}
           </span>
         </div>
       </div>
@@ -146,7 +146,7 @@
             [ngClass]="{ 'invalid-input': shouldDisplayError('toDate') }"
           />
           <span *ngIf="shouldDisplayError('toDate')" class="error-message">
-            {{ getErrorMessage("toDate") }}
+            {{ getErrorMessage("toDate", "'To Date'", "'From Date'") }}
           </span>
         </div>
       </div>

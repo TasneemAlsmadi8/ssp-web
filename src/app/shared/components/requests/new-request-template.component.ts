@@ -42,12 +42,13 @@ export abstract class NewRequestComponentTemplate<
   resetInvalidInputs?(): void;
   additionalErrorMessages?(
     control: AbstractControl,
-    inputTitle: string
-  ): string;
+    inputTitle: string,
+    customMessage?: string
+  ): string | null;
 
   private fb: FormBuilder;
   private userService: LocalUserService;
-  private translate: TranslateService;
+  protected translate: TranslateService;
   private userAlertService: UserAlertService;
 
   // @Inject(null) -> to disable DI to provide values in child class
@@ -110,7 +111,8 @@ export abstract class NewRequestComponentTemplate<
 
   getErrorMessage(
     formControlName: string,
-    inputTitle: string = 'Value'
+    inputTitle: string = 'Value',
+    customMessage?: string
   ): string {
     const control = this.form.get(formControlName);
     if (!control) throw new Error('Invalid form control');
@@ -119,22 +121,25 @@ export abstract class NewRequestComponentTemplate<
     inputTitle = this.translate.instant(inputTitle);
 
     if (control.hasError('required')) {
-      return `${inputTitle} ${this.translate.instant('is required')}`;
+      return `${inputTitle} ${this.translate.instant(
+        'is required'
+      )}. ${customMessage}`;
     }
     if (control.hasError('min')) {
       return `${inputTitle} ${this.translate.instant('must be at least')} ${
         control.getError('min')?.min
-      }`;
+      }. ${customMessage}`;
     }
     if (control.hasError('max')) {
       return `${inputTitle} ${this.translate.instant('must be at most')} ${
         control.getError('max')?.max
-      }`;
+      }. ${customMessage}`;
     }
 
     if (this.additionalErrorMessages) {
-      const customMessage = this.additionalErrorMessages(control, inputTitle);
-      if (customMessage) return this.translate.instant(customMessage);
+      const additionalMessage = this.additionalErrorMessages(control, inputTitle);
+      if (additionalMessage)
+        return this.translate.instant(additionalMessage) + ' ' + customMessage;
     }
 
     return '';

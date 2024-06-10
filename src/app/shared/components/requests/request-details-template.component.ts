@@ -72,7 +72,7 @@ export abstract class RequestDetailsComponentTemplate<
   additionalErrorMessages?(
     control: AbstractControl,
     inputTitle: string
-  ): string;
+  ): string | null;
 
   private fb: FormBuilder;
   private userService: LocalUserService;

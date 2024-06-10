@@ -8,12 +8,23 @@ import {
 } from 'src/app/shared/interfaces/requests/leave';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { LeaveRequestService } from 'src/app/shared/services/requests/leave.service';
 import { takeUntil } from 'rxjs';
 import { NewRequestModalComponent } from 'src/app/shared/components/requests/new-request-modal/new-request-modal.component';
 import { NewRequestComponentTemplate } from 'src/app/shared/components/requests/new-request-template.component';
 import { TranslateModule } from '@ngx-translate/core';
+import {
+  greaterThan,
+  greaterThanOrEqual,
+  relativeErrorMessages,
+  smallerThan,
+  smallerThanOrEqual,
+} from 'src/app/shared/utils/relative-validators';
 
 @Component({
   selector: 'app-new-leave-request',
@@ -57,10 +68,10 @@ export class NewLeaveRequestComponent extends NewRequestComponentTemplate<
     const today = new Date().toISOString().slice(0, 10);
     super(leaveRequestService, {
       leaveType: ['', [Validators.required]],
-      fromTime: ['08:00', [Validators.required]],
-      toTime: ['08:00', [Validators.required]],
-      fromDate: [today, [Validators.required]],
-      toDate: [today, [Validators.required]],
+      fromTime: ['08:00', [Validators.required, smallerThanOrEqual('toTime')]],
+      toTime: ['08:00', [Validators.required, greaterThanOrEqual('fromTime')]],
+      fromDate: [today, [Validators.required, smallerThanOrEqual('toDate')]],
+      toDate: [today, [Validators.required, greaterThanOrEqual('fromDate')]],
       remarks: [''],
     });
   }
@@ -136,5 +147,19 @@ export class NewLeaveRequestComponent extends NewRequestComponentTemplate<
     };
 
     return data;
+  }
+
+  override additionalErrorMessages(
+    control: AbstractControl<any, any>,
+    inputTitle: string
+  ): string | null {
+    for (let error in relativeErrorMessages) {
+      if (control.hasError(error))
+        return `${inputTitle} ${this.translate.instant(
+          relativeErrorMessages[error]
+        )}`;
+    }
+
+    return null;
   }
 }

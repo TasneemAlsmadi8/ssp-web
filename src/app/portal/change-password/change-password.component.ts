@@ -7,6 +7,7 @@ import {
   FormControl,
   FormGroup,
   ReactiveFormsModule,
+  ValidationErrors,
   Validators,
 } from '@angular/forms';
 import { UserAlertService } from 'src/app/shared/services/user-alert.service';
@@ -15,6 +16,10 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { DestroyBaseComponent } from 'src/app/shared/base/destroy-base.component';
 import { takeUntil } from 'rxjs';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
+import {
+  matchingPasswords,
+  weakPasswordValidator,
+} from 'src/app/shared/utils/password-validators';
 
 @Component({
   selector: 'app-change-password',
@@ -36,63 +41,18 @@ export class ChangePasswordComponent
     private translate: TranslateService
   ) {
     super();
-    this.form = this.fb.group(
-      {
-        oldPassword: ['', [Validators.required]],
-        newPassword: [
-          '',
-          [Validators.required /*, this.weakPasswordValidator*/],
-        ],
-        confirmNewPassword: ['', [Validators.required]],
-      },
-      {
-        validators: this.matchingPasswords('newPassword', 'confirmNewPassword'),
-      }
-    );
-  }
-  weakPasswordValidator(control: FormControl) {
-    const password = control.value;
-    const hasUpperCase = /[A-Z]/.test(password);
-    const hasLowerCase = /[a-z]/.test(password);
-    const hasNumber = /\d/.test(password);
-    const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(
-      password
-    );
-    const minLength = password.length >= 8;
+    this.form = this.fb.group({
+      oldPassword: ['', [Validators.required]],
+      newPassword: ['', [Validators.required, weakPasswordValidator]],
+      confirmNewPassword: [
+        '',
+        [Validators.required, matchingPasswords('newPassword')],
+      ],
+    });
 
-    const errors = [];
-
-    if (!hasUpperCase) errors.push('Missing uppercase letter');
-    if (!hasLowerCase) errors.push('Missing lowercase letter');
-    if (!hasNumber) errors.push('Missing number');
-    if (!hasSpecialChar) errors.push('Missing special character');
-    if (!minLength) errors.push('Password must be at least 8 characters long');
-
-    if (errors.length) {
-      return { weakPassword: { errors, actualValue: password } };
-    }
-
-    return null;
-  }
-
-  matchingPasswords(passwordKey: string, confirmPasswordKey: string) {
-    return (formGroup: FormGroup) => {
-      const passwordControl = formGroup.controls[passwordKey];
-      const confirmPasswordControl = formGroup.controls[confirmPasswordKey];
-
-      if (
-        confirmPasswordControl.invalid &&
-        !confirmPasswordControl.hasError('mustMatch')
-      ) {
-        return;
-      }
-
-      if (passwordControl.value !== confirmPasswordControl.value) {
-        confirmPasswordControl.setErrors({ mustMatch: true });
-      } else {
-        confirmPasswordControl.setErrors(null);
-      }
-    };
+    this.form.get('newPassword')!.valueChanges.subscribe(() => {
+      this.form.get('confirmNewPassword')?.updateValueAndValidity();
+    });
   }
 
   shouldDisplayError(formControlName: string, onlyDirty = false): boolean {
