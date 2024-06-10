@@ -7,7 +7,7 @@ interface CompareValue {
   /** The value for comparison. */
   value: number | string;
   /** The type of the value. */
-  type: 'strNum' | 'strDate' | 'strTime' | 'number';
+  type: 'strNum' | 'strDate' | 'strTime' | 'number' | 'emptyStr';
 }
 
 /**
@@ -20,11 +20,13 @@ interface CompareValue {
 const extractCompareValue = (value: string | number): CompareValue => {
   // Check if the value matches the HH:mm format
   const timeRegex = /^([01]\d|2[0-3]):?([0-5]\d)$/;
-
   if (typeof value === 'number') {
     return { value, type: 'number' };
   } else if (typeof value === 'string') {
     // Check if the value is a valid time string
+    if (!value) {
+      return { value: 0, type: 'emptyStr' };
+    }
     if (timeRegex.test(value)) {
       const [hours, minutes] = value.split(':').map(Number);
       const timestamp = hours * 60 + minutes;
@@ -76,7 +78,11 @@ const createComparatorValidator = (
 
     const otherValue: CompareValue = extractCompareValue(otherControl.value);
 
-    if (thisValue.type !== otherValue.type) {
+    if (
+      thisValue.type !== 'emptyStr' &&
+      otherValue.type !== 'emptyStr' &&
+      thisValue.type !== otherValue.type
+    ) {
       throw new Error('Values are not comparable. Expected matching types.');
     }
     // TODO: find better way
