@@ -32,6 +32,10 @@ export class SharedArrayStore<T> {
     return this.subject.getValue().length === 0;
   }
 
+  get length(): number {
+    return this.subject.getValue().length;
+  }
+
   getValue(): T[] {
     return this.subject.getValue();
   }
@@ -41,6 +45,30 @@ export class SharedArrayStore<T> {
       value = this.defaultSort(value);
     }
     this.subject.next(value);
+  }
+
+  add(
+    value: T[] | T,
+    compareFn: (a: T, b: T) => boolean = (a, b) => a === b,
+    applyDefaultSorting: boolean = true
+  ) {
+    if (!(value instanceof Array)) value = [value];
+    const newValue: T[] = [...this.getValue()];
+
+    value.forEach((newItem) => {
+      const index = newValue.findIndex((existingItem) =>
+        compareFn(existingItem, newItem)
+      );
+      if (index !== -1) {
+        // Replace existing value with new value
+        newValue[index] = newItem;
+      } else {
+        // Add new value if not a duplicate
+        newValue.push(newItem);
+      }
+    });
+
+    this.update(newValue, applyDefaultSorting);
   }
 
   find(compareFn: (value: T) => boolean): T | undefined {
