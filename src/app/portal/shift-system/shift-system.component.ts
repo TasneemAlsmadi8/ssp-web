@@ -1,110 +1,91 @@
-import { Component, TemplateRef, ViewChild } from '@angular/core';
-import {
-  CalendarEvent,
-  CalendarEventAction,
-  CalendarEventTimesChangedEvent,
-  CalendarModule,
-  CalendarView,
-} from 'angular-calendar';
-import {
-  addDays,
-  addHours,
-  endOfDay,
-  endOfMonth,
-  isSameDay,
-  isSameMonth,
-  startOfDay,
-  subDays,
-} from 'date-fns';
-import { Subject } from 'rxjs';
-import { EventColor } from 'calendar-utils';
-import { CommonModule, NgSwitch } from '@angular/common';
+import { Component, OnInit } from '@angular/core';
+import { CalendarEvent, CalendarModule, CalendarView } from 'angular-calendar';
+import { getMonth, isSameDay, isSameMonth } from 'date-fns';
+import { Subject, takeUntil } from 'rxjs';
+import { CommonModule } from '@angular/common';
+import { ShiftSystemService } from 'src/app/shared/services/shift-system.service';
+import { DestroyBaseComponent } from 'src/app/shared/base/destroy-base.component';
+import { EmployeeShift } from 'src/app/shared/interfaces/shift-system';
+import { HttpErrorResponse } from '@angular/common/http';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 
 @Component({
   selector: 'app-shift-system',
-  imports: [CalendarModule, CommonModule],
+  imports: [
+    CalendarModule,
+    CommonModule,
+    FontAwesomeModule,
+    ReactiveFormsModule,
+  ],
   standalone: true,
   templateUrl: './shift-system.component.html',
   styleUrls: ['./shift-system.component.scss'],
 })
-export class ShiftSystemComponent {
-  @ViewChild('modalContent', { static: true }) modalContent!: TemplateRef<any>;
-
+export class ShiftSystemComponent
+  extends DestroyBaseComponent
+  implements OnInit
+{
   view: CalendarView = CalendarView.Month;
 
   CalendarView = CalendarView;
 
-  viewDate: Date = new Date();
-
-  modalData?: {
-    action: string;
-    event: CalendarEvent;
-  };
-
-  actions: CalendarEventAction[] = [
-    {
-      label: '<i class="fas fa-fw fa-pencil-alt"></i>',
-      a11yLabel: 'Edit',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.handleEvent('Edited', event);
-      },
-    },
-    {
-      label: '<i class="fas fa-fw fa-trash-alt"></i>',
-      a11yLabel: 'Delete',
-      onClick: ({ event }: { event: CalendarEvent }): void => {
-        this.events = this.events.filter((iEvent) => iEvent !== event);
-        this.handleEvent('Deleted', event);
-      },
-    },
-  ];
+  private _viewDate: Date = new Date();
+  public get viewDate(): Date {
+    return this._viewDate;
+  }
+  public set viewDate(value: Date) {
+    if (getMonth(value) !== getMonth(this._viewDate))
+      this.updateMonthShifts(value);
+    this._viewDate = value;
+  }
 
   refresh = new Subject<void>();
+  viewControl: FormControl;
 
-  events: CalendarEvent[] = [
-    {
-      start: subDays(startOfDay(new Date()), 1),
-      end: addDays(new Date(), 1),
-      title: 'A 3 day event',
-      color: { ...colors['red'] },
-      actions: this.actions,
-      allDay: true,
-      resizable: {
-        beforeStart: true,
-        afterEnd: true,
-      },
-      draggable: true,
-    },
-    {
-      start: startOfDay(new Date()),
-      title: 'An event with no end date',
-      color: { ...colors['yellow'] },
-      actions: this.actions,
-    },
-    {
-      start: subDays(endOfMonth(new Date()), 3),
-      end: addDays(endOfMonth(new Date()), 3),
-      title: 'A long event that spans 2 months',
-      color: { ...colors['blue'] },
-      allDay: true,
-    },
-    {
-      start: addHours(startOfDay(new Date()), 2),
-      end: addHours(new Date(), 2),
-      title: 'A draggable and resizable event',
-      color: { ...colors['yellow'] },
-      actions: this.actions,
-      resizable: {
-        beforeStart: true,
-        afterEnd: true,
-      },
-      draggable: true,
-    },
-  ];
+  events: CalendarEvent<EmployeeShift>[] = [];
+  activeDayIsOpen: boolean = false;
 
-  activeDayIsOpen: boolean = true;
+  faArrowLeft = faAngleLeft; // Define icons
+  faArrowRight = faAngleRight;
 
-  constructor() {} // private modal: NgbModal
+  constructor(private shiftService: ShiftSystemService) {
+    super();
+    this.viewControl = new FormControl(this.view);
+    this.viewControl.valueChanges.subscribe((view) => this.setView(view));
+    shiftService.list$.subscribe((value) => {
+      this.events = value.map((shift): CalendarEvent<EmployeeShift> => {
+        return {
+          ...shift,
+          start: new Date(shift.date),
+          title: shift.shiftType || 'empty shift type',
+          allDay: true,
+        };
+      });
+    });
+  }
+
+  ngOnInit(): void {
+    this.updateMonthShifts(this.viewDate);
+  }
+
+  updateMonthShifts(date: Date) {
+    this.shiftService
+      .getAll(date)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        error: (err: HttpErrorResponse) => {
+          // if (
+          //   err.error ===
+          //   'There are no shifts defined for that employee in that month'
+          // ) {
+          // } else
+          console.log('Error: ' + err.error);
+        },
+      });
+    this.closeOpenMonthViewDay();
+  }
 
   dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
     if (isSameMonth(date, this.viewDate)) {
@@ -120,70 +101,18 @@ export class ShiftSystemComponent {
     }
   }
 
-  eventTimesChanged({
-    event,
-    newStart,
-    newEnd,
-  }: CalendarEventTimesChangedEvent): void {
-    this.events = this.events.map((iEvent) => {
-      if (iEvent === event) {
-        return {
-          ...event,
-          start: newStart,
-          end: newEnd,
-        };
-      }
-      return iEvent;
-    });
-    this.handleEvent('Dropped or resized', event);
-  }
-
   handleEvent(action: string, event: CalendarEvent): void {
-    this.modalData = { event, action };
-    console.log(this.modalData);
+    // this.modalData = { event, action };
+    console.log({ action, event });
     // this.modal.open(this.modalContent, { size: 'lg' });
-  }
-
-  addEvent(): void {
-    this.events = [
-      ...this.events,
-      {
-        title: 'New event',
-        start: startOfDay(new Date()),
-        end: endOfDay(new Date()),
-        color: colors['red'],
-        draggable: true,
-        resizable: {
-          beforeStart: true,
-          afterEnd: true,
-        },
-      },
-    ];
-  }
-
-  deleteEvent(eventToDelete: CalendarEvent) {
-    this.events = this.events.filter((event) => event !== eventToDelete);
   }
 
   setView(view: CalendarView) {
     this.view = view;
+    this.activeDayIsOpen = false;
   }
 
   closeOpenMonthViewDay() {
     this.activeDayIsOpen = false;
   }
 }
-const colors: Record<string, EventColor> = {
-  red: {
-    primary: '#ad2121',
-    secondary: '#FAE3E3',
-  },
-  blue: {
-    primary: '#1e90ff',
-    secondary: '#D1E8FF',
-  },
-  yellow: {
-    primary: '#e3bc08',
-    secondary: '#FDF1BA',
-  },
-};
