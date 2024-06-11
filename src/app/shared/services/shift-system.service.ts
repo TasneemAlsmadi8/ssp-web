@@ -33,7 +33,7 @@ export class ShiftSystemService extends BaseService {
     return this.getShiftsById(this.user.id, date).pipe(
       tap((shifts) => {
         this.shiftsStore.add(shifts, (a, b) => a.id === b.id);
-        console.log(this.shiftsStore.length);
+        // console.log(this.shiftsStore.length);
       })
     );
   }

@@ -10,6 +10,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
+import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 
 @Component({
   selector: 'app-shift-system',
@@ -18,6 +19,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
     CommonModule,
     FontAwesomeModule,
     ReactiveFormsModule,
+    ModalComponent,
   ],
   standalone: true,
   templateUrl: './shift-system.component.html',
@@ -27,19 +29,12 @@ export class ShiftSystemComponent
   extends DestroyBaseComponent
   implements OnInit
 {
+  faArrowLeft = faAngleLeft;
+  faArrowRight = faAngleRight;
+
   view: CalendarView = CalendarView.Month;
 
   CalendarView = CalendarView;
-
-  private _viewDate: Date = new Date();
-  public get viewDate(): Date {
-    return this._viewDate;
-  }
-  public set viewDate(value: Date) {
-    if (getMonth(value) !== getMonth(this._viewDate))
-      this.updateMonthShifts(value);
-    this._viewDate = value;
-  }
 
   refresh = new Subject<void>();
   viewControl: FormControl;
@@ -47,8 +42,19 @@ export class ShiftSystemComponent
   events: CalendarEvent<EmployeeShift>[] = [];
   activeDayIsOpen: boolean = false;
 
-  faArrowLeft = faAngleLeft; // Define icons
-  faArrowRight = faAngleRight;
+  eventDetailsIsOpen = false;
+  activeEventDetails?: EmployeeShift;
+
+  private _viewDate: Date = new Date();
+
+  get viewDate(): Date {
+    return this._viewDate;
+  }
+  set viewDate(value: Date) {
+    if (getMonth(value) !== getMonth(this._viewDate))
+      this.updateMonthShifts(value);
+    this._viewDate = value;
+  }
 
   constructor(private shiftService: ShiftSystemService) {
     super();
@@ -101,10 +107,9 @@ export class ShiftSystemComponent
     }
   }
 
-  handleEvent(action: string, event: CalendarEvent): void {
-    // this.modalData = { event, action };
-    console.log({ action, event });
-    // this.modal.open(this.modalContent, { size: 'lg' });
+  viewDetails(event: CalendarEvent): void {
+    this.eventDetailsIsOpen = true;
+    this.activeEventDetails = event as unknown as EmployeeShift;
   }
 
   setView(view: CalendarView) {
