@@ -1,6 +1,22 @@
 import { Component, OnInit } from '@angular/core';
-import { CalendarEvent, CalendarModule, CalendarView } from 'angular-calendar';
-import { getMonth, isSameDay, isSameMonth } from 'date-fns';
+import {
+  CalendarEvent,
+  CalendarModule,
+  CalendarView,
+  DAYS_OF_WEEK,
+} from 'angular-calendar';
+import { WeekDay } from 'calendar-utils/calendar-utils';
+import {
+  addMonths,
+  endOfMonth,
+  endOfWeek,
+  format,
+  getMonth,
+  isSameDay,
+  isSameMonth,
+  startOfMonth,
+  startOfWeek,
+} from 'date-fns';
 import { Subject, takeUntil } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ShiftSystemService } from 'src/app/shared/services/shift-system.service';
@@ -11,6 +27,8 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { faAngleLeft, faAngleRight } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
+import { stringToColor } from 'src/app/shared/utils/color-utils';
+import { enUS } from 'date-fns/locale';
 
 @Component({
   selector: 'app-shift-system',
@@ -51,49 +69,117 @@ export class ShiftSystemComponent
     return this._viewDate;
   }
   set viewDate(value: Date) {
-    if (getMonth(value) !== getMonth(this._viewDate))
-      this.updateMonthShifts(value);
+    if (getMonth(value) !== getMonth(this.viewDate)) {
+      this._viewDate = value;
+      this.updateMonthShifts();
+      this.closeOpenMonthViewDay();
+    }
     this._viewDate = value;
   }
+
+  weekStartsOn: number = DAYS_OF_WEEK.SUNDAY;
+
+  weekendDays: number[] = [DAYS_OF_WEEK.FRIDAY, DAYS_OF_WEEK.SATURDAY];
 
   constructor(private shiftService: ShiftSystemService) {
     super();
     this.viewControl = new FormControl(this.view);
     this.viewControl.valueChanges.subscribe((view) => this.setView(view));
     shiftService.list$.subscribe((value) => {
-      this.events = value.map((shift): CalendarEvent<EmployeeShift> => {
-        return {
-          ...shift,
-          start: new Date(shift.date),
-          title: shift.shiftType || 'empty shift type',
-          allDay: true,
-        };
-      });
+      this.events = value.map(this.mapEmployeeShiftToCalendarEvent);
     });
   }
 
-  ngOnInit(): void {
-    this.updateMonthShifts(this.viewDate);
+  private mapEmployeeShiftToCalendarEvent(
+    shift: EmployeeShift
+  ): CalendarEvent<EmployeeShift> {
+    const title = shift.shiftType
+      ? `${shift.employeeName} - ${shift.shiftType}`
+      : shift.employeeName;
+    return {
+      ...shift,
+      start: new Date(shift.date),
+      title: title,
+      allDay: true,
+      color: {
+        primary: stringToColor(title),
+        secondary: stringToColor(title, {
+          saturation: 50,
+          lightness: 90,
+        }),
+      },
+    };
   }
 
-  updateMonthShifts(date: Date) {
+  ngOnInit(): void {
+    this.updateMonthShifts();
+  }
+
+  updateMonthShifts() {
+    const monthName = format(this.viewDate, 'MMMM', { locale: enUS });
+
     this.shiftService
-      .getAll(date)
+      .getAll(this.viewDate)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
-        error: (err: HttpErrorResponse) => {
-          // if (
-          //   err.error ===
-          //   'There are no shifts defined for that employee in that month'
-          // ) {
-          // } else
-          console.log('Error: ' + err.error);
+        next: () => {
+          console.log(`Successfully fetched data for month ${monthName}`);
+        },
+        error: (error: HttpErrorResponse) => {
+          console.error(
+            `Failed to fetch data for month ${monthName}:`,
+            error.error || error
+          );
         },
       });
-    this.closeOpenMonthViewDay();
+
+    if (this.isNextMonthVisible()) {
+      const monthName = format(addMonths(this.viewDate, 1), 'MMMM', {
+        locale: enUS,
+      });
+      this.shiftService
+        .getAll(addMonths(this.viewDate, 1))
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            console.log(`Successfully fetched data for month ${monthName}`);
+          },
+          error: (error: HttpErrorResponse) => {
+            console.error(
+              `Failed to fetch data for month ${monthName}:`,
+              error.error || error
+            );
+          },
+        });
+    }
+    if (this.isPrevMonthVisible()) {
+      const monthName = format(addMonths(this.viewDate, -1), 'MMMM', {
+        locale: enUS,
+      });
+      this.shiftService
+        .getAll(addMonths(this.viewDate, -1))
+        .pipe(takeUntil(this.destroy$))
+        .subscribe({
+          next: () => {
+            console.log(`Successfully fetched data for month ${monthName}`);
+          },
+          error: (error: HttpErrorResponse) => {
+            console.error(
+              `Failed to fetch data for month ${monthName}:`,
+              error.error || error
+            );
+          },
+        });
+    }
   }
 
-  dayClicked({ date, events }: { date: Date; events: CalendarEvent[] }): void {
+  monthDayClicked({
+    date,
+    events,
+  }: {
+    date: Date;
+    events: CalendarEvent[];
+  }): void {
     if (isSameMonth(date, this.viewDate)) {
       if (
         (isSameDay(this.viewDate, date) && this.activeDayIsOpen === true) ||
@@ -105,6 +191,10 @@ export class ShiftSystemComponent
       }
       this.viewDate = date;
     }
+  }
+
+  weekDayClicked(weekDay: WeekDay) {
+    this.viewDate = weekDay.date;
   }
 
   viewDetails(event: CalendarEvent): void {
@@ -119,5 +209,31 @@ export class ShiftSystemComponent
 
   closeOpenMonthViewDay() {
     this.activeDayIsOpen = false;
+  }
+
+  isPrevMonthVisible() {
+    if (this.view === CalendarView.Month) {
+      return (
+        getMonth(startOfWeek(startOfMonth(this.viewDate))) !==
+        getMonth(this.viewDate)
+      );
+    }
+    if (this.view === CalendarView.Week) {
+      return getMonth(startOfWeek(this.viewDate)) !== getMonth(this.viewDate);
+    }
+    return false;
+  }
+
+  isNextMonthVisible() {
+    if (this.view === CalendarView.Month) {
+      return (
+        getMonth(endOfWeek(endOfMonth(this.viewDate))) !==
+        getMonth(this.viewDate)
+      );
+    }
+    if (this.view === CalendarView.Week) {
+      return getMonth(endOfWeek(this.viewDate)) !== getMonth(this.viewDate);
+    }
+    return false;
   }
 }

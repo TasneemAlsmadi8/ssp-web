@@ -38,7 +38,7 @@ export class ShiftSystemService extends BaseService {
     );
   }
 
-  getShiftsById(id: string, date: Date) {
+  getShiftsById(id: string, date: Date): Observable<EmployeeShift[]> {
     const url = `${this.url}/getShiftDataByEmpId?Month=${
       date.getMonth() + 1
     }&Year=${date.getFullYear()}&EmpId=${id}`;

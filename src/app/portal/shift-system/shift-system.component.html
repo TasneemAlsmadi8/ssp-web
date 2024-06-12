@@ -60,7 +60,9 @@
       [events]="events"
       [refresh]="refresh"
       [activeDayIsOpen]="activeDayIsOpen"
-      (dayClicked)="dayClicked($event.day)"
+      [weekStartsOn]="weekStartsOn"
+      [weekendDays]="weekendDays"
+      (dayClicked)="monthDayClicked($event.day)"
       (eventClicked)="viewDetails($event.event)"
     >
     </mwl-calendar-month-view>
@@ -69,6 +71,9 @@
       [viewDate]="viewDate"
       [events]="events"
       [refresh]="refresh"
+      [weekStartsOn]="weekStartsOn"
+      [weekendDays]="weekendDays"
+      (dayHeaderClicked)="weekDayClicked($event.day)"
       (eventClicked)="viewDetails($event.event)"
     >
     </mwl-calendar-week-view>
@@ -151,8 +156,11 @@
             <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
               Shift Type
             </td>
-            <td class="px-6 py-4 whitespace-nowrap text-gray-500">
-              {{ activeEventDetails?.shiftType || "Empty" }}
+            <td
+              class="px-6 py-4 whitespace-nowrap text-gray-500"
+              [ngClass]="{ 'text-red-800 font-semibold': !activeEventDetails?.shiftType }"
+            >
+              {{ activeEventDetails?.shiftType || "No Data Provided!" }}
             </td>
           </tr>
           <!-- <tr class="hover:bg-gray-50">
