@@ -3,6 +3,7 @@ import { DestroyBaseComponent } from 'src/app/shared/base/destroy-base.component
 import { Item } from 'src/app/shared/interfaces/generic-item';
 import { takeUntil } from 'rxjs';
 import { GenericHistoryService } from '../../services/history/generic-history.service';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   standalone: true,
@@ -22,6 +23,10 @@ export abstract class HistoryPageComponentTemplate<
   activeItemDetails?: Request;
   ItemDetailsOpen = false;
 
+  isLoading: boolean = false;
+  isError: boolean = false;
+  errorMessage?: string;
+
   abstract getItemId(item: History): number;
   abstract mapHistoryToUpdateRequest(item: History): Request;
 
@@ -36,16 +41,23 @@ export abstract class HistoryPageComponentTemplate<
   }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.historyService
       .getAll()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (value) => {
           console.log(value);
+          this.isError = false;
         },
-        error: (err) => {
-          console.log(err);
+        error: (err: HttpErrorResponse) => {
+          console.log(err.error);
+          this.errorMessage = err.error;
+          this.isError = true;
         },
+      })
+      .add(() => {
+        this.isLoading = false;
       });
   }
 

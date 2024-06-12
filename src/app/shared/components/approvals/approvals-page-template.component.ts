@@ -6,6 +6,7 @@ import { GenericApprovalService } from '../../services/approvals/generic-approva
 import { SelectedItems } from '../../utils/selected-items';
 import { UserAlertService } from '../../services/user-alert.service';
 import { GenericApproval } from '../../interfaces/approvals/shared';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   standalone: true,
@@ -28,6 +29,10 @@ export abstract class ApprovalPageComponentTemplate<
   activeItemDetails?: Request;
   ItemDetailsOpen = false;
 
+  isLoading: boolean = false;
+  isError: boolean = false;
+  errorMessage?: string;
+
   abstract getItemId(item: Approval): number;
   abstract mapApprovalToUpdateRequest(item: Approval): Request;
 
@@ -43,16 +48,23 @@ export abstract class ApprovalPageComponentTemplate<
   }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.approvalService
       .getAll()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (value) => {
           console.log(value);
+          this.isError = false;
         },
-        error: (err) => {
-          console.log(err);
+        error: (err: HttpErrorResponse) => {
+          console.log(err.error);
+          this.errorMessage = err.error;
+          this.isError = true;
         },
+      })
+      .add(() => {
+        this.isLoading = false;
       });
   }
 

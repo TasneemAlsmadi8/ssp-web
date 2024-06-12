@@ -2,7 +2,13 @@
   <h1 class="text-2xl font-semibold pb-2 mb-2 border-b">
     {{ "Value Transaction Requests" | translate }}
   </h1>
-  <app-paginated-table [items]="items" (pageChange)="activePageItems = $event">
+  <app-paginated-table
+    [items]="items"
+    (pageChange)="activePageItems = $event"
+    [isLoading]="isLoading"
+    [isError]="isError"
+    [errorMessage]="errorMessage!"
+  >
     <thead class="text-xs text-gray-700 uppercase bg-gray-50">
       <tr>
         <th scope="col" class="px-6 py-3">{{ "ID" | translate }}</th>

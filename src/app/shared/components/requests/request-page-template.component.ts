@@ -3,6 +3,7 @@ import { DestroyBaseComponent } from 'src/app/shared/base/destroy-base.component
 import { GenericRequestService } from 'src/app/shared/services/requests/generic-request.service';
 import { Item } from 'src/app/shared/interfaces/generic-item';
 import { takeUntil } from 'rxjs';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   standalone: true,
@@ -18,6 +19,10 @@ export abstract class RequestPageComponentTemplate<Request extends Item>
   activeItemDetails?: Request;
   ItemDetailsOpen = false;
 
+  isLoading: boolean = false;
+  isError: boolean = false;
+  errorMessage?: string;
+
   abstract trackByRequestId(index: number, item: Request): number;
 
   constructor(
@@ -31,16 +36,23 @@ export abstract class RequestPageComponentTemplate<Request extends Item>
   }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.requestService
       .getAll()
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (value) => {
           console.log(value);
+          this.isError = false;
         },
-        error: (err) => {
-          console.log(err);
+        error: (err: HttpErrorResponse) => {
+          console.log(err.error);
+          this.errorMessage = err.error;
+          this.isError = true;
         },
+      })
+      .add(() => {
+        this.isLoading = false;
       });
   }
 
