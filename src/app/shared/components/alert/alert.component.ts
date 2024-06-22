@@ -1,11 +1,7 @@
 import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import {
-  faCircleInfo,
-  faInfo,
-  faInfoCircle,
-} from '@fortawesome/free-solid-svg-icons';
+import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 
 @Component({
   selector: 'app-alert',
