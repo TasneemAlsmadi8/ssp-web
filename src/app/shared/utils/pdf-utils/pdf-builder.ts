@@ -95,8 +95,7 @@ export class PdfBuilder {
     let yOffset = this.pageOptions.height - this.pageOptions.marginTop;
 
     for (const element of this.elements) {
-      const styles = element.computeStyles();
-      await element.draw(page, 50, yOffset, styles);
+      await element.render(page, page.getWidth() - 100, 50, yOffset);
       yOffset -= element.height; // Adjust spacing
     }
 

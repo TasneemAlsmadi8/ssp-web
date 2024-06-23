@@ -1,7 +1,8 @@
-import { rgb, StandardFonts, PDFPage, PDFFont } from 'pdf-lib';
-import { Element, ComputedStyles } from './abstract-element';
+import { StandardFonts, PDFFont } from 'pdf-lib';
+import { Element } from './abstract-element';
+import { ParagraphElement } from './paragraph-element';
 
-export class HeadingElement extends Element {
+export class HeadingElement extends ParagraphElement {
   level: number;
 
   constructor(level: number) {
@@ -12,41 +13,32 @@ export class HeadingElement extends Element {
     this.setStyle('padding', 5);
   }
 
-  get innerHeight(): number {
-    const fontSize = this.styles['font-size'] ?? 14;
-    const padding = this.styles['padding'] ?? 0;
+  // get innerHeight(): number {
+  //   return (
+  //     this.computedStyles.fontSize +
+  //     this.computedStyles.paddingTop +
+  //     this.computedStyles.paddingBottom
+  //   ); // fontSize -> should use heightAtSize
+  // }
+  // get innerWidth(): number {
+  //   return (
+  //     this.parentWidth -
+  //     this.computedStyles.marginLeft -
+  //     this.computedStyles.marginRight
+  //   );
+  // }
 
-    return fontSize + padding * 2; // fontSize -> should use heightAtSize
-  }
+  // async draw(x: number, y: number) {
+  //   const font: PDFFont = await this.page.doc.embedFont(
+  //     StandardFonts.Helvetica
+  //   );
 
-  get height(): number {
-    const marginTop = this.styles['margin-top'] ?? 0;
-    const marginBottom = this.styles['margin-bottom'] ?? 0;
-
-    return this.innerHeight + marginTop + marginBottom;
-  }
-
-  async draw(page: PDFPage, x: number, y: number, styles: ComputedStyles) {
-    const font: PDFFont = await page.doc.embedFont(StandardFonts.Helvetica);
-
-    // Draw background if background color is set
-    if (styles.backgroundColor !== rgb(1, 1, 1)) {
-      // not white
-      page.drawRectangle({
-        x: x + styles.boxX,
-        y: y + styles.boxY,
-        width: page.getWidth() - 100,
-        height: this.innerHeight,
-        color: styles.backgroundColor,
-      });
-    }
-
-    page.drawText(this.textContent, {
-      x: x + styles.textX,
-      y: y + styles.textY,
-      size: styles.fontSize,
-      font,
-      color: styles.color,
-    });
-  }
+  //   this.page.drawText(this.textContent, {
+  //     x: x ,//+ this.positionAdjustment.textX,
+  //     y: y ,//+ this.positionAdjustment.textY,
+  //     size: this.computedStyles.fontSize,
+  //     font,
+  //     color: this.computedStyles.color,
+  //   });
+  // }
 }

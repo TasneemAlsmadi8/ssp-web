@@ -1,4 +1,4 @@
-import { rgb, StandardFonts, PDFPage, PDFFont } from 'pdf-lib';
+import { rgb, StandardFonts, PDFFont } from 'pdf-lib';
 import { Style, Element, ComputedStyles, hexToRgb } from './abstract-element';
 
 export interface TableCell {
@@ -23,57 +23,55 @@ export class TableElement extends Element {
   }
 
   get innerHeight(): number {
-    const padding = this.styles['padding'] ?? 0;
-    const rowHeight = (this.styles['font-size'] ?? 14) + padding * 2;
+    const padding =
+      this.computedStyles.paddingTop + this.computedStyles.paddingBottom;
+    const rowHeight = this.computedStyles.fontSize + padding;
     return this.rows.length * rowHeight;
   }
-
-  get height(): number {
-    const marginTop = this.styles['margin-top'] ?? 0;
-    const marginBottom = this.styles['margin-bottom'] ?? 0;
-    return this.innerHeight + marginTop + marginBottom;
+  get innerWidth(): number {
+    return (
+      this.parentWidth -
+      this.computedStyles.marginLeft -
+      this.computedStyles.marginRight
+    );
   }
 
-  async draw(page: PDFPage, x: number, y: number, styles: ComputedStyles) {
-    const font: PDFFont = await page.doc.embedFont(StandardFonts.Helvetica);
-    const cellPadding = this.styles['padding'] ?? 5;
-    const fontSize = this.styles['font-size'] ?? 14;
-    const rowHeight = fontSize + cellPadding * 2;
+  async draw(x: number, y: number) {
+    const font: PDFFont = await this.page.doc.embedFont(
+      StandardFonts.Helvetica
+    );
+    const { fontSize, paddingTop, paddingBottom, color } = this.computedStyles;
+
+    const cellYPadding = paddingTop + paddingBottom;
+    const rowHeight = fontSize + cellYPadding; // Adjust for cell padding
+    const tableWidth = this.innerWidth;
+    const colCount = this.rows[0].cells.length;
+    const cellWidth = tableWidth / colCount; // Adjust for table width and column count
 
     let cursorY = y;
-
-    const tableWidth = page.getWidth() - 100; // Adjust the table width as needed
-    const colCount = this.rows[0].cells.length;
-    const cellWidth = tableWidth / colCount;
 
     for (const row of this.rows) {
       let cursorX = x;
       for (const cell of row.cells) {
-        const cellStyles = {
-          ...styles,
-          ...this.computeCellStyles(cell.styles),
-        };
+        const cellStyles = this.computeCellStyles(cell.styles);
+        const {
+          fontSize: cellFontSize = fontSize,
+          paddingLeft = 0,
+          paddingRight = 0,
+          paddingTop: cellPaddingTop = 0,
+          paddingBottom: cellPaddingBottom = 0,
+          color: cellColor = color,
+        } = cellStyles;
 
-        // Draw background if background color is set
-        if (cellStyles.backgroundColor !== rgb(1, 1, 1)) {
-          page.drawRectangle({
-            x: cursorX,
-            y: cursorY - rowHeight,
-            width: cellWidth,
-            height: rowHeight,
-            color: cellStyles.backgroundColor,
-          });
-        }
-
-        page.drawText(cell.text, {
-          x: cursorX + cellPadding,
-          y: cursorY - cellPadding - fontSize,
-          size: cellStyles.fontSize,
+        this.page.drawText(cell.text, {
+          x: cursorX + paddingLeft,
+          y: cursorY - cellPaddingTop - cellFontSize,
+          size: cellFontSize,
           font,
-          color: cellStyles.color,
+          color: cellColor,
         });
 
-        page.drawRectangle({
+        this.page.drawRectangle({
           x: cursorX,
           y: cursorY - rowHeight,
           width: cellWidth,
@@ -90,14 +88,37 @@ export class TableElement extends Element {
 
   private computeCellStyles(cellStyles?: Style): Partial<ComputedStyles> {
     if (!cellStyles) return {};
-    const color = cellStyles['color'] ?? this.styles['color'];
-    const backgroundColor =
-      cellStyles['background-color'] ?? this.styles['background-color'];
+    const color = cellStyles['color']
+      ? hexToRgb(cellStyles['color'])
+      : this.computedStyles.color;
+    const backgroundColor = cellStyles['background-color']
+      ? hexToRgb(cellStyles['background-color'])
+      : this.computedStyles.backgroundColor;
+    const computedPaddingTop =
+      cellStyles['padding-top'] ??
+      cellStyles.padding ??
+      this.computedStyles.paddingTop;
+    const computedPaddingRight =
+      cellStyles['padding-right'] ??
+      cellStyles.padding ??
+      this.computedStyles.paddingRight;
+    const computedPaddingBottom =
+      cellStyles['padding-bottom'] ??
+      cellStyles.padding ??
+      this.computedStyles.paddingBottom;
+    const computedPaddingLeft =
+      cellStyles['padding-left'] ??
+      cellStyles.padding ??
+      this.computedStyles.paddingLeft;
+
     return {
-      fontSize: cellStyles['font-size'] ?? this.styles['font-size'],
-      color: color ? hexToRgb(color) : undefined,
-      backgroundColor: backgroundColor ? hexToRgb(backgroundColor) : undefined,
-      padding: cellStyles['padding'] ?? this.styles['padding'],
+      fontSize: cellStyles['font-size'] ?? this.computedStyles.fontSize,
+      color: color,
+      backgroundColor: backgroundColor,
+      paddingTop: computedPaddingTop,
+      paddingRight: computedPaddingRight,
+      paddingBottom: computedPaddingBottom,
+      paddingLeft: computedPaddingLeft,
     };
   }
 }

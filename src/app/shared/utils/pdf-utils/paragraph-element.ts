@@ -10,44 +10,42 @@ export class ParagraphElement extends Element {
   }
 
   get innerHeight(): number {
-    const fontSize = this.styles['font-size'] ?? 14;
-    const padding = this.styles['padding'] ?? 0;
-
-    const textHeight = this.textContent.split('\n').length * fontSize;
-
-    return textHeight + padding * 2;
+    const textHeight =
+      this.textContent.split('\n').length * this.computedStyles.fontSize;
+    // debugger
+    return (
+      textHeight +
+      this.computedStyles.paddingTop +
+      this.computedStyles.paddingBottom
+    );
   }
 
-  get height(): number {
-    const marginTop = this.styles['margin-top'] ?? 0;
-    const marginBottom = this.styles['margin-bottom'] ?? 0;
-
-    return this.innerHeight + marginTop + marginBottom;
+  get innerWidth(): number {
+    return (
+      this.parentWidth -
+      this.computedStyles.marginLeft -
+      this.computedStyles.marginRight
+    );
   }
 
-  async draw(page: PDFPage, x: number, y: number, styles: ComputedStyles) {
-    const font: PDFFont = await page.doc.embedFont(StandardFonts.Helvetica);
+  async draw(x: number, y: number) {
+    const font: PDFFont = await this.page.doc.embedFont(
+      StandardFonts.Helvetica
+    );
+    const { fontSize, color } = this.computedStyles;
+    const { textX, textY } = this.positionAdjustment;
 
-    // Draw background if background color is set
-    if (styles.backgroundColor !== rgb(1, 1, 1)) {
-      // not white
-      page.drawRectangle({
-        x: x + styles.boxX,
-        y: y + styles.boxY,
-        width: page.getWidth() - 100,
-        height: this.innerHeight,
-        color: styles.backgroundColor,
-      });
-    }
     const lines = this.textContent.split('\n');
+
     for (let index = 0; index < lines.length; index++) {
       const line = lines[index];
-      page.drawText(line, {
-        x: x + styles.textX,
-        y: y + styles.textY - styles.fontSize * index,
-        size: styles.fontSize,
+      const lineOffset = -fontSize * index;
+      this.page.drawText(line, {
+        x: x + textX,
+        y: y + textY + lineOffset,
+        size: fontSize,
         font,
-        color: styles.color,
+        color,
       });
     }
   }
