@@ -1,5 +1,6 @@
 import { rgb, StandardFonts, PDFFont } from 'pdf-lib';
 import { Style, Element, ComputedStyles, hexToRgb } from './abstract-element';
+import { TableCellElement } from './table-cell-element';
 
 export interface TableCell {
   text: string;
@@ -7,19 +8,48 @@ export interface TableCell {
 }
 
 export interface TableRow {
-  cells: TableCell[];
+  cells: TableCellElement[];
+  styles?: Style;
 }
 
 export class TableElement extends Element {
   rows: TableRow[];
-
+  private cellStyles?: Style;
   constructor() {
     super();
     this.rows = [];
+    this.cellStyles = {
+      border: 1,
+    };
   }
 
-  addRow(cells: TableCell[]) {
-    this.rows.push({ cells });
+  setCellStyles(styles: Style): void {
+    this.cellStyles = { ...this.cellStyles, ...styles };
+  }
+
+  getRowHeight(index: number): number {
+    if (index >= this.rows.length) {
+      throw new Error('Invalid row index');
+    }
+
+    const row = this.rows[index].cells;
+
+    return row.reduce(
+      (max: number, curr) => (curr.height > max ? curr.height : max),
+      row[0].height
+    );
+  }
+
+  addRow(cells: TableCell[], styles?: Style) {
+    const elements: TableCellElement[] = cells.map((value) => {
+      const elem = new TableCellElement();
+      elem.setTextContent(value.text);
+      if (this.cellStyles) elem.setStyles(this.cellStyles);
+      if (styles) elem.setStyles(styles);
+      if (value.styles) elem.setStyles(value.styles);
+      return elem;
+    });
+    this.rows.push({ cells: elements });
   }
 
   get innerHeight(): number {
@@ -38,87 +68,27 @@ export class TableElement extends Element {
 
   async draw(x: number, y: number) {
     const font: PDFFont = await this.page.doc.embedFont(
-      StandardFonts.Helvetica
+      this.computedStyles.font
     );
-    const { fontSize, paddingTop, paddingBottom, color } = this.computedStyles;
+    // const { fontSize, paddingTop, paddingBottom, color } = this.computedStyles;
 
-    const cellYPadding = paddingTop + paddingBottom;
-    const rowHeight = fontSize + cellYPadding; // Adjust for cell padding
+    // const cellYPadding = paddingTop + paddingBottom;
     const tableWidth = this.innerWidth;
     const colCount = this.rows[0].cells.length;
     const cellWidth = tableWidth / colCount; // Adjust for table width and column count
 
-    let cursorY = y;
+    let cursorY = y; // + this.positionAdjustment.textY;
 
-    for (const row of this.rows) {
-      let cursorX = x;
+    for (let index = 0; index < this.rows.length; index++) {
+      const row = this.rows[index];
+      const rowHeight = this.getRowHeight(index);
+      let cursorX = x; // + this.positionAdjustment.textY;
       for (const cell of row.cells) {
-        const cellStyles = this.computeCellStyles(cell.styles);
-        const {
-          fontSize: cellFontSize = fontSize,
-          paddingLeft = 0,
-          paddingRight = 0,
-          paddingTop: cellPaddingTop = 0,
-          paddingBottom: cellPaddingBottom = 0,
-          color: cellColor = color,
-        } = cellStyles;
-
-        this.page.drawText(cell.text, {
-          x: cursorX + paddingLeft,
-          y: cursorY - cellPaddingTop - cellFontSize,
-          size: cellFontSize,
-          font,
-          color: cellColor,
-        });
-
-        this.page.drawRectangle({
-          x: cursorX,
-          y: cursorY - rowHeight,
-          width: cellWidth,
-          height: rowHeight,
-          borderColor: rgb(0, 0, 0),
-          borderWidth: 1,
-        });
+        cell.render(this.page, cellWidth, cursorX, cursorY);
 
         cursorX += cellWidth;
       }
       cursorY -= rowHeight;
     }
-  }
-
-  private computeCellStyles(cellStyles?: Style): Partial<ComputedStyles> {
-    if (!cellStyles) return {};
-    const color = cellStyles['color']
-      ? hexToRgb(cellStyles['color'])
-      : this.computedStyles.color;
-    const backgroundColor = cellStyles['background-color']
-      ? hexToRgb(cellStyles['background-color'])
-      : this.computedStyles.backgroundColor;
-    const computedPaddingTop =
-      cellStyles['padding-top'] ??
-      cellStyles.padding ??
-      this.computedStyles.paddingTop;
-    const computedPaddingRight =
-      cellStyles['padding-right'] ??
-      cellStyles.padding ??
-      this.computedStyles.paddingRight;
-    const computedPaddingBottom =
-      cellStyles['padding-bottom'] ??
-      cellStyles.padding ??
-      this.computedStyles.paddingBottom;
-    const computedPaddingLeft =
-      cellStyles['padding-left'] ??
-      cellStyles.padding ??
-      this.computedStyles.paddingLeft;
-
-    return {
-      fontSize: cellStyles['font-size'] ?? this.computedStyles.fontSize,
-      color: color,
-      backgroundColor: backgroundColor,
-      paddingTop: computedPaddingTop,
-      paddingRight: computedPaddingRight,
-      paddingBottom: computedPaddingBottom,
-      paddingLeft: computedPaddingLeft,
-    };
   }
 }

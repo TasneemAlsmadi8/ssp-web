@@ -1,9 +1,11 @@
-import { rgb, PDFPage, PDFFont, RGB } from 'pdf-lib';
+import { rgb, PDFPage, PDFFont, RGB, StandardFonts } from 'pdf-lib';
 
 // Define a Style interface
 export interface Style {
   [key: string]: string | number | undefined;
+  font?: 'TimesRoman' | 'Helvetica' | 'Courier';
   'font-size'?: number;
+  'font-weight'?: 'normal' | 'bold';
   color?: string;
   'background-color'?: string;
   margin?: number;
@@ -26,6 +28,7 @@ export interface Style {
 
 // Define a ComputedStyles interface
 export interface ComputedStyles {
+  font: StandardFonts;
   fontSize: number;
   color: RGB;
   backgroundColor: RGB;
@@ -104,6 +107,16 @@ export abstract class Element {
     this._computedStyles = undefined;
   }
 
+  setStyles(styles: Style) {
+    const removeUndefined = <T = any>(obj: any): T =>
+      Object.fromEntries(
+        Object.entries(obj).filter(([_, v]) => v !== undefined)
+      ) as T;
+
+    styles = removeUndefined<Style>(styles);
+    this.styles = { ...this.styles, ...styles };
+  }
+
   setTextContent(text: string) {
     this.textContent = text;
   }
@@ -144,6 +157,7 @@ export abstract class Element {
 
   private computeStyles(): ComputedStyles {
     const defaultStyles: ComputedStyles = {
+      font: StandardFonts.Helvetica,
       fontSize: 14,
       color: rgb(0, 0, 0),
       backgroundColor: rgb(1, 1, 1), // white background
@@ -162,6 +176,15 @@ export abstract class Element {
       borderColor: rgb(0, 0, 0), // default black border
     };
 
+    let computedFontName = 'Helvetica';
+    if (this.styles['font']) computedFontName = this.styles['font'];
+    if (this.styles['font-weight'] === 'bold') computedFontName += 'Bold';
+
+    let computedFont: StandardFonts = defaultStyles.font;
+    if (computedFontName && computedFontName in StandardFonts) {
+      computedFont =
+        StandardFonts[computedFontName as keyof typeof StandardFonts];
+    }
     const computedFontSize = this.styles['font-size'] ?? defaultStyles.fontSize;
     const computedPaddingTop =
       this.styles['padding-top'] ??
@@ -215,6 +238,7 @@ export abstract class Element {
       defaultStyles.borderLeft;
 
     return {
+      font: computedFont,
       fontSize: computedFontSize,
       color: this.styles['color']
         ? hexToRgb(this.styles['color'])
@@ -260,7 +284,7 @@ export abstract class Element {
           x: startX,
           y: startY,
           width: this.innerWidth,
-          height: this.innerHeight,
+          height: this.innerHeight + borderBottom,
           borderColor,
           borderWidth: borderTop,
         });

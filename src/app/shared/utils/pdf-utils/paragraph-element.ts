@@ -30,7 +30,7 @@ export class ParagraphElement extends Element {
 
   async draw(x: number, y: number) {
     const font: PDFFont = await this.page.doc.embedFont(
-      StandardFonts.Helvetica
+      this.computedStyles.font
     );
     const { fontSize, color } = this.computedStyles;
     const { textX, textY } = this.positionAdjustment;

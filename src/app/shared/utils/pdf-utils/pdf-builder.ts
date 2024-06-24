@@ -17,6 +17,7 @@ export class PdfBuilder {
   pdfDoc!: PDFDocument;
 
   constructor(
+    public fileName: string,
     private pageOptions: PageOptions = {
       height: 841.89,
       width: 595.28,
@@ -29,10 +30,7 @@ export class PdfBuilder {
     const elem = new HeadingElement(level);
     this.elements.push(elem);
     if (text) elem.setTextContent(text);
-    for (const style in styles) {
-      const value = styles[style];
-      if (value) elem.setStyle(style, value);
-    }
+    if (styles) elem.setStyles(styles);
     return elem;
   }
   createParagraph(text?: string, styles?: Style): Element {
@@ -40,26 +38,73 @@ export class PdfBuilder {
     this.elements.push(elem);
 
     if (text) elem.setTextContent(text);
-    for (const style in styles) {
-      const value = styles[style];
-      if (value) elem.setStyle(style, value);
-    }
+    if (styles) elem.setStyles(styles);
     return elem;
   }
 
-  createTable(data: TableCell[][], styles?: Style): TableElement {
+  createTable(
+    data: TableCell[][],
+    styles?: Style,
+    cellStyles?: Style
+  ): TableElement {
     const elem = new TableElement();
     this.elements.push(elem);
     for (const row of data) {
       elem.addRow(row);
     }
-    if (styles) {
-      for (const style in styles) {
-        const value = styles[style];
-        if (value) elem.setStyle(style, value);
+    if (cellStyles) elem.setCellStyles(cellStyles);
+    if (styles) elem.setStyles(styles);
+    return elem;
+  }
+
+  createTableFromObject(
+    obj: any,
+    options?: {
+      rowHeaders?: boolean;
+      headerStyles?: Style;
+      cellStyles?: Style;
+    }
+  ): TableElement {
+    const { rowHeaders, headerStyles, cellStyles } = options ?? {};
+
+    const data: TableCell[][] = [];
+    const keys: any[] = Object.keys(obj);
+    const values: any[] = Object.values(obj);
+
+    if (rowHeaders) {
+      // Add headers as the first row
+      const headerRow: TableCell[] = keys.map((key) => ({
+        text: key,
+        styles: headerStyles,
+      }));
+      data.push(headerRow);
+
+      for (let i = 0; i < values.length; i++) {
+        const row: TableCell[] = Array.isArray(values[i])
+          ? values[i].map((val: any) => ({
+              text: val.toString(),
+              styles: cellStyles,
+            }))
+          : [{ text: values[i].toString(), styles: cellStyles }];
+        data.push(row);
+      }
+    } else {
+      // Add headers as the first column
+      for (let i = 0; i < keys.length; i++) {
+        const row: TableCell[] = [
+          { text: keys[i], styles: headerStyles },
+          {
+            text: Array.isArray(values[i])
+              ? values[i].join(', ')
+              : values[i].toString(),
+            styles: cellStyles,
+          },
+        ];
+        data.push(row);
       }
     }
-    return elem;
+
+    return this.createTable(data, cellStyles);
   }
 
   async download(): Promise<void> {
@@ -72,7 +117,7 @@ export class PdfBuilder {
 
     const a = document.createElement('a');
     a.href = url;
-    a.download = 'generated-document.pdf';
+    a.download = this.fileName;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
