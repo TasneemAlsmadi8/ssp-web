@@ -1,39 +1,51 @@
-import { rgb, StandardFonts, PDFPage, PDFFont } from 'pdf-lib';
-import { Element, ComputedStyles } from './abstract-element';
+import { PDFFont } from 'pdf-lib';
+import { Element } from './abstract-element';
 
 export class ParagraphElement extends Element {
+  textContent: string;
   constructor() {
     super();
+    this.textContent = '';
     this.setStyle('font-size', 14);
     this.setStyle('color', '#000000');
     this.setStyle('padding', 2);
   }
+  setTextContent(text: string) {
+    this.textContent = text;
+  }
 
-  get innerHeight(): number {
+  get fontHeight(): number {
+    const height = this.font?.heightAtSize(this.computedStyles.fontSize);
+    if (!height) throw new Error('Font is undefined!');
+
+    return height;
+  }
+
+  get textWidth(): number {
+    const height = this.font?.widthOfTextAtSize(
+      this.textContent,
+      this.computedStyles.fontSize
+    );
+    if (!height) throw new Error('Font is undefined!');
+
+    console.log(height);
+    return height;
+  }
+
+  get contentHeight(): number {
     const textHeight =
-      this.textContent.split('\n').length * this.computedStyles.fontSize;
+      this.textContent.split('\n').length * this.fontHeight + 2;
     // debugger
-    return (
-      textHeight +
-      this.computedStyles.paddingTop +
-      this.computedStyles.paddingBottom
-    );
+    return textHeight;
   }
 
-  get innerWidth(): number {
-    return (
-      this.parentWidth -
-      this.computedStyles.marginLeft -
-      this.computedStyles.marginRight
-    );
+  get contentWidth(): number {
+    return this.textWidth; // TODO: check if this take \n in consideration
   }
 
-  async draw(x: number, y: number) {
-    const font: PDFFont = await this.page.doc.embedFont(
-      this.computedStyles.font
-    );
+  protected async draw(): Promise<void> {
     const { fontSize, color } = this.computedStyles;
-    const { textX, textY } = this.positionAdjustment;
+    const { contentX: textX, contentY: textY } = this.positionAdjustment;
 
     const lines = this.textContent.split('\n');
 
@@ -41,10 +53,10 @@ export class ParagraphElement extends Element {
       const line = lines[index];
       const lineOffset = -fontSize * index;
       this.page.drawText(line, {
-        x: x + textX,
-        y: y + textY + lineOffset,
+        x: this.position.x + textX,
+        y: this.position.y + textY + lineOffset,
         size: fontSize,
-        font,
+        font: this.font!,
         color,
       });
     }

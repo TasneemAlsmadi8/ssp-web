@@ -52,42 +52,42 @@ export class TableElement extends Element {
     this.rows.push({ cells: elements });
   }
 
-  get innerHeight(): number {
-    const padding =
-      this.computedStyles.paddingTop + this.computedStyles.paddingBottom;
-    const rowHeight = this.computedStyles.fontSize + padding;
-    return this.rows.length * rowHeight;
+  get contentHeight(): number {
+    let result = 0;
+    for (let i = 0; i < this.rows.length; i++) {
+      result += this.getRowHeight(i);
+    }
+    return result;
   }
-  get innerWidth(): number {
+  get contentWidth(): number {
     return (
       this.parentWidth -
+      this.computedStyles.paddingLeft -
+      this.computedStyles.paddingRight -
       this.computedStyles.marginLeft -
       this.computedStyles.marginRight
     );
   }
 
-  async draw(x: number, y: number) {
-    const font: PDFFont = await this.page.doc.embedFont(
-      this.computedStyles.font
-    );
+  async draw() {
     // const { fontSize, paddingTop, paddingBottom, color } = this.computedStyles;
 
     // const cellYPadding = paddingTop + paddingBottom;
-    const tableWidth = this.innerWidth;
+    const tableWidth = this.contentWidth;
     const colCount = this.rows[0].cells.length;
     const cellWidth = tableWidth / colCount; // Adjust for table width and column count
 
-    let cursorY = y; // + this.positionAdjustment.textY;
+    let cursorY = this.position.y; // + this.positionAdjustment.textY;
 
     for (let index = 0; index < this.rows.length; index++) {
       const row = this.rows[index];
-      const rowHeight = this.getRowHeight(index);
-      let cursorX = x; // + this.positionAdjustment.textY;
+      let cursorX = this.position.x; // + this.positionAdjustment.textY;
       for (const cell of row.cells) {
-        cell.render(this.page, cellWidth, cursorX, cursorY);
+        await cell.render(this.page, cellWidth, cursorX, cursorY);
 
         cursorX += cellWidth;
       }
+      const rowHeight = this.getRowHeight(index);
       cursorY -= rowHeight;
     }
   }

@@ -47,8 +47,8 @@ export interface ComputedStyles {
   borderColor: RGB;
 }
 export interface CalculatedPositionAdjustment {
-  textX: number; // x position adjustment for text
-  textY: number; // y position adjustment for text
+  contentX: number; // x position adjustment for text
+  contentY: number; // y position adjustment for text
   boxX: number; // x position adjustment for background box
   boxY: number; // y position adjustment for background box
 }
@@ -57,19 +57,17 @@ export interface CalculatedPositionAdjustment {
 export abstract class Element {
   private styles: Style;
   private _computedStyles?: ComputedStyles;
-  textContent: string;
-  font?: PDFFont;
 
   private _positionAdjustment?: CalculatedPositionAdjustment;
   protected get positionAdjustment(): CalculatedPositionAdjustment {
     if (!this._positionAdjustment) {
       // debugger
       this._positionAdjustment = {
-        textX:
+        contentX:
           this.computedStyles.paddingLeft +
           this.computedStyles.marginLeft +
           this.computedStyles.borderLeft,
-        textY: -(
+        contentY: -(
           0.75 * this.computedStyles.fontSize +
           this.computedStyles.paddingTop +
           this.computedStyles.marginTop +
@@ -92,6 +90,8 @@ export abstract class Element {
 
   protected page!: PDFPage;
   protected parentWidth!: number;
+  protected position!: { x: number; y: number };
+  protected font!: PDFFont;
 
   protected get computedStyles(): ComputedStyles {
     if (!this._computedStyles) this._computedStyles = this.computeStyles();
@@ -99,7 +99,6 @@ export abstract class Element {
   }
   constructor() {
     this.styles = {};
-    this.textContent = '';
   }
 
   setStyle(name: keyof Style, value: string | number) {
@@ -117,17 +116,21 @@ export abstract class Element {
     this.styles = { ...this.styles, ...styles };
   }
 
-  setTextContent(text: string) {
-    this.textContent = text;
-  }
-
-  render(page: PDFPage, parentWidth: number, x: number, y: number): void {
+  async render(
+    page: PDFPage,
+    parentWidth: number,
+    x: number,
+    y: number
+  ): Promise<void> {
     this.page = page;
     this.parentWidth = parentWidth;
+    this.position = { x, y };
     this._computedStyles = this.computeStyles();
-    this.drawBackground(x, y);
-    this.drawBorder(x, y);
-    this.draw(x, y);
+    this.font = await this.page.doc.embedFont(this.computedStyles.font);
+    if (this.preDraw) await this.preDraw();
+    this.drawBackground();
+    await this.draw();
+    this.drawBorder();
   }
 
   get height(): number {
@@ -150,10 +153,26 @@ export abstract class Element {
     );
   }
 
-  protected abstract draw(x: number, y: number): Promise<void>;
+  protected preDraw?(): Promise<void>;
+  protected abstract draw(): Promise<void>;
 
-  abstract readonly innerHeight: number; // Abstract inner height property
-  abstract readonly innerWidth: number; // Abstract inner width property
+  get innerHeight(): number {
+    return (
+      this.contentHeight +
+      this.computedStyles.paddingTop +
+      this.computedStyles.paddingBottom
+    );
+  }
+  get innerWidth(): number {
+    // always full of parent
+    return (
+      this.parentWidth -
+      this.computedStyles.marginLeft -
+      this.computedStyles.marginRight
+    );
+  }
+  abstract readonly contentHeight: number; // Abstract inner height property
+  abstract readonly contentWidth: number; // Abstract inner width property
 
   private computeStyles(): ComputedStyles {
     const defaultStyles: ComputedStyles = {
@@ -264,12 +283,12 @@ export abstract class Element {
     };
   }
 
-  drawBorder(x: number, y: number) {
+  drawBorder() {
     const { borderTop, borderRight, borderBottom, borderLeft, borderColor } =
       this.computedStyles;
 
-    const startX = x + this.positionAdjustment.boxX;
-    const startY = y + this.positionAdjustment.boxY;
+    const startX = this.position.x + this.positionAdjustment.boxX;
+    const startY = this.position.y + this.positionAdjustment.boxY;
     const endX = startX + this.innerWidth;
     const endY = startY + this.innerHeight;
 
@@ -326,7 +345,7 @@ export abstract class Element {
     }
   }
 
-  drawBackground(x: number, y: number) {
+  drawBackground() {
     const { backgroundColor } = this.computedStyles;
     if (
       backgroundColor.red !== 1 ||
@@ -334,8 +353,8 @@ export abstract class Element {
       backgroundColor.green !== 1
     ) {
       this.page.drawRectangle({
-        x: x + this.positionAdjustment.boxX,
-        y: y + this.positionAdjustment.boxY,
+        x: this.position.x + this.positionAdjustment.boxX,
+        y: this.position.y + this.positionAdjustment.boxY,
         width: this.innerWidth,
         height: this.innerHeight,
         color: backgroundColor,
