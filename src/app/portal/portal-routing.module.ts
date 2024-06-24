@@ -128,6 +128,14 @@ const routes: Routes = [
           ),
       },
 
+      {
+        path: 'reports/leave-balance',
+        title: 'Leave Balance Report',
+        loadComponent: () =>
+          import(
+            './reports/reports-leave-balance/reports-leave-balance.component'
+          ).then((m) => m.ReportsLeaveBalanceComponent),
+      },
       { path: '**', component: PageNotFoundComponent },
     ],
   },
