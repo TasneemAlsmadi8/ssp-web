@@ -2,13 +2,12 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { takeUntil } from 'rxjs';
 import { DestroyBaseComponent } from 'src/app/shared/base/destroy-base.component';
-import { EmployeeInfo } from 'src/app/shared/interfaces/Employee';
 import { ReactiveFormsModule } from '@angular/forms';
 import { HttpErrorResponse } from '@angular/common/http';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { UserAlertService } from 'src/app/shared/services/user-alert.service';
 import { FormErrorMessageBehavior } from 'src/app/shared/components/FormErrorMessage';
-import { CommonModule, NgClass, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { LeaveBalanceReportService } from 'src/app/shared/services/reports/leave-balance.service';
 import { LeaveRequestService } from 'src/app/shared/services/requests/leave.service';
 import { LeaveRequestType } from 'src/app/shared/interfaces/requests/leave';
@@ -65,11 +64,6 @@ export class ReportsLeaveBalanceComponent
     if (control.hasError('required')) {
       return `${inputTitle} ${this.translate.instant(
         'is required'
-      )}.${customMessage}`;
-    }
-    if (control.hasError('pattern')) {
-      return `${inputTitle} ${this.translate.instant(
-        'does not match the required pattern'
       )}.${customMessage}`;
     }
     return '';
