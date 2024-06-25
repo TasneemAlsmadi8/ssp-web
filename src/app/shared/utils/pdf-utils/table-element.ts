@@ -1,4 +1,4 @@
-import { Style, Element } from './abstract-element';
+import { Style, Element, ContainerElement } from './abstract-element';
 import { TableCellElement } from './table-cell-element';
 
 export interface TableCell {
@@ -11,7 +11,7 @@ export interface TableRow {
   styles?: Style;
 }
 
-export class TableElement extends Element {
+export class TableElement extends Element implements ContainerElement {
   rows: TableRow[];
   private cellStyles?: Style;
   constructor() {
