@@ -84,7 +84,7 @@ export abstract class Element {
   }
 
   protected page!: PDFPage;
-  protected parentWidth!: number;
+  protected maxWidth!: number;
   protected position!: { x: number; y: number };
   protected font!: PDFFont;
 
@@ -121,11 +121,11 @@ export abstract class Element {
       for (const child of this.children) await child.init(page);
   }
 
-  async render(parentWidth: number, x: number, y: number): Promise<void> {
+  async render(maxWidth: number, x: number, y: number): Promise<void> {
     if (!this.page)
       throw new Error('Element must be initialized before rendering');
 
-    this.parentWidth = parentWidth;
+    this.maxWidth = maxWidth;
     this.position = { x, y };
     this._computedStyles = this.computeStyles();
     if (this.preDraw) await this.preDraw();
@@ -172,7 +172,7 @@ export abstract class Element {
   get innerWidth(): number {
     // always full of parent
     return (
-      this.parentWidth -
+      this.maxWidth -
       this.computedStyles.marginLeft -
       this.computedStyles.marginRight
     );

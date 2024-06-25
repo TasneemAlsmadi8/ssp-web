@@ -64,7 +64,7 @@ export class TableElement extends Element implements ContainerElement {
   }
   get contentWidth(): number {
     return (
-      this.parentWidth -
+      this.maxWidth -
       this.computedStyles.paddingLeft -
       this.computedStyles.paddingRight -
       this.computedStyles.marginLeft -
