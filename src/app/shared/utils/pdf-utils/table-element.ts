@@ -1,5 +1,4 @@
-import { rgb, StandardFonts, PDFFont } from 'pdf-lib';
-import { Style, Element, ComputedStyles, hexToRgb } from './abstract-element';
+import { Style, Element } from './abstract-element';
 import { TableCellElement } from './table-cell-element';
 
 export interface TableCell {
@@ -21,6 +20,10 @@ export class TableElement extends Element {
     this.cellStyles = {
       border: 1,
     };
+  }
+
+  override get children(): TableCellElement[] {
+    return this.rows.flatMap((value) => value.cells);
   }
 
   setCellStyles(styles: Style): void {
@@ -77,17 +80,18 @@ export class TableElement extends Element {
     const colCount = this.rows[0].cells.length;
     const cellWidth = tableWidth / colCount; // Adjust for table width and column count
 
-    let cursorY = this.position.y; // + this.positionAdjustment.textY;
+    let cursorY = this.position.y + this.positionAdjustment.contentY; //+ this.contentHeight;
 
     for (let index = 0; index < this.rows.length; index++) {
       const row = this.rows[index];
-      let cursorX = this.position.x; // + this.positionAdjustment.textY;
+      const rowHeight = this.getRowHeight(index);
+      let cursorX = this.position.x + this.positionAdjustment.contentX;
       for (const cell of row.cells) {
-        await cell.render(this.page, cellWidth, cursorX, cursorY);
+        cell.setHeight(rowHeight);
+        await cell.render(cellWidth, cursorX, cursorY);
 
         cursorX += cellWidth;
       }
-      const rowHeight = this.getRowHeight(index);
       cursorY -= rowHeight;
     }
   }

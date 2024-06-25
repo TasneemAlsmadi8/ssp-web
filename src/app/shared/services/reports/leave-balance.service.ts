@@ -42,13 +42,14 @@ export class LeaveBalanceReportService extends BaseService {
       height: 0,
       width: 0,
       marginTop: 0,
-      marginLeft: 0
-    }
+      marginLeft: 0,
+    };
     const builder = new PdfBuilder('Leave Balance Report.pdf');
 
-    builder.createHeading(4, 'Leave Balance Report', {
+    builder.createHeading(6, 'Leave Balance Report', {
       'border-bottom': 1,
       'margin-bottom': 15,
+      'align-content-horizontally': 'center',
     });
 
     // builder.createParagraph(JSON.stringify(data, null, 8), {
@@ -56,7 +57,8 @@ export class LeaveBalanceReportService extends BaseService {
     // });
 
     const cellStyles: Style = {
-      padding: 5,
+      'align-content-vertically': 'center',
+      'align-content-horizontally': 'center',
     };
 
     const displayData = convertObjectKeysToSentences(data);
@@ -67,6 +69,8 @@ export class LeaveBalanceReportService extends BaseService {
         color: '#171436',
         'background-color': '#dddddd',
         'font-weight': 'bold',
+        'font-size': 16,
+        'align-content-horizontally': 'start',
       },
     });
 

@@ -24,6 +24,8 @@ export interface Style {
   'border-right'?: number;
   'border-bottom'?: number;
   'border-left'?: number;
+  'align-content-horizontally'?: 'start' | 'center' | 'end';
+  'align-content-vertically'?: 'start' | 'center' | 'end';
 }
 
 // Define a ComputedStyles interface
@@ -45,6 +47,8 @@ export interface ComputedStyles {
   borderBottom: number;
   borderLeft: number;
   borderColor: RGB;
+  alignContentHorizontally: 'start' | 'center' | 'end';
+  alignContentVertically: 'start' | 'center' | 'end';
 }
 export interface CalculatedPositionAdjustment {
   contentX: number; // x position adjustment for text
@@ -63,25 +67,13 @@ export abstract class Element {
     if (!this._positionAdjustment) {
       // debugger
       this._positionAdjustment = {
-        contentX:
-          this.computedStyles.paddingLeft +
-          this.computedStyles.marginLeft +
-          this.computedStyles.borderLeft,
-        contentY: -(
-          0.75 * this.computedStyles.fontSize +
-          this.computedStyles.paddingTop +
-          this.computedStyles.marginTop +
-          this.computedStyles.borderTop
-        ),
+        contentX: this.calculateContentXAdjustment(),
+        contentY: this.calculateContentYAdjustment(),
         boxX: this.computedStyles.marginLeft + this.computedStyles.borderLeft,
         boxY: -(
-          // 0.25 * this.computedStyles.fontSize +
-          (
-            this.innerHeight +
-            this.computedStyles.marginTop +
-            // this.computedStyles.borderTop +
-            this.computedStyles.borderTop
-          )
+          this.innerHeight +
+          this.computedStyles.marginTop +
+          this.computedStyles.borderTop
         ),
       };
     }
@@ -92,6 +84,8 @@ export abstract class Element {
   protected parentWidth!: number;
   protected position!: { x: number; y: number };
   protected font!: PDFFont;
+
+  showBoxes: boolean = false;
 
   protected get computedStyles(): ComputedStyles {
     if (!this._computedStyles) this._computedStyles = this.computeStyles();
@@ -116,19 +110,24 @@ export abstract class Element {
     this.styles = { ...this.styles, ...styles };
   }
 
-  async render(
-    page: PDFPage,
-    parentWidth: number,
-    x: number,
-    y: number
-  ): Promise<void> {
+  async init(page: PDFPage) {
     this.page = page;
+    this.font = await this.page.doc.embedFont(this.computedStyles.font);
+
+    if (this.children)
+      for (const child of this.children) await child.init(page);
+  }
+
+  async render(parentWidth: number, x: number, y: number): Promise<void> {
+    if (!this.page)
+      throw new Error('Element must be initialized before rendering');
+
     this.parentWidth = parentWidth;
     this.position = { x, y };
     this._computedStyles = this.computeStyles();
-    this.font = await this.page.doc.embedFont(this.computedStyles.font);
     if (this.preDraw) await this.preDraw();
     this.drawBackground();
+    if (this.showBoxes) this.drawBoxes();
     await this.draw();
     this.drawBorder();
   }
@@ -153,6 +152,10 @@ export abstract class Element {
     );
   }
 
+  private readonly _children?: Element[] | undefined; // Abstract inner height property
+  public get children(): Element[] | undefined {
+    return this._children;
+  }
   protected preDraw?(): Promise<void>;
   protected abstract draw(): Promise<void>;
 
@@ -192,7 +195,9 @@ export abstract class Element {
       borderRight: 0,
       borderBottom: 0,
       borderLeft: 0,
-      borderColor: rgb(0, 0, 0), // default black border
+      borderColor: rgb(0, 0, 0),
+      alignContentHorizontally: 'start',
+      alignContentVertically: 'start',
     };
 
     let computedFontName = 'Helvetica';
@@ -256,6 +261,13 @@ export abstract class Element {
       this.styles.border ??
       defaultStyles.borderLeft;
 
+    const alignContentHorizontally =
+      this.styles['align-content-horizontally'] ??
+      defaultStyles.alignContentHorizontally;
+    const alignContentVertically =
+      this.styles['align-content-vertically'] ??
+      defaultStyles.alignContentVertically;
+
     return {
       font: computedFont,
       fontSize: computedFontSize,
@@ -280,6 +292,8 @@ export abstract class Element {
       borderColor: this.styles['border-color']
         ? hexToRgb(this.styles['border-color'])
         : defaultStyles.borderColor,
+      alignContentHorizontally,
+      alignContentVertically,
     };
   }
 
@@ -345,6 +359,47 @@ export abstract class Element {
     }
   }
 
+  drawBoxes() {
+    const s = this.computedStyles;
+    const colors = {
+      margin: hexToRgb('#a87132'),
+      // border: hexToRgb('#bf9667'),
+      padding: hexToRgb('#96bf67'),
+      inner: hexToRgb('#5d75a6'),
+      content: hexToRgb('#a65da1'),
+    };
+    this.page.drawRectangle({
+      x: this.position.x,
+      y: this.position.y - this.height,
+      width: this.width,
+      height: this.height,
+      color: colors.margin,
+    });
+    this.page.drawRectangle({
+      x: this.position.x + this.positionAdjustment.boxX,
+      y: this.position.y + this.positionAdjustment.boxY,
+      width: this.innerWidth,
+      height: this.innerHeight,
+      color: colors.padding,
+    });
+    const innerAreaHeight = this.innerHeight - s.paddingTop - s.paddingBottom;
+    this.page.drawRectangle({
+      x: this.position.x + this.positionAdjustment.boxX + s.paddingLeft,
+      y: this.position.y + this.positionAdjustment.boxY + s.paddingTop,
+      width: this.innerWidth - s.paddingLeft - s.paddingRight,
+      height: innerAreaHeight,
+      color: colors.inner,
+    });
+    this.page.drawRectangle({
+      x: this.position.x + this.positionAdjustment.contentX,
+      y:
+        this.position.y + this.positionAdjustment.contentY - this.contentHeight,
+      width: this.contentWidth,
+      height: this.contentHeight,
+      color: colors.content,
+    });
+  }
+
   drawBackground() {
     const { backgroundColor } = this.computedStyles;
     if (
@@ -359,6 +414,76 @@ export abstract class Element {
         height: this.innerHeight,
         color: backgroundColor,
       });
+    }
+  }
+
+  private calculateContentYAdjustment(): number {
+    // Destructure commonly used style properties for better readability and efficiency
+    const {
+      paddingTop,
+      marginTop,
+      borderTop,
+      paddingBottom,
+      marginBottom,
+      borderBottom,
+      alignContentVertically,
+    } = this.computedStyles;
+
+    // Pre-calculate offsets and adjustments
+    const totalTopOffset = paddingTop + marginTop + borderTop;
+    const totalBottomOffset = paddingBottom + marginBottom + borderBottom;
+    const contentHeightAdjustment = this.contentHeight;
+    const containerHeightAdjustment = this.height - totalBottomOffset;
+
+    switch (alignContentVertically) {
+      case 'start':
+        // Align content to the start (top)
+        return -totalTopOffset;
+      case 'end':
+        // Align content to the end (bottom)
+        return -(containerHeightAdjustment - contentHeightAdjustment);
+      case 'center': {
+        // Align content to the center
+        const centerOffset = (this.innerHeight - contentHeightAdjustment) / 2;
+        return -(marginTop + borderTop + centerOffset);
+      }
+      default:
+        throw new Error('Illegal align value');
+    }
+  }
+
+  private calculateContentXAdjustment(): number {
+    // Destructure commonly used style properties for better readability and efficiency
+    const {
+      paddingLeft,
+      marginLeft,
+      borderLeft,
+      paddingRight,
+      marginRight,
+      borderRight,
+      alignContentHorizontally,
+    } = this.computedStyles;
+
+    // Pre-calculate offsets and adjustments
+    const totalLeftOffset = paddingLeft + marginLeft + borderLeft;
+    const totalRightOffset = paddingRight + marginRight + borderRight;
+    const contentWidthAdjustment = this.contentWidth;
+    const containerWidthAdjustment = this.width - contentWidthAdjustment;
+
+    switch (alignContentHorizontally) {
+      case 'start':
+        // Align content to the start (left)
+        return totalLeftOffset;
+      case 'end':
+        // Align content to the end (right)
+        return containerWidthAdjustment - totalRightOffset;
+      case 'center': {
+        // Align content to the center
+        const centerOffset = (this.innerWidth - contentWidthAdjustment) / 2;
+        return marginLeft + borderLeft + centerOffset;
+      }
+      default:
+        throw new Error('Illegal align value');
     }
   }
 }

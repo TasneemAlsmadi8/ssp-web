@@ -22,20 +22,20 @@ export class ParagraphElement extends Element {
   }
 
   get textWidth(): number {
-    const height = this.font?.widthOfTextAtSize(
-      this.textContent,
-      this.computedStyles.fontSize
-    );
-    if (!height) throw new Error('Font is undefined!');
+    const width = this.textContent
+      .split('\n')
+      .map((text) => {
+        return this.font.widthOfTextAtSize(text, this.computedStyles.fontSize);
+      })
+      .reduce((max, cur) => (cur > max ? cur : max), 0);
 
-    console.log(height);
-    return height;
+    return width;
   }
 
   get contentHeight(): number {
+    const lineSpacing = 2;
     const textHeight =
-      this.textContent.split('\n').length * this.fontHeight + 2;
-    // debugger
+      this.textContent.split('\n').length * (this.fontHeight + lineSpacing);
     return textHeight;
   }
 
@@ -45,7 +45,10 @@ export class ParagraphElement extends Element {
 
   protected async draw(): Promise<void> {
     const { fontSize, color } = this.computedStyles;
-    const { contentX: textX, contentY: textY } = this.positionAdjustment;
+    let { contentX: textX, contentY: textY } = this.positionAdjustment;
+
+    textY -= this.fontHeight * 0.79; // for characters under the line (g, q, y, ...)
+    // textY += this.contentHeight - this.fontHeight; // to start first line from top instead of bottom
 
     const lines = this.textContent.split('\n');
 

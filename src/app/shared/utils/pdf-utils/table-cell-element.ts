@@ -1,14 +1,14 @@
 import { ParagraphElement } from './paragraph-element';
 
 export class TableCellElement extends ParagraphElement {
-  private _height?: number;
+  private _heightDiff?: number;
 
-  override get height() {
-    if (this._height) return this._height;
-    return super.height;
+  override get innerHeight() {
+    return super.innerHeight + (this._heightDiff ?? 0);
   }
 
-  override set height(value: number) {
-    this._height = value;
+  setHeight(value: number) {
+    // if( value < this.height) throw new Error("Can not set height smaller than content");
+    this._heightDiff = value - this.height;
   }
 }

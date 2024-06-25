@@ -63,9 +63,10 @@ export class PdfBuilder {
       rowHeaders?: boolean;
       headerStyles?: Style;
       cellStyles?: Style;
+      tableStyles?: Style;
     }
   ): TableElement {
-    const { rowHeaders, headerStyles, cellStyles } = options ?? {};
+    const { rowHeaders, headerStyles, cellStyles, tableStyles } = options ?? {};
 
     const data: TableCell[][] = [];
     const keys: any[] = Object.keys(obj);
@@ -104,7 +105,7 @@ export class PdfBuilder {
       }
     }
 
-    return this.createTable(data, cellStyles);
+    return this.createTable(data, tableStyles, cellStyles);
   }
 
   async download(): Promise<void> {
@@ -140,7 +141,8 @@ export class PdfBuilder {
     let yOffset = this.pageOptions.height - this.pageOptions.marginTop;
 
     for (const element of this.elements) {
-      await element.render(page, page.getWidth() - 100, 50, yOffset);
+      await element.init(page);
+      await element.render(page.getWidth() - 100, 50, yOffset);
       yOffset -= element.height; // Adjust spacing
     }
 
