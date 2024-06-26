@@ -83,16 +83,19 @@ export class ReportsLeaveBalanceComponent
   onSubmit() {
     this.isLoading = true;
     const { leaveType, toDate } = this.form.value;
+    const input = { leaveCode: leaveType, toDate };
     this.leaveBalanceService
-      .getReport(leaveType, toDate)
+      .getReport(input)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
           console.log(res);
-          this.leaveBalanceService.downloadPdf(res);
         },
         error: (err: HttpErrorResponse) => {
-          this.userAlertService.showError('Error!');
+          this.userAlertService.showError(
+            'Error!',
+            'No data returned for the report'
+          );
           console.log(err);
         },
       })

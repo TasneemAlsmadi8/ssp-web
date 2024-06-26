@@ -2,13 +2,15 @@ import { Injectable } from '@angular/core';
 import { BaseService } from '../../base/base.service';
 import { HttpClient } from '@angular/common/http';
 import { LocalUserService } from '../local-user.service';
-import { Observable, map } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import {
   LeaveBalanceReport,
   LeaveBalanceReportApi,
+  LeaveBalanceReportInput,
 } from '../../interfaces/reports/leave-balance';
 import { PageOptions, PdfBuilder } from '../../utils/pdf-utils/pdf-builder';
 import { Style } from '../../utils/pdf-utils/abstract-element';
+import { DatePipe } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
@@ -16,7 +18,11 @@ import { Style } from '../../utils/pdf-utils/abstract-element';
 export class LeaveBalanceReportService extends BaseService {
   private url = this.baseUrl;
 
-  constructor(private http: HttpClient, private userService: LocalUserService) {
+  constructor(
+    private http: HttpClient,
+    private userService: LocalUserService,
+    private datePipe: DatePipe
+  ) {
     super();
   }
 
@@ -25,56 +31,139 @@ export class LeaveBalanceReportService extends BaseService {
   }
 
   getReport(
-    leaveCode: string,
-    toDate: string // yyyy-mm-dd
+    input: LeaveBalanceReportInput,
+    download: boolean = true
   ): Observable<LeaveBalanceReport> {
+    let { leaveCode, toDate } = input;
     toDate = toDate.replaceAll('-', '');
     const url =
       this.url +
       `/LeaveBalanceReport?EmployeeID=${this.user.id}&LeaveType=${leaveCode}&ToDate=${toDate}&UILang=???`;
-    return this.http
-      .get<LeaveBalanceReportApi[]>(url, this.httpOptions)
-      .pipe(map((response) => LeaveBalanceAdapter.apiToModel(response[0])));
+    return this.http.get<LeaveBalanceReportApi[]>(url, this.httpOptions).pipe(
+      map((response) => LeaveBalanceAdapter.apiToModel(response[0])),
+      tap((data) => {
+        if (download) this.downloadPdf(input, data);
+      })
+    );
   }
 
-  downloadPdf(data: LeaveBalanceReport) {
-    const templatePage: PageOptions = {
-      height: 0,
-      width: 0,
-      marginTop: 0,
-      marginLeft: 0,
+  private downloadPdf(
+    input: LeaveBalanceReportInput,
+    data: LeaveBalanceReport
+  ) {
+    const templatePage: Partial<PageOptions> = {
+      // height: 0,
+      // width: 0,
+      marginTop: 70,
+      marginBottom: 50,
+      marginLeft: 20,
+      marginRight: 20,
     };
-    const builder = new PdfBuilder('Leave Balance Report.pdf');
+    const builder = new PdfBuilder('Leave Balance Report.pdf', templatePage);
 
-    builder.createHeading(6, 'Leave Balance Report', {
-      'border-bottom': 1,
-      'margin-bottom': 15,
-      'align-content-horizontally': 'center',
+    const headerContainer = builder.createHorizontalContainer({
+      styles: {},
     });
+    // headerContainer.showBoxes = true;
 
-    // builder.createParagraph(JSON.stringify(data, null, 8), {
-    //   'background-color': '#fccb83',
-    // });
+    const title = builder.createParagraph('Leave Balance Report', {
+      styles: {
+        // 'border-bottom': 1,
+        // 'margin-bottom': 15,
+        'margin-left': 30,
+        'font-size': 14,
+        'font-weight': 'bold',
+        'align-content-horizontally': 'center',
+        'align-content-vertically': 'center',
+      },
+      standalone: true,
+    });
+    headerContainer.addElement(title, { percent: 100, pixels: -50 });
+    // title.showBoxes = true;
+
+    const headerSide = builder.createVerticalContainer({ standalone: true });
+    headerContainer.addElement(headerSide, { pixels: 50 });
+    // headerSide.showBoxes = true;
+
+    const pageNum = builder.createParagraph('Page 1 of 1', {
+      styles: {
+        'margin-bottom': 3,
+        'font-size': 8,
+        'align-content-horizontally': 'end',
+        // 'align-content-vertically': 'center',
+      },
+      standalone: true,
+    });
+    headerSide.addElement(pageNum);
+
+    const todayParagraph = builder.createParagraph(
+      this.formatDateToDisplay(new Date()),
+      {
+        styles: {
+          'font-size': 8,
+          'align-content-horizontally': 'end',
+          // 'align-content-vertically': 'center',
+        },
+        standalone: true,
+      }
+    );
+    headerSide.addElement(todayParagraph);
+
+    builder.createParagraph(
+      `To Date:  ${this.formatDateToDisplay(new Date(input.toDate))}`,
+      {
+        styles: {
+          'font-size': 12,
+          'font-weight': 'bold',
+          'margin-bottom': 5,
+          padding: 10,
+          'border-bottom': 2,
+        },
+      }
+    );
+
 
     const cellStyles: Style = {
-      'align-content-vertically': 'center',
+      // 'align-content-vertically': 'center',
       'align-content-horizontally': 'center',
+      'font-size': 8,
+      'background-color': '#dddddd',
+      border: 0,
     };
 
-    const displayData = convertObjectKeysToSentences(data);
-    builder.createTableFromObject(displayData, {
+    const displayData = {
+      'S.N.': 1,
+      'Employee Code': data.employeeCode,
+      'Employee Name': data.fullName,
+      'Leave Type': data.leaveCode,
+      Entitlement: data.entitlement,
+      'Opening Balance': data.openingBalance,
+      'Earned Leaves': data.earnedLeaves,
+      'Taken Leaves': data.takenLeaves,
+      'Encashed Leaves': data.encashedDays,
+      'Leave Balance': data.leaveBalance,
+      'Vacation Value': data.paidVacationValue,
+    };
+    const table = builder.createTableFromObject(displayData, {
       cellStyles,
       headerStyles: {
         ...cellStyles,
-        color: '#171436',
-        'background-color': '#dddddd',
+        'background-color': '#ffffff',
         'font-weight': 'bold',
-        'font-size': 16,
-        'align-content-horizontally': 'start',
       },
+      rowHeaders: true,
     });
+    // table.rows[0].cells.forEach((cell) => (cell.showBoxes = true));
+    // console.log(table.rows[0].cells[4]);
 
     builder.download();
+  }
+
+  private formatDateToDisplay(date: Date): string {
+    const result = this.datePipe.transform(date, 'dd/MM/yyyy');
+    if (!result) throw new Error('Invalid Date');
+
+    return result;
   }
 }
 

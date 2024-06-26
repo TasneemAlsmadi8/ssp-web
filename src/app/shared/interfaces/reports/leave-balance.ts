@@ -25,6 +25,11 @@ export interface LeaveBalanceReport {
   paidVacationValue: number; // decimal string
 }
 
+export interface LeaveBalanceReportInput {
+  leaveCode: string;
+  toDate: string; // yyyy-mm-dd
+}
+
 export interface LeaveBalanceReportApi {
   empID: string;
   employeeCode: string;

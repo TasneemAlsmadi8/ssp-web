@@ -9,6 +9,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from './shared/shared/shared.module';
+import { DatePipe } from '@angular/common';
 
 @NgModule({
   declarations: [AppComponent, PageNotFoundComponent],
@@ -21,7 +22,7 @@ import { SharedModule } from './shared/shared/shared.module';
     HttpClientModule,
     SharedModule,
   ],
-  providers: [],
+  providers: [DatePipe],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
