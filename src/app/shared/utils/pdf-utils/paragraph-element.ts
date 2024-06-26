@@ -6,12 +6,43 @@ export class ParagraphElement extends Element {
   constructor() {
     super();
     this.textContent = '';
-    this.setStyle('font-size', 14);
+    this.setStyle('font-size', 12);
     this.setStyle('color', '#000000');
     this.setStyle('padding', 2);
   }
   setTextContent(text: string) {
     this.textContent = text;
+  }
+
+  private wrapText() {
+    if (this.contentWidth <= this.innerWidth) {
+      return;
+    }
+
+    const words = this.textContent.split(' ');
+    let wrappedText = '';
+    let currentLine = '';
+
+    for (const word of words) {
+      const testLine =
+        currentLine.length === 0 ? word : currentLine + ' ' + word;
+      const testWidth = this.getTextWidth(testLine);
+
+      if (testWidth > this.innerWidth) {
+        if (currentLine.length > 0) {
+          wrappedText += currentLine + '\n';
+        }
+        currentLine = word;
+      } else {
+        currentLine = testLine;
+      }
+    }
+
+    if (currentLine.length > 0) {
+      wrappedText += currentLine;
+    }
+
+    this.textContent = wrappedText;
   }
 
   get fontHeight(): number {
@@ -21,8 +52,8 @@ export class ParagraphElement extends Element {
     return height;
   }
 
-  get textWidth(): number {
-    const width = this.textContent
+  getTextWidth(text: string): number {
+    const width = text
       .split('\n')
       .map((text) => {
         return this.font.widthOfTextAtSize(text, this.computedStyles.fontSize);
@@ -40,21 +71,25 @@ export class ParagraphElement extends Element {
   }
 
   get contentWidth(): number {
-    return this.textWidth; // TODO: check if this take \n in consideration
+    return this.getTextWidth(this.textContent);
   }
 
   protected async draw(): Promise<void> {
     const { fontSize, color } = this.computedStyles;
-    let { contentX: textX, contentY: textY } = this.positionAdjustment;
+    let { contentY: textY } = this.positionAdjustment;
 
-    textY -= this.fontHeight * 0.79; // for characters under the line (g, q, y, ...)
-    // textY += this.contentHeight - this.fontHeight; // to start first line from top instead of bottom
+    textY += this.fontHeight * (0.21 - 1);
+    // 0.21 -> for characters under the line (g, q, y, ...)
+    // -1 -> to start first line from top instead of bottom
 
     const lines = this.textContent.split('\n');
 
     for (let index = 0; index < lines.length; index++) {
       const line = lines[index];
       const lineOffset = -fontSize * index;
+      let textX = this.calculateContentXAdjustment(this.getTextWidth(line));
+      // to apply alignment on each line separately
+
       this.page.drawText(line, {
         x: this.position.x + textX,
         y: this.position.y + textY + lineOffset,
@@ -63,5 +98,14 @@ export class ParagraphElement extends Element {
         color,
       });
     }
+  }
+
+  override async preRender(preRenderArgs: {
+    x?: number;
+    y?: number;
+    maxWidth?: number;
+  }): Promise<void> {
+    super.preRender(preRenderArgs);
+    this.wrapText();
   }
 }

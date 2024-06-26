@@ -3,74 +3,124 @@ import { Element, Style } from './abstract-element';
 import { HeadingElement } from './heading-element';
 import { ParagraphElement } from './paragraph-element';
 import { TableCell, TableElement } from './table-element';
+import { HorizontalContainerElement } from './horizontal-container-element';
+import { VerticalContainerElement } from './vertical-container-element';
 
 export interface PageOptions {
   height: number;
   width: number;
   marginTop: number;
+  marginBottom: number;
   marginLeft: number;
+  marginRight: number;
   templateUrl?: string;
 }
 
 export class PdfBuilder {
   elements: Element[] = [];
   pdfDoc!: PDFDocument;
+  private pageOptions: PageOptions;
 
-  constructor(
-    public fileName: string,
-    private pageOptions: PageOptions = {
+  constructor(public fileName: string, pageOptions?: Partial<PageOptions>) {
+    this.pageOptions = {
       height: 841.89,
       width: 595.28,
       marginTop: 50,
+      marginBottom: 50,
       marginLeft: 50,
-    }
-  ) {}
+      marginRight: 50,
+    };
+    if (pageOptions) this.pageOptions = { ...this.pageOptions, ...pageOptions };
+  }
 
-  createHeading(level: number, text?: string, styles?: Style): Element {
+  createHeading(
+    level: number,
+    text: string,
+    options?: { styles?: Style; standalone?: boolean }
+  ): HeadingElement {
+    const { styles, standalone } = options ?? {};
+
     const elem = new HeadingElement(level);
-    this.elements.push(elem);
-    if (text) elem.setTextContent(text);
+    elem.setTextContent(text);
     if (styles) elem.setStyles(styles);
+
+    if (!standalone) this.elements.push(elem);
     return elem;
   }
-  createParagraph(text?: string, styles?: Style): Element {
-    const elem = new ParagraphElement();
-    this.elements.push(elem);
+  createParagraph(
+    text: string,
+    options?: { styles?: Style; standalone?: boolean }
+  ): ParagraphElement {
+    const { styles, standalone } = options ?? {};
 
-    if (text) elem.setTextContent(text);
+    const elem = new ParagraphElement();
+    elem.setTextContent(text);
     if (styles) elem.setStyles(styles);
+
+    if (!standalone) this.elements.push(elem);
     return elem;
   }
 
   createTable(
     data: TableCell[][],
-    styles?: Style,
-    cellStyles?: Style
+    options?: { styles?: Style; standalone?: boolean; cellStyles?: Style }
   ): TableElement {
+    const { styles, cellStyles, standalone } = options ?? {};
+
     const elem = new TableElement();
-    this.elements.push(elem);
     for (const row of data) {
       elem.addRow(row);
     }
     if (cellStyles) elem.setCellStyles(cellStyles);
     if (styles) elem.setStyles(styles);
+
+    if (!standalone) this.elements.push(elem);
+    return elem;
+  }
+  createHorizontalContainer(options?: {
+    styles?: Style;
+    standalone?: boolean;
+  }): HorizontalContainerElement {
+    const { styles, standalone } = options ?? {};
+
+    const elem = new HorizontalContainerElement();
+    if (styles) elem.setStyles(styles);
+
+    if (!standalone) this.elements.push(elem);
+    return elem;
+  }
+
+  createVerticalContainer(options?: {
+    styles?: Style;
+    standalone?: boolean;
+  }): VerticalContainerElement {
+    const { styles, standalone } = options ?? {};
+
+    const elem = new VerticalContainerElement();
+    if (styles) elem.setStyles(styles);
+
+    if (!standalone) this.elements.push(elem);
     return elem;
   }
 
   createTableFromObject(
-    obj: any,
+    obj: {
+      [key: string]: string | number | null | undefined;
+    },
     options?: {
       rowHeaders?: boolean;
       headerStyles?: Style;
       cellStyles?: Style;
       tableStyles?: Style;
+      standalone?: boolean;
     }
   ): TableElement {
-    const { rowHeaders, headerStyles, cellStyles, tableStyles } = options ?? {};
+    const { rowHeaders, headerStyles, cellStyles, tableStyles, standalone } =
+      options ?? {};
 
     const data: TableCell[][] = [];
-    const keys: any[] = Object.keys(obj);
-    const values: any[] = Object.values(obj);
+    const keys = Object.keys(obj);
+    const values = Object.values(obj).map((value) => value?.toString() ?? '-');
 
     if (rowHeaders) {
       // Add headers as the first row
@@ -80,24 +130,18 @@ export class PdfBuilder {
       }));
       data.push(headerRow);
 
-      for (let i = 0; i < values.length; i++) {
-        const row: TableCell[] = Array.isArray(values[i])
-          ? values[i].map((val: any) => ({
-              text: val.toString(),
-              styles: cellStyles,
-            }))
-          : [{ text: values[i].toString(), styles: cellStyles }];
-        data.push(row);
-      }
+      const row: TableCell[] = values.map((values) => ({
+        text: values,
+        styles: cellStyles,
+      }));
+      data.push(row);
     } else {
       // Add headers as the first column
       for (let i = 0; i < keys.length; i++) {
         const row: TableCell[] = [
           { text: keys[i], styles: headerStyles },
           {
-            text: Array.isArray(values[i])
-              ? values[i].join(', ')
-              : values[i].toString(),
+            text: values[i],
             styles: cellStyles,
           },
         ];
@@ -105,7 +149,11 @@ export class PdfBuilder {
       }
     }
 
-    return this.createTable(data, tableStyles, cellStyles);
+    return this.createTable(data, {
+      styles: tableStyles,
+      cellStyles,
+      standalone,
+    });
   }
 
   async download(): Promise<void> {
@@ -140,9 +188,20 @@ export class PdfBuilder {
 
     let yOffset = this.pageOptions.height - this.pageOptions.marginTop;
 
+    const writableWidth =
+      page.getWidth() -
+      this.pageOptions.marginLeft -
+      this.pageOptions.marginRight;
+
     for (const element of this.elements) {
+      console.log(this.pageOptions);
+      console.log(writableWidth);
       await element.init(page);
-      await element.render(page.getWidth() - 100, 50, yOffset);
+      await element.render({
+        x: this.pageOptions.marginLeft,
+        y: yOffset,
+        maxWidth: writableWidth,
+      });
       yOffset -= element.height; // Adjust spacing
     }
 

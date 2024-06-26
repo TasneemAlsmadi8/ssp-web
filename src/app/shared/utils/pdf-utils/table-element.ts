@@ -39,7 +39,7 @@ export class TableElement extends Element implements ContainerElement {
 
     return row.reduce(
       (max: number, curr) => (curr.height > max ? curr.height : max),
-      row[0].height
+      row[0]?.height
     );
   }
 
@@ -84,11 +84,14 @@ export class TableElement extends Element implements ContainerElement {
 
     for (let index = 0; index < this.rows.length; index++) {
       const row = this.rows[index];
+      for (const cell of row.cells) {
+        cell.preRender({ maxWidth: cellWidth });
+      }
       const rowHeight = this.getRowHeight(index);
       let cursorX = this.position.x + this.positionAdjustment.contentX;
       for (const cell of row.cells) {
         cell.setHeight(rowHeight);
-        await cell.render(cellWidth, cursorX, cursorY);
+        await cell.render({ x: cursorX, y: cursorY });
 
         cursorX += cellWidth;
       }

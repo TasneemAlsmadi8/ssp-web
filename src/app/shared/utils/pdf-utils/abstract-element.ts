@@ -65,6 +65,8 @@ export abstract class Element {
   private styles: Style;
   private _computedStyles?: ComputedStyles;
 
+  private _heightDiff?: number;
+
   private _positionAdjustment?: CalculatedPositionAdjustment;
   protected get positionAdjustment(): CalculatedPositionAdjustment {
     if (!this._positionAdjustment) {
@@ -90,6 +92,15 @@ export abstract class Element {
 
   showBoxes: boolean = false;
 
+  private _isPreRenderDone = false;
+  private get isPreRenderDone(): boolean {
+    return (
+      this._isPreRenderDone &&
+      this.maxWidth !== undefined &&
+      this.position?.x !== undefined &&
+      this.position?.y !== undefined
+    );
+  }
   protected get computedStyles(): ComputedStyles {
     if (!this._computedStyles) this._computedStyles = this.computeStyles();
     return this._computedStyles;
@@ -113,6 +124,11 @@ export abstract class Element {
     this.styles = { ...this.styles, ...styles };
   }
 
+  setHeight(value: number) {
+    // if( value < this.height) throw new Error("Can not set height smaller than content");
+    this._heightDiff = value - this.height;
+  }
+
   async init(page: PDFPage) {
     this.page = page;
     this.font = await this.page.doc.embedFont(this.computedStyles.font);
@@ -121,13 +137,33 @@ export abstract class Element {
       for (const child of this.children) await child.init(page);
   }
 
-  async render(maxWidth: number, x: number, y: number): Promise<void> {
+  async preRender(preRenderArgs: {
+    x?: number;
+    y?: number;
+    maxWidth?: number;
+  }) {
+    const { x, y, maxWidth } = preRenderArgs;
     if (!this.page)
       throw new Error('Element must be initialized before rendering');
 
-    this.maxWidth = maxWidth;
-    this.position = { x, y };
+    if (maxWidth) this.maxWidth = maxWidth;
+    if (x && y) this.position = { x, y };
     this._computedStyles = this.computeStyles();
+
+    this._isPreRenderDone = true;
+  }
+
+  async render(preRenderArgs?: {
+    x?: number;
+    y?: number;
+    maxWidth?: number;
+  }): Promise<void> {
+    if (preRenderArgs) this.preRender(preRenderArgs);
+    if (!this.isPreRenderDone)
+      throw new Error(
+        'Pre render calculation is not fully done.\nEither call preRender with all arguments, or fully provide preRenderArgs'
+      );
+
     if (this.preDraw) await this.preDraw();
     this.drawBackground();
     if (this.showBoxes) this.drawBoxes();
@@ -155,9 +191,11 @@ export abstract class Element {
     );
   }
 
-  private readonly _children?: Element[] | undefined; // Abstract inner height property
-  public get children(): Element[] | undefined {
-    return this._children;
+  protected _children?: Element[] | undefined; // Abstract inner height property
+
+  get children(): Element[] {
+    if (!this._children) return [];
+    return [...this._children];
   }
   protected preDraw?(): Promise<void>;
   protected abstract draw(): Promise<void>;
@@ -166,7 +204,8 @@ export abstract class Element {
     return (
       this.contentHeight +
       this.computedStyles.paddingTop +
-      this.computedStyles.paddingBottom
+      this.computedStyles.paddingBottom +
+      (this._heightDiff ?? 0)
     );
   }
   get innerWidth(): number {
@@ -420,7 +459,7 @@ export abstract class Element {
     }
   }
 
-  private calculateContentYAdjustment(): number {
+  protected calculateContentYAdjustment(customContentHeight?: number): number {
     // Destructure commonly used style properties for better readability and efficiency
     const {
       paddingTop,
@@ -435,7 +474,7 @@ export abstract class Element {
     // Pre-calculate offsets and adjustments
     const totalTopOffset = paddingTop + marginTop + borderTop;
     const totalBottomOffset = paddingBottom + marginBottom + borderBottom;
-    const contentHeightAdjustment = this.contentHeight;
+    const contentHeightAdjustment = customContentHeight ?? this.contentHeight;
     const containerHeightAdjustment = this.height - totalBottomOffset;
 
     switch (alignContentVertically) {
@@ -448,14 +487,16 @@ export abstract class Element {
       case 'center': {
         // Align content to the center
         const centerOffset = (this.innerHeight - contentHeightAdjustment) / 2;
-        return -(marginTop + borderTop + centerOffset);
+        const centerPos = -(marginTop + borderTop + centerOffset);
+        const startPos = -totalTopOffset;
+        return centerPos > startPos ? startPos : centerPos;
       }
       default:
         throw new Error('Illegal align value');
     }
   }
 
-  private calculateContentXAdjustment(): number {
+  protected calculateContentXAdjustment(customContentWidth?: number): number {
     // Destructure commonly used style properties for better readability and efficiency
     const {
       paddingLeft,
@@ -470,7 +511,7 @@ export abstract class Element {
     // Pre-calculate offsets and adjustments
     const totalLeftOffset = paddingLeft + marginLeft + borderLeft;
     const totalRightOffset = paddingRight + marginRight + borderRight;
-    const contentWidthAdjustment = this.contentWidth;
+    const contentWidthAdjustment = customContentWidth ?? this.contentWidth;
     const containerWidthAdjustment = this.width - contentWidthAdjustment;
 
     switch (alignContentHorizontally) {
@@ -483,7 +524,9 @@ export abstract class Element {
       case 'center': {
         // Align content to the center
         const centerOffset = (this.innerWidth - contentWidthAdjustment) / 2;
-        return marginLeft + borderLeft + centerOffset;
+        const centerPos = marginLeft + borderLeft + centerOffset;
+        const startPos = totalLeftOffset;
+        return centerPos < startPos ? startPos : centerPos;
       }
       default:
         throw new Error('Illegal align value');
