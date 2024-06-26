@@ -78,11 +78,13 @@ export class LeaveBalanceReportService extends BaseService {
       },
       standalone: true,
     });
-    headerContainer.addElement(title, { percent: 100, pixels: -50 });
+    headerContainer.addElement(title, {
+      maxWidth: { percent: 100, pixels: -50 },
+    });
     // title.showBoxes = true;
 
     const headerSide = builder.createVerticalContainer({ standalone: true });
-    headerContainer.addElement(headerSide, { pixels: 50 });
+    headerContainer.addElement(headerSide, { maxWidth: { pixels: 50 } });
     // headerSide.showBoxes = true;
 
     const pageNum = builder.createParagraph('Page 1 of 1', {
@@ -121,7 +123,6 @@ export class LeaveBalanceReportService extends BaseService {
         },
       }
     );
-
 
     const cellStyles: Style = {
       // 'align-content-vertically': 'center',

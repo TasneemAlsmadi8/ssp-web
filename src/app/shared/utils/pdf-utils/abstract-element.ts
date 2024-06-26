@@ -57,9 +57,14 @@ export interface CalculatedPositionAdjustment {
   boxY: number; // y position adjustment for background box
 }
 
-export interface ContainerElement {
+export interface ParentElement {
   readonly children: Element[];
 }
+
+export interface ContainerElement extends ParentElement {
+  addElement(element: Element, options?: { [key: string]: any }): void;
+}
+
 // Define an abstract base class for an Element
 export abstract class Element {
   private styles: Style;

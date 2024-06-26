@@ -1,4 +1,4 @@
-import { Style, Element, ContainerElement } from './abstract-element';
+import { Element, ContainerElement } from './abstract-element';
 
 export interface Width {
   pixels?: number;
@@ -35,9 +35,9 @@ export class HorizontalContainerElement
     );
   }
 
-  addElement(element: Element, maxWidth: Width) {
+  addElement(element: Element, options: { maxWidth: Width }) {
     this._children!.push(element);
-    this.childrenWidth.push(maxWidth);
+    this.childrenWidth.push(options.maxWidth);
   }
 
   private calculateWidth(width: Width): number {

@@ -1,9 +1,4 @@
-import { Style, Element, ContainerElement } from './abstract-element';
-
-export interface Width {
-  pixels?: number;
-  percent?: number;
-}
+import { Element, ContainerElement } from './abstract-element';
 
 export class VerticalContainerElement
   extends Element
