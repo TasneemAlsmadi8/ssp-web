@@ -41,6 +41,7 @@ export class PdfParser {
       case 't':
         return this.parseTable(elementJson, standalone);
       case 'object-table':
+      case 'obj-table':
       case 'o-table':
         return this.parseObjectTable(elementJson, standalone);
       case 'horizontal-container':

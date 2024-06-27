@@ -28,8 +28,8 @@ export interface TableElementJson extends BaseElementJson {
   cellStyles?: Style;
 }
 export interface ObjectTableElementJson extends BaseElementJson {
-  type: 'object-table' | 'o-table';
-  data: { [key: string]: string | number | null | undefined }[];
+  type: 'object-table' | 'o-table' | 'obj-table';
+  data: Array<{ [key: string]: string | number | null | undefined }>;
   rowHeaders?: boolean;
   headerStyles?: Style;
   cellStyles?: Style;
