@@ -149,9 +149,9 @@ export class LeaveBalanceReportService extends BaseService {
     };
 
     const parser = new PdfParser(leaveBalanceReportJson);
-    const builder = parser.parse();
+    const pdfBuilder = parser.parse();
     // builder.elements[0].showBoxes = true;
-    builder.download();
+    pdfBuilder.download();
   }
 
   private formatDateToDisplay(date: Date): string {
