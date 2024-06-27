@@ -1,5 +1,5 @@
-import { Style } from './abstract-element';
-import { PageOptions } from './pdf-builder';
+import { Style } from '../elements/abstract-element';
+import { PageOptions } from '../pdf-builder';
 
 export interface BaseElementJson extends Record<string, any> {
   type: string;

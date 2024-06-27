@@ -9,10 +9,10 @@ import {
   LeaveBalanceReportInput,
 } from '../../interfaces/reports/leave-balance';
 import { PageOptions, PdfBuilder } from '../../utils/pdf-utils/pdf-builder';
-import { Style } from '../../utils/pdf-utils/abstract-element';
+import { Style } from '../../utils/pdf-utils/elements/abstract-element';
 import { DatePipe } from '@angular/common';
-import { PdfJson } from '../../utils/pdf-utils/element-json-types';
-import { PdfParser } from '../../utils/pdf-utils/pdf-parser';
+import { PdfJson } from '../../utils/pdf-utils/parser/element-json-types';
+import { PdfParser } from '../../utils/pdf-utils/parser/pdf-parser';
 
 @Injectable({
   providedIn: 'root',

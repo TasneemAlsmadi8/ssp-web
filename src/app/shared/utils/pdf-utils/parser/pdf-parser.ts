@@ -1,6 +1,6 @@
-import { PdfBuilder } from './pdf-builder';
-import { Element } from './abstract-element';
-import { Width } from './horizontal-container-element';
+import { PdfBuilder } from '../pdf-builder';
+import { Element } from '../elements/abstract-element';
+import { Width } from '../elements/horizontal-container-element';
 import {
   BaseElementJson,
   ElementJson,

@@ -1,10 +1,10 @@
 import { PDFDocument, PDFPage } from 'pdf-lib';
-import { Element, Style } from './abstract-element';
-import { HeadingElement } from './heading-element';
-import { ParagraphElement } from './paragraph-element';
-import { TableCell, TableElement } from './table-element';
-import { HorizontalContainerElement } from './horizontal-container-element';
-import { VerticalContainerElement } from './vertical-container-element';
+import { Element, Style } from './elements/abstract-element';
+import { HeadingElement } from './elements/heading-element';
+import { ParagraphElement } from './elements/paragraph-element';
+import { TableCell, TableElement } from './elements/table-element';
+import { HorizontalContainerElement } from './elements/horizontal-container-element';
+import { VerticalContainerElement } from './elements/vertical-container-element';
 
 export interface PageOptions {
   height: number;
