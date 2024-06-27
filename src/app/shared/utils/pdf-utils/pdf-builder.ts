@@ -103,10 +103,10 @@ export class PdfBuilder {
     return elem;
   }
 
-  createTableFromObject(
-    obj: {
+  createTableFromArrayOfObjects(
+    data: Array<{
       [key: string]: string | number | null | undefined;
-    },
+    }>,
     options?: {
       rowHeaders?: boolean;
       headerStyles?: Style;
@@ -118,9 +118,17 @@ export class PdfBuilder {
     const { rowHeaders, headerStyles, cellStyles, tableStyles, standalone } =
       options ?? {};
 
-    const data: TableCell[][] = [];
-    const keys = Object.keys(obj);
-    const values = Object.values(obj).map((value) => value?.toString() ?? '-');
+    const tableData: TableCell[][] = [];
+
+    if (data.length === 0) {
+      return this.createTable(tableData, {
+        styles: tableStyles,
+        cellStyles,
+        standalone,
+      });
+    }
+
+    const keys = Object.keys(data[0]);
 
     if (rowHeaders) {
       // Add headers as the first row
@@ -128,33 +136,88 @@ export class PdfBuilder {
         text: key,
         styles: headerStyles,
       }));
-      data.push(headerRow);
+      tableData.push(headerRow);
 
-      const row: TableCell[] = values.map((values) => ({
-        text: values,
-        styles: cellStyles,
-      }));
-      data.push(row);
+      data.forEach((obj) => {
+        const row: TableCell[] = keys.map((key) => ({
+          text: obj[key]?.toString() ?? '-',
+          styles: cellStyles,
+        }));
+        tableData.push(row);
+      });
     } else {
       // Add headers as the first column
       for (let i = 0; i < keys.length; i++) {
-        const row: TableCell[] = [
-          { text: keys[i], styles: headerStyles },
-          {
-            text: values[i],
+        const row: TableCell[] = [{ text: keys[i], styles: headerStyles }];
+        data.forEach((obj) => {
+          row.push({
+            text: obj[keys[i]]?.toString() ?? '-',
             styles: cellStyles,
-          },
-        ];
-        data.push(row);
+          });
+        });
+        tableData.push(row);
       }
     }
 
-    return this.createTable(data, {
+    return this.createTable(tableData, {
       styles: tableStyles,
       cellStyles,
       standalone,
     });
   }
+
+  // createTableFromObject(
+  //   obj: {
+  //     [key: string]: string | number | null | undefined;
+  //   },
+  //   options?: {
+  //     rowHeaders?: boolean;
+  //     headerStyles?: Style;
+  //     cellStyles?: Style;
+  //     tableStyles?: Style;
+  //     standalone?: boolean;
+  //   }
+  // ): TableElement {
+  //   const { rowHeaders, headerStyles, cellStyles, tableStyles, standalone } =
+  //     options ?? {};
+
+  //   const data: TableCell[][] = [];
+  //   const keys = Object.keys(obj);
+  //   const values = Object.values(obj).map((value) => value?.toString() ?? '-');
+
+  //   if (rowHeaders) {
+  //     // Add headers as the first row
+  //     const headerRow: TableCell[] = keys.map((key) => ({
+  //       text: key,
+  //       styles: headerStyles,
+  //     }));
+  //     data.push(headerRow);
+
+  //     const row: TableCell[] = values.map((values) => ({
+  //       text: values,
+  //       styles: cellStyles,
+  //     }));
+  //     data.push(row);
+  //   } else {
+  //     // Add headers as the first column
+  //     for (let i = 0; i < keys.length; i++) {
+  //       const row: TableCell[] = [
+  //         { text: keys[i], styles: headerStyles },
+  //         {
+  //           text: values[i],
+  //           styles: cellStyles,
+  //         },
+  //       ];
+  //       data.push(row);
+  //     }
+  //   }
+
+  //   return this.createTable(data, {
+  //     styles: tableStyles,
+  //     cellStyles,
+  //     standalone,
+  //   });
+  // }
 
   async download(): Promise<void> {
     // Generate the PDF

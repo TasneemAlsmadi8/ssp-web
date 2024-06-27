@@ -11,6 +11,8 @@ import {
 import { PageOptions, PdfBuilder } from '../../utils/pdf-utils/pdf-builder';
 import { Style } from '../../utils/pdf-utils/abstract-element';
 import { DatePipe } from '@angular/common';
+import { PdfJson } from '../../utils/pdf-utils/element-json-types';
+import { PdfParser } from '../../utils/pdf-utils/pdf-parser';
 
 @Injectable({
   providedIn: 'root',
@@ -51,112 +53,104 @@ export class LeaveBalanceReportService extends BaseService {
     input: LeaveBalanceReportInput,
     data: LeaveBalanceReport
   ) {
-    const templatePage: Partial<PageOptions> = {
-      // height: 0,
-      // width: 0,
-      marginTop: 70,
-      marginBottom: 50,
-      marginLeft: 20,
-      marginRight: 20,
-    };
-    const builder = new PdfBuilder('Leave Balance Report.pdf', templatePage);
-
-    const headerContainer = builder.createHorizontalContainer({
-      styles: {},
-    });
-    // headerContainer.showBoxes = true;
-
-    const title = builder.createParagraph('Leave Balance Report', {
-      styles: {
-        // 'border-bottom': 1,
-        // 'margin-bottom': 15,
-        'margin-left': 30,
-        'font-size': 14,
-        'font-weight': 'bold',
-        'align-content-horizontally': 'center',
-        'align-content-vertically': 'center',
+    const leaveBalanceReportJson: PdfJson = {
+      fileName: 'Leave Balance Report.pdf',
+      pageOptions: {
+        marginTop: 70,
+        marginBottom: 50,
+        marginLeft: 20,
+        marginRight: 20,
       },
-      standalone: true,
-    });
-    headerContainer.addElement(title, {
-      maxWidth: { percent: 100, pixels: -50 },
-    });
-    // title.showBoxes = true;
-
-    const headerSide = builder.createVerticalContainer({ standalone: true });
-    headerContainer.addElement(headerSide, { maxWidth: { pixels: 50 } });
-    // headerSide.showBoxes = true;
-
-    const pageNum = builder.createParagraph('Page 1 of 1', {
-      styles: {
-        'margin-bottom': 3,
-        'font-size': 8,
-        'align-content-horizontally': 'end',
-        // 'align-content-vertically': 'center',
-      },
-      standalone: true,
-    });
-    headerSide.addElement(pageNum);
-
-    const todayParagraph = builder.createParagraph(
-      this.formatDateToDisplay(new Date()),
-      {
-        styles: {
-          'font-size': 8,
-          'align-content-horizontally': 'end',
-          // 'align-content-vertically': 'center',
+      elements: [
+        {
+          type: 'horizontal-container',
+          elements: [
+            {
+              type: 'p',
+              text: 'Leave Balance Report',
+              styles: {
+                'margin-left': 30,
+                'font-size': 14,
+                'font-weight': 'bold',
+                'align-content-horizontally': 'center',
+                'align-content-vertically': 'center',
+              },
+            },
+            {
+              type: 'vertical-container',
+              elements: [
+                {
+                  type: 'paragraph',
+                  text: 'Page 1 of 1',
+                  styles: {
+                    'margin-bottom': 3,
+                    'font-size': 8,
+                    'align-content-horizontally': 'end',
+                  },
+                },
+                {
+                  type: 'paragraph',
+                  text: this.formatDateToDisplay(new Date()),
+                  styles: {
+                    'font-size': 8,
+                    'align-content-horizontally': 'end',
+                  },
+                },
+              ],
+            },
+          ],
+          widths: ['100%-50', '50'],
         },
-        standalone: true,
-      }
-    );
-    headerSide.addElement(todayParagraph);
-
-    builder.createParagraph(
-      `To Date:  ${this.formatDateToDisplay(new Date(input.toDate))}`,
-      {
-        styles: {
-          'font-size': 12,
-          'font-weight': 'bold',
-          'margin-bottom': 5,
-          padding: 10,
-          'border-bottom': 2,
+        {
+          type: 'paragraph',
+          text: `To Date:  ${this.formatDateToDisplay(new Date(input.toDate))}`,
+          styles: {
+            'font-size': 12,
+            'font-weight': 'bold',
+            'margin-bottom': 5,
+            padding: 10,
+            'border-bottom': 2,
+          },
         },
-      }
-    );
-
-    const cellStyles: Style = {
-      // 'align-content-vertically': 'center',
-      'align-content-horizontally': 'center',
-      'font-size': 8,
-      'background-color': '#dddddd',
-      border: 0,
+        {
+          type: 'object-table',
+          data: [
+            {
+              'S.N.': 1,
+              'Employee Code': data.employeeCode,
+              'Employee Name': data.fullName,
+              'Leave Type': data.leaveCode,
+              Entitlement: data.entitlement,
+              'Opening Balance': data.openingBalance,
+              'Earned Leaves': data.earnedLeaves,
+              'Taken Leaves': data.takenLeaves,
+              'Encashed Leaves': data.encashedDays,
+              'Leave Balance': data.leaveBalance,
+              'Vacation Value': data.paidVacationValue,
+            },
+          ],
+          rowHeaders: true,
+          cellStyles: {
+            'align-content-horizontally': 'center',
+            'font-size': 8,
+            'background-color': '#dddddd',
+            border: 0,
+          },
+          headerStyles: {
+            'align-content-horizontally': 'center',
+            'font-size': 8,
+            'background-color': '#ffffff',
+            'font-weight': 'bold',
+            border: 0,
+          },
+          tableStyles: {},
+        },
+      ],
     };
 
-    const displayData = {
-      'S.N.': 1,
-      'Employee Code': data.employeeCode,
-      'Employee Name': data.fullName,
-      'Leave Type': data.leaveCode,
-      Entitlement: data.entitlement,
-      'Opening Balance': data.openingBalance,
-      'Earned Leaves': data.earnedLeaves,
-      'Taken Leaves': data.takenLeaves,
-      'Encashed Leaves': data.encashedDays,
-      'Leave Balance': data.leaveBalance,
-      'Vacation Value': data.paidVacationValue,
-    };
-    const table = builder.createTableFromObject(displayData, {
-      cellStyles,
-      headerStyles: {
-        ...cellStyles,
-        'background-color': '#ffffff',
-        'font-weight': 'bold',
-      },
-      rowHeaders: true,
-    });
-    // table.rows[0].cells.forEach((cell) => (cell.showBoxes = true));
-    // console.log(table.rows[0].cells[4]);
-
+    const parser = new PdfParser(leaveBalanceReportJson);
+    const builder = parser.parse();
+    // builder.elements[0].showBoxes = true;
     builder.download();
   }
 
