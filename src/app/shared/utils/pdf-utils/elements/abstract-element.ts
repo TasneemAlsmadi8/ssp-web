@@ -1,10 +1,7 @@
-import {
-  ElementStyleCalculator,
-} from './element-styles';
+import { ElementStyleCalculator } from './element-styles';
 import {
   Style,
   ComputedStyles,
-  CustomFont,
   CalculatedPositionAdjustment,
   hexToRgb,
 } from './element-styles';
@@ -19,9 +16,7 @@ export interface ContainerElement extends ParentElement {
 }
 export abstract class Element {
   private styles: Style;
-  private _computedStyles?: ComputedStyles;
-
-  private _heightDiff?: number;
+  protected computedStyles!: ComputedStyles;
 
   private _positionAdjustment?: CalculatedPositionAdjustment;
   protected get positionAdjustment(): CalculatedPositionAdjustment {
@@ -42,13 +37,17 @@ export abstract class Element {
     return this._positionAdjustment;
   }
 
+  protected font!: PDFFont;
+
   protected page!: PDFPage;
   protected maxWidth!: number;
   protected position!: { x: number; y: number };
-  protected font!: PDFFont;
+
+  private _heightDiff?: number;
 
   showBoxes: boolean = false;
 
+  private isInitDone = false;
   private _isPreRenderDone = false;
 
   private get isPreRenderDone(): boolean {
@@ -59,21 +58,18 @@ export abstract class Element {
       this.position?.y !== undefined
     );
   }
-  protected get computedStyles(): ComputedStyles {
-    if (!this._computedStyles)
-      this._computedStyles = ElementStyleCalculator.computeStyles(this.styles);
-    return this._computedStyles;
-  }
   constructor() {
     this.styles = {};
   }
 
   setStyle(name: keyof Style, value: string | number) {
+    if (this.isInitDone) throw new Error('Can not change styles after init');
+
     this.styles[name] = value;
-    this._computedStyles = undefined;
   }
 
   setStyles(styles: Style) {
+    if (this.isInitDone) throw new Error('Can not change styles after init');
     const removeUndefined = <T = any>(obj: any): T =>
       Object.fromEntries(
         Object.entries(obj).filter(([_, v]) => v !== undefined)
@@ -84,22 +80,22 @@ export abstract class Element {
   }
 
   setHeight(value: number) {
+    if (this.isPreRenderDone)
+      throw new Error('Can not change height after preRender');
     // if( value < this.height) throw new Error("Can not set height smaller than content");
     this._heightDiff = value - this.height;
   }
 
-  addCustomFont(customFont: CustomFont) {
-    ElementStyleCalculator.addCustomFont(customFont);
-  }
-
   async init(page: PDFPage) {
     this.page = page;
-    if (!this.font) {
-      this.font = await this.page.doc.embedFont(this.computedStyles.font);
-    }
+
+    this.computedStyles = ElementStyleCalculator.computeStyles(this.styles);
+    this.font = await this.page.doc.embedFont(this.computedStyles.font);
 
     if (this.children)
       for (const child of this.children) await child.init(page);
+
+    this.isInitDone = true;
   }
 
   async preRender(preRenderArgs: {
@@ -108,13 +104,11 @@ export abstract class Element {
     maxWidth?: number;
   }) {
     const { x, y, maxWidth } = preRenderArgs;
-    if (!this.page)
+    if (!this.isInitDone)
       throw new Error('Element must be initialized before rendering');
 
     if (maxWidth) this.maxWidth = maxWidth;
     if (x && y) this.position = { x, y };
-    if (!this._computedStyles)
-      this._computedStyles = ElementStyleCalculator.computeStyles(this.styles);
 
     this._isPreRenderDone = true;
   }
@@ -137,6 +131,9 @@ export abstract class Element {
     this.drawBorder();
   }
 
+  protected preDraw?(): Promise<void>;
+  protected abstract draw(): Promise<void>;
+
   get height(): number {
     return (
       this.innerHeight +
@@ -146,7 +143,6 @@ export abstract class Element {
       this.computedStyles.borderBottom
     );
   }
-
   get width(): number {
     return (
       this.innerWidth +
@@ -156,15 +152,6 @@ export abstract class Element {
       this.computedStyles.borderRight
     );
   }
-
-  protected _children?: Element[] | undefined; // Abstract inner height property
-
-  get children(): Element[] {
-    if (!this._children) return [];
-    return [...this._children];
-  }
-  protected preDraw?(): Promise<void>;
-  protected abstract draw(): Promise<void>;
 
   get innerHeight(): number {
     return (
@@ -182,8 +169,16 @@ export abstract class Element {
       this.computedStyles.marginRight
     );
   }
+
   abstract readonly contentHeight: number; // Abstract inner height property
   abstract readonly contentWidth: number; // Abstract inner width property
+
+  protected _children?: Element[] | undefined;
+
+  get children(): Element[] {
+    if (!this._children) return [];
+    return [...this._children];
+  }
 
   drawBorder() {
     const { borderTop, borderRight, borderBottom, borderLeft, borderColor } =
@@ -305,7 +300,7 @@ export abstract class Element {
     }
   }
 
-  protected calculateContentYAdjustment(customContentHeight: number): number {
+  protected getCustomContentYAdjustment(customContentHeight: number): number {
     return ElementStyleCalculator.calculateContentYAdjustment(
       this.computedStyles,
       {
@@ -317,7 +312,7 @@ export abstract class Element {
     );
   }
 
-  protected calculateContentXAdjustment(customContentWidth: number): number {
+  protected getCustomContentXAdjustment(customContentWidth: number): number {
     return ElementStyleCalculator.calculateContentXAdjustment(
       this.computedStyles,
       {

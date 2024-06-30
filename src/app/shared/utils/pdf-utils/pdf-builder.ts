@@ -1,7 +1,7 @@
 import { PDFDocument, PDFPage } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import { Element } from './elements/abstract-element';
-import { CustomFont } from './elements/element-styles';
+import { CustomFont, ElementStyleCalculator } from './elements/element-styles';
 import { Style } from './elements/element-styles';
 import { HeadingElement } from './elements/heading-element';
 import { ParagraphElement } from './elements/paragraph-element';
@@ -23,7 +23,6 @@ export class PdfBuilder {
   elements: Element[] = [];
   pdfDoc!: PDFDocument;
   private pageOptions: PageOptions;
-  private customFonts: CustomFont[] = [];
 
   constructor(public fileName: string, pageOptions?: Partial<PageOptions>) {
     this.pageOptions = {
@@ -38,16 +37,7 @@ export class PdfBuilder {
   }
 
   addCustomFont(customFont: CustomFont) {
-    this.customFonts.push(customFont);
-    for (const element of this.elements) {
-      element.addCustomFont(customFont);
-    }
-  }
-
-  private applyCustomFonts(element: Element) {
-    for (const font of this.customFonts) {
-      element.addCustomFont(font);
-    }
+    ElementStyleCalculator.addCustomFont(customFont);
   }
 
   createHeading(
@@ -62,7 +52,6 @@ export class PdfBuilder {
     if (styles) elem.setStyles(styles);
 
     if (!standalone) this.elements.push(elem);
-    this.applyCustomFonts(elem);
     return elem;
   }
   createParagraph(
@@ -76,7 +65,6 @@ export class PdfBuilder {
     if (styles) elem.setStyles(styles);
 
     if (!standalone) this.elements.push(elem);
-    this.applyCustomFonts(elem);
     return elem;
   }
 
@@ -94,7 +82,6 @@ export class PdfBuilder {
     if (styles) elem.setStyles(styles);
 
     if (!standalone) this.elements.push(elem);
-    this.applyCustomFonts(elem);
     return elem;
   }
   createHorizontalContainer(options?: {
@@ -107,7 +94,6 @@ export class PdfBuilder {
     if (styles) elem.setStyles(styles);
 
     if (!standalone) this.elements.push(elem);
-    this.applyCustomFonts(elem);
     return elem;
   }
   async addFontFromUrl(options: {
@@ -170,7 +156,6 @@ export class PdfBuilder {
     if (styles) elem.setStyles(styles);
 
     if (!standalone) this.elements.push(elem);
-    this.applyCustomFonts(elem);
     return elem;
   }
 

@@ -156,7 +156,7 @@ export class ParagraphElement extends Element {
       const segments = this.splitIntoDirectionalSegments(line);
       console.log(segments);
       const lineOffset = -fontSize * index;
-      let textX = this.calculateContentXAdjustment(this.getTextWidth(line));
+      let textX = this.getCustomContentXAdjustment(this.getTextWidth(line));
 
       if (segments.length === 1 || isParagraphLtr) {
         for (const segment of segments) {
