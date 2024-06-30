@@ -1,4 +1,6 @@
-import { Style, Element, ParentElement } from './abstract-element';
+import { ParentElement } from './abstract-element';
+import { Element } from './abstract-element';
+import { Style } from './element-styles';
 import { TableCellElement } from './table-cell-element';
 
 export interface TableCell {

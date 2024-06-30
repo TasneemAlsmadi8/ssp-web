@@ -1,4 +1,4 @@
-import { Style } from '../elements/abstract-element';
+import { Style } from '../elements/element-styles';
 import { PageOptions } from '../pdf-builder';
 
 export interface BaseElementJson extends Record<string, any> {

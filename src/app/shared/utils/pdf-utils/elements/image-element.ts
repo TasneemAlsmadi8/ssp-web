@@ -1,5 +1,6 @@
 import { PDFDocument, PDFImage, PDFPage, rgb } from 'pdf-lib';
-import { ComputedStyles, Element } from './abstract-element';
+import { Element } from './abstract-element';
+import { ComputedStyles } from './element-styles';
 
 export class ImageElement extends Element {
   imageUrl: string;

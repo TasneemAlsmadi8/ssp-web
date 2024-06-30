@@ -1,61 +1,14 @@
-import { rgb, PDFPage, PDFFont, RGB, StandardFonts } from 'pdf-lib';
-
-// Define a Style interface
-export interface Style {
-  [key: string]: string | number | undefined;
-  font?: 'TimesRoman' | 'Helvetica' | 'Courier' | string;
-  'font-size'?: number;
-  'font-weight'?: 'normal' | 'bold';
-  color?: string;
-  'background-color'?: string;
-  margin?: number;
-  'margin-top'?: number;
-  'margin-right'?: number;
-  'margin-bottom'?: number;
-  'margin-left'?: number;
-  padding?: number;
-  'padding-top'?: number;
-  'padding-right'?: number;
-  'padding-bottom'?: number;
-  'padding-left'?: number;
-  border?: number;
-  'border-color'?: string;
-  'border-top'?: number;
-  'border-right'?: number;
-  'border-bottom'?: number;
-  'border-left'?: number;
-  'align-content-horizontally'?: 'start' | 'center' | 'end';
-  'align-content-vertically'?: 'start' | 'center' | 'end';
-}
-
-// Define a ComputedStyles interface
-export interface ComputedStyles {
-  font: StandardFonts | FontRawBytes;
-  fontSize: number;
-  color: RGB;
-  backgroundColor: RGB;
-  paddingTop: number;
-  paddingRight: number;
-  paddingBottom: number;
-  paddingLeft: number;
-  marginTop: number;
-  marginRight: number;
-  marginBottom: number;
-  marginLeft: number;
-  borderTop: number;
-  borderRight: number;
-  borderBottom: number;
-  borderLeft: number;
-  borderColor: RGB;
-  alignContentHorizontally: 'start' | 'center' | 'end';
-  alignContentVertically: 'start' | 'center' | 'end';
-}
-export interface CalculatedPositionAdjustment {
-  contentX: number; // x position adjustment for text
-  contentY: number; // y position adjustment for text
-  boxX: number; // x position adjustment for background box
-  boxY: number; // y position adjustment for background box
-}
+import {
+  ElementStyleCalculator,
+} from './element-styles';
+import {
+  Style,
+  ComputedStyles,
+  CustomFont,
+  CalculatedPositionAdjustment,
+  hexToRgb,
+} from './element-styles';
+import { PDFPage, PDFFont } from 'pdf-lib';
 
 export interface ParentElement {
   readonly children: Element[];
@@ -64,47 +17,27 @@ export interface ParentElement {
 export interface ContainerElement extends ParentElement {
   addElement(element: Element, options?: { [key: string]: any }): void;
 }
-
-/**
- * | Type            | Contents                                                |
- * | --------------- | ------------------------------------------------------- |
- * | `StandardFonts` | One of the standard 14 fonts                            |
- * | `string`        | A base64 encoded string (or data URI) containing a font |
- * | `Uint8Array`    | The raw bytes of a font                                 |
- * | `ArrayBuffer`   | The raw bytes of a font                                 |
- */
-export type FontRawBytes = StandardFonts | string | Uint8Array | ArrayBuffer;
-
-export interface CustomFont {
-  name: string;
-  fontBytes: {
-    normal: FontRawBytes;
-    bold?: FontRawBytes;
-  };
-}
-
-// Define an abstract base class for an Element
 export abstract class Element {
   private styles: Style;
   private _computedStyles?: ComputedStyles;
-  private customFonts: CustomFont[] = [];
 
   private _heightDiff?: number;
 
   private _positionAdjustment?: CalculatedPositionAdjustment;
   protected get positionAdjustment(): CalculatedPositionAdjustment {
     if (!this._positionAdjustment) {
-      // debugger
-      this._positionAdjustment = {
-        contentX: this.calculateContentXAdjustment(),
-        contentY: this.calculateContentYAdjustment(),
-        boxX: this.computedStyles.marginLeft + this.computedStyles.borderLeft,
-        boxY: -(
-          this.innerHeight +
-          this.computedStyles.marginTop +
-          this.computedStyles.borderTop
-        ),
-      };
+      this._positionAdjustment =
+        ElementStyleCalculator.calculatePositionAdjustment(
+          this.computedStyles,
+          {
+            height: this.height,
+            innerHeight: this.innerHeight,
+            contentHeight: this.contentHeight,
+            width: this.width,
+            innerWidth: this.innerWidth,
+            contentWidth: this.contentWidth,
+          }
+        );
     }
     return this._positionAdjustment;
   }
@@ -117,6 +50,7 @@ export abstract class Element {
   showBoxes: boolean = false;
 
   private _isPreRenderDone = false;
+
   private get isPreRenderDone(): boolean {
     return (
       this._isPreRenderDone &&
@@ -126,7 +60,8 @@ export abstract class Element {
     );
   }
   protected get computedStyles(): ComputedStyles {
-    if (!this._computedStyles) this._computedStyles = this.computeStyles();
+    if (!this._computedStyles)
+      this._computedStyles = ElementStyleCalculator.computeStyles(this.styles);
     return this._computedStyles;
   }
   constructor() {
@@ -154,31 +89,7 @@ export abstract class Element {
   }
 
   addCustomFont(customFont: CustomFont) {
-    this.customFonts.push(customFont);
-    if (this.children)
-      for (const child of this.children) {
-        child.addCustomFont(customFont);
-      }
-  }
-
-  getComputedFont(defaultFontName: string): StandardFonts | FontRawBytes {
-    let fontName = this.styles['font'] ?? defaultFontName;
-    let font: StandardFonts | FontRawBytes;
-    if (fontName in StandardFonts) {
-      if (this.styles['font']) fontName = this.styles['font'];
-      if (this.styles['font-weight'] === 'bold') fontName += 'Bold';
-
-      font = StandardFonts[fontName as keyof typeof StandardFonts];
-      return font;
-    }
-    let customFont = this.customFonts.find((value) => fontName === value.name);
-    if (customFont) {
-      if (this.styles['font-weight'] === 'bold' && customFont.fontBytes.bold)
-        return customFont.fontBytes.bold;
-      return customFont.fontBytes.normal;
-    }
-
-    throw new Error(`Font ${fontName} Not Found`);
+    ElementStyleCalculator.addCustomFont(customFont);
   }
 
   async init(page: PDFPage) {
@@ -202,7 +113,8 @@ export abstract class Element {
 
     if (maxWidth) this.maxWidth = maxWidth;
     if (x && y) this.position = { x, y };
-    if (!this._computedStyles) this._computedStyles = this.computeStyles();
+    if (!this._computedStyles)
+      this._computedStyles = ElementStyleCalculator.computeStyles(this.styles);
 
     this._isPreRenderDone = true;
   }
@@ -272,118 +184,6 @@ export abstract class Element {
   }
   abstract readonly contentHeight: number; // Abstract inner height property
   abstract readonly contentWidth: number; // Abstract inner width property
-
-  private computeStyles(): ComputedStyles {
-    const defaultStyles: ComputedStyles = {
-      font: StandardFonts.Helvetica,
-      fontSize: 14,
-      color: rgb(0, 0, 0),
-      backgroundColor: rgb(1, 1, 1), // white background
-      paddingTop: 0,
-      paddingRight: 0,
-      paddingBottom: 0,
-      paddingLeft: 0,
-      marginTop: 0,
-      marginRight: 0,
-      marginBottom: 0,
-      marginLeft: 0,
-      borderTop: 0,
-      borderRight: 0,
-      borderBottom: 0,
-      borderLeft: 0,
-      borderColor: rgb(0, 0, 0),
-      alignContentHorizontally: 'start',
-      alignContentVertically: 'start',
-    };
-
-    const computedFont = this.getComputedFont(defaultStyles.font.toString());
-    const computedFontSize = this.styles['font-size'] ?? defaultStyles.fontSize;
-    const computedPaddingTop =
-      this.styles['padding-top'] ??
-      this.styles.padding ??
-      defaultStyles.paddingTop;
-    const computedPaddingRight =
-      this.styles['padding-right'] ??
-      this.styles.padding ??
-      defaultStyles.paddingRight;
-    const computedPaddingBottom =
-      this.styles['padding-bottom'] ??
-      this.styles.padding ??
-      defaultStyles.paddingBottom;
-    const computedPaddingLeft =
-      this.styles['padding-left'] ??
-      this.styles.padding ??
-      defaultStyles.paddingLeft;
-
-    const computedMarginTop =
-      this.styles['margin-top'] ??
-      this.styles.margin ??
-      defaultStyles.marginTop;
-    const computedMarginRight =
-      this.styles['margin-right'] ??
-      this.styles.margin ??
-      defaultStyles.marginRight;
-    const computedMarginBottom =
-      this.styles['margin-bottom'] ??
-      this.styles.margin ??
-      defaultStyles.marginBottom;
-    const computedMarginLeft =
-      this.styles['margin-left'] ??
-      this.styles.margin ??
-      defaultStyles.marginLeft;
-
-    const computedBorderTop =
-      this.styles['border-top'] ??
-      this.styles.border ??
-      defaultStyles.borderTop;
-    const computedBorderRight =
-      this.styles['border-right'] ??
-      this.styles.border ??
-      defaultStyles.borderRight;
-    const computedBorderBottom =
-      this.styles['border-bottom'] ??
-      this.styles.border ??
-      defaultStyles.borderBottom;
-    const computedBorderLeft =
-      this.styles['border-left'] ??
-      this.styles.border ??
-      defaultStyles.borderLeft;
-
-    const alignContentHorizontally =
-      this.styles['align-content-horizontally'] ??
-      defaultStyles.alignContentHorizontally;
-    const alignContentVertically =
-      this.styles['align-content-vertically'] ??
-      defaultStyles.alignContentVertically;
-
-    return {
-      font: computedFont,
-      fontSize: computedFontSize,
-      color: this.styles['color']
-        ? hexToRgb(this.styles['color'])
-        : defaultStyles.color,
-      backgroundColor: this.styles['background-color']
-        ? hexToRgb(this.styles['background-color'])
-        : defaultStyles.backgroundColor,
-      paddingTop: computedPaddingTop,
-      paddingRight: computedPaddingRight,
-      paddingBottom: computedPaddingBottom,
-      paddingLeft: computedPaddingLeft,
-      marginTop: computedMarginTop,
-      marginRight: computedMarginRight,
-      marginBottom: computedMarginBottom,
-      marginLeft: computedMarginLeft,
-      borderTop: computedBorderTop,
-      borderRight: computedBorderRight,
-      borderBottom: computedBorderBottom,
-      borderLeft: computedBorderLeft,
-      borderColor: this.styles['border-color']
-        ? hexToRgb(this.styles['border-color'])
-        : defaultStyles.borderColor,
-      alignContentHorizontally,
-      alignContentVertically,
-    };
-  }
 
   drawBorder() {
     const { borderTop, borderRight, borderBottom, borderLeft, borderColor } =
@@ -505,86 +305,27 @@ export abstract class Element {
     }
   }
 
-  protected calculateContentYAdjustment(customContentHeight?: number): number {
-    // Destructure commonly used style properties for better readability and efficiency
-    const {
-      paddingTop,
-      marginTop,
-      borderTop,
-      paddingBottom,
-      marginBottom,
-      borderBottom,
-      alignContentVertically,
-    } = this.computedStyles;
-
-    // Pre-calculate offsets and adjustments
-    const totalTopOffset = paddingTop + marginTop + borderTop;
-    const totalBottomOffset = paddingBottom + marginBottom + borderBottom;
-    const contentHeightAdjustment = customContentHeight ?? this.contentHeight;
-    const containerHeightAdjustment = this.height - totalBottomOffset;
-
-    switch (alignContentVertically) {
-      case 'start':
-        // Align content to the start (top)
-        return -totalTopOffset;
-      case 'end':
-        // Align content to the end (bottom)
-        return -(containerHeightAdjustment - contentHeightAdjustment);
-      case 'center': {
-        // Align content to the center
-        const centerOffset = (this.innerHeight - contentHeightAdjustment) / 2;
-        const centerPos = -(marginTop + borderTop + centerOffset);
-        const startPos = -totalTopOffset;
-        return centerPos > startPos ? startPos : centerPos;
-      }
-      default:
-        throw new Error('Illegal align value');
-    }
+  protected calculateContentYAdjustment(customContentHeight: number): number {
+    return ElementStyleCalculator.calculateContentYAdjustment(
+      this.computedStyles,
+      {
+        height: this.height,
+        innerHeight: this.innerHeight,
+        contentHeight: this.contentHeight,
+      },
+      customContentHeight
+    );
   }
 
-  protected calculateContentXAdjustment(customContentWidth?: number): number {
-    // Destructure commonly used style properties for better readability and efficiency
-    const {
-      paddingLeft,
-      marginLeft,
-      borderLeft,
-      paddingRight,
-      marginRight,
-      borderRight,
-      alignContentHorizontally,
-    } = this.computedStyles;
-
-    // Pre-calculate offsets and adjustments
-    const totalLeftOffset = paddingLeft + marginLeft + borderLeft;
-    const totalRightOffset = paddingRight + marginRight + borderRight;
-    const contentWidthAdjustment = customContentWidth ?? this.contentWidth;
-    const containerWidthAdjustment = this.width - contentWidthAdjustment;
-
-    switch (alignContentHorizontally) {
-      case 'start':
-        // Align content to the start (left)
-        return totalLeftOffset;
-      case 'end':
-        // Align content to the end (right)
-        return containerWidthAdjustment - totalRightOffset;
-      case 'center': {
-        // Align content to the center
-        const centerOffset = (this.innerWidth - contentWidthAdjustment) / 2;
-        const centerPos = marginLeft + borderLeft + centerOffset;
-        const startPos = totalLeftOffset;
-        return centerPos < startPos ? startPos : centerPos;
-      }
-      default:
-        throw new Error('Illegal align value');
-    }
+  protected calculateContentXAdjustment(customContentWidth: number): number {
+    return ElementStyleCalculator.calculateContentXAdjustment(
+      this.computedStyles,
+      {
+        width: this.width,
+        innerWidth: this.innerWidth,
+        contentWidth: this.contentWidth,
+      },
+      customContentWidth
+    );
   }
-}
-
-// Utility function to convert hex color to rgb
-export function hexToRgb(hex: string): RGB {
-  return rgb(
-    parseInt(hex.substring(1, 3), 16) / 255,
-    parseInt(hex.substring(3, 5), 16) / 255,
-    parseInt(hex.substring(5, 7), 16) / 255
-  );
 }

@@ -1,6 +1,8 @@
 import { PDFDocument, PDFPage } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
-import { CustomFont, Element, Style } from './elements/abstract-element';
+import { Element } from './elements/abstract-element';
+import { CustomFont } from './elements/element-styles';
+import { Style } from './elements/element-styles';
 import { HeadingElement } from './elements/heading-element';
 import { ParagraphElement } from './elements/paragraph-element';
 import { TableCell, TableElement } from './elements/table-element';

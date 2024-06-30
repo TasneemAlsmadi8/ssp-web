@@ -1,4 +1,5 @@
-import { Element, ContainerElement } from './abstract-element';
+import { ContainerElement } from './abstract-element';
+import { Element } from './abstract-element';
 
 export class VerticalContainerElement
   extends Element
