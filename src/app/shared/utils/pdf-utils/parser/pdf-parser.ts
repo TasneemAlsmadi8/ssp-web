@@ -15,15 +15,15 @@ import {
 } from './element-json-types';
 
 export class PdfParser {
-  private readonly builder: PdfBuilder;
+  private builder!: PdfBuilder;
 
-  constructor(private pdfJson: PdfJson) {
+  constructor() {}
+
+  parse(pdfJson: PdfJson): PdfBuilder {
     const { fileName, pageOptions } = pdfJson;
     this.builder = new PdfBuilder(fileName, pageOptions);
-  }
 
-  parse(): PdfBuilder {
-    for (const elementJson of this.pdfJson.elements) {
+    for (const elementJson of pdfJson.elements) {
       this.parseElement(elementJson);
     }
     return this.builder;
