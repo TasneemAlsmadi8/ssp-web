@@ -1,5 +1,6 @@
 import { PDFDocument, PDFPage } from 'pdf-lib';
-import { Element, Style } from './elements/abstract-element';
+import fontkit from '@pdf-lib/fontkit';
+import { CustomFont, Element, Style } from './elements/abstract-element';
 import { HeadingElement } from './elements/heading-element';
 import { ParagraphElement } from './elements/paragraph-element';
 import { TableCell, TableElement } from './elements/table-element';
@@ -20,6 +21,7 @@ export class PdfBuilder {
   elements: Element[] = [];
   pdfDoc!: PDFDocument;
   private pageOptions: PageOptions;
+  private customFonts: CustomFont[] = [];
 
   constructor(public fileName: string, pageOptions?: Partial<PageOptions>) {
     this.pageOptions = {
@@ -31,6 +33,19 @@ export class PdfBuilder {
       marginRight: 50,
     };
     if (pageOptions) this.pageOptions = { ...this.pageOptions, ...pageOptions };
+  }
+
+  addCustomFont(customFont: CustomFont) {
+    this.customFonts.push(customFont);
+    for (const element of this.elements) {
+      element.addCustomFont(customFont);
+    }
+  }
+
+  private applyCustomFonts(element: Element) {
+    for (const font of this.customFonts) {
+      element.addCustomFont(font);
+    }
   }
 
   createHeading(
@@ -45,6 +60,7 @@ export class PdfBuilder {
     if (styles) elem.setStyles(styles);
 
     if (!standalone) this.elements.push(elem);
+    this.applyCustomFonts(elem);
     return elem;
   }
   createParagraph(
@@ -58,6 +74,7 @@ export class PdfBuilder {
     if (styles) elem.setStyles(styles);
 
     if (!standalone) this.elements.push(elem);
+    this.applyCustomFonts(elem);
     return elem;
   }
 
@@ -75,6 +92,7 @@ export class PdfBuilder {
     if (styles) elem.setStyles(styles);
 
     if (!standalone) this.elements.push(elem);
+    this.applyCustomFonts(elem);
     return elem;
   }
   createHorizontalContainer(options?: {
@@ -87,7 +105,57 @@ export class PdfBuilder {
     if (styles) elem.setStyles(styles);
 
     if (!standalone) this.elements.push(elem);
+    this.applyCustomFonts(elem);
     return elem;
+  }
+  async addFontFromUrl(options: {
+    name: string;
+    fontUrls: { normal: string; bold?: string };
+    fromCssFile?: boolean;
+  }) {
+    const { name, fontUrls, fromCssFile } = options;
+    let actualFontUrl = fontUrls;
+    if (fromCssFile) {
+      // Fetch the CSS file
+      const fontCss = await fetch(fontUrls.normal).then((res) => res.text());
+
+      // Extract the actual font URL from the CSS file
+      const fontMatch = fontCss.match(/url\((https:\/\/[^)]+)\)/);
+      if (!fontMatch) {
+        throw new Error('Font URL not found in CSS file');
+      }
+
+      actualFontUrl.normal = fontMatch[1];
+      if (fontUrls.bold) {
+        const fontCss = await fetch(fontUrls.bold).then((res) => res.text());
+
+        // Extract the actual font URL from the CSS file
+        const fontMatch = fontCss.match(/url\((https:\/\/[^)]+)\)/);
+        if (!fontMatch) {
+          throw new Error('Font URL not found in CSS file');
+        }
+
+        actualFontUrl.bold = fontMatch[1];
+      }
+    }
+
+    // Fetch the font data
+    const fontNormalArrayBuffer = await fetch(actualFontUrl.normal).then(
+      (res) => res.arrayBuffer()
+    );
+    let fontBoldArrayBuffer;
+    if (actualFontUrl.bold)
+      fontBoldArrayBuffer = await fetch(actualFontUrl.bold).then((res) =>
+        res.arrayBuffer()
+      );
+
+    this.addCustomFont({
+      name,
+      fontBytes: {
+        normal: fontNormalArrayBuffer,
+        bold: fontBoldArrayBuffer,
+      },
+    });
   }
 
   createVerticalContainer(options?: {
@@ -100,6 +168,7 @@ export class PdfBuilder {
     if (styles) elem.setStyles(styles);
 
     if (!standalone) this.elements.push(elem);
+    this.applyCustomFonts(elem);
     return elem;
   }
 
@@ -247,6 +316,8 @@ export class PdfBuilder {
     // const page = pages[0];
 
     this.pdfDoc = await PDFDocument.create();
+    this.pdfDoc.registerFontkit(fontkit);
+
     const page = await this.addPage();
 
     let yOffset = this.pageOptions.height - this.pageOptions.marginTop;
@@ -257,8 +328,8 @@ export class PdfBuilder {
       this.pageOptions.marginRight;
 
     for (const element of this.elements) {
-      console.log(this.pageOptions);
-      console.log(writableWidth);
+      // console.log(this.pageOptions);
+      // console.log(writableWidth);
       await element.init(page);
       await element.render({
         x: this.pageOptions.marginLeft,

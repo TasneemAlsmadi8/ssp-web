@@ -3,7 +3,7 @@ import { rgb, PDFPage, PDFFont, RGB, StandardFonts } from 'pdf-lib';
 // Define a Style interface
 export interface Style {
   [key: string]: string | number | undefined;
-  font?: 'TimesRoman' | 'Helvetica' | 'Courier';
+  font?: 'TimesRoman' | 'Helvetica' | 'Courier' | string;
   'font-size'?: number;
   'font-weight'?: 'normal' | 'bold';
   color?: string;
@@ -30,7 +30,7 @@ export interface Style {
 
 // Define a ComputedStyles interface
 export interface ComputedStyles {
-  font: StandardFonts;
+  font: StandardFonts | FontRawBytes;
   fontSize: number;
   color: RGB;
   backgroundColor: RGB;
@@ -65,10 +65,29 @@ export interface ContainerElement extends ParentElement {
   addElement(element: Element, options?: { [key: string]: any }): void;
 }
 
+/**
+ * | Type            | Contents                                                |
+ * | --------------- | ------------------------------------------------------- |
+ * | `StandardFonts` | One of the standard 14 fonts                            |
+ * | `string`        | A base64 encoded string (or data URI) containing a font |
+ * | `Uint8Array`    | The raw bytes of a font                                 |
+ * | `ArrayBuffer`   | The raw bytes of a font                                 |
+ */
+export type FontRawBytes = StandardFonts | string | Uint8Array | ArrayBuffer;
+
+export interface CustomFont {
+  name: string;
+  fontBytes: {
+    normal: FontRawBytes;
+    bold?: FontRawBytes;
+  };
+}
+
 // Define an abstract base class for an Element
 export abstract class Element {
   private styles: Style;
   private _computedStyles?: ComputedStyles;
+  private customFonts: CustomFont[] = [];
 
   private _heightDiff?: number;
 
@@ -134,9 +153,39 @@ export abstract class Element {
     this._heightDiff = value - this.height;
   }
 
+  addCustomFont(customFont: CustomFont) {
+    this.customFonts.push(customFont);
+    if (this.children)
+      for (const child of this.children) {
+        child.addCustomFont(customFont);
+      }
+  }
+
+  getComputedFont(defaultFontName: string): StandardFonts | FontRawBytes {
+    let fontName = this.styles['font'] ?? defaultFontName;
+    let font: StandardFonts | FontRawBytes;
+    if (fontName in StandardFonts) {
+      if (this.styles['font']) fontName = this.styles['font'];
+      if (this.styles['font-weight'] === 'bold') fontName += 'Bold';
+
+      font = StandardFonts[fontName as keyof typeof StandardFonts];
+      return font;
+    }
+    let customFont = this.customFonts.find((value) => fontName === value.name);
+    if (customFont) {
+      if (this.styles['font-weight'] === 'bold' && customFont.fontBytes.bold)
+        return customFont.fontBytes.bold;
+      return customFont.fontBytes.normal;
+    }
+
+    throw new Error(`Font ${fontName} Not Found`);
+  }
+
   async init(page: PDFPage) {
     this.page = page;
-    this.font = await this.page.doc.embedFont(this.computedStyles.font);
+    if (!this.font) {
+      this.font = await this.page.doc.embedFont(this.computedStyles.font);
+    }
 
     if (this.children)
       for (const child of this.children) await child.init(page);
@@ -153,7 +202,7 @@ export abstract class Element {
 
     if (maxWidth) this.maxWidth = maxWidth;
     if (x && y) this.position = { x, y };
-    this._computedStyles = this.computeStyles();
+    if (!this._computedStyles) this._computedStyles = this.computeStyles();
 
     this._isPreRenderDone = true;
   }
@@ -247,15 +296,7 @@ export abstract class Element {
       alignContentVertically: 'start',
     };
 
-    let computedFontName = 'Helvetica';
-    if (this.styles['font']) computedFontName = this.styles['font'];
-    if (this.styles['font-weight'] === 'bold') computedFontName += 'Bold';
-
-    let computedFont: StandardFonts = defaultStyles.font;
-    if (computedFontName && computedFontName in StandardFonts) {
-      computedFont =
-        StandardFonts[computedFontName as keyof typeof StandardFonts];
-    }
+    const computedFont = this.getComputedFont(defaultStyles.font.toString());
     const computedFontSize = this.styles['font-size'] ?? defaultStyles.fontSize;
     const computedPaddingTop =
       this.styles['padding-top'] ??

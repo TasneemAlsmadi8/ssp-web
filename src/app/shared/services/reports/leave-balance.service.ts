@@ -49,10 +49,23 @@ export class LeaveBalanceReportService extends BaseService {
     );
   }
 
-  private downloadPdf(
+  private async downloadPdf(
     input: LeaveBalanceReportInput,
     data: LeaveBalanceReport
   ) {
+    const tableObj = {
+      'S.N.': 1,
+      'Employee Code': data.employeeCode,
+      'Employee Name': data.fullName,
+      'Leave Type': data.leaveName,
+      Entitlement: data.entitlement,
+      'Opening Balance': data.openingBalance,
+      'Earned Leaves': data.earnedLeaves,
+      'Taken Leaves': data.takenLeaves,
+      'Encashed Leaves': data.encashedDays,
+      'Leave Balance': data.leaveBalance,
+      'Vacation Value': data.paidVacationValue,
+    };
     const leaveBalanceReportJson: PdfJson = {
       fileName: 'Leave Balance Report.pdf',
       pageOptions: {
@@ -114,26 +127,14 @@ export class LeaveBalanceReportService extends BaseService {
         },
         {
           type: 'object-table',
-          data: [
-            {
-              'S.N.': 1,
-              'Employee Code': data.employeeCode,
-              'Employee Name': data.fullName,
-              'Leave Type': data.leaveCode,
-              Entitlement: data.entitlement,
-              'Opening Balance': data.openingBalance,
-              'Earned Leaves': data.earnedLeaves,
-              'Taken Leaves': data.takenLeaves,
-              'Encashed Leaves': data.encashedDays,
-              'Leave Balance': data.leaveBalance,
-              'Vacation Value': data.paidVacationValue,
-            },
-          ],
+          data: [tableObj],
           rowHeaders: true,
           cellStyles: {
             'align-content-horizontally': 'center',
+            font: 'Noto Sans',
             'font-size': 8,
             'background-color': '#dddddd',
+            'font-weight': 'bold',
             border: 0,
           },
           headerStyles: {
@@ -148,9 +149,17 @@ export class LeaveBalanceReportService extends BaseService {
       ],
     };
 
-    const parser = new PdfParser(leaveBalanceReportJson);
-    const pdfBuilder = parser.parse();
-    // builder.elements[0].showBoxes = true;
+    const parser = new PdfParser();
+    const pdfBuilder = parser.parse(leaveBalanceReportJson);
+
+    await pdfBuilder.addFontFromUrl({
+      name: 'Noto Sans',
+      fontUrls: {
+        normal: '/assets/fonts/NotoSansEnglishArabic-Regular.ttf',
+        bold: '/assets/fonts/NotoSansEnglishArabic-Bold.ttf',
+      },
+    });
+
     pdfBuilder.download();
   }
 
