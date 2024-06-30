@@ -146,6 +146,24 @@ export class LeaveBalanceReportService extends BaseService {
           },
           tableStyles: {},
         },
+        {
+          type: 'p',
+          text: 'مرحبا 1 مرحبا 2 مرحبا 3',
+          styles: {
+            font: 'Noto Sans',
+            'font-weight': 'normal',
+            'font-size': 30,
+          },
+        },
+        {
+          type: 'p',
+          text: 'Hello مرحبا',
+          styles: {
+            font: 'Noto Sans',
+            'font-weight': 'bold',
+            'font-size': 30,
+          },
+        },
       ],
     };
 

@@ -23,7 +23,8 @@
       "ES2022",
       "dom"
     ],
-    "typeRoots": ["./node_modules/@angular/material, ./node_modules"]
+    "typeRoots": ["./node_modules/@angular/material, ./node_modules"],
+    "esModuleInterop": true
   },
   "angularCompilerOptions": {
     "enableI18nLegacyMessageIdFormat": false,
