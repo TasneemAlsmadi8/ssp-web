@@ -39,9 +39,10 @@ export class ParagraphElement extends Element {
     let currentDirection: 'ltr' | 'rtl' | null = null;
 
     for (const char of text) {
-      const isLTR = this.isLTR(char);
-      const isRTL = this.isRTL(char);
-      const isNeutral = this.isNeutral(char);
+      let isLTR, isRTL, isNeutral;
+      isLTR = this.isLTR(char);
+      if (!isLTR) isRTL = this.isRTL(char);
+      if (!isRTL) isNeutral = this.isNeutral(char);
 
       if (!isLTR && !isRTL && !isNeutral)
         throw new Error(`Problem in direction detection for char: (${char})`);

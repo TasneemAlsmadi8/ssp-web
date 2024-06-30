@@ -14,6 +14,7 @@ export interface ParentElement {
 export interface ContainerElement extends ParentElement {
   addElement(element: Element, options?: { [key: string]: any }): void;
 }
+
 export abstract class Element {
   private styles: Style;
   protected computedStyles!: ComputedStyles;
