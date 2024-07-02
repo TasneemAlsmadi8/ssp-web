@@ -114,11 +114,13 @@ export abstract class Element {
     this._isPreRenderDone = true;
   }
 
+  @Element.UseFallbackFont
   async render(preRenderArgs?: {
     x?: number;
     y?: number;
     maxWidth?: number;
   }): Promise<void> {
+    // await this.executeWithFallbackFont(async () => {
     if (preRenderArgs) this.preRender(preRenderArgs);
     if (!this.isPreRenderDone)
       throw new Error(
@@ -130,6 +132,7 @@ export abstract class Element {
     if (this.showBoxes) this.drawBoxes();
     await this.draw();
     this.drawBorder();
+    // });
   }
 
   protected preDraw?(): Promise<void>;
@@ -323,5 +326,76 @@ export abstract class Element {
       },
       customContentWidth
     );
+  }
+
+  protected async executeWithFallbackFont(
+    testFunction: (...args: any[]) => any,
+    ...args: any[]
+  ) {
+    try {
+      await testFunction(...args);
+    } catch (e) {
+      if (e instanceof Error && e.message.includes('WinAnsi cannot encode')) {
+        console.error(
+          'Custom font failed, falling back to Noto Sans English/Arabic.'
+        );
+        console.log(this);
+
+        try {
+          this.font = await this.page.doc.embedFont(
+            ElementStyleCalculator.getFallbackFont(this.styles)
+          );
+          await testFunction(...args);
+        } catch (fontError) {
+          console.error('Fallback font embedding failed:', fontError);
+          throw fontError; // Rethrow the error after logging
+        }
+      } else {
+        throw e; // Re-throw if it's a different error
+      }
+    }
+  }
+
+  protected static UseFallbackFont(
+    target: object,
+    methodName: string,
+    descriptor: PropertyDescriptor
+  ): PropertyDescriptor {
+    const originalMethod = descriptor.value;
+
+    console.log(methodName);
+
+    descriptor.value = async function useFallbackFontWrapper(...args: any[]) {
+      try {
+        await originalMethod.apply(this, args);
+      } catch (error) {
+        if (
+          error instanceof Error &&
+          error.message.includes('WinAnsi cannot encode')
+        ) {
+          console.error(
+            'Font failed to encode all characters, falling back to Noto Sans English/Arabic.'
+          );
+          console.log(this);
+          debugger;
+          try {
+            const fallbackFont = await (this as any).page.doc.embedFont(
+              ElementStyleCalculator.getFallbackFont((this as any).styles)
+            );
+            (this as any).font = fallbackFont;
+            await originalMethod.apply(this, args);
+          } catch (fontError: any) {
+            console.error('Fallback font embedding failed:', fontError);
+            throw new Error(
+              `Fallback font embedding failed: ${fontError.message}`
+            );
+          }
+        } else {
+          throw error; // Re-throw if it's a different error
+        }
+      }
+    };
+
+    return descriptor;
   }
 }

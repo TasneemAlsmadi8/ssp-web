@@ -93,8 +93,43 @@ export interface ElementDimensions
 
 export class ElementStyleCalculator {
   private static customFonts: CustomFont[] = [];
+  private static fallbackFontName = 'Noto Sans';
+
+  static getFallbackFont(styles: Style) {
+    return this.computeFont(
+      { ...styles, font: undefined },
+      ElementStyleCalculator.fallbackFontName
+    );
+  }
+
   static addCustomFont(customFont: CustomFont) {
     ElementStyleCalculator.customFonts.push(customFont);
+  }
+
+  static async addFontFromUrl(options: {
+    name: string;
+    fontUrls: { normal: string; bold?: string };
+  }) {
+    const { name, fontUrls } = options;
+    let actualFontUrl = fontUrls;
+
+    // Fetch the font data
+    const fontNormalArrayBuffer = await fetch(actualFontUrl.normal).then(
+      (res) => res.arrayBuffer()
+    );
+    let fontBoldArrayBuffer;
+    if (actualFontUrl.bold)
+      fontBoldArrayBuffer = await fetch(actualFontUrl.bold).then((res) =>
+        res.arrayBuffer()
+      );
+
+    ElementStyleCalculator.addCustomFont({
+      name,
+      fontBytes: {
+        normal: fontNormalArrayBuffer,
+        bold: fontBoldArrayBuffer,
+      },
+    });
   }
 
   static computeStyles(
@@ -189,15 +224,18 @@ export class ElementStyleCalculator {
       alignContentVertically,
     };
   }
+
   static computeFont(
     styles: Style,
     defaultFontName: string
   ): StandardFonts | FontRawBytes {
-    let fontName = styles['font'] ?? defaultFontName;
+    let { font: fontName, 'font-weight': fontWeight } = styles;
     let font: StandardFonts | FontRawBytes;
+
+    fontName = fontName ?? defaultFontName;
+
     if (fontName in StandardFonts) {
-      if (styles['font']) fontName = styles['font'];
-      if (styles['font-weight'] === 'bold') fontName += 'Bold';
+      if (fontWeight === 'bold') fontName += 'Bold';
 
       font = StandardFonts[fontName as keyof typeof StandardFonts];
       return font;
@@ -206,7 +244,7 @@ export class ElementStyleCalculator {
       (value) => fontName === value.name
     );
     if (customFont) {
-      if (styles['font-weight'] === 'bold' && customFont.fontBytes.bold)
+      if (fontWeight === 'bold' && customFont.fontBytes.bold)
         return customFont.fontBytes.bold;
       return customFont.fontBytes.normal;
     }
@@ -316,6 +354,18 @@ export class ElementStyleCalculator {
     }
   }
 }
+
+// TODO: check if this have any problems (race condition), check if there is a better way
+const addDefaultFonts = () => {
+  ElementStyleCalculator.addFontFromUrl({
+    name: 'Noto Sans',
+    fontUrls: {
+      normal: '/assets/fonts/NotoSansEnglishArabic-Regular.ttf',
+      bold: '/assets/fonts/NotoSansEnglishArabic-Bold.ttf',
+    },
+  });
+};
+addDefaultFonts();
 
 export function hexToRgb(hex: string): RGB {
   return rgb(

@@ -150,7 +150,7 @@ export class LeaveBalanceReportService extends BaseService {
           type: 'p',
           text: 'مرحبا 1 مرحبا 2 مرحبا 3',
           styles: {
-            font: 'Noto Sans',
+            // font: 'Noto Sans',
             'font-weight': 'normal',
             'font-size': 30,
           },
@@ -159,7 +159,7 @@ export class LeaveBalanceReportService extends BaseService {
           type: 'p',
           text: 'Hello مرحبا',
           styles: {
-            font: 'Noto Sans',
+            // font: 'Noto Sans',
             'font-weight': 'bold',
             'font-size': 30,
           },
@@ -170,14 +170,9 @@ export class LeaveBalanceReportService extends BaseService {
     const parser = new PdfParser();
     const pdfBuilder = parser.parse(leaveBalanceReportJson);
 
-    await pdfBuilder.addFontFromUrl({
-      name: 'Noto Sans',
-      fontUrls: {
-        normal: '/assets/fonts/NotoSansEnglishArabic-Regular.ttf',
-        bold: '/assets/fonts/NotoSansEnglishArabic-Bold.ttf',
-      },
-    });
-
+    // pdfBuilder.elements[2].children.forEach(
+    //   (child) => (child.showBoxes = true)
+    // );
     pdfBuilder.download();
   }
 

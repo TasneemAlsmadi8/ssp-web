@@ -222,6 +222,7 @@ export class ParagraphElement extends Element {
     }
   }
 
+  @Element.UseFallbackFont
   override async preRender(preRenderArgs: {
     x?: number;
     y?: number;

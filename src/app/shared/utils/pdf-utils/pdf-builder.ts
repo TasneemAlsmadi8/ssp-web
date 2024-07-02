@@ -101,49 +101,7 @@ export class PdfBuilder {
     fontUrls: { normal: string; bold?: string };
     fromCssFile?: boolean;
   }) {
-    const { name, fontUrls, fromCssFile } = options;
-    let actualFontUrl = fontUrls;
-    if (fromCssFile) {
-      // Fetch the CSS file
-      const fontCss = await fetch(fontUrls.normal).then((res) => res.text());
-
-      // Extract the actual font URL from the CSS file
-      const fontMatch = fontCss.match(/url\((https:\/\/[^)]+)\)/);
-      if (!fontMatch) {
-        throw new Error('Font URL not found in CSS file');
-      }
-
-      actualFontUrl.normal = fontMatch[1];
-      if (fontUrls.bold) {
-        const fontCss = await fetch(fontUrls.bold).then((res) => res.text());
-
-        // Extract the actual font URL from the CSS file
-        const fontMatch = fontCss.match(/url\((https:\/\/[^)]+)\)/);
-        if (!fontMatch) {
-          throw new Error('Font URL not found in CSS file');
-        }
-
-        actualFontUrl.bold = fontMatch[1];
-      }
-    }
-
-    // Fetch the font data
-    const fontNormalArrayBuffer = await fetch(actualFontUrl.normal).then(
-      (res) => res.arrayBuffer()
-    );
-    let fontBoldArrayBuffer;
-    if (actualFontUrl.bold)
-      fontBoldArrayBuffer = await fetch(actualFontUrl.bold).then((res) =>
-        res.arrayBuffer()
-      );
-
-    this.addCustomFont({
-      name,
-      fontBytes: {
-        normal: fontNormalArrayBuffer,
-        bold: fontBoldArrayBuffer,
-      },
-    });
+    ElementStyleCalculator.addFontFromUrl(options);
   }
 
   createVerticalContainer(options?: {
