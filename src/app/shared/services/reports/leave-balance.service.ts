@@ -134,7 +134,7 @@ export class LeaveBalanceReportService extends BaseService {
             font: 'Noto Sans',
             'font-size': 8,
             'background-color': '#dddddd',
-            'font-weight': 'bold',
+            // 'font-weight': 'bold',
             border: 0,
           },
           headerStyles: {

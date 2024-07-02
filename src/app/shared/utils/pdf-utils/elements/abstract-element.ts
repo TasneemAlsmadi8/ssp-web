@@ -377,7 +377,6 @@ export abstract class Element {
             'Font failed to encode all characters, falling back to Noto Sans English/Arabic.'
           );
           console.log(this);
-          debugger;
           try {
             const fallbackFont = await (this as any).page.doc.embedFont(
               ElementStyleCalculator.getFallbackFont((this as any).styles)
