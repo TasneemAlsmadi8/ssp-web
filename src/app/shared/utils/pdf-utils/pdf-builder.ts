@@ -8,10 +8,9 @@ import { ParagraphElement } from './elements/paragraph-element';
 import { TableCell, TableElement } from './elements/table-element';
 import { HorizontalContainerElement } from './elements/horizontal-container-element';
 import { VerticalContainerElement } from './elements/vertical-container-element';
+import { PageDimensions } from './elements/element-styles';
 
-export interface PageOptions {
-  height: number;
-  width: number;
+export interface PageOptions extends PageDimensions {
   marginTop: number;
   marginBottom: number;
   marginLeft: number;
@@ -47,7 +46,7 @@ export class PdfBuilder {
   ): HeadingElement {
     const { styles, standalone } = options ?? {};
 
-    const elem = new HeadingElement(level);
+    const elem = new HeadingElement(this.pageOptions, level);
     elem.setTextContent(text);
     if (styles) elem.setStyles(styles);
 
@@ -60,7 +59,7 @@ export class PdfBuilder {
   ): ParagraphElement {
     const { styles, standalone } = options ?? {};
 
-    const elem = new ParagraphElement();
+    const elem = new ParagraphElement(this.pageOptions);
     elem.setTextContent(text);
     if (styles) elem.setStyles(styles);
 
@@ -74,7 +73,7 @@ export class PdfBuilder {
   ): TableElement {
     const { styles, cellStyles, standalone } = options ?? {};
 
-    const elem = new TableElement();
+    const elem = new TableElement(this.pageOptions);
     for (const row of data) {
       elem.addRow(row);
     }
@@ -90,7 +89,7 @@ export class PdfBuilder {
   }): HorizontalContainerElement {
     const { styles, standalone } = options ?? {};
 
-    const elem = new HorizontalContainerElement();
+    const elem = new HorizontalContainerElement(this.pageOptions);
     if (styles) elem.setStyles(styles);
 
     if (!standalone) this.elements.push(elem);
@@ -110,7 +109,7 @@ export class PdfBuilder {
   }): VerticalContainerElement {
     const { styles, standalone } = options ?? {};
 
-    const elem = new VerticalContainerElement();
+    const elem = new VerticalContainerElement(this.pageOptions);
     if (styles) elem.setStyles(styles);
 
     if (!standalone) this.elements.push(elem);

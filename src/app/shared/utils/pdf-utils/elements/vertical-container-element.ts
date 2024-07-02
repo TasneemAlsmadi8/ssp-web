@@ -1,12 +1,13 @@
 import { ContainerElement } from './abstract-element';
 import { Element } from './abstract-element';
+import { PageDimensions } from './element-styles';
 
 export class VerticalContainerElement
   extends Element
   implements ContainerElement
 {
-  constructor() {
-    super();
+  constructor(pageDimensions: PageDimensions) {
+    super(pageDimensions);
     this._children = [];
   }
 

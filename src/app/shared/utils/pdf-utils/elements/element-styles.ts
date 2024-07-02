@@ -1,6 +1,10 @@
-import { StandardFonts, RGB, rgb } from 'pdf-lib';
+import { StandardFonts, RGB, rgb, PDFPage } from 'pdf-lib';
 
 // Define a Style interface
+export interface PageDimensions {
+  height: number;
+  width: number;
+}
 
 export interface Style {
   [key: string]: string | number | undefined;
@@ -27,6 +31,11 @@ export interface Style {
   'border-left'?: number;
   'align-content-horizontally'?: 'start' | 'center' | 'end';
   'align-content-vertically'?: 'start' | 'center' | 'end';
+  position?: 'static' | 'relative' | 'fixed';
+  top?: number;
+  right?: number;
+  bottom?: number;
+  left?: number;
 }
 // Define a ComputedStyles interface
 
@@ -50,6 +59,9 @@ export interface ComputedStyles {
   borderColor: RGB;
   alignContentHorizontally: 'start' | 'center' | 'end';
   alignContentVertically: 'start' | 'center' | 'end';
+  position: 'static' | 'relative' | 'fixed';
+  bottom: number;
+  left: number;
 }
 export interface CalculatedPositionAdjustment {
   contentX: number; // x position adjustment for text
@@ -134,13 +146,75 @@ export class ElementStyleCalculator {
 
   static computeStyles(
     styles: Style,
+    pageDimensions: PageDimensions,
     parentStyles: Partial<ComputedStyles> = {}
   ): ComputedStyles {
-    const defaultStyles: ComputedStyles = {
+    const defaultStyles = this.getDefaultStyles(pageDimensions, parentStyles);
+
+    const computedFont = this.computeFont(
+      styles,
+      defaultStyles.font.toString()
+    );
+    const computedFontSize = this.resolveStyle(
+      styles,
+      'font-size',
+      defaultStyles.fontSize
+    );
+    const computedPadding = this.computePadding(styles, defaultStyles);
+    const computedMargin = this.computeMargin(styles, defaultStyles);
+    const computedBorder = this.computeBorder(styles, defaultStyles);
+    const alignContentHorizontally = this.resolveStyle(
+      styles,
+      'align-content-horizontally',
+      defaultStyles.alignContentHorizontally
+    );
+    const alignContentVertically = this.resolveStyle(
+      styles,
+      'align-content-vertically',
+      defaultStyles.alignContentVertically
+    );
+    const position = this.resolveStyle(
+      styles,
+      'position',
+      defaultStyles.position
+    );
+
+    const { computedBottom, computedLeft } = this.computePosition(
+      position,
+      styles,
+      pageDimensions
+    );
+
+    return {
+      font: computedFont,
+      fontSize: computedFontSize,
+      color: styles['color'] ? hexToRgb(styles['color']) : defaultStyles.color,
+      backgroundColor: styles['background-color']
+        ? hexToRgb(styles['background-color'])
+        : defaultStyles.backgroundColor,
+      ...computedPadding,
+      ...computedMargin,
+      ...computedBorder,
+      borderColor: styles['border-color']
+        ? hexToRgb(styles['border-color'])
+        : defaultStyles.borderColor,
+      alignContentHorizontally,
+      alignContentVertically,
+      position,
+      bottom: computedBottom,
+      left: computedLeft,
+    };
+  }
+
+  static getDefaultStyles(
+    pageDimensions: PageDimensions,
+    parentStyles: Partial<ComputedStyles>
+  ): ComputedStyles {
+    return {
       font: StandardFonts.Helvetica,
       fontSize: 14,
       color: rgb(0, 0, 0),
-      backgroundColor: rgb(1, 1, 1), // white background
+      backgroundColor: rgb(1, 1, 1),
       paddingTop: 0,
       paddingRight: 0,
       paddingBottom: 0,
@@ -156,72 +230,10 @@ export class ElementStyleCalculator {
       borderColor: rgb(0, 0, 0),
       alignContentHorizontally: 'start',
       alignContentVertically: 'start',
+      position: 'static',
+      bottom: pageDimensions.height,
+      left: 0,
       ...parentStyles,
-    };
-
-    const computedFont = this.computeFont(
-      styles,
-      defaultStyles.font.toString()
-    );
-    const computedFontSize = styles['font-size'] ?? defaultStyles.fontSize;
-    const computedPaddingTop =
-      styles['padding-top'] ?? styles.padding ?? defaultStyles.paddingTop;
-    const computedPaddingRight =
-      styles['padding-right'] ?? styles.padding ?? defaultStyles.paddingRight;
-    const computedPaddingBottom =
-      styles['padding-bottom'] ?? styles.padding ?? defaultStyles.paddingBottom;
-    const computedPaddingLeft =
-      styles['padding-left'] ?? styles.padding ?? defaultStyles.paddingLeft;
-
-    const computedMarginTop =
-      styles['margin-top'] ?? styles.margin ?? defaultStyles.marginTop;
-    const computedMarginRight =
-      styles['margin-right'] ?? styles.margin ?? defaultStyles.marginRight;
-    const computedMarginBottom =
-      styles['margin-bottom'] ?? styles.margin ?? defaultStyles.marginBottom;
-    const computedMarginLeft =
-      styles['margin-left'] ?? styles.margin ?? defaultStyles.marginLeft;
-
-    const computedBorderTop =
-      styles['border-top'] ?? styles.border ?? defaultStyles.borderTop;
-    const computedBorderRight =
-      styles['border-right'] ?? styles.border ?? defaultStyles.borderRight;
-    const computedBorderBottom =
-      styles['border-bottom'] ?? styles.border ?? defaultStyles.borderBottom;
-    const computedBorderLeft =
-      styles['border-left'] ?? styles.border ?? defaultStyles.borderLeft;
-
-    const alignContentHorizontally =
-      styles['align-content-horizontally'] ??
-      defaultStyles.alignContentHorizontally;
-    const alignContentVertically =
-      styles['align-content-vertically'] ??
-      defaultStyles.alignContentVertically;
-
-    return {
-      font: computedFont,
-      fontSize: computedFontSize,
-      color: styles['color'] ? hexToRgb(styles['color']) : defaultStyles.color,
-      backgroundColor: styles['background-color']
-        ? hexToRgb(styles['background-color'])
-        : defaultStyles.backgroundColor,
-      paddingTop: computedPaddingTop,
-      paddingRight: computedPaddingRight,
-      paddingBottom: computedPaddingBottom,
-      paddingLeft: computedPaddingLeft,
-      marginTop: computedMarginTop,
-      marginRight: computedMarginRight,
-      marginBottom: computedMarginBottom,
-      marginLeft: computedMarginLeft,
-      borderTop: computedBorderTop,
-      borderRight: computedBorderRight,
-      borderBottom: computedBorderBottom,
-      borderLeft: computedBorderLeft,
-      borderColor: styles['border-color']
-        ? hexToRgb(styles['border-color'])
-        : defaultStyles.borderColor,
-      alignContentHorizontally,
-      alignContentVertically,
     };
   }
 
@@ -353,6 +365,153 @@ export class ElementStyleCalculator {
         throw new Error('Illegal align value');
     }
   }
+
+  static calculatePosition(
+    computedStyles: ComputedStyles,
+    originalPosition: { x: number; y: number }
+  ): { x: number; y: number } {
+    const { position, bottom, left } = computedStyles;
+    const { x, y } = originalPosition;
+
+    switch (position) {
+      case 'static':
+        return { x, y };
+      case 'relative':
+        return { x: x + left, y: y + bottom };
+      case 'fixed':
+        return { x: left, y: bottom };
+      default:
+        throw new Error('Illegal position value');
+    }
+  }
+
+  private static resolveStyle(
+    styles: Style,
+    styleProp: string,
+    defaultProp: any,
+    aliasStyleProp?: string
+  ) {
+    const aliasStyle = aliasStyleProp ? styles[aliasStyleProp] : undefined;
+    return styles[styleProp] ?? aliasStyle ?? defaultProp;
+  }
+
+  private static computePadding(styles: Style, defaultStyles: ComputedStyles) {
+    return {
+      paddingTop: this.resolveStyle(
+        styles,
+        'padding-top',
+        defaultStyles.paddingTop,
+        'padding'
+      ),
+      paddingRight: this.resolveStyle(
+        styles,
+        'padding-right',
+        defaultStyles.paddingRight,
+        'padding'
+      ),
+      paddingBottom: this.resolveStyle(
+        styles,
+        'padding-bottom',
+        defaultStyles.paddingBottom,
+        'padding'
+      ),
+      paddingLeft: this.resolveStyle(
+        styles,
+        'padding-left',
+        defaultStyles.paddingLeft,
+        'padding'
+      ),
+    };
+  }
+
+  private static computeMargin(styles: Style, defaultStyles: ComputedStyles) {
+    return {
+      marginTop: this.resolveStyle(
+        styles,
+        'margin-top',
+        defaultStyles.marginTop,
+        'margin'
+      ),
+      marginRight: this.resolveStyle(
+        styles,
+        'margin-right',
+        defaultStyles.marginRight,
+        'margin'
+      ),
+      marginBottom: this.resolveStyle(
+        styles,
+        'margin-bottom',
+        defaultStyles.marginBottom,
+        'margin'
+      ),
+      marginLeft: this.resolveStyle(
+        styles,
+        'margin-left',
+        defaultStyles.marginLeft,
+        'margin'
+      ),
+    };
+  }
+
+  private static computeBorder(styles: Style, defaultStyles: ComputedStyles) {
+    return {
+      borderTop: this.resolveStyle(
+        styles,
+        'border-top',
+        defaultStyles.borderTop,
+        'border'
+      ),
+      borderRight: this.resolveStyle(
+        styles,
+        'border-right',
+        defaultStyles.borderRight,
+        'border'
+      ),
+      borderBottom: this.resolveStyle(
+        styles,
+        'border-bottom',
+        defaultStyles.borderBottom,
+        'border'
+      ),
+      borderLeft: this.resolveStyle(
+        styles,
+        'border-left',
+        defaultStyles.borderLeft,
+        'border'
+      ),
+    };
+  }
+
+  private static computePosition(
+    position: string,
+    styles: Style,
+    pageDimensions: PageDimensions
+  ) {
+    let computedBottom = 0;
+    let computedLeft = 0;
+
+    if (position !== 'static') {
+      const { top, bottom, left, right } = styles;
+      if (top !== undefined && bottom !== undefined)
+        throw new Error('You cannot specify both bottom and top styles');
+      if (left !== undefined && right !== undefined)
+        throw new Error('You cannot specify both left and right styles');
+
+      if (bottom !== undefined) computedBottom = bottom;
+      if (left !== undefined) computedLeft = left;
+
+      if (position === 'relative') {
+        if (top !== undefined) computedBottom = -top;
+        if (right !== undefined) computedLeft = -right;
+      } else {
+        // position: fixed
+        if (top !== undefined) computedBottom = pageDimensions.height - top;
+        if (right !== undefined) computedLeft = pageDimensions.width - right;
+      }
+    }
+
+    return { computedBottom, computedLeft };
+  }
 }
 
 // TODO: check if this have any problems (race condition), check if there is a better way
@@ -373,4 +532,4 @@ export function hexToRgb(hex: string): RGB {
     parseInt(hex.substring(3, 5), 16) / 255,
     parseInt(hex.substring(5, 7), 16) / 255
   );
-} // Define an abstract base class for an Element
+}

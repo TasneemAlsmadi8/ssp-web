@@ -1,4 +1,4 @@
-import { ElementStyleCalculator } from './element-styles';
+import { ElementStyleCalculator, PageDimensions } from './element-styles';
 import {
   Style,
   ComputedStyles,
@@ -59,7 +59,7 @@ export abstract class Element {
       this.position?.y !== undefined
     );
   }
-  constructor() {
+  constructor(protected pageDimensions: PageDimensions) {
     this.styles = {};
   }
 
@@ -90,7 +90,10 @@ export abstract class Element {
   async init(page: PDFPage) {
     this.page = page;
 
-    this.computedStyles = ElementStyleCalculator.computeStyles(this.styles);
+    this.computedStyles = ElementStyleCalculator.computeStyles(
+      this.styles,
+      this.pageDimensions
+    );
     this.font = await this.page.doc.embedFont(this.computedStyles.font);
 
     if (this.children)
@@ -109,7 +112,12 @@ export abstract class Element {
       throw new Error('Element must be initialized before rendering');
 
     if (maxWidth) this.maxWidth = maxWidth;
-    if (x && y) this.position = { x, y };
+    if (x && y) {
+      this.position = ElementStyleCalculator.calculatePosition(
+        this.computedStyles,
+        { x, y }
+      );
+    }
 
     this._isPreRenderDone = true;
   }

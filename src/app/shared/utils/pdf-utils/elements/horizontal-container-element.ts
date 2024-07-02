@@ -1,5 +1,6 @@
 import { ContainerElement } from './abstract-element';
 import { Element } from './abstract-element';
+import { PageDimensions } from './element-styles';
 
 export interface Width {
   pixels?: number;
@@ -11,8 +12,8 @@ export class HorizontalContainerElement
   implements ContainerElement
 {
   childrenWidth: Width[] = [];
-  constructor() {
-    super();
+  constructor(pageDimensions: PageDimensions) {
+    super(pageDimensions);
     this._children = [];
   }
 

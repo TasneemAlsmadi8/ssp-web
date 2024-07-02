@@ -1,10 +1,11 @@
 import { Element } from './abstract-element';
+import { PageDimensions } from './element-styles';
 
 export class ParagraphElement extends Element {
   textContent: string;
 
-  constructor() {
-    super();
+  constructor(pageDimensions: PageDimensions) {
+    super(pageDimensions);
     this.textContent = '';
     this.setStyle('font-size', 12);
     this.setStyle('color', '#000000');
@@ -114,10 +115,14 @@ export class ParagraphElement extends Element {
   }
 
   get fontHeight(): number {
-    const height = this.font?.heightAtSize(this.computedStyles.fontSize);
+    const lineSpacing = 3;
+    const fontSize = this.computedStyles.fontSize;
+    const height = this.font?.heightAtSize(fontSize);
+    console.log(`font height: ${height}`);
+    console.log(`font size: ${this.computedStyles.fontSize}`);
     if (!height) throw new Error('Font is undefined!');
 
-    return height;
+    return fontSize + lineSpacing;
   }
 
   getTextWidth(text: string): number {
@@ -132,9 +137,7 @@ export class ParagraphElement extends Element {
   }
 
   get contentHeight(): number {
-    const lineSpacing = 2;
-    const textHeight =
-      this.textContent.split('\n').length * (this.fontHeight + lineSpacing);
+    const textHeight = this.textContent.split('\n').length * this.fontHeight;
     return textHeight;
   }
 
@@ -155,8 +158,8 @@ export class ParagraphElement extends Element {
     for (let index = 0; index < lines.length; index++) {
       const line = lines[index];
       const segments = this.splitIntoDirectionalSegments(line);
-      console.log(segments);
-      const lineOffset = -fontSize * index;
+      // console.log(segments);
+      const lineOffset = -this.fontHeight * index;
       let textX = this.getCustomContentXAdjustment(this.getTextWidth(line));
 
       if (segments.length === 1 || isParagraphLtr) {
