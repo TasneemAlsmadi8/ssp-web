@@ -1,4 +1,4 @@
-import { StandardFonts, RGB, rgb, PDFPage } from 'pdf-lib';
+import { StandardFonts, RGB, rgb } from 'pdf-lib';
 
 // Define a Style interface
 export interface PageDimensions {
@@ -36,6 +36,8 @@ export interface Style {
   right?: number;
   bottom?: number;
   left?: number;
+  width?: 'max-width' | 'fit-content';
+  height?: 'fit-content';
 }
 // Define a ComputedStyles interface
 
@@ -59,9 +61,8 @@ export interface ComputedStyles {
   borderColor: RGB;
   alignContentHorizontally: 'start' | 'center' | 'end';
   alignContentVertically: 'start' | 'center' | 'end';
-  position: 'static' | 'relative' | 'fixed';
-  bottom: number;
-  left: number;
+  width: 'max-width' | 'fit-content';
+  height: 'max-width' | 'fit-content';
 }
 export interface CalculatedPositionAdjustment {
   contentX: number; // x position adjustment for text
@@ -146,10 +147,9 @@ export class ElementStyleCalculator {
 
   static computeStyles(
     styles: Style,
-    pageDimensions: PageDimensions,
     parentStyles: Partial<ComputedStyles> = {}
   ): ComputedStyles {
-    const defaultStyles = this.getDefaultStyles(pageDimensions, parentStyles);
+    const defaultStyles = this.getDefaultStyles(parentStyles);
 
     const computedFont = this.computeFont(
       styles,
@@ -173,17 +173,8 @@ export class ElementStyleCalculator {
       'align-content-vertically',
       defaultStyles.alignContentVertically
     );
-    const position = this.resolveStyle(
-      styles,
-      'position',
-      defaultStyles.position
-    );
-
-    const { computedBottom, computedLeft } = this.computePosition(
-      position,
-      styles,
-      pageDimensions
-    );
+    const width = this.resolveStyle(styles, 'width', defaultStyles.width);
+    const height = this.resolveStyle(styles, 'height', defaultStyles.height);
 
     return {
       font: computedFont,
@@ -200,14 +191,12 @@ export class ElementStyleCalculator {
         : defaultStyles.borderColor,
       alignContentHorizontally,
       alignContentVertically,
-      position,
-      bottom: computedBottom,
-      left: computedLeft,
+      width,
+      height,
     };
   }
 
   static getDefaultStyles(
-    pageDimensions: PageDimensions,
     parentStyles: Partial<ComputedStyles>
   ): ComputedStyles {
     return {
@@ -230,9 +219,8 @@ export class ElementStyleCalculator {
       borderColor: rgb(0, 0, 0),
       alignContentHorizontally: 'start',
       alignContentVertically: 'start',
-      position: 'static',
-      bottom: pageDimensions.height,
-      left: 0,
+      width: 'max-width',
+      height: 'fit-content',
       ...parentStyles,
     };
   }
@@ -367,19 +355,44 @@ export class ElementStyleCalculator {
   }
 
   static calculatePosition(
-    computedStyles: ComputedStyles,
-    originalPosition: { x: number; y: number }
+    styles: Style,
+    originalPosition: { x: number; y: number },
+    dimensions: { width: number; height: number },
+    pageDimensions: PageDimensions
   ): { x: number; y: number } {
-    const { position, bottom, left } = computedStyles;
     const { x, y } = originalPosition;
+    const { position = 'static', top, bottom, left, right } = styles;
+
+    if (position === 'static') {
+      return { x, y };
+    }
+
+    if (top !== undefined && bottom !== undefined) {
+      throw new Error('You cannot specify both bottom and top styles');
+    }
+    if (left !== undefined && right !== undefined) {
+      throw new Error('You cannot specify both left and right styles');
+    }
+
+    let computedY = y;
+    let computedX = x;
 
     switch (position) {
-      case 'static':
-        return { x, y };
       case 'relative':
-        return { x: x + left, y: y + bottom };
+        if (top !== undefined) computedY -= top;
+        if (bottom !== undefined) computedY += bottom;
+        if (left !== undefined) computedX += left;
+        if (right !== undefined) computedX -= right;
+        return { x: computedX, y: computedY };
+
       case 'fixed':
-        return { x: left, y: bottom };
+        if (top !== undefined) computedY = pageDimensions.height - top;
+        if (bottom !== undefined) computedY = bottom + dimensions.height;
+        if (left !== undefined) computedX = left;
+        if (right !== undefined)
+          computedX = pageDimensions.width - right - dimensions.width;
+        return { x: computedX, y: computedY };
+
       default:
         throw new Error('Illegal position value');
     }
@@ -480,37 +493,6 @@ export class ElementStyleCalculator {
         'border'
       ),
     };
-  }
-
-  private static computePosition(
-    position: string,
-    styles: Style,
-    pageDimensions: PageDimensions
-  ) {
-    let computedBottom = 0;
-    let computedLeft = 0;
-
-    if (position !== 'static') {
-      const { top, bottom, left, right } = styles;
-      if (top !== undefined && bottom !== undefined)
-        throw new Error('You cannot specify both bottom and top styles');
-      if (left !== undefined && right !== undefined)
-        throw new Error('You cannot specify both left and right styles');
-
-      if (bottom !== undefined) computedBottom = bottom;
-      if (left !== undefined) computedLeft = left;
-
-      if (position === 'relative') {
-        if (top !== undefined) computedBottom = -top;
-        if (right !== undefined) computedLeft = -right;
-      } else {
-        // position: fixed
-        if (top !== undefined) computedBottom = pageDimensions.height - top;
-        if (right !== undefined) computedLeft = pageDimensions.width - right;
-      }
-    }
-
-    return { computedBottom, computedLeft };
   }
 }
 

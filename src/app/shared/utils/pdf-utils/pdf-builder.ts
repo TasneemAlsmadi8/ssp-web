@@ -280,7 +280,7 @@ export class PdfBuilder {
         y: yOffset,
         maxWidth: writableWidth,
       });
-      yOffset -= element.height; // Adjust spacing
+      yOffset -= element.heightOffset; // Adjust spacing
     }
 
     return this.pdfDoc.save();

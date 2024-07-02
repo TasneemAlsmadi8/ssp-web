@@ -44,6 +44,8 @@ export abstract class Element {
   protected maxWidth!: number;
   protected position!: { x: number; y: number };
 
+  private _widthDiff?: number;
+  private isWidthFitContent = false;
   private _heightDiff?: number;
 
   showBoxes: boolean = false;
@@ -55,6 +57,7 @@ export abstract class Element {
     return (
       this._isPreRenderDone &&
       this.maxWidth !== undefined &&
+      // this._widthDiff !== undefined &&
       this.position?.x !== undefined &&
       this.position?.y !== undefined
     );
@@ -84,17 +87,40 @@ export abstract class Element {
     if (this.isPreRenderDone)
       throw new Error('Can not change height after preRender');
     // if( value < this.height) throw new Error("Can not set height smaller than content");
+    this._heightDiff = 0;
     this._heightDiff = value - this.height;
+    if (this.height < 0) {
+      console.warn(`height is less than 0! (${this.height})`);
+    }
+  }
+
+  setWidth(value: number, inPreRender = false) {
+    if (this.isPreRenderDone && !inPreRender)
+      throw new Error('Can not change width after preRender');
+    // if( value < this.height) throw new Error("Can not set height smaller than content");
+    this._widthDiff = 0;
+    if (!this.isWidthFitContent) this._widthDiff = value - this.width;
+    if (this.width < 0) {
+      console.warn(`width is less than 0! (${this.width})`);
+    }
+  }
+
+  setWidthFitContent() {
+    this.isWidthFitContent = true;
+    this._widthDiff = 0;
+  }
+
+  setHeightFitContent() {
+    this._heightDiff = 0;
   }
 
   async init(page: PDFPage) {
     this.page = page;
 
-    this.computedStyles = ElementStyleCalculator.computeStyles(
-      this.styles,
-      this.pageDimensions
-    );
+    this.computedStyles = ElementStyleCalculator.computeStyles(this.styles);
     this.font = await this.page.doc.embedFont(this.computedStyles.font);
+
+    if (this.computedStyles.width === 'fit-content') this.setWidthFitContent();
 
     if (this.children)
       for (const child of this.children) await child.init(page);
@@ -111,11 +137,16 @@ export abstract class Element {
     if (!this.isInitDone)
       throw new Error('Element must be initialized before rendering');
 
-    if (maxWidth) this.maxWidth = maxWidth;
+    if (maxWidth) {
+      this.maxWidth = maxWidth;
+      this.setWidth(maxWidth, true);
+    }
     if (x && y) {
       this.position = ElementStyleCalculator.calculatePosition(
-        this.computedStyles,
-        { x, y }
+        this.styles,
+        { x, y },
+        { width: this.width, height: this.height },
+        this.pageDimensions
       );
     }
 
@@ -145,6 +176,11 @@ export abstract class Element {
 
   protected preDraw?(): Promise<void>;
   protected abstract draw(): Promise<void>;
+
+  get heightOffset() {
+    if (this.styles.position === 'fixed') return 0;
+    return this.height;
+  }
 
   get height(): number {
     return (
@@ -176,9 +212,10 @@ export abstract class Element {
   get innerWidth(): number {
     // always full of parent
     return (
-      this.maxWidth -
-      this.computedStyles.marginLeft -
-      this.computedStyles.marginRight
+      this.contentWidth +
+      this.computedStyles.paddingLeft +
+      this.computedStyles.paddingRight +
+      (this._widthDiff ?? 0)
     );
   }
 
@@ -347,7 +384,7 @@ export abstract class Element {
         console.error(
           'Custom font failed, falling back to Noto Sans English/Arabic.'
         );
-        console.log(this);
+        // console.log(this);
 
         try {
           this.font = await this.page.doc.embedFont(
@@ -371,7 +408,7 @@ export abstract class Element {
   ): PropertyDescriptor {
     const originalMethod = descriptor.value;
 
-    console.log(methodName);
+    // console.log(methodName);
 
     descriptor.value = async function useFallbackFontWrapper(...args: any[]) {
       try {
@@ -384,7 +421,7 @@ export abstract class Element {
           console.error(
             'Font failed to encode all characters, falling back to Noto Sans English/Arabic.'
           );
-          console.log(this);
+          // console.log(this);
           try {
             const fallbackFont = await (this as any).page.doc.embedFont(
               ElementStyleCalculator.getFallbackFont((this as any).styles)

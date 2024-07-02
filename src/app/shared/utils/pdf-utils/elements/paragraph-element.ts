@@ -118,8 +118,8 @@ export class ParagraphElement extends Element {
     const lineSpacing = 3;
     const fontSize = this.computedStyles.fontSize;
     const height = this.font?.heightAtSize(fontSize);
-    console.log(`font height: ${height}`);
-    console.log(`font size: ${this.computedStyles.fontSize}`);
+    // console.log(`font height: ${height}`);
+    // console.log(`font size: ${this.computedStyles.fontSize}`);
     if (!height) throw new Error('Font is undefined!');
 
     return fontSize + lineSpacing;
@@ -233,5 +233,6 @@ export class ParagraphElement extends Element {
   }): Promise<void> {
     super.preRender(preRenderArgs);
     this.wrapText();
+    this.setWidth(this.maxWidth, true);
   }
 }
