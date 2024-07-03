@@ -108,13 +108,15 @@ export class PdfParser {
     elementJson: ObjectTableElementJson,
     standalone: boolean = false
   ) {
-    const { data, rowHeaders, headerStyles, cellStyles, tableStyles } =
+    let { data, rowHeaders, headerStyles, cellStyles, tableStyles } =
       elementJson;
     if (!data || typeof data !== 'object')
       throw new Error(
         "ObjectTable element must have a 'data' field of type object"
       );
 
+    if (!(data instanceof Array)) data = [data];
+    
     return this.builder.createTableFromArrayOfObjects(data, {
       rowHeaders,
       headerStyles,

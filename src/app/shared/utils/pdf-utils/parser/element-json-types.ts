@@ -27,9 +27,10 @@ export interface TableElementJson extends BaseElementJson {
   data: TableCell[][];
   cellStyles?: Style;
 }
+type DataRecord = Record<string, string | number | null | undefined>;
 export interface ObjectTableElementJson extends BaseElementJson {
   type: 'object-table' | 'o-table' | 'obj-table';
-  data: Array<{ [key: string]: string | number | null | undefined }>;
+  data: Array<DataRecord> | DataRecord;
   rowHeaders?: boolean;
   headerStyles?: Style;
   cellStyles?: Style;

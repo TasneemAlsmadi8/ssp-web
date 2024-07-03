@@ -20,6 +20,7 @@ export interface PageMargins {
 
 export interface PageOptions extends PageDimensions, PageMargins {
   templateUrl?: string;
+  landscape?: true;
 }
 
 export class PdfBuilder {
@@ -42,6 +43,15 @@ export class PdfBuilder {
       marginRight: 50,
     };
     if (pageOptions) this.pageOptions = { ...this.pageOptions, ...pageOptions };
+    if (
+      pageOptions?.landscape &&
+      this.pageOptions.height > this.pageOptions.width
+    ) {
+      [this.pageOptions.width, this.pageOptions.height] = [
+        this.pageOptions.height,
+        this.pageOptions.width,
+      ];
+    }
     if (templatePdfBuilder) this.setTemplatePdfBuilder(templatePdfBuilder);
   }
 
@@ -142,8 +152,10 @@ export class PdfBuilder {
       standalone?: boolean;
     }
   ): TableElement {
-    const { rowHeaders, headerStyles, cellStyles, tableStyles, standalone } =
+    let { rowHeaders, headerStyles, cellStyles, tableStyles, standalone } =
       options ?? {};
+
+    headerStyles = { ...cellStyles, ...headerStyles };
 
     const tableData: TableCell[][] = [];
 

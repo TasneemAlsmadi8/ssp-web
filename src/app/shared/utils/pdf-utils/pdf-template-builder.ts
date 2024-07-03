@@ -14,7 +14,7 @@ interface TemplateVariables {
 export class PdfTemplateBuilder extends PdfBuilder {
   private variables: TemplateVariables = {
     date: new Date().toDateString(),
-    pageNumber: 0,
+    pageNumber: 1,
     totalPages: 1,
   };
 
