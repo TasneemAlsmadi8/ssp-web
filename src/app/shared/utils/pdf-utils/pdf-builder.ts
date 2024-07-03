@@ -9,21 +9,30 @@ import { TableCell, TableElement } from './elements/table-element';
 import { HorizontalContainerElement } from './elements/horizontal-container-element';
 import { VerticalContainerElement } from './elements/vertical-container-element';
 import { PageDimensions } from './elements/element-styles';
+import { PdfTemplateBuilder } from './pdf-template-builder';
 
-export interface PageOptions extends PageDimensions {
+export interface PageMargins {
   marginTop: number;
   marginBottom: number;
   marginLeft: number;
   marginRight: number;
+}
+
+export interface PageOptions extends PageDimensions, PageMargins {
   templateUrl?: string;
 }
 
 export class PdfBuilder {
   elements: Element[] = [];
-  pdfDoc!: PDFDocument;
+  private templatePdfBuilder?: PdfTemplateBuilder;
+  private pdfDoc!: PDFDocument;
   private pageOptions: PageOptions;
 
-  constructor(public fileName: string, pageOptions?: Partial<PageOptions>) {
+  constructor(
+    public fileName: string,
+    pageOptions?: Partial<PageOptions>,
+    templatePdfBuilder?: PdfTemplateBuilder
+  ) {
     this.pageOptions = {
       height: 841.89,
       width: 595.28,
@@ -33,6 +42,11 @@ export class PdfBuilder {
       marginRight: 50,
     };
     if (pageOptions) this.pageOptions = { ...this.pageOptions, ...pageOptions };
+    if (templatePdfBuilder) this.setTemplatePdfBuilder(templatePdfBuilder);
+  }
+
+  setTemplatePdfBuilder(value: PdfTemplateBuilder) {
+    this.templatePdfBuilder = value;
   }
 
   addCustomFont(customFont: CustomFont) {
@@ -234,8 +248,8 @@ export class PdfBuilder {
 
   async download(): Promise<void> {
     // Generate the PDF
-    const pdfBytes = await this.renderDOMToPDF();
-
+    await this.renderElementsToPDF();
+    const pdfBytes = await this.pdfDoc.save();
     // Download the PDF
     const blob = this.uint8ArrayToBlob(pdfBytes, 'application/pdf');
     const url = window.URL.createObjectURL(blob);
@@ -249,7 +263,7 @@ export class PdfBuilder {
     window.URL.revokeObjectURL(url);
   }
 
-  private async renderDOMToPDF(): Promise<Uint8Array> {
+  protected async renderElementsToPDF(pdfDoc?: PDFDocument, page?: PDFPage) {
     // const url = '/assets/ABS Report Template.pdf';
     // const existingPdfBytes = await fetch(url).then((res) => res.arrayBuffer());
 
@@ -259,10 +273,10 @@ export class PdfBuilder {
     // const pages = pdfDoc.getPages();
     // const page = pages[0];
 
-    this.pdfDoc = await PDFDocument.create();
+    this.pdfDoc = pdfDoc ?? (await PDFDocument.create());
     this.pdfDoc.registerFontkit(fontkit);
 
-    const page = await this.addPage();
+    if (!page) page = await this.addPage();
 
     let yOffset = this.pageOptions.height - this.pageOptions.marginTop;
 
@@ -282,8 +296,6 @@ export class PdfBuilder {
       });
       yOffset -= element.heightOffset; // Adjust spacing
     }
-
-    return this.pdfDoc.save();
   }
 
   private uint8ArrayToBlob(array: Uint8Array, contentType: string): Blob {
@@ -296,6 +308,8 @@ export class PdfBuilder {
         this.pageOptions.width,
         this.pageOptions.height,
       ]);
+      if (this.templatePdfBuilder)
+        await this.templatePdfBuilder.newTemplatePage(this.pdfDoc, page);
       return page;
     }
 
@@ -306,6 +320,9 @@ export class PdfBuilder {
 
     const [templatePage] = await this.pdfDoc.copyPages(templatePdfDoc, [0]);
     const page = this.pdfDoc.addPage(templatePage);
+
+    if (this.templatePdfBuilder)
+      await this.templatePdfBuilder.newTemplatePage(this.pdfDoc, page);
     return page;
   }
 }

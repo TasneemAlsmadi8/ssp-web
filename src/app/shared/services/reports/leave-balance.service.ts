@@ -69,51 +69,62 @@ export class LeaveBalanceReportService extends BaseService {
     const leaveBalanceReportJson: PdfJson = {
       fileName: 'Leave Balance Report.pdf',
       pageOptions: {
-        marginTop: 70,
+        marginTop: 90,
         marginBottom: 50,
         marginLeft: 20,
         marginRight: 20,
       },
-      elements: [
-        {
-          type: 'horizontal-container',
-          elements: [
-            {
-              type: 'p',
-              text: 'Leave Balance Report',
-              styles: {
-                'margin-left': 30,
-                'font-size': 14,
-                'font-weight': 'bold',
-                'align-content-horizontally': 'center',
-                'align-content-vertically': 'center',
-              },
-            },
-            {
-              type: 'vertical-container',
-              elements: [
-                {
-                  type: 'paragraph',
-                  text: 'Page 1 of 1',
-                  styles: {
-                    'margin-bottom': 3,
-                    'font-size': 8,
-                    'align-content-horizontally': 'end',
-                  },
-                },
-                {
-                  type: 'paragraph',
-                  text: this.formatDateToDisplay(new Date()),
-                  styles: {
-                    'font-size': 8,
-                    'align-content-horizontally': 'end',
-                  },
-                },
-              ],
-            },
-          ],
-          widths: ['100%-50', '50'],
+      template: {
+        pageMargins: {
+          marginTop: 70,
         },
+        variables: {
+          title: 'Leave Balance Report',
+          date: this.formatDateToDisplay(new Date()),
+        },
+        elements: [
+          {
+            type: 'horizontal-container',
+            elements: [
+              {
+                type: 'p',
+                text: '${title}',
+                styles: {
+                  'margin-left': 30,
+                  'font-size': 14,
+                  'font-weight': 'bold',
+                  'align-content-horizontally': 'center',
+                  'align-content-vertically': 'center',
+                },
+              },
+              {
+                type: 'vertical-container',
+                elements: [
+                  {
+                    type: 'paragraph',
+                    text: 'Page ${pageNumber} of ${totalPages}',
+                    styles: {
+                      'margin-bottom': 3,
+                      'font-size': 8,
+                      'align-content-horizontally': 'end',
+                    },
+                  },
+                  {
+                    type: 'paragraph',
+                    text: '${date}',
+                    styles: {
+                      'font-size': 8,
+                      'align-content-horizontally': 'end',
+                    },
+                  },
+                ],
+              },
+            ],
+            widths: ['100%-50', '50'],
+          },
+        ],
+      },
+      elements: [
         {
           type: 'paragraph',
           text: `To Date:  ${this.formatDateToDisplay(new Date(input.toDate))}`,
@@ -146,35 +157,13 @@ export class LeaveBalanceReportService extends BaseService {
           },
           tableStyles: {},
         },
-        {
-          type: 'p',
-          text: 'مرحبا 1 مرحبا 2 مرحبا 3',
-          styles: {
-            // font: 'Noto Sans',
-            'font-weight': 'normal',
-            'font-size': 30,
-            position: 'fixed',
-            left: 0,
-            top: 0,
-            'background-color': '#993333',
-          },
-        },
-        {
-          type: 'p',
-          text: 'Hello مرحبا',
-          styles: {
-            // font: 'Noto Sans',
-            'font-weight': 'bold',
-            'font-size': 30,
-          },
-        },
       ],
     };
 
     const parser = new PdfParser();
     const pdfBuilder = parser.parse(leaveBalanceReportJson);
 
-    // pdfBuilder.elements[2].children.forEach(
+    // pdfBuilder.elements[1].children.forEach(
     //   (child) => (child.showBoxes = true)
     // );
     pdfBuilder.download();

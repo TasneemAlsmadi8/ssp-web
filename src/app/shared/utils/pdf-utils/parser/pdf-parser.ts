@@ -13,6 +13,7 @@ import {
   TableElementJson,
   VerticalContainerElementJson,
 } from './element-json-types';
+import { PdfTemplateBuilder } from '../pdf-template-builder';
 
 export class PdfParser {
   private builder!: PdfBuilder;
@@ -20,8 +21,24 @@ export class PdfParser {
   constructor() {}
 
   parse(pdfJson: PdfJson): PdfBuilder {
-    const { fileName, pageOptions } = pdfJson;
-    this.builder = new PdfBuilder(fileName, pageOptions);
+    const { template, fileName, pageOptions } = pdfJson;
+
+    let templateBuilder: PdfTemplateBuilder | undefined;
+    if (template) {
+      templateBuilder = new PdfTemplateBuilder(template?.name, {
+        ...pageOptions,
+        ...template.pageMargins,
+      });
+      this.builder = templateBuilder;
+      if (template?.variables)
+        templateBuilder.addVariables(template?.variables);
+
+      for (const elementJson of template.elements) {
+        this.parseElement(elementJson);
+      }
+    }
+
+    this.builder = new PdfBuilder(fileName, pageOptions, templateBuilder);
 
     for (const elementJson of pdfJson.elements) {
       this.parseElement(elementJson);

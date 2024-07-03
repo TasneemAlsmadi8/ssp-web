@@ -1,5 +1,5 @@
 import { Style } from '../elements/element-styles';
-import { PageOptions } from '../pdf-builder';
+import { PageMargins, PageOptions } from '../pdf-builder';
 
 export interface BaseElementJson extends Record<string, any> {
   type: string;
@@ -68,5 +68,11 @@ export type ElementJson =
 export interface PdfJson {
   fileName: string;
   pageOptions?: Partial<PageOptions>;
+  template?: {
+    elements: ElementJson[];
+    name?: string;
+    variables?: { [key: string]: string | number };
+    pageMargins?: Partial<PageMargins>;
+  };
   elements: ElementJson[];
 }
