@@ -11,6 +11,7 @@ export interface Style {
   font?: 'TimesRoman' | 'Helvetica' | 'Courier' | string;
   'font-size'?: number;
   'font-weight'?: 'normal' | 'bold';
+  'text-decoration'?: 'none' | 'underline';
   color?: string;
   'background-color'?: string;
   margin?: number;
@@ -44,6 +45,7 @@ export interface Style {
 export interface ComputedStyles {
   font: StandardFonts | FontRawBytes;
   fontSize: number;
+  textDecoration: 'none' | 'underline';
   color: RGB;
   backgroundColor: RGB;
   paddingTop: number;
@@ -147,7 +149,7 @@ export class ElementStyleCalculator {
 
   static computeStyles(
     styles: Style,
-    parentStyles: Partial<ComputedStyles> = {}
+    parentStyles?: ComputedStyles
   ): ComputedStyles {
     const defaultStyles = this.getDefaultStyles(parentStyles);
 
@@ -176,10 +178,19 @@ export class ElementStyleCalculator {
     const width = this.resolveStyle(styles, 'width', defaultStyles.width);
     const height = this.resolveStyle(styles, 'height', defaultStyles.height);
 
+    const textDecoration = this.resolveStyle(
+      styles,
+      'text-decoration',
+      defaultStyles.textDecoration
+    );
+    const color = styles['color']
+      ? hexToRgb(styles['color'])
+      : defaultStyles.color;
     return {
       font: computedFont,
       fontSize: computedFontSize,
-      color: styles['color'] ? hexToRgb(styles['color']) : defaultStyles.color,
+      textDecoration,
+      color,
       backgroundColor: styles['background-color']
         ? hexToRgb(styles['background-color'])
         : defaultStyles.backgroundColor,
@@ -196,12 +207,24 @@ export class ElementStyleCalculator {
     };
   }
 
-  static getDefaultStyles(
-    parentStyles: Partial<ComputedStyles>
-  ): ComputedStyles {
+  static getInheritedStyles(
+    parentStyles: ComputedStyles
+  ): Partial<ComputedStyles> {
+    return {
+      font: parentStyles.font,
+      fontSize: parentStyles.fontSize,
+      textDecoration: parentStyles.textDecoration,
+      color: parentStyles.color,
+    };
+  }
+
+  static getDefaultStyles(parentStyles?: ComputedStyles): ComputedStyles {
+    let inheritedStyles = {};
+    if (parentStyles) inheritedStyles = this.getInheritedStyles(parentStyles);
     return {
       font: StandardFonts.Helvetica,
       fontSize: 14,
+      textDecoration: 'none',
       color: rgb(0, 0, 0),
       backgroundColor: rgb(1, 1, 1),
       paddingTop: 0,
@@ -221,7 +244,7 @@ export class ElementStyleCalculator {
       alignContentVertically: 'start',
       width: 'max-width',
       height: 'fit-content',
-      ...parentStyles,
+      ...inheritedStyles,
     };
   }
 

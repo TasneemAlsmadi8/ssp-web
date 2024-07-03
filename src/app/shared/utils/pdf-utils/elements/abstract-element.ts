@@ -114,16 +114,20 @@ export abstract class Element {
     this._heightDiff = 0;
   }
 
-  async init(page: PDFPage) {
+  async init(page: PDFPage, parentStyles?: ComputedStyles) {
     this.page = page;
 
-    this.computedStyles = ElementStyleCalculator.computeStyles(this.styles);
+    this.computedStyles = ElementStyleCalculator.computeStyles(
+      this.styles,
+      parentStyles
+    );
     this.font = await this.page.doc.embedFont(this.computedStyles.font);
 
     if (this.computedStyles.width === 'fit-content') this.setWidthFitContent();
 
     if (this.children)
-      for (const child of this.children) await child.init(page);
+      for (const child of this.children)
+        await child.init(page, this.computedStyles);
 
     this.isInitDone = true;
   }

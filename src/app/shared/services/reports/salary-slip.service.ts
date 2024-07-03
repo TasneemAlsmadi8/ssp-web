@@ -72,7 +72,7 @@ export class SalarySlipReportService extends BaseService {
     const table2Data = {
       'Period:': `${startDate}   To   ${endDate}`,
       'Month Days:': data.workUnitNo,
-      'Working Days:': `${data.days}  ${data.workUnit}`,
+      'Working Days:': `${data.days}    ${data.workUnit}`,
       'Basic Salary:': data.basicSalary,
       'Worth Salary:': data.worthSalary,
       'Paid Vacation:': data.paidVacation,
@@ -149,6 +149,7 @@ export class SalarySlipReportService extends BaseService {
           type: 'h-container',
           styles: {
             'border-bottom': 2,
+            'font-size': 8,
           },
           widths: ['40%', '30%', '30%'],
           elements: [
@@ -158,10 +159,10 @@ export class SalarySlipReportService extends BaseService {
               rowHeaders: false,
               cellStyles: {
                 border: 0,
-                'font-size': 8,
               },
               headerStyles: {
                 'font-weight': 'bold',
+                'text-decoration': 'underline',
               },
             },
             {
@@ -170,10 +171,10 @@ export class SalarySlipReportService extends BaseService {
               rowHeaders: false,
               cellStyles: {
                 border: 0,
-                'font-size': 8,
               },
               headerStyles: {
                 'font-weight': 'bold',
+                'text-decoration': 'underline',
               },
             },
             {
@@ -182,10 +183,10 @@ export class SalarySlipReportService extends BaseService {
               rowHeaders: false,
               cellStyles: {
                 border: 0,
-                'font-size': 8,
               },
               headerStyles: {
                 'font-weight': 'bold',
+                'text-decoration': 'underline',
               },
             },
           ],
@@ -195,6 +196,7 @@ export class SalarySlipReportService extends BaseService {
           styles: {
             margin: 5,
             'margin-bottom': 20,
+            'font-size': 8,
           },
           widths: ['33%', '33%'],
           elements: [
@@ -211,15 +213,12 @@ export class SalarySlipReportService extends BaseService {
                   text: 'Repeatable Allowances Details:',
                   styles: {
                     'font-weight': 'bold',
-                    'font-size': 8,
+                    'text-decoration': 'underline',
                   },
                 },
                 {
                   type: 'p',
                   text: `${data.repeatableAllowance}`,
-                  styles: {
-                    'font-size': 8,
-                  },
                 },
               ],
             },
@@ -236,15 +235,12 @@ export class SalarySlipReportService extends BaseService {
                   text: 'Repeatable Deductions Details:',
                   styles: {
                     'font-weight': 'bold',
-                    'font-size': 8,
+                    'text-decoration': 'underline',
                   },
                 },
                 {
                   type: 'p',
                   text: `${data.repeatableDeductions}`,
-                  styles: {
-                    'font-size': 8,
-                  },
                 },
               ],
             },
@@ -254,6 +250,7 @@ export class SalarySlipReportService extends BaseService {
           type: 'h-container',
           styles: {
             margin: 5,
+            'font-size': 8,
           },
           widths: ['33%', '33%'],
           elements: [
@@ -270,15 +267,12 @@ export class SalarySlipReportService extends BaseService {
                   text: 'Non-Repeatable Allowances Details:',
                   styles: {
                     'font-weight': 'bold',
-                    'font-size': 8,
+                    'text-decoration': 'underline',
                   },
                 },
                 {
                   type: 'p',
                   text: `${data.nonRepeatableAllowances}`,
-                  styles: {
-                    'font-size': 8,
-                  },
                 },
               ],
             },
@@ -295,15 +289,12 @@ export class SalarySlipReportService extends BaseService {
                   text: 'Non-Repeatable Deductions Details:',
                   styles: {
                     'font-weight': 'bold',
-                    'font-size': 8,
+                    'text-decoration': 'underline',
                   },
                 },
                 {
                   type: 'p',
                   text: `${data.nonRepeatableDeductions}`,
-                  styles: {
-                    'font-size': 8,
-                  },
                 },
               ],
             },
@@ -319,6 +310,7 @@ export class SalarySlipReportService extends BaseService {
             'padding-right': 10,
             'margin-bottom': 20,
             'border-top': 2,
+            'font-size': 8,
           },
           widths: ['32%', '36%', '32%'],
           elements: [
@@ -337,14 +329,12 @@ export class SalarySlipReportService extends BaseService {
                   text: 'Total Salary:',
                   styles: {
                     'font-weight': 'bold',
-                    'font-size': 8,
                   },
                 },
                 {
                   type: 'p',
                   text: `${data.totalSalary}`,
                   styles: {
-                    'font-size': 8,
                     'align-content-horizontally': 'end',
                   },
                 },
@@ -366,14 +356,12 @@ export class SalarySlipReportService extends BaseService {
                   text: 'Net Salary:',
                   styles: {
                     'font-weight': 'bold',
-                    'font-size': 8,
                   },
                 },
                 {
                   type: 'p',
                   text: `${data.netSalary}`,
                   styles: {
-                    'font-size': 8,
                     'align-content-horizontally': 'end',
                   },
                 },

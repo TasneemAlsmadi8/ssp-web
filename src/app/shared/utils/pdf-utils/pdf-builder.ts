@@ -28,6 +28,7 @@ export class PdfBuilder {
   private templatePdfBuilder?: PdfTemplateBuilder;
   private pdfDoc!: PDFDocument;
   private pageOptions: PageOptions;
+  private globalStyles: Style = {};
 
   constructor(
     public fileName: string,

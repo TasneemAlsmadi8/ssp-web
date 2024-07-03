@@ -7,9 +7,9 @@ export class ParagraphElement extends Element {
   constructor(pageDimensions: PageDimensions) {
     super(pageDimensions);
     this.textContent = '';
-    this.setStyle('font-size', 12);
-    this.setStyle('color', '#000000');
-    this.setStyle('padding', 2);
+    // this.setStyle('font-size', 12);
+    // this.setStyle('color', '#000000');
+    // this.setStyle('padding', 2);
   }
 
   setTextContent(text: string) {
@@ -146,7 +146,7 @@ export class ParagraphElement extends Element {
   }
 
   protected async draw(): Promise<void> {
-    const { fontSize, color } = this.computedStyles;
+    const { fontSize, color, textDecoration } = this.computedStyles;
     let { contentY: textY } = this.positionAdjustment;
 
     textY += this.fontHeight * (0.21 - 1);
@@ -159,8 +159,9 @@ export class ParagraphElement extends Element {
       const line = lines[index];
       const segments = this.splitIntoDirectionalSegments(line);
       // console.log(segments);
-      const lineOffset = -this.fontHeight * index;
-      let textX = this.getCustomContentXAdjustment(this.getTextWidth(line));
+      const lineYOffset = -this.fontHeight * index;
+      const lineWidth = this.getTextWidth(line);
+      let textX = this.getCustomContentXAdjustment(lineWidth);
 
       if (segments.length === 1 || isParagraphLtr) {
         for (const segment of segments) {
@@ -168,7 +169,7 @@ export class ParagraphElement extends Element {
 
           this.page.drawText(segment, {
             x: this.position.x + textX,
-            y: this.position.y + textY + lineOffset,
+            y: this.position.y + textY + lineYOffset,
             size: fontSize,
             font: this.font!,
             color,
@@ -204,7 +205,7 @@ export class ParagraphElement extends Element {
             }
             this.page.drawText(segment, {
               x: this.position.x + textX - segmentWidth,
-              y: this.position.y + textY + lineOffset,
+              y: this.position.y + textY + lineYOffset,
               size: fontSize,
               font: this.font!,
               color,
@@ -213,7 +214,7 @@ export class ParagraphElement extends Element {
           } else {
             this.page.drawText(segment, {
               x: this.position.x + textX - segmentWidth,
-              y: this.position.y + textY + lineOffset,
+              y: this.position.y + textY + lineYOffset,
               size: fontSize,
               font: this.font!,
               color,
@@ -221,6 +222,27 @@ export class ParagraphElement extends Element {
             textX -= segmentWidth;
           }
         }
+      }
+
+      if (textDecoration === 'underline') {
+        this.page.drawLine({
+          start: {
+            x: this.position.x + textX - lineWidth,
+            y:
+              this.position.y +
+              this.positionAdjustment.contentY -
+              this.fontHeight * 0.9,
+          },
+          end: {
+            x: this.position.x + textX,
+            y:
+              this.position.y +
+              this.positionAdjustment.contentY -
+              this.fontHeight * 0.9,
+          },
+          thickness: 1.3,
+          color,
+        });
       }
     }
   }
