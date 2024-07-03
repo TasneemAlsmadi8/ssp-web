@@ -9,7 +9,7 @@ export class ParagraphElement extends Element {
     this.textContent = '';
     // this.setStyle('font-size', 12);
     // this.setStyle('color', '#000000');
-    // this.setStyle('padding', 2);
+    this.setStyle('padding', 1);
   }
 
   setTextContent(text: string) {

@@ -11,7 +11,7 @@ import {
   SalarySlipReportApi,
   SalarySlipReportInput,
 } from '../../interfaces/reports/salary-slip';
-import { formatDateToISO } from '../../utils/data-formatter';
+import { formatDateToISO, formatFloat } from '../../utils/data-formatter';
 import { endOfMonth, format, startOfMonth } from 'date-fns';
 
 @Injectable({
@@ -73,10 +73,10 @@ export class SalarySlipReportService extends BaseService {
       'Period:': `${startDate}   To   ${endDate}`,
       'Month Days:': data.workUnitNo,
       'Working Days:': `${data.days}    ${data.workUnit}`,
-      'Basic Salary:': data.basicSalary,
-      'Worth Salary:': data.worthSalary,
-      'Paid Vacation:': data.paidVacation,
-      'Additional Salary:': data.additionalSalary,
+      'Basic Salary:': formatFloat(data.basicSalary, 3),
+      'Worth Salary:': formatFloat(data.worthSalary, 3),
+      'Paid Vacation:': formatFloat(data.paidVacation, 3),
+      'Additional Salary:': formatFloat(data.additionalSalary, 3),
     };
     const table3Data = {
       'Payment Method:': data.payMethod,
@@ -116,13 +116,16 @@ export class SalarySlipReportService extends BaseService {
               },
               {
                 type: 'vertical-container',
+                styles: {
+                  'font-size': 8,
+                  'margin-bottom': 10,
+                },
                 elements: [
                   {
                     type: 'paragraph',
                     text: 'Page ${pageNumber} of ${totalPages}',
                     styles: {
                       'margin-bottom': 3,
-                      'font-size': 8,
                       'align-content-horizontally': 'end',
                     },
                   },
@@ -130,7 +133,6 @@ export class SalarySlipReportService extends BaseService {
                     type: 'paragraph',
                     text: '${date}',
                     styles: {
-                      'font-size': 8,
                       'align-content-horizontally': 'end',
                     },
                   },
@@ -144,12 +146,15 @@ export class SalarySlipReportService extends BaseService {
           },
         ],
       },
+      styles: {
+        'font-size': 8,
+      },
       elements: [
         {
           type: 'h-container',
           styles: {
+            padding: 5,
             'border-bottom': 2,
-            'font-size': 8,
           },
           widths: ['40%', '30%', '30%'],
           elements: [
@@ -195,8 +200,8 @@ export class SalarySlipReportService extends BaseService {
           type: 'h-container',
           styles: {
             margin: 5,
+            padding: 2,
             'margin-bottom': 20,
-            'font-size': 8,
           },
           widths: ['33%', '33%'],
           elements: [
@@ -250,7 +255,7 @@ export class SalarySlipReportService extends BaseService {
           type: 'h-container',
           styles: {
             margin: 5,
-            'font-size': 8,
+            padding: 2,
           },
           widths: ['33%', '33%'],
           elements: [
@@ -310,7 +315,6 @@ export class SalarySlipReportService extends BaseService {
             'padding-right': 10,
             'margin-bottom': 20,
             'border-top': 2,
-            'font-size': 8,
           },
           widths: ['32%', '36%', '32%'],
           elements: [
@@ -333,7 +337,7 @@ export class SalarySlipReportService extends BaseService {
                 },
                 {
                   type: 'p',
-                  text: `${data.totalSalary}`,
+                  text: `${formatFloat(data.totalSalary, 3)}`,
                   styles: {
                     'align-content-horizontally': 'end',
                   },
@@ -360,7 +364,7 @@ export class SalarySlipReportService extends BaseService {
                 },
                 {
                   type: 'p',
-                  text: `${data.netSalary}`,
+                  text: `${formatFloat(data.netSalary, 3)}`,
                   styles: {
                     'align-content-horizontally': 'end',
                   },

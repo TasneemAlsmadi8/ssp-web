@@ -24,11 +24,10 @@ export interface PageOptions extends PageDimensions, PageMargins {
 }
 
 export class PdfBuilder {
-  elements: Element[] = [];
+  body: VerticalContainerElement;
   private templatePdfBuilder?: PdfTemplateBuilder;
   private pdfDoc!: PDFDocument;
   private pageOptions: PageOptions;
-  private globalStyles: Style = {};
 
   constructor(
     public fileName: string,
@@ -54,6 +53,11 @@ export class PdfBuilder {
       ];
     }
     if (templatePdfBuilder) this.setTemplatePdfBuilder(templatePdfBuilder);
+    this.body = new VerticalContainerElement(this.pageOptions);
+  }
+
+  setStyles(styles: Style) {
+    this.body.setStyles(styles);
   }
 
   setTemplatePdfBuilder(value: PdfTemplateBuilder) {
@@ -75,7 +79,7 @@ export class PdfBuilder {
     elem.setTextContent(text);
     if (styles) elem.setStyles(styles);
 
-    if (!standalone) this.elements.push(elem);
+    if (!standalone) this.body.addElement(elem);
     return elem;
   }
   createParagraph(
@@ -88,7 +92,7 @@ export class PdfBuilder {
     elem.setTextContent(text);
     if (styles) elem.setStyles(styles);
 
-    if (!standalone) this.elements.push(elem);
+    if (!standalone) this.body.addElement(elem);
     return elem;
   }
 
@@ -105,7 +109,7 @@ export class PdfBuilder {
     if (cellStyles) elem.setCellStyles(cellStyles);
     if (styles) elem.setStyles(styles);
 
-    if (!standalone) this.elements.push(elem);
+    if (!standalone) this.body.addElement(elem);
     return elem;
   }
   createHorizontalContainer(options?: {
@@ -117,7 +121,7 @@ export class PdfBuilder {
     const elem = new HorizontalContainerElement(this.pageOptions);
     if (styles) elem.setStyles(styles);
 
-    if (!standalone) this.elements.push(elem);
+    if (!standalone) this.body.addElement(elem);
     return elem;
   }
   async addFontFromUrl(options: {
@@ -137,7 +141,7 @@ export class PdfBuilder {
     const elem = new VerticalContainerElement(this.pageOptions);
     if (styles) elem.setStyles(styles);
 
-    if (!standalone) this.elements.push(elem);
+    if (!standalone) this.body.addElement(elem);
     return elem;
   }
 
@@ -298,17 +302,12 @@ export class PdfBuilder {
       this.pageOptions.marginLeft -
       this.pageOptions.marginRight;
 
-    for (const element of this.elements) {
-      // console.log(this.pageOptions);
-      // console.log(writableWidth);
-      await element.init(page);
-      await element.render({
-        x: this.pageOptions.marginLeft,
-        y: yOffset,
-        maxWidth: writableWidth,
-      });
-      yOffset -= element.heightOffset; // Adjust spacing
-    }
+    await this.body.init(page);
+    await this.body.render({
+      x: this.pageOptions.marginLeft,
+      y: yOffset,
+      maxWidth: writableWidth,
+    });
   }
 
   private uint8ArrayToBlob(array: Uint8Array, contentType: string): Blob {

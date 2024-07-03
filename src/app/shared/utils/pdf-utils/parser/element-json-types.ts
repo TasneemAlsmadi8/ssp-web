@@ -69,11 +69,13 @@ export type ElementJson =
 export interface PdfJson {
   fileName: string;
   pageOptions?: Partial<PageOptions>;
+  styles?: Style;
   template?: {
-    elements: ElementJson[];
     name?: string;
-    variables?: { [key: string]: string | number };
+    styles?: Style;
     pageMargins?: Partial<PageMargins>;
+    variables?: { [key: string]: string | number };
+    elements: ElementJson[];
   };
   elements: ElementJson[];
 }

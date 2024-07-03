@@ -41,7 +41,7 @@ export class VerticalContainerElement
 
       await child.render({ x: cursorX, y: cursorY, maxWidth: this.maxWidth });
 
-      cursorY -= child.height;
+      cursorY -= child.heightOffset;
     }
   }
 }
