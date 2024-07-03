@@ -2,7 +2,7 @@ export interface LeaveBalanceReport {
   employeeId: string;
   employeeCode: string;
   fullName: string;
-  fullNameForeign?: string | null;
+  fullNameForeign?: string;
   currentSalary: number; // decimal string
   entitlement: number; // decimal string
   openingBalance: number; // decimal string

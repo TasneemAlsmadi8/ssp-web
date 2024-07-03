@@ -127,7 +127,6 @@ const routes: Routes = [
             (m) => m.ShiftSystemComponent
           ),
       },
-
       {
         path: 'reports/leave-balance',
         title: 'Leave Balance Report',
@@ -135,6 +134,14 @@ const routes: Routes = [
           import(
             './reports/reports-leave-balance/reports-leave-balance.component'
           ).then((m) => m.ReportsLeaveBalanceComponent),
+      },
+      {
+        path: 'reports/salary-slip',
+        title: 'Salary Slip Report',
+        loadComponent: () =>
+          import(
+            './reports/reports-salary-slip/reports-salary-slip.component'
+          ).then((m) => m.ReportsSalarySlipComponent),
       },
       { path: '**', component: PageNotFoundComponent },
     ],
