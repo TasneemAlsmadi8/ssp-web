@@ -2,11 +2,15 @@ import { Injectable } from '@angular/core';
 import { BaseService } from '../../base/base.service';
 import { HttpClient } from '@angular/common/http';
 import { LocalUserService } from '../local-user.service';
-import { Observable, map, tap } from 'rxjs';
+import { Observable, forkJoin, map, tap } from 'rxjs';
 import { DatePipe } from '@angular/common';
 import { PdfJson } from '../../utils/pdf-utils/parser/element-json-types';
 import { PdfParser } from '../../utils/pdf-utils/parser/pdf-parser';
 import {
+  RepeatableAllowance,
+  RepeatableAllowanceApi,
+  RepeatableDeduction,
+  RepeatableDeductionApi,
   SalarySlipReport,
   SalarySlipReportApi,
   SalarySlipReportInput,
@@ -18,7 +22,8 @@ import { endOfMonth, format, startOfMonth } from 'date-fns';
   providedIn: 'root',
 })
 export class SalarySlipReportService extends BaseService {
-  private url = this.baseUrl;
+  private endpoint = '/SalaryReport';
+  private url = this.baseUrl + this.endpoint;
 
   constructor(
     private http: HttpClient,
@@ -35,34 +40,83 @@ export class SalarySlipReportService extends BaseService {
   getReport(
     input: SalarySlipReportInput,
     download: boolean = true
-  ): Observable<SalarySlipReport> {
-    let { month, year } = input;
-    const url =
-      this.url +
-      `/SalaryReport/GetSalarySlipReport?EmployeeID=${this.user.id}&Month=${month}&Year=${year}&UILang=???`;
-    return this.http.get<SalarySlipReportApi[]>(url, this.httpOptions).pipe(
-      map((response) => SalarySlipAdapter.apiToModel(response[0])),
+  ): Observable<
+    [SalarySlipReport, RepeatableAllowance[], RepeatableDeduction[]]
+  > {
+    return forkJoin([
+      this.getReportData(input),
+      this.getRepeatableAllowanceDetails(input),
+      this.getRepeatableDeductionDetails(input),
+    ]).pipe(
       tap((data) => {
         if (download) this.downloadPdf(input, data);
       })
     );
   }
 
+  private getReportData(
+    input: SalarySlipReportInput
+  ): Observable<SalarySlipReport> {
+    let { month, year } = input;
+    const url =
+      this.url +
+      `/GetSalarySlipReport?EmployeeID=${this.user.id}&Month=${month}&Year=${year}&UILang=???`;
+    return this.http
+      .get<SalarySlipReportApi[]>(url, this.httpOptions)
+      .pipe(map((response) => SalarySlipAdapter.apiToModel(response[0])));
+  }
+
+  private getRepeatableAllowanceDetails(
+    input: SalarySlipReportInput
+  ): Observable<RepeatableAllowance[]> {
+    let { month, year } = input;
+    const url =
+      this.url +
+      `/GetSalarySlipRepAllowances?EmployeeID=${this.user.id}&Month=${month}&Year=${year}&UILang=???`;
+    return this.http
+      .get<RepeatableAllowanceApi[]>(url, this.httpOptions)
+      .pipe(
+        map((response) =>
+          response.map((value) =>
+            SalarySlipAdapter.repeatableAllowanceApiToModel(value)
+          )
+        )
+      );
+  }
+  private getRepeatableDeductionDetails(
+    input: SalarySlipReportInput
+  ): Observable<RepeatableDeduction[]> {
+    let { month, year } = input;
+    const url =
+      this.url +
+      `/GetSalarySlipRepDeductions?EmployeeID=${this.user.id}&Month=${month}&Year=${year}&UILang=???`;
+    return this.http
+      .get<RepeatableDeductionApi[]>(url, this.httpOptions)
+      .pipe(
+        map((response) =>
+          response.map((value) =>
+            SalarySlipAdapter.repeatableDeductionApiToModel(value)
+          )
+        )
+      );
+  }
+
   private async downloadPdf(
     input: SalarySlipReportInput,
-    data: SalarySlipReport
+    data: [SalarySlipReport, RepeatableAllowance[], RepeatableDeduction[]]
   ) {
+    const [reportData, repAllowanceDetails, repDeductionsDetails] = data;
     const table1Data = {
-      'Employee Code:': data.employeeCode,
-      'Employee Name:': data.fullName,
+      'Employee Code:': reportData.employeeCode,
+      'Employee Name:': reportData.fullName,
       'Month:': input.month,
       'Year:': input.year,
       'Employment Date:': this.formatDateToDisplay(
-        new Date(data.employmentDate)
+        new Date(reportData.employmentDate)
       ),
-      'Position:': data.position,
-      'Department:': data.departmentName,
-      'Branch:': data.branch,
+      'Position:': reportData.position,
+      'Department:': reportData.departmentName,
+      'Branch:': reportData.branch,
     };
     const inputDate = new Date(input.year, input.month - 1);
 
@@ -71,17 +125,31 @@ export class SalarySlipReportService extends BaseService {
 
     const table2Data = {
       'Period:': `${startDate}   To   ${endDate}`,
-      'Month Days:': data.workUnitNo,
-      'Working Days:': `${data.days}    ${data.workUnit}`,
-      'Basic Salary:': formatFloat(data.basicSalary, 3),
-      'Worth Salary:': formatFloat(data.worthSalary, 3),
-      'Paid Vacation:': formatFloat(data.paidVacation, 3),
-      'Additional Salary:': formatFloat(data.additionalSalary, 3),
+      'Month Days:': reportData.workUnitNo,
+      'Working Days:': `${reportData.days}    ${reportData.workUnit}`,
+      'Basic Salary:': formatFloat(reportData.basicSalary, 3),
+      'Worth Salary:': formatFloat(reportData.worthSalary, 3),
+      'Paid Vacation:': formatFloat(reportData.paidVacation, 3),
+      'Additional Salary:': formatFloat(reportData.additionalSalary, 3),
     };
     const table3Data = {
-      'Payment Method:': data.payMethod,
+      'Payment Method:': reportData.payMethod,
     };
 
+    const repAllowancesTable = repAllowanceDetails.reduce(
+      (acc: Record<string, any>, allowance) => {
+        acc[allowance.allowanceName] = formatFloat(allowance.value, 3);
+        return acc;
+      },
+      {}
+    );
+    const repDeductionsTable = repDeductionsDetails.reduce(
+      (acc: Record<string, any>, deduction) => {
+        acc[deduction.deductionName] = formatFloat(deduction.value, 3);
+        return acc;
+      },
+      {}
+    );
     const salarySlipReportJson: PdfJson = {
       fileName: 'Salary Slip Report.pdf',
       pageOptions: {
@@ -147,7 +215,7 @@ export class SalarySlipReportService extends BaseService {
         ],
       },
       styles: {
-        'font-size': 8,
+        'font-size': 9,
       },
       elements: [
         {
@@ -203,14 +271,12 @@ export class SalarySlipReportService extends BaseService {
             padding: 2,
             'margin-bottom': 20,
           },
-          widths: ['33%', '33%'],
+          widths: ['35%', '35%'],
           elements: [
             {
-              type: 'h-container',
-              widths: ['80%', '20%'],
+              type: 'v-container',
               styles: {
-                'background-color': '#dddddd',
-                'margin-right': 60,
+                'padding-right': 60,
               },
               elements: [
                 {
@@ -219,20 +285,47 @@ export class SalarySlipReportService extends BaseService {
                   styles: {
                     'font-weight': 'bold',
                     'text-decoration': 'underline',
+                    'background-color': '#dddddd',
                   },
                 },
                 {
-                  type: 'p',
-                  text: `${data.repeatableAllowance}`,
+                  type: 'obj-table',
+                  data: repAllowancesTable,
+                  rowHeaders: false,
+                  styles: {
+                    'padding-bottom': 3,
+                    'border-bottom': 1.3,
+                  },
+                  cellStyles: {
+                    border: 0,
+                    'align-content-horizontally': 'end',
+                  },
+                  headerStyles: {
+                    'align-content-horizontally': 'start',
+                  },
+                },
+                {
+                  type: 'obj-table',
+                  data: {
+                    Total: formatFloat(reportData.repeatableAllowance, 3),
+                  },
+                  rowHeaders: false,
+                  cellStyles: {
+                    border: 0,
+                    'font-weight': 'bold',
+                    'align-content-horizontally': 'end',
+                  },
+                  headerStyles: {
+                    'align-content-horizontally': 'start',
+                  },
                 },
               ],
             },
             {
-              type: 'h-container',
-              widths: ['80%', '20%'],
+              type: 'v-container',
               styles: {
-                'background-color': '#dddddd',
-                'margin-right': 60,
+                'padding-right': 60,
+                // font: 'Noto Sans',
               },
               elements: [
                 {
@@ -241,11 +334,39 @@ export class SalarySlipReportService extends BaseService {
                   styles: {
                     'font-weight': 'bold',
                     'text-decoration': 'underline',
+                    'background-color': '#dddddd',
                   },
                 },
                 {
-                  type: 'p',
-                  text: `${data.repeatableDeductions}`,
+                  type: 'obj-table',
+                  data: repDeductionsTable,
+                  rowHeaders: false,
+                  styles: {
+                    'padding-bottom': 3,
+                    'border-bottom': 1.3,
+                  },
+                  cellStyles: {
+                    border: 0,
+                    'align-content-horizontally': 'end',
+                  },
+                  headerStyles: {
+                    'align-content-horizontally': 'start',
+                  },
+                },
+                {
+                  type: 'obj-table',
+                  data: {
+                    Total: formatFloat(reportData.repeatableDeductions, 3),
+                  },
+                  rowHeaders: false,
+                  cellStyles: {
+                    border: 0,
+                    'font-weight': 'bold',
+                    'align-content-horizontally': 'end',
+                  },
+                  headerStyles: {
+                    'align-content-horizontally': 'start',
+                  },
                 },
               ],
             },
@@ -257,7 +378,7 @@ export class SalarySlipReportService extends BaseService {
             margin: 5,
             padding: 2,
           },
-          widths: ['33%', '33%'],
+          widths: ['35%', '35%'],
           elements: [
             {
               type: 'h-container',
@@ -277,7 +398,7 @@ export class SalarySlipReportService extends BaseService {
                 },
                 {
                   type: 'p',
-                  text: `${data.nonRepeatableAllowances}`,
+                  text: `${reportData.nonRepeatableAllowances}`,
                 },
               ],
             },
@@ -299,7 +420,7 @@ export class SalarySlipReportService extends BaseService {
                 },
                 {
                   type: 'p',
-                  text: `${data.nonRepeatableDeductions}`,
+                  text: `${reportData.nonRepeatableDeductions}`,
                 },
               ],
             },
@@ -315,6 +436,7 @@ export class SalarySlipReportService extends BaseService {
             'padding-right': 10,
             'margin-bottom': 20,
             'border-top': 2,
+            'font-weight': 'bold',
           },
           widths: ['32%', '36%', '32%'],
           elements: [
@@ -331,13 +453,10 @@ export class SalarySlipReportService extends BaseService {
                 {
                   type: 'p',
                   text: 'Total Salary:',
-                  styles: {
-                    'font-weight': 'bold',
-                  },
                 },
                 {
                   type: 'p',
-                  text: `${formatFloat(data.totalSalary, 3)}`,
+                  text: `${formatFloat(reportData.totalSalary, 3)}`,
                   styles: {
                     'align-content-horizontally': 'end',
                   },
@@ -353,18 +472,16 @@ export class SalarySlipReportService extends BaseService {
                 padding: 1.5,
                 'padding-left': 7,
                 'padding-right': 7,
+                'font-weight': 'bold',
               },
               elements: [
                 {
                   type: 'p',
                   text: 'Net Salary:',
-                  styles: {
-                    'font-weight': 'bold',
-                  },
                 },
                 {
                   type: 'p',
-                  text: `${formatFloat(data.netSalary, 3)}`,
+                  text: `${formatFloat(reportData.netSalary, 3)}`,
                   styles: {
                     'align-content-horizontally': 'end',
                   },
@@ -442,6 +559,37 @@ class SalarySlipAdapter {
       positionName: apiSchema.posName ?? undefined,
       branch: apiSchema.branch ?? undefined,
       branchName: apiSchema.branchName ?? undefined,
+    };
+    return obj;
+  }
+  static repeatableAllowanceApiToModel(
+    apiSchema: RepeatableAllowanceApi
+  ): RepeatableAllowance {
+    const obj: RepeatableAllowance = {
+      employeeId: apiSchema.u_empID.toString(),
+      code: apiSchema.code,
+      name: apiSchema.name,
+      batchNumber: apiSchema.u_BatchNo,
+      value: apiSchema.u_Value,
+      totalValue: apiSchema.u_TotValue,
+      allowanceId: apiSchema.u_AllowID,
+      allowanceName: apiSchema.allowanceName,
+      isAdditionalSalary: apiSchema.u_IsAddSal,
+    };
+    return obj;
+  }
+  static repeatableDeductionApiToModel(
+    apiSchema: RepeatableDeductionApi
+  ): RepeatableDeduction {
+    const obj: RepeatableDeduction = {
+      employeeId: apiSchema.u_empID.toString(),
+      code: apiSchema.code,
+      name: apiSchema.name,
+      batchNumber: apiSchema.u_BatchNo,
+      value: apiSchema.u_Value,
+      companyValue: apiSchema.u_CompValue,
+      deductionId: apiSchema.u_DeductID,
+      deductionName: apiSchema.deductionName,
     };
     return obj;
   }

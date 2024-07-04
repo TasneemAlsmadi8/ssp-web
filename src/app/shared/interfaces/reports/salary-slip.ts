@@ -47,6 +47,29 @@ export interface SalarySlipReport {
   toDate: string;
 }
 
+export interface RepeatableAllowance {
+  employeeId: string;
+  code: string;
+  name: string;
+  batchNumber: number;
+  value: number;
+  totalValue: number;
+  allowanceId: string;
+  allowanceName: string;
+  isAdditionalSalary: string; // "Y" or "N" string
+}
+
+export interface RepeatableDeduction {
+  employeeId: string;
+  code: string;
+  name: string;
+  batchNumber: number;
+  value: number;
+  companyValue: number;
+  deductionId: string;
+  deductionName: string;
+}
+
 export interface SalarySlipReportInput {
   month: number;
   year: number;
@@ -99,4 +122,27 @@ export interface SalarySlipReportApi {
   u_ENNameInReport: string;
   u_FromDate: string;
   u_ToDate: string;
+}
+
+export interface RepeatableAllowanceApi {
+  code: string;
+  name: string;
+  u_BatchNo: number;
+  u_empID: number;
+  u_AllowID: string;
+  u_Value: number;
+  u_TotValue: number;
+  u_IsAddSal: string; // "Y" or "N" string
+  allowanceName: string;
+}
+
+export interface RepeatableDeductionApi {
+  code: string;
+  name: string;
+  u_BatchNo: number;
+  u_empID: number;
+  u_DeductID: string;
+  u_Value: number;
+  u_CompValue: number;
+  deductionName: string;
 }
