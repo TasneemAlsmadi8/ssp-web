@@ -16,6 +16,7 @@ export interface ContainerElement extends ParentElement {
 }
 
 export abstract class Element {
+  parent?: Element;
   private styles: Style;
   protected computedStyles!: ComputedStyles;
 
@@ -113,21 +114,21 @@ export abstract class Element {
   setHeightFitContent() {
     this._heightDiff = 0;
   }
-
-  async init(page: PDFPage, parentStyles?: ComputedStyles) {
+  async init(page: PDFPage, parent?: Element) {
     this.page = page;
+    this.parent = parent;
 
-    this.computedStyles = ElementStyleCalculator.computeStyles(
+    this.styles = ElementStyleCalculator.inheritStyles(
       this.styles,
-      parentStyles
+      parent?.styles
     );
+    this.computedStyles = ElementStyleCalculator.computeStyles(this.styles);
     this.font = await this.page.doc.embedFont(this.computedStyles.font);
 
     if (this.computedStyles.width === 'fit-content') this.setWidthFitContent();
 
     if (this.children)
-      for (const child of this.children)
-        await child.init(page, this.computedStyles);
+      for (const child of this.children) await child.init(page, this);
 
     this.isInitDone = true;
   }

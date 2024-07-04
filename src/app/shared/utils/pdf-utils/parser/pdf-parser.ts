@@ -111,8 +111,7 @@ export class PdfParser {
     elementJson: ObjectTableElementJson,
     standalone: boolean = false
   ) {
-    let { data, rowHeaders, headerStyles, cellStyles, tableStyles } =
-      elementJson;
+    let { data, rowHeaders, headerStyles, cellStyles, styles } = elementJson;
     if (!data || typeof data !== 'object')
       throw new Error(
         "ObjectTable element must have a 'data' field of type object"
@@ -124,7 +123,7 @@ export class PdfParser {
       rowHeaders,
       headerStyles,
       cellStyles,
-      tableStyles,
+      styles,
       standalone,
     });
   }

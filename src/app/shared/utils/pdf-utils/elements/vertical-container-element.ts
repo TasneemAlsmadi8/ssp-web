@@ -39,7 +39,11 @@ export class VerticalContainerElement
     for (let index = 0; index < this.children.length; index++) {
       const child = this.children[index];
 
-      await child.render({ x: cursorX, y: cursorY, maxWidth: this.maxWidth });
+      await child.render({
+        x: cursorX,
+        y: cursorY,
+        maxWidth: this.contentWidth,
+      });
 
       cursorY -= child.heightOffset;
     }

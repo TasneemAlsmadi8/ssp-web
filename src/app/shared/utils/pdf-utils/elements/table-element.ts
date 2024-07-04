@@ -75,9 +75,6 @@ export class TableElement extends Element implements ParentElement {
   }
 
   async draw() {
-    // const { fontSize, paddingTop, paddingBottom, color } = this.computedStyles;
-
-    // const cellYPadding = paddingTop + paddingBottom;
     const tableWidth = this.contentWidth;
     const colCount = this.rows[0].cells.length;
     const cellWidth = tableWidth / colCount; // Adjust for table width and column count
@@ -87,14 +84,13 @@ export class TableElement extends Element implements ParentElement {
     for (let index = 0; index < this.rows.length; index++) {
       const row = this.rows[index];
       for (const cell of row.cells) {
-        cell.preRender({ maxWidth: cellWidth });
+        await cell.preRender({ maxWidth: cellWidth });
       }
       const rowHeight = this.getRowHeight(index);
       let cursorX = this.position.x + this.positionAdjustment.contentX;
       for (const cell of row.cells) {
         cell.setHeight(rowHeight);
         await cell.render({ x: cursorX, y: cursorY });
-
         cursorX += cellWidth;
       }
       cursorY -= rowHeight;

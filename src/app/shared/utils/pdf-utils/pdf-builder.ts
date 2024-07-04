@@ -153,11 +153,11 @@ export class PdfBuilder {
       rowHeaders?: boolean;
       headerStyles?: Style;
       cellStyles?: Style;
-      tableStyles?: Style;
+      styles?: Style;
       standalone?: boolean;
     }
   ): TableElement {
-    let { rowHeaders, headerStyles, cellStyles, tableStyles, standalone } =
+    let { rowHeaders, headerStyles, cellStyles, styles, standalone } =
       options ?? {};
 
     headerStyles = { ...cellStyles, ...headerStyles };
@@ -166,7 +166,7 @@ export class PdfBuilder {
 
     if (data.length === 0) {
       return this.createTable(tableData, {
-        styles: tableStyles,
+        styles,
         cellStyles,
         standalone,
       });
@@ -204,7 +204,7 @@ export class PdfBuilder {
     }
 
     return this.createTable(tableData, {
-      styles: tableStyles,
+      styles: styles,
       cellStyles,
       standalone,
     });

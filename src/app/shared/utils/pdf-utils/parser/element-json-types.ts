@@ -34,7 +34,6 @@ export interface ObjectTableElementJson extends BaseElementJson {
   rowHeaders?: boolean;
   headerStyles?: Style;
   cellStyles?: Style;
-  tableStyles?: Style;
 }
 
 type PercentageString = `${number}%`;

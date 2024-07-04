@@ -147,11 +147,8 @@ export class ElementStyleCalculator {
     });
   }
 
-  static computeStyles(
-    styles: Style,
-    parentStyles?: ComputedStyles
-  ): ComputedStyles {
-    const defaultStyles = this.getDefaultStyles(parentStyles);
+  static computeStyles(styles: Style): ComputedStyles {
+    const defaultStyles = this.getDefaultStyles();
 
     const computedFont = this.computeFont(
       styles,
@@ -207,20 +204,25 @@ export class ElementStyleCalculator {
     };
   }
 
-  static getInheritedStyles(
-    parentStyles: ComputedStyles
-  ): Partial<ComputedStyles> {
+  static inheritStyles(styles: Style, parentStyles?: Style): Style {
+    if (!parentStyles) return styles;
+    return {
+      ...this.getInheritedStyles(parentStyles),
+      ...styles,
+    };
+  }
+
+  private static getInheritedStyles(parentStyles: Style): Partial<Style> {
     return {
       font: parentStyles.font,
-      fontSize: parentStyles.fontSize,
-      textDecoration: parentStyles.textDecoration,
+      'font-size': parentStyles['font-size'],
+      'font-weight': parentStyles['font-weight'],
+      'text-decoration': parentStyles['text-decoration'],
       color: parentStyles.color,
     };
   }
 
-  static getDefaultStyles(parentStyles?: ComputedStyles): ComputedStyles {
-    let inheritedStyles = {};
-    if (parentStyles) inheritedStyles = this.getInheritedStyles(parentStyles);
+  static getDefaultStyles(): ComputedStyles {
     return {
       font: StandardFonts.Helvetica,
       fontSize: 14,
@@ -244,7 +246,6 @@ export class ElementStyleCalculator {
       alignContentVertically: 'start',
       width: 'max-width',
       height: 'fit-content',
-      ...inheritedStyles,
     };
   }
 
