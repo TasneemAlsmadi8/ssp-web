@@ -77,9 +77,7 @@ export class SalarySlipReportService extends BaseService {
       .get<RepeatableAllowanceApi[]>(url, this.httpOptions)
       .pipe(
         map((response) =>
-          response.map((value) =>
-            SalarySlipAdapter.repeatableAllowanceApiToModel(value)
-          )
+          response.map(SalarySlipAdapter.repeatableAllowanceApiToModel)
         )
       );
   }
@@ -94,9 +92,7 @@ export class SalarySlipReportService extends BaseService {
       .get<RepeatableDeductionApi[]>(url, this.httpOptions)
       .pipe(
         map((response) =>
-          response.map((value) =>
-            SalarySlipAdapter.repeatableDeductionApiToModel(value)
-          )
+          response.map(SalarySlipAdapter.repeatableDeductionApiToModel)
         )
       );
   }
