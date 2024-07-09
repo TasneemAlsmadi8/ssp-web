@@ -143,6 +143,14 @@ const routes: Routes = [
             './reports/reports-salary-slip/reports-salary-slip.component'
           ).then((m) => m.ReportsSalarySlipComponent),
       },
+      {
+        path: 'reports/hourly-transactions',
+        title: 'Hourly Transactions Report',
+        loadComponent: () =>
+          import(
+            './reports/reports-hourly-transactions/reports-hourly-transactions.component'
+          ).then((m) => m.ReportsHourlyTransactionsComponent),
+      },
       { path: '**', component: PageNotFoundComponent },
     ],
   },
