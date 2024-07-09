@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BaseService } from '../../base/base.service';
 import { HttpClient } from '@angular/common/http';
 import { LocalUserService } from '../local-user.service';
-import { Observable, forkJoin, map, tap } from 'rxjs';
+import { Observable, catchError, forkJoin, map, of, tap } from 'rxjs';
 import { DatePipe } from '@angular/common';
 import { PdfJson } from '../../utils/pdf-utils/parser/element-json-types';
 import { PdfParser } from '../../utils/pdf-utils/parser/pdf-parser';
@@ -45,8 +45,18 @@ export class SalarySlipReportService extends BaseService {
   > {
     return forkJoin([
       this.getReportData(input),
-      this.getRepeatableAllowanceDetails(input),
-      this.getRepeatableDeductionDetails(input),
+      this.getRepeatableAllowanceDetails(input).pipe(
+        catchError((error) => {
+          console.error('Error in getRepeatableAllowanceDetails:', error);
+          return of([]); // Handle error and return an empty array if it fails
+        })
+      ),
+      this.getRepeatableDeductionDetails(input).pipe(
+        catchError((error) => {
+          console.error('Error in getRepeatableDeductionDetails:', error);
+          return of([]); // Handle error and return an empty array if it fails
+        })
+      ),
     ]).pipe(
       tap((data) => {
         if (download) this.downloadPdf(input, data);
