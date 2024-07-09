@@ -8,9 +8,17 @@ export interface TableCell {
   styles?: Style;
 }
 
-export interface TableRow {
-  cells: TableCellElement[];
-  styles?: Style;
+export class TableRow {
+  constructor(public cells: TableCellElement[], styles?: Style) {
+    if (styles) this.addStyles(styles);
+  }
+  addStyles(styles: Style) {
+    this.cells.forEach((value) => {
+      const oldStyles = value.styles;
+      value.setStyles(styles);
+      value.setStyles(oldStyles);
+    });
+  }
 }
 
 export class TableElement extends Element implements ParentElement {
@@ -54,7 +62,7 @@ export class TableElement extends Element implements ParentElement {
       if (value.styles) elem.setStyles(value.styles);
       return elem;
     });
-    this.rows.push({ cells: elements });
+    this.rows.push(new TableRow(elements));
   }
 
   get contentHeight(): number {

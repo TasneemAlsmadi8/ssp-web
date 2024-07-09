@@ -17,7 +17,10 @@ export interface ContainerElement extends ParentElement {
 
 export abstract class Element {
   parent?: Element;
-  private styles: Style;
+  private _styles: Style;
+  public get styles(): Style {
+    return { ...this._styles };
+  }
   protected computedStyles!: ComputedStyles;
 
   private _positionAdjustment?: CalculatedPositionAdjustment;
@@ -64,7 +67,7 @@ export abstract class Element {
     );
   }
   constructor(protected pageDimensions: PageDimensions) {
-    this.styles = {};
+    this._styles = {};
   }
 
   setStyle(name: keyof Style, value: string | number) {
@@ -81,7 +84,7 @@ export abstract class Element {
       ) as T;
 
     styles = removeUndefined<Style>(styles);
-    this.styles = { ...this.styles, ...styles };
+    this._styles = { ...this.styles, ...styles };
   }
 
   setHeight(value: number) {
@@ -118,7 +121,7 @@ export abstract class Element {
     this.page = page;
     this.parent = parent;
 
-    this.styles = ElementStyleCalculator.inheritStyles(
+    this._styles = ElementStyleCalculator.inheritStyles(
       this.styles,
       parent?.styles
     );
