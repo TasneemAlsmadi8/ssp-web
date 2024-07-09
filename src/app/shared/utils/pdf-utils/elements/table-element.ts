@@ -83,6 +83,8 @@ export class TableElement extends Element implements ParentElement {
   }
 
   async draw() {
+    if (this.rows.length === 0) return;
+
     const tableWidth = this.contentWidth;
     const colCount = this.rows[0].cells.length;
     const cellWidth = tableWidth / colCount; // Adjust for table width and column count
