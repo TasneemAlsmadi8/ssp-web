@@ -101,17 +101,31 @@ export class PdfParser {
     elementJson: TableElementJson,
     standalone: boolean = false
   ) {
-    const { data, styles, cellStyles } = elementJson;
+    const { data, styles, cellStyles, rowStyles, columnStyles } = elementJson;
     if (!data || !Array.isArray(data))
       throw new Error("Table element must have a 'data' field of type array");
 
-    return this.builder.createTable(data, { styles, cellStyles, standalone });
+    return this.builder.createTable(data, {
+      styles,
+      cellStyles,
+      rowStyles,
+      columnStyles,
+      standalone,
+    });
   }
   private parseObjectTable(
     elementJson: ObjectTableElementJson,
     standalone: boolean = false
   ) {
-    let { data, rowHeaders, headerStyles, cellStyles, styles } = elementJson;
+    let {
+      data,
+      rowHeaders,
+      headerStyles,
+      cellStyles,
+      rowStyles,
+      columnStyles,
+      styles,
+    } = elementJson;
     if (!data || typeof data !== 'object')
       throw new Error(
         "ObjectTable element must have a 'data' field of type object"
@@ -123,6 +137,8 @@ export class PdfParser {
       rowHeaders,
       headerStyles,
       cellStyles,
+      rowStyles,
+      columnStyles,
       styles,
       standalone,
     });

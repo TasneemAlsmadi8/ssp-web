@@ -22,18 +22,33 @@ export interface TableCell {
   styles?: Style;
 }
 
+/**
+ * Represents styles for table rows or columns.
+ * This type allows adding styles based on a special selection criteria
+ * such as 'odd', 'even', 'first', 'last', or using a row/column number from 1 to the last.
+ * Negative numbers can also be used to start from the end.
+ */
+export type TableRowColumnStyle = Partial<
+  Record<`${number}` | 'odd' | 'even' | 'first' | 'last', Style>
+>;
+
 export interface TableElementJson extends BaseElementJson {
   type: 'table' | 't';
   data: TableCell[][];
   cellStyles?: Style;
+  rowStyles?: TableRowColumnStyle;
+  columnStyles?: TableRowColumnStyle;
 }
-type DataRecord = Record<string, string | number | null | undefined>;
+
+export type DataRecord = Record<string, string | number | null | undefined>;
 export interface ObjectTableElementJson extends BaseElementJson {
   type: 'object-table' | 'o-table' | 'obj-table';
   data: Array<DataRecord> | DataRecord;
   rowHeaders?: boolean;
   headerStyles?: Style;
   cellStyles?: Style;
+  rowStyles?: TableRowColumnStyle;
+  columnStyles?: TableRowColumnStyle;
 }
 
 type PercentageString = `${number}%`;

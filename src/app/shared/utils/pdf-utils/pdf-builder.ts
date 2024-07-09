@@ -10,6 +10,7 @@ import { HorizontalContainerElement } from './elements/horizontal-container-elem
 import { VerticalContainerElement } from './elements/vertical-container-element';
 import { PageDimensions } from './elements/element-styles';
 import { PdfTemplateBuilder } from './pdf-template-builder';
+import { TableRowColumnStyle } from './parser/element-json-types';
 
 export interface PageMargins {
   marginTop: number;
@@ -98,19 +99,82 @@ export class PdfBuilder {
 
   createTable(
     data: TableCell[][],
-    options?: { styles?: Style; standalone?: boolean; cellStyles?: Style }
+    options?: {
+      styles?: Style;
+      standalone?: boolean;
+      cellStyles?: Style;
+      rowStyles?: TableRowColumnStyle;
+      columnStyles?: TableRowColumnStyle;
+    }
   ): TableElement {
-    const { styles, cellStyles, standalone } = options ?? {};
+    const { styles, cellStyles, rowStyles, columnStyles, standalone } =
+      options ?? {};
+
+    //TODO implement coll styles
+    if (columnStyles) console.error('Column styles not implemented yet');
 
     const elem = new TableElement(this.pageOptions);
-    for (const row of data) {
-      elem.addRow(row);
+
+    const rowCount = data.length;
+    for (let index = 0; index < rowCount; index++) {
+      const rowData = data[index];
+      let customStyles: Style = {};
+      if (rowStyles) customStyles = resolveRowColStyles(index, rowStyles);
+
+      elem.addRow(rowData, customStyles);
     }
     if (cellStyles) elem.setCellStyles(cellStyles);
     if (styles) elem.setStyles(styles);
 
     if (!standalone) this.body.addElement(elem);
     return elem;
+
+    function resolveRowColStyles(
+      index: number,
+      rowColStyles: TableRowColumnStyle
+    ) {
+      let customStyles: Style = {};
+      if ('odd' in rowColStyles && (index + 1) % 2 === 1) {
+        customStyles = {
+          ...customStyles,
+          ...rowColStyles['odd'],
+        };
+      } else if ('even' in rowColStyles && (index + 1) % 2 === 0) {
+        customStyles = {
+          ...customStyles,
+          ...rowColStyles['even'],
+        };
+      }
+
+      if (index === 0 && 'first' in rowColStyles) {
+        customStyles = {
+          ...customStyles,
+          ...rowColStyles['first'],
+        };
+      } else if (index === rowCount - 1 && 'last' in rowColStyles) {
+        customStyles = {
+          ...customStyles,
+          ...rowColStyles['last'],
+        };
+      }
+
+      let rowStyleKey: keyof TableRowColumnStyle = `${index - rowCount}`;
+      if (rowStyleKey in rowColStyles) {
+        customStyles = {
+          ...customStyles,
+          ...rowColStyles[rowStyleKey],
+        };
+      }
+
+      rowStyleKey = `${index + 1}`;
+      if (rowStyleKey in rowColStyles) {
+        customStyles = {
+          ...customStyles,
+          ...(rowColStyles[rowStyleKey] as Style),
+        };
+      }
+      return customStyles;
+    }
   }
   createHorizontalContainer(options?: {
     styles?: Style;
@@ -153,12 +217,21 @@ export class PdfBuilder {
       rowHeaders?: boolean;
       headerStyles?: Style;
       cellStyles?: Style;
+      rowStyles?: TableRowColumnStyle;
+      columnStyles?: TableRowColumnStyle;
       styles?: Style;
       standalone?: boolean;
     }
   ): TableElement {
-    let { rowHeaders, headerStyles, cellStyles, styles, standalone } =
-      options ?? {};
+    let {
+      rowHeaders,
+      headerStyles,
+      cellStyles,
+      rowStyles,
+      columnStyles,
+      styles,
+      standalone,
+    } = options ?? {};
 
     headerStyles = { ...cellStyles, ...headerStyles };
 
@@ -167,7 +240,9 @@ export class PdfBuilder {
     if (data.length === 0) {
       return this.createTable(tableData, {
         styles,
-        cellStyles,
+        cellStyles: headerStyles,
+        rowStyles,
+        columnStyles,
         standalone,
       });
     }
@@ -206,6 +281,8 @@ export class PdfBuilder {
     return this.createTable(tableData, {
       styles: styles,
       cellStyles,
+      rowStyles,
+      columnStyles,
       standalone,
     });
   }
