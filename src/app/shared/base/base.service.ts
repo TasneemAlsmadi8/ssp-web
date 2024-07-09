@@ -1,6 +1,6 @@
 import { HttpHeaders } from '@angular/common/http';
-import { Injectable } from '@angular/core';
-import { environment } from 'environments/environments';
+import { Injectable, inject } from '@angular/core';
+import { ConfigService } from '../services/config.service';
 @Injectable({
   providedIn: 'root',
 })
@@ -9,7 +9,8 @@ export class BaseService {
   protected httpOptions: { headers: HttpHeaders };
 
   constructor() {
-    this.baseUrl = environment.apiUrl;
+    const configService = inject(ConfigService);
+    this.baseUrl = configService.getConfig().apiUrl;
     this.httpOptions = {
       headers: new HttpHeaders({
         'Content-Type': 'application/json',

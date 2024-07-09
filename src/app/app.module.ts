@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { APP_INITIALIZER, NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
@@ -10,6 +10,12 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { HttpClientModule } from '@angular/common/http';
 import { SharedModule } from './shared/shared/shared.module';
 import { DatePipe } from '@angular/common';
+import { ConfigService } from './shared/services/config.service';
+import { lastValueFrom } from 'rxjs';
+
+export function initializeApp(configService: ConfigService) {
+  return (): Promise<any> => lastValueFrom(configService.loadConfig());
+}
 
 @NgModule({
   declarations: [AppComponent, PageNotFoundComponent],
@@ -22,7 +28,15 @@ import { DatePipe } from '@angular/common';
     HttpClientModule,
     SharedModule,
   ],
-  providers: [DatePipe],
+  providers: [
+    DatePipe,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initializeApp,
+      deps: [ConfigService],
+      multi: true,
+    },
+  ],
   bootstrap: [AppComponent],
 })
 export class AppModule {}
