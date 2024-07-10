@@ -1,8 +1,9 @@
+import { measureCodeRuntime } from '../../performance';
 import { Element } from './abstract-element';
 import { PageDimensions } from './element-styles';
 
 export class ParagraphElement extends Element {
-  textContent: string;
+  private textContent: string;
 
   constructor(pageDimensions: PageDimensions) {
     super(pageDimensions);
@@ -14,6 +15,7 @@ export class ParagraphElement extends Element {
 
   setTextContent(text: string) {
     this.textContent = text;
+    this._contentWidth = undefined;
   }
 
   private isLTR(char: string): boolean {
@@ -112,6 +114,7 @@ export class ParagraphElement extends Element {
     }
 
     this.textContent = wrappedText;
+    this._contentWidth = undefined;
   }
 
   get fontHeight(): number {
@@ -125,15 +128,43 @@ export class ParagraphElement extends Element {
     return fontSize + lineSpacing;
   }
 
-  getTextWidth(text: string): number {
-    const width = text
-      .split('\n')
-      .map((text) =>
-        this.font.widthOfTextAtSize(text, this.computedStyles.fontSize)
-      )
-      .reduce((max, cur) => (cur > max ? cur : max), 0);
+  private static segmentWidthCache = new Map<string, number>();
+
+  private getSegmentWidth(segment: string): number {
+    const key = `${segment}-${this.styles.font}-${this.computedStyles.fontSize}`;
+    if (ParagraphElement.segmentWidthCache.has(key)) {
+      return ParagraphElement.segmentWidthCache.get(key)!;
+    }
+
+    // TODO: handle change in font size
+    const width = this.font.widthOfTextAtSize(
+      segment,
+      this.computedStyles.fontSize
+    );
+    ParagraphElement.segmentWidthCache.set(key, width);
 
     return width;
+  }
+
+  private getLineWidth(line: string): number {
+    return (
+      line
+        .split(/(\s+)/) // split into words
+        // .split('') // split into chars. may be faster. not as accurate cause of multi-shape chars such as in arabic
+        .reduce(
+          (totalWidth, segment) => totalWidth + this.getSegmentWidth(segment),
+          0
+        )
+    );
+  }
+
+  getTextWidth(text: string): number {
+    return text
+      .split('\n')
+      .reduce(
+        (maxWidth, line) => Math.max(maxWidth, this.getLineWidth(line)),
+        0
+      );
   }
 
   get contentHeight(): number {
@@ -141,8 +172,11 @@ export class ParagraphElement extends Element {
     return textHeight;
   }
 
+  private _contentWidth?: number;
   get contentWidth(): number {
-    return this.getTextWidth(this.textContent);
+    if (!this._contentWidth)
+      this._contentWidth = this.getTextWidth(this.textContent);
+    return this._contentWidth;
   }
 
   protected async draw(): Promise<void> {
