@@ -287,59 +287,6 @@ export class PdfBuilder {
     });
   }
 
-  // createTableFromObject(
-  //   obj: {
-  //     [key: string]: string | number | null | undefined;
-  //   },
-  //   options?: {
-  //     rowHeaders?: boolean;
-  //     headerStyles?: Style;
-  //     cellStyles?: Style;
-  //     tableStyles?: Style;
-  //     standalone?: boolean;
-  //   }
-  // ): TableElement {
-  //   const { rowHeaders, headerStyles, cellStyles, tableStyles, standalone } =
-  //     options ?? {};
-
-  //   const data: TableCell[][] = [];
-  //   const keys = Object.keys(obj);
-  //   const values = Object.values(obj).map((value) => value?.toString() ?? '-');
-
-  //   if (rowHeaders) {
-  //     // Add headers as the first row
-  //     const headerRow: TableCell[] = keys.map((key) => ({
-  //       text: key,
-  //       styles: headerStyles,
-  //     }));
-  //     data.push(headerRow);
-
-  //     const row: TableCell[] = values.map((values) => ({
-  //       text: values,
-  //       styles: cellStyles,
-  //     }));
-  //     data.push(row);
-  //   } else {
-  //     // Add headers as the first column
-  //     for (let i = 0; i < keys.length; i++) {
-  //       const row: TableCell[] = [
-  //         { text: keys[i], styles: headerStyles },
-  //         {
-  //           text: values[i],
-  //           styles: cellStyles,
-  //         },
-  //       ];
-  //       data.push(row);
-  //     }
-  //   }
-
-  //   return this.createTable(data, {
-  //     styles: tableStyles,
-  //     cellStyles,
-  //     standalone,
-  //   });
-  // }
-
   async download(): Promise<void> {
     // Generate the PDF
     await this.renderElementsToPDF();
@@ -358,15 +305,6 @@ export class PdfBuilder {
   }
 
   protected async renderElementsToPDF(pdfDoc?: PDFDocument, page?: PDFPage) {
-    // const url = '/assets/ABS Report Template.pdf';
-    // const existingPdfBytes = await fetch(url).then((res) => res.arrayBuffer());
-
-    // const pdfDoc = await PDFDocument.load(existingPdfBytes);
-    // // const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
-
-    // const pages = pdfDoc.getPages();
-    // const page = pages[0];
-
     this.pdfDoc = pdfDoc ?? (await PDFDocument.create());
     this.pdfDoc.registerFontkit(fontkit);
 

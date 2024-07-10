@@ -44,93 +44,13 @@ export class HourlyTransactionReportService extends BaseService {
     const url =
       this.url +
       `/HourlyTransactionReport?EmployeeID=${this.user.id}&UILang=???&TranType=${transactionType}&FromDate=${fromDate}&ToDate=${toDate}`;
+    if (download) this.userAlertService.showLoading('Generating Report...');
     return this.http
       .get<HourlyTransactionReportApi[]>(url, this.httpOptions)
       .pipe(
-        // catchError((err, caught) => {
-        //   const mockData = [
-        //     {
-        //       empCode: '419',
-        //       fullName: 'LARA SSP EMAIL LARA SSP EMAIL',
-        //       tranCode: 'OV01',
-        //       tranName: 'عمل اضافي مباشر',
-        //       u_FromDate: '2023-07-02T00:00:00',
-        //       u_ToDate: '2023-07-02T00:00:00',
-        //       noOfHours: null,
-        //       overtimeHours: '100.000000',
-        //       u_Remarks: '',
-        //       u_BatchNo: '45',
-        //     },
-        //     {
-        //       empCode: '419',
-        //       fullName: 'LARA SSP EMAIL LARA SSP EMAIL',
-        //       tranCode: 'ABSENCE',
-        //       tranName: 'غياب',
-        //       u_FromDate: '2023-06-13T00:00:00',
-        //       u_ToDate: '2023-06-13T00:00:00',
-        //       noOfHours: '8.000000',
-        //       overtimeHours: '0.000000',
-        //       u_Remarks: null,
-        //       u_BatchNo: '46',
-        //     },
-        //     {
-        //       empCode: '419',
-        //       fullName: 'LARA SSP EMAIL LARA SSP EMAIL',
-        //       tranCode: 'OV01',
-        //       tranName: 'عمل اضافي مباشر',
-        //       u_FromDate: '2023-06-05T00:00:00',
-        //       u_ToDate: '2023-06-05T00:00:00',
-        //       noOfHours: null,
-        //       overtimeHours: '100.000000',
-        //       u_Remarks: '',
-        //       u_BatchNo: '46',
-        //     },
-        //     {
-        //       empCode: '419',
-        //       fullName: 'LARA SSP EMAIL LARA SSP EMAIL',
-        //       tranCode: 'OV01',
-        //       tranName: 'عمل اضافي مباشر',
-        //       u_FromDate: '2023-06-06T00:00:00',
-        //       u_ToDate: '2023-06-06T00:00:00',
-        //       noOfHours: null,
-        //       overtimeHours: '100.000000',
-        //       u_Remarks: null,
-        //       u_BatchNo: '46',
-        //     },
-        //     {
-        //       empCode: '419',
-        //       fullName: 'LARA SSP EMAIL LARA SSP EMAIL',
-        //       tranCode: 'DELAY',
-        //       tranName: 'تأخير',
-        //       u_FromDate: '2023-06-18T00:00:00',
-        //       u_ToDate: '2023-06-18T00:00:00',
-        //       noOfHours: '2.000000',
-        //       overtimeHours: '0.000000',
-        //       u_Remarks: null,
-        //       u_BatchNo: '46',
-        //     },
-        //     {
-        //       empCode: '419',
-        //       fullName: 'LARA SSP EMAIL LARA SSP EMAIL',
-        //       tranCode: 'UP01',
-        //       tranName: 'اجازة غير مدفوعة الاجر',
-        //       u_FromDate: '2023-07-05T00:00:00',
-        //       u_ToDate: '2023-07-05T00:00:00',
-        //       noOfHours: '8.000000',
-        //       overtimeHours: '0.000000',
-        //       u_Remarks: '',
-        //       u_BatchNo: '45',
-        //     },
-        //   ];
-
-        //   console.error(err);
-        //   console.warn('Using Mock Data');
-        //   return of(mockData);
-        // }),
         map((response) => response.map(HourlyTransactionAdapter.apiToModel)),
         tap((data) => {
           if (download) {
-            this.userAlertService.showLoading('Generating Report...');
             this.downloadPdf(input, data).then(() => {
               this.userAlertService.showSuccess(
                 'Report Downloaded Successfully.'
@@ -166,6 +86,7 @@ export class HourlyTransactionReportService extends BaseService {
         marginBottom: 50,
         marginLeft: 20,
         marginRight: 20,
+        landscape: true,
       },
       template: {
         pageMargins: {
@@ -238,11 +159,8 @@ export class HourlyTransactionReportService extends BaseService {
             'border-bottom': 1,
           },
           rowStyles: {
-            odd: {
+            even: {
               'background-color': '#eeeeee',
-            },
-            first: {
-              'background-color': '#ffffff',
             },
           },
         },
@@ -255,13 +173,6 @@ export class HourlyTransactionReportService extends BaseService {
     // pdfBuilder.elements[1].children.forEach(
     //   (child) => (child.showBoxes = true)
     // );
-
-    // (pdfBuilder.body.children[0] as TableElement).rows.slice(1).forEach((row, index) => {
-    //   if (index % 2 === 1)
-    //     row.addStyles({
-    //       'background-color': '#eeeeee',
-    //     });
-    // });
 
     pdfBuilder.download();
   }
