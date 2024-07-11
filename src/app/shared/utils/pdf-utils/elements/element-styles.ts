@@ -40,8 +40,18 @@ export interface Style {
   width?: 'max-width' | 'fit-content';
   height?: 'fit-content';
 }
-// Define a ComputedStyles interface
 
+/**
+ * Represents styles for child elements such as row, column, etc .
+ * This type allows adding styles based on a special selection criteria
+ * such as 'odd', 'even', 'first', 'last', or using a child number from 1 to the last.
+ * Negative numbers can also be used to start from the end.
+ */
+export type ChildrenStylesSelectors = Partial<
+  Record<`${number}` | 'odd' | 'even' | 'first' | 'last', Style>
+>;
+
+// Define a ComputedStyles interface
 export interface ComputedStyles {
   font: StandardFonts | FontRawBytes;
   fontSize: number;
@@ -420,6 +430,65 @@ export class ElementStyleCalculator {
       default:
         throw new Error('Illegal position value');
     }
+  }
+
+  /**
+   * Resolves and returns an array of styles that represent the children styles
+   * as indicated by selectors
+   */
+  static resolveChildrenStyles(
+    childrenCount: number,
+    stylesSelectors: ChildrenStylesSelectors
+  ): Style[] {
+    const childrenStyles: Style[] = [];
+
+    for (let index = 0; index < childrenCount; index++) {
+      let childStyles: Style = {};
+      if ('odd' in stylesSelectors && (index + 1) % 2 === 1) {
+        childStyles = {
+          ...childStyles,
+          ...stylesSelectors['odd'],
+        };
+      } else if ('even' in stylesSelectors && (index + 1) % 2 === 0) {
+        childStyles = {
+          ...childStyles,
+          ...stylesSelectors['even'],
+        };
+      }
+
+      if (index === 0 && 'first' in stylesSelectors) {
+        childStyles = {
+          ...childStyles,
+          ...stylesSelectors['first'],
+        };
+      } else if (index === childrenCount - 1 && 'last' in stylesSelectors) {
+        childStyles = {
+          ...childStyles,
+          ...stylesSelectors['last'],
+        };
+      }
+
+      let rowStyleKey: keyof ChildrenStylesSelectors = `${
+        index - childrenCount
+      }`;
+      if (rowStyleKey in stylesSelectors) {
+        childStyles = {
+          ...childStyles,
+          ...stylesSelectors[rowStyleKey],
+        };
+      }
+
+      rowStyleKey = `${index + 1}`;
+      if (rowStyleKey in stylesSelectors) {
+        childStyles = {
+          ...childStyles,
+          ...(stylesSelectors[rowStyleKey] as Style),
+        };
+      }
+      childrenStyles.push(childStyles);
+    }
+
+    return childrenStyles;
   }
 
   private static resolveStyle(

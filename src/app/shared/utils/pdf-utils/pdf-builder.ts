@@ -1,7 +1,11 @@
 import { PDFDocument, PDFPage } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import { Element } from './elements/abstract-element';
-import { CustomFont, ElementStyleCalculator } from './elements/element-styles';
+import {
+  ChildrenStylesSelectors,
+  CustomFont,
+  ElementStyleCalculator,
+} from './elements/element-styles';
 import { Style } from './elements/element-styles';
 import { HeadingElement } from './elements/heading-element';
 import { ParagraphElement } from './elements/paragraph-element';
@@ -10,7 +14,6 @@ import { HorizontalContainerElement } from './elements/horizontal-container-elem
 import { VerticalContainerElement } from './elements/vertical-container-element';
 import { PageDimensions } from './elements/element-styles';
 import { PdfTemplateBuilder } from './pdf-template-builder';
-import { TableRowColumnStyle } from './parser/element-json-types';
 
 export interface PageMargins {
   marginTop: number;
@@ -103,8 +106,8 @@ export class PdfBuilder {
       styles?: Style;
       standalone?: boolean;
       cellStyles?: Style;
-      rowStyles?: TableRowColumnStyle;
-      columnStyles?: TableRowColumnStyle;
+      rowStyles?: ChildrenStylesSelectors;
+      columnStyles?: ChildrenStylesSelectors;
     }
   ): TableElement {
     const { styles, cellStyles, rowStyles, columnStyles, standalone } =
@@ -116,65 +119,25 @@ export class PdfBuilder {
     const elem = new TableElement(this.pageOptions);
 
     const rowCount = data.length;
+    let childrenStyles: Style[] = [];
+    if (rowStyles)
+      childrenStyles = ElementStyleCalculator.resolveChildrenStyles(
+        rowCount,
+        rowStyles
+      );
+
     for (let index = 0; index < rowCount; index++) {
       const rowData = data[index];
-      let customStyles: Style = {};
-      if (rowStyles) customStyles = resolveRowColStyles(index, rowStyles);
 
-      elem.addRow(rowData, customStyles);
+      if (childrenStyles.length > 0)
+        elem.addRow(rowData, childrenStyles[index]);
+      else elem.addRow(rowData);
     }
     if (cellStyles) elem.setCellStyles(cellStyles);
     if (styles) elem.setStyles(styles);
 
     if (!standalone) this.body.addElement(elem);
     return elem;
-
-    function resolveRowColStyles(
-      index: number,
-      rowColStyles: TableRowColumnStyle
-    ) {
-      let customStyles: Style = {};
-      if ('odd' in rowColStyles && (index + 1) % 2 === 1) {
-        customStyles = {
-          ...customStyles,
-          ...rowColStyles['odd'],
-        };
-      } else if ('even' in rowColStyles && (index + 1) % 2 === 0) {
-        customStyles = {
-          ...customStyles,
-          ...rowColStyles['even'],
-        };
-      }
-
-      if (index === 0 && 'first' in rowColStyles) {
-        customStyles = {
-          ...customStyles,
-          ...rowColStyles['first'],
-        };
-      } else if (index === rowCount - 1 && 'last' in rowColStyles) {
-        customStyles = {
-          ...customStyles,
-          ...rowColStyles['last'],
-        };
-      }
-
-      let rowStyleKey: keyof TableRowColumnStyle = `${index - rowCount}`;
-      if (rowStyleKey in rowColStyles) {
-        customStyles = {
-          ...customStyles,
-          ...rowColStyles[rowStyleKey],
-        };
-      }
-
-      rowStyleKey = `${index + 1}`;
-      if (rowStyleKey in rowColStyles) {
-        customStyles = {
-          ...customStyles,
-          ...(rowColStyles[rowStyleKey] as Style),
-        };
-      }
-      return customStyles;
-    }
   }
   createHorizontalContainer(options?: {
     styles?: Style;
@@ -217,8 +180,8 @@ export class PdfBuilder {
       rowHeaders?: boolean;
       headerStyles?: Style;
       cellStyles?: Style;
-      rowStyles?: TableRowColumnStyle;
-      columnStyles?: TableRowColumnStyle;
+      rowStyles?: ChildrenStylesSelectors;
+      columnStyles?: ChildrenStylesSelectors;
       styles?: Style;
       standalone?: boolean;
     }

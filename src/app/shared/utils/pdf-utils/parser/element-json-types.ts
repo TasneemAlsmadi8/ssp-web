@@ -1,4 +1,4 @@
-import { Style } from '../elements/element-styles';
+import { ChildrenStylesSelectors, Style } from '../elements/element-styles';
 import { PageMargins, PageOptions } from '../pdf-builder';
 
 export interface BaseElementJson extends Record<string, any> {
@@ -22,22 +22,12 @@ export interface TableCell {
   styles?: Style;
 }
 
-/**
- * Represents styles for table rows or columns.
- * This type allows adding styles based on a special selection criteria
- * such as 'odd', 'even', 'first', 'last', or using a row/column number from 1 to the last.
- * Negative numbers can also be used to start from the end.
- */
-export type TableRowColumnStyle = Partial<
-  Record<`${number}` | 'odd' | 'even' | 'first' | 'last', Style>
->;
-
 export interface TableElementJson extends BaseElementJson {
   type: 'table' | 't';
   data: TableCell[][];
   cellStyles?: Style;
-  rowStyles?: TableRowColumnStyle;
-  columnStyles?: TableRowColumnStyle;
+  rowStyles?: ChildrenStylesSelectors;
+  columnStyles?: ChildrenStylesSelectors;
 }
 
 export type DataRecord = Record<string, string | number | null | undefined>;
@@ -47,8 +37,8 @@ export interface ObjectTableElementJson extends BaseElementJson {
   rowHeaders?: boolean;
   headerStyles?: Style;
   cellStyles?: Style;
-  rowStyles?: TableRowColumnStyle;
-  columnStyles?: TableRowColumnStyle;
+  rowStyles?: ChildrenStylesSelectors;
+  columnStyles?: ChildrenStylesSelectors;
 }
 
 type PercentageString = `${number}%`;
