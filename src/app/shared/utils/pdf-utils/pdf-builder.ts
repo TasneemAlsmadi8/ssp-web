@@ -59,6 +59,14 @@ export class PdfBuilder {
     this.pageTemplateBuilder = value;
   }
 
+  async addFontFromUrl(options: {
+    name: string;
+    fontUrls: { normal: string; bold?: string };
+    fromCssFile?: boolean;
+  }) {
+    await ElementStyleCalculator.addFontFromUrl(options);
+  }
+
   addCustomFont(customFont: CustomFont) {
     ElementStyleCalculator.addCustomFont(customFont);
   }

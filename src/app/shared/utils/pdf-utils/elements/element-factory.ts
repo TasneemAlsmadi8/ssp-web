@@ -40,6 +40,7 @@ export class ElementFactory {
 
     return elem;
   }
+
   createParagraph(
     text: string,
     options?: { styles?: Style }
@@ -90,6 +91,7 @@ export class ElementFactory {
 
     return elem;
   }
+
   createHorizontalContainer(options?: {
     styles?: Style;
   }): HorizontalContainerElement {
@@ -99,13 +101,6 @@ export class ElementFactory {
     if (styles) elem.setStyles(styles);
 
     return elem;
-  }
-  async addFontFromUrl(options: {
-    name: string;
-    fontUrls: { normal: string; bold?: string };
-    fromCssFile?: boolean;
-  }) {
-    ElementStyleCalculator.addFontFromUrl(options);
   }
 
   createVerticalContainer(options?: {
