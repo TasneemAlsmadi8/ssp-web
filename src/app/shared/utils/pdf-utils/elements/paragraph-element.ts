@@ -18,6 +18,10 @@ export class ParagraphElement extends Element {
     this._contentWidth = undefined;
   }
 
+  getTextContent() {
+    return this.textContent;
+  }
+
   private isLTR(char: string): boolean {
     const ltrRegex =
       /[\u0041-\u005A\u0061-\u007A\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u024F\u1E00-\u1EFF\u0400-\u04FF\u0370-\u03FF\u0030-\u0039]/;

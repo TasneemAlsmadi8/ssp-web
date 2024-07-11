@@ -1,19 +1,11 @@
 import { PDFDocument, PDFPage } from 'pdf-lib';
 import fontkit from '@pdf-lib/fontkit';
 import { Element } from './elements/abstract-element';
-import {
-  ChildrenStylesSelectors,
-  CustomFont,
-  ElementStyleCalculator,
-} from './elements/element-styles';
+import { CustomFont, ElementStyleCalculator } from './elements/element-styles';
 import { Style } from './elements/element-styles';
-import { HeadingElement } from './elements/heading-element';
-import { ParagraphElement } from './elements/paragraph-element';
-import { TableCell, TableElement } from './elements/table-element';
-import { HorizontalContainerElement } from './elements/horizontal-container-element';
 import { VerticalContainerElement } from './elements/vertical-container-element';
 import { PageDimensions } from './elements/element-styles';
-import { PdfTemplateBuilder } from './pdf-template-builder';
+import { PdfTemplateResolver } from './pdf-template-resolver';
 
 export interface PageMargins {
   marginTop: number;
@@ -28,15 +20,15 @@ export interface PageOptions extends PageDimensions, PageMargins {
 }
 
 export class PdfBuilder {
-  body: VerticalContainerElement;
-  private templatePdfBuilder?: PdfTemplateBuilder;
+  private body: VerticalContainerElement;
   private pdfDoc!: PDFDocument;
   private pageOptions: PageOptions;
+  private pdfTemplateResolver = new PdfTemplateResolver();
 
   constructor(
     public fileName: string,
     pageOptions?: Partial<PageOptions>,
-    templatePdfBuilder?: PdfTemplateBuilder
+    private pageTemplateBuilder?: PdfBuilder
   ) {
     this.pageOptions = {
       height: 841.89,
@@ -56,7 +48,6 @@ export class PdfBuilder {
         this.pageOptions.width,
       ];
     }
-    if (templatePdfBuilder) this.setTemplatePdfBuilder(templatePdfBuilder);
     this.body = new VerticalContainerElement(this.pageOptions);
   }
 
@@ -64,190 +55,20 @@ export class PdfBuilder {
     this.body.setStyles(styles);
   }
 
-  setTemplatePdfBuilder(value: PdfTemplateBuilder) {
-    this.templatePdfBuilder = value;
+  setTemplatePdfBuilder(value: PdfBuilder) {
+    this.pageTemplateBuilder = value;
   }
 
   addCustomFont(customFont: CustomFont) {
     ElementStyleCalculator.addCustomFont(customFont);
   }
 
-  createHeading(
-    level: number,
-    text: string,
-    options?: { styles?: Style; standalone?: boolean }
-  ): HeadingElement {
-    const { styles, standalone } = options ?? {};
-
-    const elem = new HeadingElement(this.pageOptions, level);
-    elem.setTextContent(text);
-    if (styles) elem.setStyles(styles);
-
-    if (!standalone) this.body.addElement(elem);
-    return elem;
-  }
-  createParagraph(
-    text: string,
-    options?: { styles?: Style; standalone?: boolean }
-  ): ParagraphElement {
-    const { styles, standalone } = options ?? {};
-
-    const elem = new ParagraphElement(this.pageOptions);
-    elem.setTextContent(text);
-    if (styles) elem.setStyles(styles);
-
-    if (!standalone) this.body.addElement(elem);
-    return elem;
+  setVariables(variables: { [key: string]: string | number }) {
+    this.pdfTemplateResolver.setVariables(variables);
   }
 
-  createTable(
-    data: TableCell[][],
-    options?: {
-      styles?: Style;
-      standalone?: boolean;
-      cellStyles?: Style;
-      rowStyles?: ChildrenStylesSelectors;
-      columnStyles?: ChildrenStylesSelectors;
-    }
-  ): TableElement {
-    const { styles, cellStyles, rowStyles, columnStyles, standalone } =
-      options ?? {};
-
-    //TODO implement coll styles
-    if (columnStyles) console.error('Column styles not implemented yet');
-
-    const elem = new TableElement(this.pageOptions);
-
-    const rowCount = data.length;
-    let childrenStyles: Style[] = [];
-    if (rowStyles)
-      childrenStyles = ElementStyleCalculator.resolveChildrenStyles(
-        rowCount,
-        rowStyles
-      );
-
-    for (let index = 0; index < rowCount; index++) {
-      const rowData = data[index];
-
-      if (childrenStyles.length > 0)
-        elem.addRow(rowData, childrenStyles[index]);
-      else elem.addRow(rowData);
-    }
-    if (cellStyles) elem.setCellStyles(cellStyles);
-    if (styles) elem.setStyles(styles);
-
-    if (!standalone) this.body.addElement(elem);
-    return elem;
-  }
-  createHorizontalContainer(options?: {
-    styles?: Style;
-    standalone?: boolean;
-  }): HorizontalContainerElement {
-    const { styles, standalone } = options ?? {};
-
-    const elem = new HorizontalContainerElement(this.pageOptions);
-    if (styles) elem.setStyles(styles);
-
-    if (!standalone) this.body.addElement(elem);
-    return elem;
-  }
-  async addFontFromUrl(options: {
-    name: string;
-    fontUrls: { normal: string; bold?: string };
-    fromCssFile?: boolean;
-  }) {
-    ElementStyleCalculator.addFontFromUrl(options);
-  }
-
-  createVerticalContainer(options?: {
-    styles?: Style;
-    standalone?: boolean;
-  }): VerticalContainerElement {
-    const { styles, standalone } = options ?? {};
-
-    const elem = new VerticalContainerElement(this.pageOptions);
-    if (styles) elem.setStyles(styles);
-
-    if (!standalone) this.body.addElement(elem);
-    return elem;
-  }
-
-  createTableFromArrayOfObjects(
-    data: Array<{
-      [key: string]: string | number | null | undefined;
-    }>,
-    options?: {
-      rowHeaders?: boolean;
-      headerStyles?: Style;
-      cellStyles?: Style;
-      rowStyles?: ChildrenStylesSelectors;
-      columnStyles?: ChildrenStylesSelectors;
-      styles?: Style;
-      standalone?: boolean;
-    }
-  ): TableElement {
-    let {
-      rowHeaders,
-      headerStyles,
-      cellStyles,
-      rowStyles,
-      columnStyles,
-      styles,
-      standalone,
-    } = options ?? {};
-
-    headerStyles = { ...cellStyles, ...headerStyles };
-
-    const tableData: TableCell[][] = [];
-
-    if (data.length === 0) {
-      return this.createTable(tableData, {
-        styles,
-        cellStyles: headerStyles,
-        rowStyles,
-        columnStyles,
-        standalone,
-      });
-    }
-
-    const keys = Object.keys(data[0]);
-
-    if (rowHeaders) {
-      // Add headers as the first row
-      const headerRow: TableCell[] = keys.map((key) => ({
-        text: key,
-        styles: headerStyles,
-      }));
-      tableData.push(headerRow);
-
-      data.forEach((obj) => {
-        const row: TableCell[] = keys.map((key) => ({
-          text: obj[key]?.toString() ?? '-',
-          styles: cellStyles,
-        }));
-        tableData.push(row);
-      });
-    } else {
-      // Add headers as the first column
-      for (let i = 0; i < keys.length; i++) {
-        const row: TableCell[] = [{ text: keys[i], styles: headerStyles }];
-        data.forEach((obj) => {
-          row.push({
-            text: obj[keys[i]]?.toString() ?? '-',
-            styles: cellStyles,
-          });
-        });
-        tableData.push(row);
-      }
-    }
-
-    return this.createTable(tableData, {
-      styles: styles,
-      cellStyles,
-      rowStyles,
-      columnStyles,
-      standalone,
-    });
+  addElement(element: Element): void {
+    this.body.addElement(element);
   }
 
   async getPdfBase64(): Promise<string> {
@@ -278,13 +99,15 @@ export class PdfBuilder {
   //   window.URL.revokeObjectURL(url);
   // }
 
-  protected async renderElementsToPDF(pdfDoc?: PDFDocument, page?: PDFPage) {
+  private async renderElementsToPDF(pdfDoc?: PDFDocument, page?: PDFPage) {
     this.pdfDoc = pdfDoc ?? (await PDFDocument.create());
-    this.pdfDoc.registerFontkit(fontkit);
+    if (!pdfDoc) this.pdfDoc.registerFontkit(fontkit);
 
     if (!page) page = await this.addPage();
 
     let yOffset = this.pageOptions.height - this.pageOptions.marginTop;
+
+    this.pdfTemplateResolver.resolve(this.body);
 
     const writableWidth =
       page.getWidth() -
@@ -297,6 +120,22 @@ export class PdfBuilder {
       y: yOffset,
       maxWidth: writableWidth,
     });
+
+    await this.renderTemplatePages();
+  }
+
+  private async renderTemplatePages() {
+    let pageNumber = 1;
+    const totalPages = this.pdfDoc.getPages().length;
+    for (const page of this.pdfDoc.getPages()) {
+      this.pageTemplateBuilder?.setVariables({
+        pageNumber,
+        totalPages,
+      });
+      this.pageTemplateBuilder?.renderElementsToPDF(this.pdfDoc, page);
+
+      pageNumber++;
+    }
   }
 
   private uint8ArrayToBlob(array: Uint8Array, contentType: string): Blob {
@@ -309,8 +148,6 @@ export class PdfBuilder {
         this.pageOptions.width,
         this.pageOptions.height,
       ]);
-      if (this.templatePdfBuilder)
-        await this.templatePdfBuilder.newTemplatePage(this.pdfDoc, page);
       return page;
     }
 
@@ -322,8 +159,6 @@ export class PdfBuilder {
     const [templatePage] = await this.pdfDoc.copyPages(templatePdfDoc, [0]);
     const page = this.pdfDoc.addPage(templatePage);
 
-    if (this.templatePdfBuilder)
-      await this.templatePdfBuilder.newTemplatePage(this.pdfDoc, page);
     return page;
   }
 }

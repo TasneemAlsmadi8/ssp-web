@@ -13,110 +13,98 @@ import {
   TableElementJson,
   VerticalContainerElementJson,
 } from './element-json-types';
-import { PdfTemplateBuilder } from '../pdf-template-builder';
+import { ElementFactory } from '../elements/element-factory';
 
 export class PdfParser {
-  private builder!: PdfBuilder;
+  private elementFactory!: ElementFactory;
 
   constructor() {}
 
   parse(pdfJson: PdfJson): PdfBuilder {
     const { template, fileName, pageOptions, styles } = pdfJson;
 
-    let templateBuilder: PdfTemplateBuilder | undefined;
+    this.elementFactory = new ElementFactory(pageOptions);
+
+    let templateBuilder: PdfBuilder | undefined;
     if (template) {
-      templateBuilder = new PdfTemplateBuilder(template?.name, {
+      templateBuilder = new PdfBuilder(template?.name ?? 'template', {
         ...pageOptions,
         ...template.pageMargins,
       });
-      this.builder = templateBuilder;
 
-      if (template.styles) this.builder.setStyles(template.styles);
+      if (template.styles) templateBuilder.setStyles(template.styles);
       if (template?.variables)
-        templateBuilder.addVariables(template?.variables);
+        templateBuilder.setVariables(template?.variables);
 
       for (const elementJson of template.elements) {
-        this.parseElement(elementJson);
+        templateBuilder.addElement(this.parseElement(elementJson));
       }
     }
 
-    this.builder = new PdfBuilder(fileName, pageOptions, templateBuilder);
-    if (styles) this.builder.setStyles(styles);
+    const builder = new PdfBuilder(fileName, pageOptions, templateBuilder);
+    if (styles) builder.setStyles(styles);
 
     for (const elementJson of pdfJson.elements) {
-      this.parseElement(elementJson);
+      builder.addElement(this.parseElement(elementJson));
     }
-    return this.builder;
+    return builder;
   }
 
-  private parseElement(elementJson: ElementJson, standalone = false): Element {
+  private parseElement(elementJson: ElementJson): Element {
     switch (elementJson.type) {
       case 'heading':
       case 'h':
-        return this.parseHeading(elementJson, standalone);
+        return this.parseHeading(elementJson);
       case 'paragraph':
       case 'p':
-        return this.parseParagraph(elementJson, standalone);
+        return this.parseParagraph(elementJson);
       case 'table':
       case 't':
-        return this.parseTable(elementJson, standalone);
+        return this.parseTable(elementJson);
       case 'object-table':
       case 'obj-table':
       case 'o-table':
-        return this.parseObjectTable(elementJson, standalone);
+        return this.parseObjectTable(elementJson);
       case 'horizontal-container':
       case 'h-container':
-        return this.parseHorizontalContainer(elementJson, standalone);
+        return this.parseHorizontalContainer(elementJson);
       case 'vertical-container':
       case 'v-container':
-        return this.parseVerticalContainer(elementJson, standalone);
+        return this.parseVerticalContainer(elementJson);
       default:
         throw new Error(
           `Unknown element type: ${(elementJson as BaseElementJson).type}`
         );
     }
   }
-  private parseHeading(
-    elementJson: HeadingElementJson,
-    standalone: boolean = false
-  ) {
+  private parseHeading(elementJson: HeadingElementJson) {
     const { level, text, styles } = elementJson;
     if (!text) throw new Error("Heading element must have a 'text' field");
     if (!level) throw new Error("Heading element must have a 'level' field");
 
-    return this.builder.createHeading(level, text, { styles, standalone });
+    return this.elementFactory.createHeading(level, text, { styles });
   }
 
-  private parseParagraph(
-    elementJson: ParagraphElementJson,
-    standalone: boolean = false
-  ) {
+  private parseParagraph(elementJson: ParagraphElementJson) {
     const { text, styles } = elementJson;
     if (!text) throw new Error("Paragraph element must have a 'text' field");
 
-    return this.builder.createParagraph(text, { styles, standalone });
+    return this.elementFactory.createParagraph(text, { styles });
   }
 
-  private parseTable(
-    elementJson: TableElementJson,
-    standalone: boolean = false
-  ) {
+  private parseTable(elementJson: TableElementJson) {
     const { data, styles, cellStyles, rowStyles, columnStyles } = elementJson;
     if (!data || !Array.isArray(data))
       throw new Error("Table element must have a 'data' field of type array");
 
-    return this.builder.createTable(data, {
+    return this.elementFactory.createTable(data, {
       styles,
       cellStyles,
       rowStyles,
       columnStyles,
-      standalone,
     });
   }
-  private parseObjectTable(
-    elementJson: ObjectTableElementJson,
-    standalone: boolean = false
-  ) {
+  private parseObjectTable(elementJson: ObjectTableElementJson) {
     let {
       data,
       rowHeaders,
@@ -133,14 +121,13 @@ export class PdfParser {
 
     if (!(data instanceof Array)) data = [data];
 
-    return this.builder.createTableFromArrayOfObjects(data, {
+    return this.elementFactory.createTableFromArrayOfObjects(data, {
       rowHeaders,
       headerStyles,
       cellStyles,
       rowStyles,
       columnStyles,
       styles,
-      standalone,
     });
   }
 
@@ -180,8 +167,7 @@ export class PdfParser {
   }
 
   private parseHorizontalContainer(
-    elementJson: HorizontalContainerElementJson,
-    standalone: boolean = false
+    elementJson: HorizontalContainerElementJson
   ) {
     const { styles, elements, widths } = elementJson;
     if (!elements || !Array.isArray(elements))
@@ -189,36 +175,31 @@ export class PdfParser {
         "HorizontalContainer element must have an 'elements' field of type array"
       );
 
-    const container = this.builder.createHorizontalContainer({
+    const container = this.elementFactory.createHorizontalContainer({
       styles,
-      standalone,
     });
     for (let index = 0; index < elements.length; index++) {
       const elementJson = elements[index];
       const maxWidth = widths[index];
-      container.addElement(this.parseElement(elementJson, true), {
+      container.addElement(this.parseElement(elementJson), {
         maxWidth: this.mapStringToWidth(maxWidth),
       });
     }
     return container;
   }
 
-  private parseVerticalContainer(
-    elementJson: VerticalContainerElementJson,
-    standalone: boolean = false
-  ) {
+  private parseVerticalContainer(elementJson: VerticalContainerElementJson) {
     const { styles, elements } = elementJson;
     if (!elements || !Array.isArray(elements))
       throw new Error(
         "VerticalContainer element must have an 'elements' field of type array"
       );
 
-    const container = this.builder.createVerticalContainer({
+    const container = this.elementFactory.createVerticalContainer({
       styles,
-      standalone,
     });
     for (const elementJson of elements) {
-      container.addElement(this.parseElement(elementJson, true));
+      container.addElement(this.parseElement(elementJson));
     }
     return container;
   }
