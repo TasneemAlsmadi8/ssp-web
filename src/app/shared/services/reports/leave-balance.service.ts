@@ -8,11 +8,10 @@ import {
   LeaveBalanceReportApi,
   LeaveBalanceReportInput,
 } from '../../interfaces/reports/leave-balance';
-import { PageOptions, PdfBuilder } from '../../utils/pdf-utils/pdf-builder';
-import { Style } from '../../utils/pdf-utils/elements/element-styles';
 import { DatePipe } from '@angular/common';
 import { PdfJson } from '../../utils/pdf-utils/parser/element-json-types';
 import { PdfParser } from '../../utils/pdf-utils/parser/pdf-parser';
+import { PdfWorkerService } from '../pdf-worker.service';
 
 @Injectable({
   providedIn: 'root',
@@ -22,6 +21,7 @@ export class LeaveBalanceReportService extends BaseService {
 
   constructor(
     private http: HttpClient,
+    private pdfWorkerService: PdfWorkerService,
     private userService: LocalUserService,
     private datePipe: DatePipe
   ) {
@@ -160,13 +160,7 @@ export class LeaveBalanceReportService extends BaseService {
       ],
     };
 
-    const parser = new PdfParser();
-    const pdfBuilder = parser.parse(leaveBalanceReportJson);
-
-    // pdfBuilder.elements[1].children.forEach(
-    //   (child) => (child.showBoxes = true)
-    // );
-    pdfBuilder.download();
+    await this.pdfWorkerService.download(leaveBalanceReportJson);
   }
 
   private formatDateToDisplay(date: Date): string {

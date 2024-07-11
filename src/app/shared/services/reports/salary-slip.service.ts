@@ -17,6 +17,7 @@ import {
 } from '../../interfaces/reports/salary-slip';
 import { formatDateToISO, formatFloat } from '../../utils/data-formatter';
 import { endOfMonth, format, startOfMonth } from 'date-fns';
+import { PdfWorkerService } from '../pdf-worker.service';
 
 @Injectable({
   providedIn: 'root',
@@ -27,6 +28,7 @@ export class SalarySlipReportService extends BaseService {
 
   constructor(
     private http: HttpClient,
+    private pdfWorkerService: PdfWorkerService,
     private userService: LocalUserService,
     private datePipe: DatePipe
   ) {
@@ -499,13 +501,7 @@ export class SalarySlipReportService extends BaseService {
       ],
     };
 
-    const parser = new PdfParser();
-    const pdfBuilder = parser.parse(salarySlipReportJson);
-
-    // pdfBuilder.elements[1].children.forEach(
-    //   (child) => (child.showBoxes = true)
-    // );
-    pdfBuilder.download();
+    await this.pdfWorkerService.download(salarySlipReportJson);
   }
 
   private formatDateToDisplay(date: Date): string {

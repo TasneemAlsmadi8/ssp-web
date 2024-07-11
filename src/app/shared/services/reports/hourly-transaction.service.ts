@@ -10,10 +10,9 @@ import {
 } from '../../interfaces/reports/hourly-transaction';
 import { DatePipe } from '@angular/common';
 import { PdfJson } from '../../utils/pdf-utils/parser/element-json-types';
-import { PdfParser } from '../../utils/pdf-utils/parser/pdf-parser';
 import { formatDateToISO } from '../../utils/data-formatter';
 import { UserAlertService } from '../user-alert.service';
-import { TableElement } from '../../utils/pdf-utils/elements/table-element';
+import { PdfWorkerService } from '../pdf-worker.service';
 
 @Injectable({
   providedIn: 'root',
@@ -23,6 +22,7 @@ export class HourlyTransactionReportService extends BaseService {
 
   constructor(
     private http: HttpClient,
+    private pdfWorkerService: PdfWorkerService,
     private userAlertService: UserAlertService,
     private userService: LocalUserService,
     private datePipe: DatePipe
@@ -167,14 +167,7 @@ export class HourlyTransactionReportService extends BaseService {
       ],
     };
 
-    const parser = new PdfParser();
-    const pdfBuilder = parser.parse(hourlyTransactionReportJson);
-
-    // pdfBuilder.elements[1].children.forEach(
-    //   (child) => (child.showBoxes = true)
-    // );
-
-    pdfBuilder.download();
+    await this.pdfWorkerService.download(hourlyTransactionReportJson);
   }
 
   private formatDateToDisplay(date: Date | string): string {

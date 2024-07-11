@@ -250,22 +250,33 @@ export class PdfBuilder {
     });
   }
 
-  async download(): Promise<void> {
-    // Generate the PDF
+  async getPdfBase64(): Promise<string> {
+    await this.renderElementsToPDF();
+    return await this.pdfDoc.saveAsBase64();
+  }
+
+  async getPdfBlob(): Promise<Blob> {
     await this.renderElementsToPDF();
     const pdfBytes = await this.pdfDoc.save();
-    // Download the PDF
-    const blob = this.uint8ArrayToBlob(pdfBytes, 'application/pdf');
-    const url = window.URL.createObjectURL(blob);
-
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = this.fileName;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    window.URL.revokeObjectURL(url);
+    return this.uint8ArrayToBlob(pdfBytes, 'application/pdf');
   }
+
+  // async download(): Promise<void> {
+  //   // Generate the PDF
+  //   await this.renderElementsToPDF();
+  //   const pdfBytes = await this.pdfDoc.save();
+  //   // Download the PDF
+  //   const blob = this.uint8ArrayToBlob(pdfBytes, 'application/pdf');
+  //   const url = window.URL.createObjectURL(blob);
+
+  //   const a = document.createElement('a');
+  //   a.href = url;
+  //   a.download = this.fileName;
+  //   document.body.appendChild(a);
+  //   a.click();
+  //   document.body.removeChild(a);
+  //   window.URL.revokeObjectURL(url);
+  // }
 
   protected async renderElementsToPDF(pdfDoc?: PDFDocument, page?: PDFPage) {
     this.pdfDoc = pdfDoc ?? (await PDFDocument.create());
