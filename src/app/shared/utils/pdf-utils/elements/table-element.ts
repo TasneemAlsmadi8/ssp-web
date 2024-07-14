@@ -82,26 +82,39 @@ export class TableElement extends Element implements ParentElement {
     );
   }
 
+  override preRender(preRenderArgs: {
+    x?: number | undefined;
+    y?: number | undefined;
+    maxWidth?: number | undefined;
+  }) {
+    super.preRender(preRenderArgs);
+
+    if (preRenderArgs.maxWidth) {
+      const tableWidth = this.contentWidth;
+      const colCount = this.rows[0].cells.length;
+      const cellWidth = tableWidth / colCount; // Adjust for table width and column count
+
+      for (const row of this.rows) {
+        for (const cell of row.cells) {
+          cell.preRender({ maxWidth: cellWidth });
+        }
+      }
+    }
+  }
+
   async draw() {
     if (this.rows.length === 0) return;
-
-    const tableWidth = this.contentWidth;
-    const colCount = this.rows[0].cells.length;
-    const cellWidth = tableWidth / colCount; // Adjust for table width and column count
 
     let cursorY = this.position.y + this.positionAdjustment.contentY; //+ this.contentHeight;
 
     for (let index = 0; index < this.rows.length; index++) {
       const row = this.rows[index];
-      for (const cell of row.cells) {
-        await cell.preRender({ maxWidth: cellWidth });
-      }
       const rowHeight = this.getRowHeight(index);
       let cursorX = this.position.x + this.positionAdjustment.contentX;
       for (const cell of row.cells) {
         cell.setHeight(rowHeight);
         await cell.render({ x: cursorX, y: cursorY });
-        cursorX += cellWidth;
+        cursorX += cell.width;
       }
       cursorY -= rowHeight;
     }

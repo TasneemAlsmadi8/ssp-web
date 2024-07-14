@@ -44,6 +44,7 @@ export abstract class Element {
 
   protected font!: PDFFont;
 
+  private pageFactory!: () => Promise<PDFPage>;
   protected page!: PDFPage;
   protected maxWidth!: number;
   protected position!: { x: number; y: number };
@@ -55,11 +56,11 @@ export abstract class Element {
   showBoxes: boolean = false;
 
   private isInitDone = false;
-  private _isPreRenderVisited = false;
+  private isPreRenderVisited = false;
 
   private get isPreRenderDone(): boolean {
     return (
-      this._isPreRenderVisited &&
+      this.isPreRenderVisited &&
       this.maxWidth !== undefined &&
       // this._widthDiff !== undefined &&
       this.position?.x !== undefined &&
@@ -69,6 +70,13 @@ export abstract class Element {
 
   constructor(protected pageOptions: PageOptions) {
     this._styles = {};
+  }
+
+  private get overflowY(): number {
+    const pageLowerY = 0 + this.pageOptions.marginBottom; // pdf-lib y offset starts from bottom of page
+    const elementLowerY = this.position.y - this.height;
+    if (elementLowerY >= pageLowerY) return 0;
+    return pageLowerY - elementLowerY;
   }
 
   setStyle(name: keyof Style, value: string | number) {
@@ -89,8 +97,11 @@ export abstract class Element {
   }
 
   setHeight(value: number) {
-    if (this.isPreRenderDone)
+    if (this.isPreRenderDone) {
+      debugger;
+      this.isPreRenderDone;
       throw new Error('Can not change height after preRender');
+    }
     // if( value < this.height) throw new Error("Can not set height smaller than content");
     this._heightDiff = 0;
     this._heightDiff = value - this.height;
@@ -118,8 +129,30 @@ export abstract class Element {
   setHeightFitContent() {
     this._heightDiff = 0;
   }
-  async init(page: PDFPage, parent?: Element) {
+
+  reset() {
+    this.isPreRenderVisited = false;
+    this.isInitDone = false;
+
+    this._widthDiff = undefined;
+    this._heightDiff = undefined;
+
+    this.position = undefined!;
+
+    this.page = undefined!;
+    this.pageFactory = undefined!;
+    this.font = undefined!;
+
+    this.children.forEach((child) => child.reset());
+  }
+
+  async init(
+    page: PDFPage,
+    pageFactory: () => Promise<PDFPage>,
+    parent?: Element
+  ) {
     this.page = page;
+    this.pageFactory = pageFactory;
     this.parent = parent;
 
     this._styles = ElementStyleCalculator.inheritStyles(
@@ -131,17 +164,17 @@ export abstract class Element {
 
     if (this.computedStyles.width === 'fit-content') this.setWidthFitContent();
 
-    if (this.children)
-      for (const child of this.children) await child.init(page, this);
+    for (const child of this.children)
+      await child.init(page, pageFactory, this);
 
     this.isInitDone = true;
   }
 
-  async preRender(preRenderArgs: {
+  preRender(preRenderArgs: {
     x?: number;
     y?: number;
     maxWidth?: number;
-  }) {
+  }): void {
     const { x, y, maxWidth } = preRenderArgs;
     if (!this.isInitDone)
       throw new Error('Element must be initialized before rendering');
@@ -159,7 +192,7 @@ export abstract class Element {
       );
     }
 
-    this._isPreRenderVisited = true;
+    this.isPreRenderVisited = true;
   }
 
   @Element.UseFallbackFont
@@ -175,12 +208,22 @@ export abstract class Element {
         'Pre render calculation is not fully done.\nEither call preRender with all arguments, or fully provide preRenderArgs'
       );
 
+    console.log(this.constructor.name, this.overflowY);
+
     if (this.preDraw) await this.preDraw();
     this.drawBackground();
     if (this.showBoxes) this.drawBoxes();
     await this.draw();
     this.drawBorder();
     // });
+
+    if (!this.parent && this.overflowY > 0) {
+      this.page = await this.pageFactory();
+      const { height, marginBottom, marginTop } = this.pageOptions;
+      const yDiff = height - marginBottom - marginTop;
+
+      this.position.y -= yDiff;
+    }
   }
 
   protected preDraw?(): Promise<void>;

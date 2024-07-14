@@ -110,26 +110,28 @@ export class PdfBuilder {
       this.pageOptions.marginLeft -
       this.pageOptions.marginRight;
 
-    await this.body.init(page);
+    await this.body.init(page, this.addPage.bind(this));
     await this.body.render({
       x: this.pageOptions.marginLeft,
       y: yOffset,
       maxWidth: writableWidth,
     });
 
-    await this.renderTemplatePages();
+    if (this.pageTemplateBuilder) await this.renderTemplatePages();
   }
 
   private async renderTemplatePages() {
     let pageNumber = 1;
     const totalPages = this.pdfDoc.getPages().length;
-    for (const page of this.pdfDoc.getPages()) {
+    const pages = this.pdfDoc.getPages();
+    for (const page of pages) {
       this.pageTemplateBuilder?.setVariables({
         pageNumber,
         totalPages,
       });
-      this.pageTemplateBuilder?.renderElementsToPDF(this.pdfDoc, page);
+      await this.pageTemplateBuilder?.renderElementsToPDF(this.pdfDoc, page);
 
+      this.pageTemplateBuilder?.body.reset();
       pageNumber++;
     }
   }

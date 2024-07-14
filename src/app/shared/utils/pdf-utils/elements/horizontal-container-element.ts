@@ -65,18 +65,30 @@ export class HorizontalContainerElement
     return result;
   }
 
+  override preRender(preRenderArgs: {
+    x?: number | undefined;
+    y?: number | undefined;
+    maxWidth?: number | undefined;
+  }): void {
+    super.preRender(preRenderArgs);
+    for (let index = 0; index < this.children.length; index++) {
+      const child = this.children[index];
+      const maxWidth = this.calculateWidth(this.childrenWidth[index]);
+      child.setHeight(this.contentHeight);
+      child.preRender({ maxWidth });
+    }
+  }
+
   async draw() {
     let cursorY = this.position.y + this.positionAdjustment.contentY;
     let cursorX = this.position.x + this.positionAdjustment.contentX;
 
     for (let index = 0; index < this.children.length; index++) {
       const child = this.children[index];
-      const maxWidth = this.calculateWidth(this.childrenWidth[index]);
 
-      child.setHeight(this.contentHeight);
-      await child.render({ x: cursorX, y: cursorY, maxWidth });
+      await child.render({ x: cursorX, y: cursorY });
 
-      cursorX += maxWidth;
+      cursorX += child.width;
     }
   }
 }
