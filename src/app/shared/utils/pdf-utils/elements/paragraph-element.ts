@@ -1,12 +1,11 @@
-import { measureCodeRuntime } from '../../performance';
 import { Element } from './abstract-element';
-import { PageDimensions } from './element-styles';
+import { PageOptions } from './element-styles';
 
 export class ParagraphElement extends Element {
   private textContent: string;
 
-  constructor(pageDimensions: PageDimensions) {
-    super(pageDimensions);
+  constructor(pageOptions: PageOptions) {
+    super(pageOptions);
     this.textContent = '';
     // this.setStyle('font-size', 12);
     // this.setStyle('color', '#000000');

@@ -6,6 +6,18 @@ export interface PageDimensions {
   width: number;
 }
 
+export interface PageMargins {
+  marginTop: number;
+  marginBottom: number;
+  marginLeft: number;
+  marginRight: number;
+}
+
+export interface PageOptions extends PageDimensions, PageMargins {
+  templateUrl?: string;
+  landscape?: true;
+}
+
 export interface Style {
   [key: string]: string | number | undefined;
   font?: 'TimesRoman' | 'Helvetica' | 'Courier' | string;

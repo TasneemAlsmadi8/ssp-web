@@ -4,20 +4,8 @@ import { Element } from './elements/abstract-element';
 import { CustomFont, ElementStyleCalculator } from './elements/element-styles';
 import { Style } from './elements/element-styles';
 import { VerticalContainerElement } from './elements/vertical-container-element';
-import { PageDimensions } from './elements/element-styles';
 import { PdfTemplateResolver } from './pdf-template-resolver';
-
-export interface PageMargins {
-  marginTop: number;
-  marginBottom: number;
-  marginLeft: number;
-  marginRight: number;
-}
-
-export interface PageOptions extends PageDimensions, PageMargins {
-  templateUrl?: string;
-  landscape?: true;
-}
+import { PageOptions } from './elements/element-styles';
 
 export class PdfBuilder {
   private body: VerticalContainerElement;

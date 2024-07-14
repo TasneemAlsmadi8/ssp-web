@@ -1,12 +1,10 @@
-import { StandardFonts, PDFFont } from 'pdf-lib';
-import { Element } from './abstract-element';
 import { ParagraphElement } from './paragraph-element';
-import { PageDimensions } from './element-styles';
+import { PageOptions } from './element-styles';
 
 export class HeadingElement extends ParagraphElement {
   level: number;
-  constructor(pageDimensions: PageDimensions, level: number) {
-    super(pageDimensions);
+  constructor(pageOptions: PageOptions, level: number) {
+    super(pageOptions);
 
     this.level = level;
     this.setStyle('font-size', 24 + (6 - level) * 3);

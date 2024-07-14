@@ -3,6 +3,7 @@ import {
   PageDimensions,
   ElementStyleCalculator,
   ChildrenStylesSelectors,
+  PageOptions,
 } from './element-styles';
 import { HeadingElement } from './heading-element';
 import { ParagraphElement } from './paragraph-element';
@@ -11,7 +12,7 @@ import { HorizontalContainerElement } from './horizontal-container-element';
 import { VerticalContainerElement } from './vertical-container-element';
 
 export class ElementFactory {
-  private pageDimensions: PageDimensions;
+  private pageOptions: PageOptions;
 
   constructor(
     pageDimensions: Partial<PageDimensions> = {
@@ -19,12 +20,16 @@ export class ElementFactory {
       width: 595.28,
     }
   ) {
-    this.pageDimensions = {
+    this.pageOptions = {
       height: 841.89,
       width: 595.28,
+      marginTop: 50,
+      marginBottom: 50,
+      marginLeft: 50,
+      marginRight: 50,
     };
     if (pageDimensions)
-      this.pageDimensions = { ...this.pageDimensions, ...pageDimensions };
+      this.pageOptions = { ...this.pageOptions, ...pageDimensions };
   }
 
   createHeading(
@@ -34,7 +39,7 @@ export class ElementFactory {
   ): HeadingElement {
     const { styles } = options ?? {};
 
-    const elem = new HeadingElement(this.pageDimensions, level);
+    const elem = new HeadingElement(this.pageOptions, level);
     elem.setTextContent(text);
     if (styles) elem.setStyles(styles);
 
@@ -47,7 +52,7 @@ export class ElementFactory {
   ): ParagraphElement {
     const { styles } = options ?? {};
 
-    const elem = new ParagraphElement(this.pageDimensions);
+    const elem = new ParagraphElement(this.pageOptions);
     elem.setTextContent(text);
     if (styles) elem.setStyles(styles);
 
@@ -69,7 +74,7 @@ export class ElementFactory {
     //TODO implement coll styles
     if (columnStyles) console.error('Column styles not implemented yet');
 
-    const elem = new TableElement(this.pageDimensions);
+    const elem = new TableElement(this.pageOptions);
 
     const rowCount = data.length;
     let childrenStyles: Style[] = [];
@@ -97,7 +102,7 @@ export class ElementFactory {
   }): HorizontalContainerElement {
     const { styles } = options ?? {};
 
-    const elem = new HorizontalContainerElement(this.pageDimensions);
+    const elem = new HorizontalContainerElement(this.pageOptions);
     if (styles) elem.setStyles(styles);
 
     return elem;
@@ -108,7 +113,7 @@ export class ElementFactory {
   }): VerticalContainerElement {
     const { styles } = options ?? {};
 
-    const elem = new VerticalContainerElement(this.pageDimensions);
+    const elem = new VerticalContainerElement(this.pageOptions);
     if (styles) elem.setStyles(styles);
 
     return elem;

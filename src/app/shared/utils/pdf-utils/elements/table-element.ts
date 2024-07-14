@@ -1,6 +1,6 @@
 import { ParentElement } from './abstract-element';
 import { Element } from './abstract-element';
-import { PageDimensions, Style } from './element-styles';
+import { PageOptions, Style } from './element-styles';
 import { TableCellElement } from './table-cell-element';
 
 export interface TableCell {
@@ -24,8 +24,8 @@ export class TableRow {
 export class TableElement extends Element implements ParentElement {
   rows: TableRow[];
   private cellStyles?: Style;
-  constructor(pageDimensions: PageDimensions) {
-    super(pageDimensions);
+  constructor(pageOptions: PageOptions) {
+    super(pageOptions);
     this.rows = [];
     this.cellStyles = {
       border: 1,
@@ -55,7 +55,7 @@ export class TableElement extends Element implements ParentElement {
 
   addRow(cells: TableCell[], styles?: Style) {
     const elements: TableCellElement[] = cells.map((value) => {
-      const elem = new TableCellElement(this.pageDimensions);
+      const elem = new TableCellElement(this.pageOptions);
       elem.setTextContent(value.text);
       if (this.cellStyles) elem.setStyles(this.cellStyles);
       if (styles) elem.setStyles(styles);

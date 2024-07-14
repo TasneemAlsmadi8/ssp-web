@@ -1,5 +1,5 @@
 import { ChildrenStylesSelectors, Style } from '../elements/element-styles';
-import { PageMargins, PageOptions } from '../pdf-builder';
+import { PageMargins, PageOptions } from '../elements/element-styles';
 
 export interface BaseElementJson extends Record<string, any> {
   type: string;

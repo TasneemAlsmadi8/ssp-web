@@ -1,4 +1,4 @@
-import { ElementStyleCalculator, PageDimensions } from './element-styles';
+import { ElementStyleCalculator, PageOptions } from './element-styles';
 import {
   Style,
   ComputedStyles,
@@ -55,18 +55,19 @@ export abstract class Element {
   showBoxes: boolean = false;
 
   private isInitDone = false;
-  private _isPreRenderDone = false;
+  private _isPreRenderVisited = false;
 
   private get isPreRenderDone(): boolean {
     return (
-      this._isPreRenderDone &&
+      this._isPreRenderVisited &&
       this.maxWidth !== undefined &&
       // this._widthDiff !== undefined &&
       this.position?.x !== undefined &&
       this.position?.y !== undefined
     );
   }
-  constructor(protected pageDimensions: PageDimensions) {
+
+  constructor(protected pageOptions: PageOptions) {
     this._styles = {};
   }
 
@@ -154,11 +155,11 @@ export abstract class Element {
         this.styles,
         { x, y },
         { width: this.width, height: this.height },
-        this.pageDimensions
+        this.pageOptions
       );
     }
 
-    this._isPreRenderDone = true;
+    this._isPreRenderVisited = true;
   }
 
   @Element.UseFallbackFont
@@ -199,6 +200,7 @@ export abstract class Element {
       this.computedStyles.borderBottom
     );
   }
+
   get width(): number {
     return (
       this.innerWidth +
@@ -217,6 +219,7 @@ export abstract class Element {
       (this._heightDiff ?? 0)
     );
   }
+
   get innerWidth(): number {
     // always full of parent
     return (
