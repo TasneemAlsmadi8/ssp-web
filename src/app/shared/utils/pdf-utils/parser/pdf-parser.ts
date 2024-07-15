@@ -21,7 +21,7 @@ export class PdfParser {
   constructor() {}
 
   parse(pdfJson: PdfJson): PdfBuilder {
-    const { template, fileName, pageOptions, styles } = pdfJson;
+    const { template, fileName, pageOptions, styles, variables } = pdfJson;
 
     this.elementFactory = new ElementFactory(pageOptions);
 
@@ -33,8 +33,7 @@ export class PdfParser {
       });
 
       if (template.styles) templateBuilder.setStyles(template.styles);
-      if (template?.variables)
-        templateBuilder.setVariables(template?.variables);
+      if (variables) templateBuilder.setVariables(variables);
 
       for (const elementJson of template.elements) {
         templateBuilder.addElement(this.parseElement(elementJson));
@@ -43,6 +42,7 @@ export class PdfParser {
 
     const builder = new PdfBuilder(fileName, pageOptions, templateBuilder);
     if (styles) builder.setStyles(styles);
+    if (variables) builder.setVariables(variables);
 
     for (const elementJson of pdfJson.elements) {
       builder.addElement(this.parseElement(elementJson));

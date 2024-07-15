@@ -74,13 +74,13 @@ export class LeaveBalanceReportService extends BaseService {
         marginLeft: 20,
         marginRight: 20,
       },
+      variables: {
+        title: 'Leave Balance Report',
+        date: this.formatDateToDisplay(new Date()),
+      },
       template: {
         pageMargins: {
           marginTop: 70,
-        },
-        variables: {
-          title: 'Leave Balance Report',
-          date: this.formatDateToDisplay(new Date()),
         },
         elements: [
           {

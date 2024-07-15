@@ -88,13 +88,13 @@ export class HourlyTransactionReportService extends BaseService {
         marginRight: 20,
         landscape: true,
       },
+      variables: {
+        title: 'Hourly Transactions Report',
+        date: this.formatDateToDisplay(new Date()),
+      },
       template: {
         pageMargins: {
           marginTop: 70,
-        },
-        variables: {
-          title: 'Hourly Transactions Report',
-          date: this.formatDateToDisplay(new Date()),
         },
         elements: [
           {

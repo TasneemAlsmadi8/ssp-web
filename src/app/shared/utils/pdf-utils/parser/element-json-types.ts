@@ -74,11 +74,11 @@ export interface PdfJson {
   fileName: string;
   pageOptions?: Partial<PageOptions>;
   styles?: Style;
+  variables?: { [key: string]: string | number };
   template?: {
     name?: string;
     styles?: Style;
     pageMargins?: Partial<PageMargins>;
-    variables?: { [key: string]: string | number };
     elements: ElementJson[];
   };
   elements: ElementJson[];

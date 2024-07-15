@@ -167,13 +167,13 @@ export class SalarySlipReportService extends BaseService {
         marginRight: 20,
         landscape: true,
       },
+      variables: {
+        title: 'Salary Slip Report',
+        date: this.formatDateToDisplay(new Date()),
+      },
       template: {
         pageMargins: {
           marginTop: 50,
-        },
-        variables: {
-          title: 'Salary Slip Report',
-          date: this.formatDateToDisplay(new Date()),
         },
         elements: [
           {
