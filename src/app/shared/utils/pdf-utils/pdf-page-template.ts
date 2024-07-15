@@ -4,7 +4,7 @@ import { PdfTemplateResolver } from './pdf-template-resolver';
 
 export class PdfPageTemplateBuilder extends PdfBuilder {
   private pdfTemplateResolver = new PdfTemplateResolver();
-  setVariables(variables: { [key: string]: string | number }) {
+  setVariables(variables: Record<string, string | number>) {
     this.pdfTemplateResolver.setVariables(variables);
   }
   async renderTemplatePages(pdfDoc: PDFDocument) {

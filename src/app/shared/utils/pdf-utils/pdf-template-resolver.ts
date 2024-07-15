@@ -28,11 +28,11 @@ export class PdfTemplateResolver {
     return element;
   }
 
-  setVariables(variables: { [key: string]: string | number }) {
+  setVariables(variables: Record<string, string | number>) {
     this.variables = { ...this.variables, ...variables };
   }
 
-  private resolveStringVars(template: string): string {
+  resolveStringVars(template: string): string {
     return template.replace(/\${(\w+)}/g, (match, p1) => {
       return p1 in this.variables ? String(this.variables[p1]) : match;
     });

@@ -3,6 +3,7 @@ import { Element } from '../elements/abstract-element';
 import { Width } from '../elements/horizontal-container-element';
 import {
   BaseElementJson,
+  DataRecord,
   ElementJson,
   HeadingElementJson,
   HorizontalContainerElementJson,
@@ -10,11 +11,13 @@ import {
   ObjectTableElementJson,
   ParagraphElementJson,
   PdfJson,
+  TableCell,
   TableElementJson,
   VerticalContainerElementJson,
 } from './element-json-types';
 import { ElementFactory } from '../elements/element-factory';
 import { PdfPageTemplateBuilder } from '../pdf-page-template';
+import { PdfTemplateResolver } from '../pdf-template-resolver';
 
 export class PdfParser {
   private elementFactory!: ElementFactory;
@@ -49,32 +52,61 @@ export class PdfParser {
     // if (variables) builder.setVariables(variables);
 
     for (const elementJson of pdfJson.elements) {
-      builder.addElement(this.parseElement(elementJson));
+      builder.addElement(this.parseElement(elementJson, variables));
     }
     return builder;
   }
 
-  private parseElement(elementJson: ElementJson): Element {
+  private parseElement(
+    elementJson: ElementJson,
+    variables?: Record<string, string | number>
+  ): Element {
+    const resolver = new PdfTemplateResolver();
+    if (variables) resolver.setVariables(variables);
+    const resolveText = <T extends { text: string }>(element: {
+      text: string;
+    }): T => {
+      element.text = resolver.resolveStringVars(element.text);
+      return element as T;
+    };
+    const resolveRecordText = (record: DataRecord): DataRecord => {
+      return Object.fromEntries(
+        Object.entries(record).map(([key, value]) => [
+          resolver.resolveStringVars(key),
+          typeof value === 'string' ? resolver.resolveStringVars(value) : value,
+        ])
+      ) as DataRecord;
+    };
+
     switch (elementJson.type) {
       case 'heading':
       case 'h':
+        elementJson = resolveText<HeadingElementJson>(elementJson);
         return this.parseHeading(elementJson);
       case 'paragraph':
       case 'p':
+        elementJson = resolveText<ParagraphElementJson>(elementJson);
         return this.parseParagraph(elementJson);
       case 'table':
       case 't':
+        elementJson.data = elementJson.data.map((row) =>
+          row.map((cell) => resolveText<TableCell>(cell))
+        );
         return this.parseTable(elementJson);
       case 'object-table':
       case 'obj-table':
       case 'o-table':
+        let data = elementJson.data;
+        if (!(data instanceof Array)) data = [data];
+
+        elementJson.data = data.map((record) => resolveRecordText(record));
         return this.parseObjectTable(elementJson);
       case 'horizontal-container':
       case 'h-container':
-        return this.parseHorizontalContainer(elementJson);
+        return this.parseHorizontalContainer(elementJson, variables);
       case 'vertical-container':
       case 'v-container':
-        return this.parseVerticalContainer(elementJson);
+        return this.parseVerticalContainer(elementJson, variables);
       default:
         throw new Error(
           `Unknown element type: ${(elementJson as BaseElementJson).type}`
@@ -171,7 +203,8 @@ export class PdfParser {
   }
 
   private parseHorizontalContainer(
-    elementJson: HorizontalContainerElementJson
+    elementJson: HorizontalContainerElementJson,
+    variables?: Record<string, string | number>
   ) {
     const { styles, elements, widths } = elementJson;
     if (!elements || !Array.isArray(elements))
@@ -185,14 +218,17 @@ export class PdfParser {
     for (let index = 0; index < elements.length; index++) {
       const elementJson = elements[index];
       const maxWidth = widths[index];
-      container.addElement(this.parseElement(elementJson), {
+      container.addElement(this.parseElement(elementJson, variables), {
         maxWidth: this.mapStringToWidth(maxWidth),
       });
     }
     return container;
   }
 
-  private parseVerticalContainer(elementJson: VerticalContainerElementJson) {
+  private parseVerticalContainer(
+    elementJson: VerticalContainerElementJson,
+    variables?: Record<string, string | number>
+  ) {
     const { styles, elements } = elementJson;
     if (!elements || !Array.isArray(elements))
       throw new Error(
@@ -203,7 +239,7 @@ export class PdfParser {
       styles,
     });
     for (const elementJson of elements) {
-      container.addElement(this.parseElement(elementJson));
+      container.addElement(this.parseElement(elementJson, variables));
     }
     return container;
   }

@@ -74,7 +74,7 @@ export interface PdfJson {
   fileName: string;
   pageOptions?: Partial<PageOptions>;
   styles?: Style;
-  variables?: { [key: string]: string | number };
+  variables?: Record<string, string | number>;
   template?: {
     name?: string;
     styles?: Style;
