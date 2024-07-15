@@ -91,4 +91,27 @@ export class HorizontalContainerElement
       cursorX += child.width;
     }
   }
+
+  override clone(): HorizontalContainerElement {
+    const cloned = super.clone() as HorizontalContainerElement;
+    cloned.childrenWidth = [...this.childrenWidth];
+    return cloned;
+  }
+
+  protected override async splitElementOnOverflow({
+    availableHeight,
+    clone,
+  }: {
+    availableHeight: number;
+    clone: Element;
+  }): Promise<Element> {
+    const splitChildren: Element[] = [];
+    for (const child of this._children!) {
+      splitChildren.push(await child.handleOverflow());
+    }
+
+    (clone as HorizontalContainerElement)._children = splitChildren;
+
+    return clone;
+  }
 }

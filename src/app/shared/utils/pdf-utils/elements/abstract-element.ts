@@ -96,9 +96,8 @@ export abstract class Element {
     this._styles = { ...this.styles, ...styles };
   }
 
-  setHeight(value: number) {
-    if (this.isPreRenderDone) {
-      debugger;
+  setHeight(value: number, inPreRender = false) {
+    if (this.isPreRenderDone && !inPreRender) {
       this.isPreRenderDone;
       throw new Error('Can not change height after preRender');
     }
@@ -144,6 +143,11 @@ export abstract class Element {
     this.font = undefined!;
 
     this.children.forEach((child) => child.reset());
+  }
+
+  private changePage(page: PDFPage) {
+    this.page = page;
+    this.children.forEach((child) => child.changePage(page));
   }
 
   async init(
@@ -195,6 +199,46 @@ export abstract class Element {
     this.isPreRenderVisited = true;
   }
 
+  protected abstract splitElementOnOverflow({
+    availableHeight,
+    clone,
+  }: {
+    availableHeight: number;
+    clone: Element;
+  }): Promise<Element>;
+
+  async handleOverflow(): Promise<Element> {
+    const clone = this.clone();
+
+    const offsetTop =
+      this.computedStyles.borderTop +
+      this.computedStyles.marginTop +
+      this.computedStyles.paddingTop;
+
+    const availableHeight = this.height - this.overflowY - offsetTop;
+
+    const splitElement = await this.splitElementOnOverflow({
+      availableHeight,
+      clone,
+    });
+
+    if (!this.parent) {
+      const newPage = await this.pageFactory();
+      splitElement.changePage(newPage);
+      splitElement.position.y =
+        this.pageOptions.height - this.pageOptions.marginTop;
+    }
+
+    this.computedStyles.borderBottom = 0;
+    this.computedStyles.marginBottom = 0;
+    this.computedStyles.paddingBottom = 0;
+    splitElement.computedStyles.borderTop = 0;
+    splitElement.computedStyles.marginTop = 0;
+    splitElement.computedStyles.paddingTop = 0;
+
+    return splitElement;
+  }
+
   @Element.UseFallbackFont
   async render(preRenderArgs?: {
     x?: number;
@@ -208,22 +252,18 @@ export abstract class Element {
         'Pre render calculation is not fully done.\nEither call preRender with all arguments, or fully provide preRenderArgs'
       );
 
-    console.log(this.constructor.name, this.overflowY);
-
-    if (this.preDraw) await this.preDraw();
-    this.drawBackground();
-    if (this.showBoxes) this.drawBoxes();
-    await this.draw();
-    this.drawBorder();
-    // });
-
-    if (!this.parent && this.overflowY > 0) {
-      this.page = await this.pageFactory();
-      const { height, marginBottom, marginTop } = this.pageOptions;
-      const yDiff = height - marginBottom - marginTop;
-
-      this.position.y -= yDiff;
-    }
+    // console.log(this.constructor.name, this.overflowY);
+    if (this.overflowY > 0) {
+      const splitElement = await this.handleOverflow();
+      this.render();
+      splitElement.render();
+    } else {
+      if (this.preDraw) await this.preDraw();
+      this.drawBackground();
+      if (this.showBoxes) this.drawBoxes();
+      await this.draw();
+      this.drawBorder();
+    } // });
   }
 
   protected preDraw?(): Promise<void>;
@@ -495,5 +535,25 @@ export abstract class Element {
     };
 
     return descriptor;
+  }
+
+  clone(): Element {
+    const cloned = Object.create(Object.getPrototypeOf(this)) as Element;
+    cloned.pageOptions = this.pageOptions;
+    cloned.parent = this.parent;
+    cloned._styles = { ...this._styles };
+    cloned.computedStyles = { ...this.computedStyles };
+    cloned.font = this.font;
+    cloned.pageFactory = this.pageFactory;
+    cloned.page = this.page;
+    cloned.maxWidth = this.maxWidth;
+    cloned.position = { ...this.position };
+    cloned.showBoxes = this.showBoxes;
+
+    cloned.isInitDone = this.isInitDone;
+    cloned.isPreRenderVisited = this.isPreRenderVisited;
+    cloned._children = this._children?.map((child) => child.clone());
+
+    return cloned;
   }
 }

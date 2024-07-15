@@ -11,4 +11,10 @@ export class HeadingElement extends ParagraphElement {
     this.setStyle('color', '#000000');
     this.setStyle('padding', 5);
   }
+
+  override clone(): HeadingElement {
+    const cloned = super.clone() as HeadingElement;
+    cloned.level = this.level;
+    return cloned;
+  }
 }

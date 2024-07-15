@@ -119,4 +119,32 @@ export class TableElement extends Element implements ParentElement {
       cursorY -= rowHeight;
     }
   }
+
+  override clone(): TableElement {
+    const cloned = super.clone() as TableElement;
+    cloned.rows = this.rows.map((row) => {
+      const clonedCells = row.cells.map((cell) => cell.clone());
+      return new TableRow(clonedCells);
+    });
+    cloned.cellStyles = { ...this.cellStyles };
+    return cloned;
+  }
+
+  protected override async splitElementOnOverflow({
+    availableHeight,
+    clone,
+  }: {
+    availableHeight: number;
+    clone: Element;
+  }): Promise<Element> {
+    const cloneRows: TableRow[] = [];
+
+    while (this.contentHeight > availableHeight) {
+      cloneRows.unshift(this.rows!.pop()!);
+    }
+
+    (clone as TableElement).rows = cloneRows;
+
+    return clone;
+  }
 }

@@ -294,4 +294,30 @@ export class ParagraphElement extends Element {
     this.wrapText();
     this.setWidth(this.maxWidth, true);
   }
+
+  protected override async splitElementOnOverflow({
+    availableHeight,
+    clone,
+  }: {
+    availableHeight: number;
+    clone: Element;
+  }): Promise<Element> {
+    const lines = this.textContent.split('\n');
+
+    const firstPartLineCount = Math.floor(availableHeight / this.fontHeight);
+
+    const firstPartLines = lines.slice(0, firstPartLineCount);
+    this.setTextContent(firstPartLines.join('\n'));
+
+    const cloneLines = lines.slice(firstPartLineCount);
+    (clone as ParagraphElement).setTextContent(cloneLines.join('\n'));
+
+    return clone;
+  }
+
+  override clone(): ParagraphElement {
+    const cloned = super.clone() as ParagraphElement;
+    cloned.textContent = this.textContent;
+    return cloned;
+  }
 }

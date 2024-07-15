@@ -38,26 +38,60 @@ export class VerticalContainerElement
     maxWidth?: number | undefined;
   }): void {
     super.preRender(preRenderArgs);
+    let cursorX, cursorY;
+    if (preRenderArgs.y)
+      cursorY = this.position.y + this.positionAdjustment.contentY;
+    if (preRenderArgs.x)
+      cursorX = this.position.x + this.positionAdjustment.contentX;
+
     for (const child of this.children) {
       child.preRender({
+        x: cursorX,
+        y: cursorY,
         maxWidth: this.contentWidth,
       });
+      if (cursorY) cursorY -= child.heightOffset;
     }
   }
 
   async draw() {
-    let cursorY = this.position.y + this.positionAdjustment.contentY;
-    let cursorX = this.position.x + this.positionAdjustment.contentX;
+    // let cursorY = this.position.y + this.positionAdjustment.contentY;
+    // let cursorX = this.position.x + this.positionAdjustment.contentX;
 
     for (let index = 0; index < this.children.length; index++) {
       const child = this.children[index];
 
-      await child.render({
-        x: cursorX,
-        y: cursorY,
-      });
+      await child.render(
+        // {
+        // x: cursorX,
+        // y: cursorY,
+        // }
+    );
 
-      cursorY -= child.heightOffset;
+      // cursorY -= child.heightOffset;
     }
+  }
+
+  protected override async splitElementOnOverflow({
+    availableHeight,
+    clone,
+  }: {
+    availableHeight: number;
+    clone: Element;
+  }): Promise<Element> {
+    const cloneChildren: Element[] = [];
+    let childOnBoundary: Element;
+    while (this.contentHeight > availableHeight) {
+      cloneChildren.unshift(this._children!.pop()!);
+    }
+    childOnBoundary = cloneChildren.shift()!;
+    const splitChild = await childOnBoundary.handleOverflow();
+
+    this.addElement(childOnBoundary);
+    cloneChildren.unshift(splitChild);
+
+    (clone as VerticalContainerElement)._children = cloneChildren;
+
+    return clone;
   }
 }
