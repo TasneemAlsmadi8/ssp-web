@@ -11,7 +11,7 @@ import {
 import { DatePipe } from '@angular/common';
 import { PdfJson } from '../../utils/pdf-utils/parser/element-json-types';
 import { PdfParser } from '../../utils/pdf-utils/parser/pdf-parser';
-import { PdfWorkerService } from '../pdf-worker.service';
+import { PdfWorkerService } from '../../workers/pdf-worker.service';
 
 @Injectable({
   providedIn: 'root',

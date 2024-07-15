@@ -17,7 +17,7 @@ import {
 } from '../../interfaces/reports/salary-slip';
 import { formatDateToISO, formatFloat } from '../../utils/data-formatter';
 import { endOfMonth, format, startOfMonth } from 'date-fns';
-import { PdfWorkerService } from '../pdf-worker.service';
+import { PdfWorkerService } from '../../workers/pdf-worker.service';
 
 @Injectable({
   providedIn: 'root',

@@ -12,7 +12,7 @@ import { DatePipe } from '@angular/common';
 import { PdfJson } from '../../utils/pdf-utils/parser/element-json-types';
 import { formatDateToISO } from '../../utils/data-formatter';
 import { UserAlertService } from '../user-alert.service';
-import { PdfWorkerService } from '../pdf-worker.service';
+import { PdfWorkerService } from '../../workers/pdf-worker.service';
 
 @Injectable({
   providedIn: 'root',
