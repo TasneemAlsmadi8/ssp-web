@@ -1,4 +1,4 @@
-import { StandardFonts, RGB, rgb } from 'pdf-lib';
+import { StandardFonts, RGB, rgb, PDFDocument, PDFFont } from 'pdf-lib';
 
 // Define a Style interface
 export interface PageDimensions {
@@ -65,7 +65,8 @@ export type ChildrenStylesSelectors = Partial<
 
 // Define a ComputedStyles interface
 export interface ComputedStyles {
-  font: StandardFonts | FontRawBytes;
+  fontName: string;
+  fontRawBytes: FontRawBytes;
   fontSize: number;
   textDecoration: 'none' | 'underline';
   color: RGB;
@@ -132,7 +133,10 @@ export class ElementStyleCalculator {
   private static customFonts: CustomFont[] = [];
   private static fallbackFontName = 'Noto Sans';
 
-  static getFallbackFont(styles: Style) {
+  static getFallbackFont(styles: Style): {
+    fontName: string;
+    fontRawBytes: string | Uint8Array | ArrayBuffer;
+  } {
     return this.computeFont(
       { ...styles, font: undefined },
       ElementStyleCalculator.fallbackFontName
@@ -174,7 +178,7 @@ export class ElementStyleCalculator {
 
     const computedFont = this.computeFont(
       styles,
-      defaultStyles.font.toString()
+      defaultStyles.fontRawBytes.toString()
     );
     const computedFontSize = this.resolveStyle(
       styles,
@@ -206,7 +210,7 @@ export class ElementStyleCalculator {
       ? hexToRgb(styles['color'])
       : defaultStyles.color;
     return {
-      font: computedFont,
+      ...computedFont,
       fontSize: computedFontSize,
       textDecoration,
       color,
@@ -246,7 +250,8 @@ export class ElementStyleCalculator {
 
   static getDefaultStyles(): ComputedStyles {
     return {
-      font: StandardFonts.Helvetica,
+      fontName: 'Helvetica',
+      fontRawBytes: StandardFonts.Helvetica,
       fontSize: 14,
       textDecoration: 'none',
       color: rgb(0, 0, 0),
@@ -274,25 +279,28 @@ export class ElementStyleCalculator {
   static computeFont(
     styles: Style,
     defaultFontName: string
-  ): StandardFonts | FontRawBytes {
+  ): { fontName: string; fontRawBytes: StandardFonts | FontRawBytes } {
     let { font: fontName, 'font-weight': fontWeight } = styles;
-    let font: StandardFonts | FontRawBytes;
+    let fontRawBytes: FontRawBytes;
 
     fontName = fontName ?? defaultFontName;
 
     if (fontName in StandardFonts) {
       if (fontWeight === 'bold') fontName += 'Bold';
 
-      font = StandardFonts[fontName as keyof typeof StandardFonts];
-      return font;
+      fontRawBytes = StandardFonts[fontName as keyof typeof StandardFonts];
+      return { fontName, fontRawBytes: fontRawBytes };
     }
     let customFont = ElementStyleCalculator.customFonts.find(
       (value) => fontName === value.name
     );
     if (customFont) {
       if (fontWeight === 'bold' && customFont.fontBytes.bold)
-        return customFont.fontBytes.bold;
-      return customFont.fontBytes.normal;
+        return {
+          fontName: fontName + 'Bold',
+          fontRawBytes: customFont.fontBytes.bold,
+        };
+      return { fontName, fontRawBytes: customFont.fontBytes.normal };
     }
 
     throw new Error(`Font ${fontName} Not Found`);

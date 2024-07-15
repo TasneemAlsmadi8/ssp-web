@@ -1,4 +1,8 @@
-import { ElementStyleCalculator, PageOptions } from './element-styles';
+import {
+  ElementStyleCalculator,
+  FontRawBytes,
+  PageOptions,
+} from './element-styles';
 import {
   Style,
   ComputedStyles,
@@ -43,6 +47,7 @@ export abstract class Element {
   }
 
   protected font!: PDFFont;
+  protected embeddedFonts: Record<string, PDFFont> = {};
 
   private pageFactory!: () => Promise<PDFPage>;
   protected page!: PDFPage;
@@ -150,6 +155,16 @@ export abstract class Element {
     this.children.forEach((child) => child.changePage(page));
   }
 
+  protected async getEmbeddedFont(
+    fontName: string,
+    fontRawBytes: FontRawBytes
+  ): Promise<PDFFont> {
+    if (fontName in this.embeddedFonts) return this.embeddedFonts[fontName];
+    const font = await this.page.doc.embedFont(fontRawBytes);
+    this.embeddedFonts[fontName] = font;
+    return font;
+  }
+
   async init(
     page: PDFPage,
     pageFactory: () => Promise<PDFPage>,
@@ -164,7 +179,12 @@ export abstract class Element {
       parent?.styles
     );
     this.computedStyles = ElementStyleCalculator.computeStyles(this.styles);
-    this.font = await this.page.doc.embedFont(this.computedStyles.font);
+
+    if (parent) this.embeddedFonts = parent.embeddedFonts;
+    this.font = await this.getEmbeddedFont(
+      this.computedStyles.fontName,
+      this.computedStyles.fontRawBytes
+    );
 
     if (this.computedStyles.width === 'fit-content') this.setWidthFitContent();
 
@@ -245,25 +265,23 @@ export abstract class Element {
     y?: number;
     maxWidth?: number;
   }): Promise<void> {
-    // await this.executeWithFallbackFont(async () => {
     if (preRenderArgs) this.preRender(preRenderArgs);
     if (!this.isPreRenderDone)
       throw new Error(
         'Pre render calculation is not fully done.\nEither call preRender with all arguments, or fully provide preRenderArgs'
       );
 
-    // console.log(this.constructor.name, this.overflowY);
     if (this.overflowY > 0) {
       const splitElement = await this.handleOverflow();
-      this.render();
-      splitElement.render();
+      await this.render();
+      await splitElement.render();
     } else {
       if (this.preDraw) await this.preDraw();
       this.drawBackground();
       if (this.showBoxes) this.drawBoxes();
       await this.draw();
       this.drawBorder();
-    } // });
+    }
   }
 
   protected preDraw?(): Promise<void>;
@@ -481,9 +499,9 @@ export abstract class Element {
         // console.log(this);
 
         try {
-          this.font = await this.page.doc.embedFont(
-            ElementStyleCalculator.getFallbackFont(this.styles)
-          );
+          const { fontName, fontRawBytes } =
+            ElementStyleCalculator.getFallbackFont(this.styles);
+          this.font = await this.getEmbeddedFont(fontName, fontRawBytes);
           await testFunction(...args);
         } catch (fontError) {
           console.error('Fallback font embedding failed:', fontError);
@@ -517,8 +535,12 @@ export abstract class Element {
           );
           // console.log(this);
           try {
-            const fallbackFont = await (this as any).page.doc.embedFont(
-              ElementStyleCalculator.getFallbackFont((this as any).styles)
+            const { fontName, fontRawBytes } =
+              ElementStyleCalculator.getFallbackFont((this as any).styles);
+
+            const fallbackFont = await (this as any).getEmbeddedFont(
+              fontName,
+              fontRawBytes
             );
             (this as any).font = fallbackFont;
             await originalMethod.apply(this, args);
