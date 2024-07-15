@@ -14,6 +14,7 @@ import {
   VerticalContainerElementJson,
 } from './element-json-types';
 import { ElementFactory } from '../elements/element-factory';
+import { PdfPageTemplateBuilder } from '../pdf-page-template';
 
 export class PdfParser {
   private elementFactory!: ElementFactory;
@@ -25,12 +26,15 @@ export class PdfParser {
 
     this.elementFactory = new ElementFactory(pageOptions);
 
-    let templateBuilder: PdfBuilder | undefined;
+    let templateBuilder: PdfPageTemplateBuilder | undefined;
     if (template) {
-      templateBuilder = new PdfBuilder(template?.name ?? 'template', {
-        ...pageOptions,
-        ...template.pageMargins,
-      });
+      templateBuilder = new PdfPageTemplateBuilder(
+        template?.name ?? 'template',
+        {
+          ...pageOptions,
+          ...template.pageMargins,
+        }
+      );
 
       if (template.styles) templateBuilder.setStyles(template.styles);
       if (variables) templateBuilder.setVariables(variables);
@@ -42,7 +46,7 @@ export class PdfParser {
 
     const builder = new PdfBuilder(fileName, pageOptions, templateBuilder);
     if (styles) builder.setStyles(styles);
-    if (variables) builder.setVariables(variables);
+    // if (variables) builder.setVariables(variables);
 
     for (const elementJson of pdfJson.elements) {
       builder.addElement(this.parseElement(elementJson));

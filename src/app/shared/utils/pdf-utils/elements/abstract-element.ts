@@ -103,6 +103,7 @@ export abstract class Element {
 
   setHeight(value: number, inPreRender = false) {
     if (this.isPreRenderDone && !inPreRender) {
+      debugger;
       this.isPreRenderDone;
       throw new Error('Can not change height after preRender');
     }

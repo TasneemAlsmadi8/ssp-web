@@ -61,12 +61,13 @@ export class VerticalContainerElement
     for (let index = 0; index < this.children.length; index++) {
       const child = this.children[index];
 
-      await child.render(
+      await child
+        .render
         // {
         // x: cursorX,
         // y: cursorY,
         // }
-    );
+        ();
 
       // cursorY -= child.heightOffset;
     }
@@ -93,5 +94,9 @@ export class VerticalContainerElement
     (clone as VerticalContainerElement)._children = cloneChildren;
 
     return clone;
+  }
+
+  override clone(): VerticalContainerElement {
+    return super.clone() as VerticalContainerElement;
   }
 }

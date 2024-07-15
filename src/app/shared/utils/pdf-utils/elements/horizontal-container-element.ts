@@ -74,7 +74,8 @@ export class HorizontalContainerElement
     for (let index = 0; index < this.children.length; index++) {
       const child = this.children[index];
       const maxWidth = this.calculateWidth(this.childrenWidth[index]);
-      child.setHeight(this.contentHeight);
+      // TODO: check why problem happened (which required to add 'true')
+      child.setHeight(this.contentHeight, true); 
       child.preRender({ maxWidth });
     }
   }
