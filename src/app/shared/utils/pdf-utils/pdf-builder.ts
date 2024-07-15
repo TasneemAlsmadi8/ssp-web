@@ -12,11 +12,14 @@ export class PdfBuilder {
   private pdfDoc!: PDFDocument;
   private pageOptions: PageOptions;
   private pdfTemplateResolver = new PdfTemplateResolver();
+  private pageTemplateBuilder?: PdfBuilder;
+
+  isReusableTemplate = false;
 
   constructor(
     public fileName: string,
     pageOptions?: Partial<PageOptions>,
-    private pageTemplateBuilder?: PdfBuilder
+    pageTemplateBuilder?: PdfBuilder
   ) {
     this.pageOptions = {
       height: 841.89,
@@ -36,6 +39,8 @@ export class PdfBuilder {
         this.pageOptions.width,
       ];
     }
+
+    if (pageTemplateBuilder) this.setTemplatePdfBuilder(pageTemplateBuilder);
     this.body = new VerticalContainerElement(this.pageOptions);
   }
 
@@ -45,6 +50,7 @@ export class PdfBuilder {
 
   setTemplatePdfBuilder(value: PdfBuilder) {
     this.pageTemplateBuilder = value;
+    this.pageTemplateBuilder.isReusableTemplate = true;
   }
 
   async addFontFromUrl(options: {
@@ -103,15 +109,17 @@ export class PdfBuilder {
 
     let yOffset = this.pageOptions.height - this.pageOptions.marginTop;
 
-    this.pdfTemplateResolver.resolve(this.body);
+    const resolvedBody = this.pdfTemplateResolver.resolve(
+      this.isReusableTemplate ? this.body.clone() : this.body
+    );
 
     const writableWidth =
       page.getWidth() -
       this.pageOptions.marginLeft -
       this.pageOptions.marginRight;
 
-    await this.body.init(page, this.addPage.bind(this));
-    await this.body.render({
+    await resolvedBody.init(page, this.addPage.bind(this));
+    await resolvedBody.render({
       x: this.pageOptions.marginLeft,
       y: yOffset,
       maxWidth: writableWidth,
@@ -122,16 +130,15 @@ export class PdfBuilder {
 
   private async renderTemplatePages() {
     let pageNumber = 1;
-    const totalPages = this.pdfDoc.getPages().length;
     const pages = this.pdfDoc.getPages();
+    const totalPages = pages.length;
     for (const page of pages) {
-      this.pageTemplateBuilder?.setVariables({
+      this.pageTemplateBuilder!.setVariables({
         pageNumber,
         totalPages,
       });
-      await this.pageTemplateBuilder?.renderElementsToPDF(this.pdfDoc, page);
+      await this.pageTemplateBuilder!.renderElementsToPDF(this.pdfDoc, page);
 
-      this.pageTemplateBuilder?.body.reset();
       pageNumber++;
     }
   }

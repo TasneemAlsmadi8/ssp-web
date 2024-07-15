@@ -15,7 +15,7 @@ export class PdfTemplateResolver {
    *
    * @param element - The root element whose text content and children's text content will be processed.
    */
-  resolve(element: Element) {
+  resolve(element: Element): Element {
     // Replace placeholders in the text content of ParagraphElement instances
     if (element instanceof ParagraphElement) {
       const filledText = this.resolveStringVars(element.getTextContent());
@@ -24,6 +24,8 @@ export class PdfTemplateResolver {
 
     // Recursively resolve string variables for each child element
     element.children.forEach((child) => this.resolve(child));
+
+    return element;
   }
 
   setVariables(variables: { [key: string]: string | number }) {

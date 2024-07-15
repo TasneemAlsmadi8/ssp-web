@@ -134,22 +134,6 @@ export abstract class Element {
     this._heightDiff = 0;
   }
 
-  reset() {
-    this.isPreRenderVisited = false;
-    this.isInitDone = false;
-
-    this._widthDiff = undefined;
-    this._heightDiff = undefined;
-
-    this.position = undefined!;
-
-    this.page = undefined!;
-    this.pageFactory = undefined!;
-    this.font = undefined!;
-
-    this.children.forEach((child) => child.reset());
-  }
-
   private changePage(page: PDFPage) {
     this.page = page;
     this.children.forEach((child) => child.changePage(page));
@@ -559,6 +543,15 @@ export abstract class Element {
     return descriptor;
   }
 
+  /**
+   * Creates a clone of the current Element instance.
+   *
+   * Note: Cloning an element after initialization will cause the cloned element
+   * to belong to the same document as the original. If you intend to use the
+   * cloned element with other documents, make sure to re-initialize it.
+   *
+   * @returns {Element} The cloned Element instance.
+   */
   clone(): Element {
     const cloned = Object.create(Object.getPrototypeOf(this)) as Element;
     cloned.pageOptions = this.pageOptions;
@@ -566,6 +559,7 @@ export abstract class Element {
     cloned._styles = { ...this._styles };
     cloned.computedStyles = { ...this.computedStyles };
     cloned.font = this.font;
+    cloned.embeddedFonts = { ...this.embeddedFonts };
     cloned.pageFactory = this.pageFactory;
     cloned.page = this.page;
     cloned.maxWidth = this.maxWidth;
