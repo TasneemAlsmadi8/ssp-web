@@ -2,22 +2,26 @@ import { PdfBuilder } from '../pdf-builder';
 import { Element } from '../elements/abstract-element';
 import { Width } from '../elements/horizontal-container-element';
 import {
+  AutoTableElementJson,
   BaseElementJson,
+  ComplexDataRecord,
   DataRecord,
   ElementJson,
   HeadingElementJson,
   HorizontalContainerElementJson,
   MaxWidth,
+  MultiDataRecords,
   ObjectTableElementJson,
   ParagraphElementJson,
   PdfJson,
-  TableCell,
+  PdfJsonTemplate,
   TableElementJson,
   VerticalContainerElementJson,
 } from './element-json-types';
 import { ElementFactory } from '../elements/element-factory';
 import { PdfPageTemplateBuilder } from '../pdf-page-template';
 import { PdfTemplateResolver } from './pdf-template-resolver';
+import { formatDateToDisplay } from '../../data-formatter';
 
 export class PdfParser {
   private elementFactory!: ElementFactory;
@@ -27,6 +31,22 @@ export class PdfParser {
   parse(pdfJson: PdfJson): PdfBuilder {
     const { template, fileName, pageOptions, styles, variables } = pdfJson;
 
+  parse(
+    pdfJson: PdfJson,
+    data: MultiDataRecords | DataRecord[],
+    input?: DataRecord
+  ): PdfBuilder {
+    const { template, name: fileName, pageOptions, styles } = pdfJson;
+    let { variables } = pdfJson;
+
+    if (!variables)
+      variables = {
+        date: formatDateToDisplay(new Date().toISOString()),
+      };
+    else if (!variables['date'])
+      variables['date'] = formatDateToDisplay(new Date().toISOString());
+    if (input) variables['input'] = input;
+
     this.elementFactory = new ElementFactory(pageOptions);
 
     let templateBuilder: PdfPageTemplateBuilder | undefined;
@@ -35,7 +55,7 @@ export class PdfParser {
         template?.name ?? 'template',
         {
           ...pageOptions,
-          ...template.pageMargins,
+          ...template.pageOptions,
         }
       );
 
@@ -52,14 +72,15 @@ export class PdfParser {
     // if (variables) builder.setVariables(variables);
 
     for (const elementJson of pdfJson.elements) {
-      builder.addElement(this.parseElement(elementJson, variables));
+      builder.addElement(this.parseElement(elementJson, data, variables));
     }
     return builder;
   }
 
   private parseElement(
     elementJson: ElementJson,
-    variables?: Record<string, string | number>
+    data?: MultiDataRecords | DataRecord[],
+    variables?: ComplexDataRecord
   ): Element {
     const resolver = new PdfTemplateResolver(variables);
 
@@ -79,12 +100,19 @@ export class PdfParser {
         return this.parseObjectTable(
           resolver.resolveObjectTableJson(elementJson)
         );
+      case 'auto-table':
+      case 'a-table':
+        if (!data)
+          throw new Error(
+            'You Can not use Auto-Table in this context (in templates).'
+          );
+        return this.parseAutoTable(elementJson, data);
       case 'horizontal-container':
       case 'h-container':
-        return this.parseHorizontalContainer(elementJson, variables);
+        return this.parseHorizontalContainer(elementJson, data, variables);
       case 'vertical-container':
       case 'v-container':
-        return this.parseVerticalContainer(elementJson, variables);
+        return this.parseVerticalContainer(elementJson, data, variables);
       default:
         throw new Error(
           `Unknown element type: ${(elementJson as BaseElementJson).type}}`
@@ -119,6 +147,7 @@ export class PdfParser {
       columnStyles,
     });
   }
+
   private parseObjectTable(elementJson: ObjectTableElementJson) {
     let {
       data,
@@ -137,6 +166,64 @@ export class PdfParser {
     if (!(data instanceof Array)) data = [data];
 
     return this.elementFactory.createTableFromArrayOfObjects(data, {
+      rowHeaders,
+      headerStyles,
+      cellStyles,
+      rowStyles,
+      columnStyles,
+      styles,
+    });
+  }
+
+  private parseAutoTable(
+    elementJson: AutoTableElementJson,
+    data: MultiDataRecords | DataRecord[]
+  ) {
+    let {
+      schema,
+      tableDataKey,
+      rowHeaders,
+      headerStyles,
+      cellStyles,
+      rowStyles,
+      columnStyles,
+      styles,
+    } = elementJson;
+
+    if (!Array.isArray(data)) {
+      if (!tableDataKey)
+        throw new Error(
+          'This report have Multi Table Data!\nPlease provide tableDataKey.\n' +
+            `Available Table Data Keys: {${Object.keys(data).join(', ')}}`
+        );
+      if (!Object.prototype.hasOwnProperty.call(data, tableDataKey))
+        throw new Error(
+          `'${tableDataKey}' Table Data Key does not exist in this reports data!\n` +
+            `Available Table Data Keys: {${Object.keys(data).join(', ')}}`
+        );
+
+      data = data[tableDataKey];
+    }
+    const tableData = data.map((record): DataRecord => {
+      const res: DataRecord = {};
+      for (const schemaKey in schema) {
+        if (Object.prototype.hasOwnProperty.call(schema, schemaKey)) {
+          const dataKey = schema[schemaKey];
+          if (!Object.prototype.hasOwnProperty.call(record, dataKey))
+            throw new Error(
+              `'${dataKey}' Data Key does not exist in this reports data!\n` +
+                `Available Table Data Keys: {${Object.keys(record).join(', ')}}`
+            );
+
+          res[schemaKey] = record[dataKey];
+        }
+      }
+
+      return res;
+    });
+
+    // const data: Array<DataRecord> = [];
+    return this.elementFactory.createTableFromArrayOfObjects(tableData, {
       rowHeaders,
       headerStyles,
       cellStyles,
@@ -183,7 +270,8 @@ export class PdfParser {
 
   private parseHorizontalContainer(
     elementJson: HorizontalContainerElementJson,
-    variables?: Record<string, string | number>
+    data?: MultiDataRecords | DataRecord[],
+    variables?: ComplexDataRecord
   ) {
     const { styles, elements, widths } = elementJson;
     if (!elements || !Array.isArray(elements))
@@ -197,7 +285,7 @@ export class PdfParser {
     for (let index = 0; index < elements.length; index++) {
       const elementJson = elements[index];
       const maxWidth = widths[index];
-      container.addElement(this.parseElement(elementJson, variables), {
+      container.addElement(this.parseElement(elementJson, data, variables), {
         maxWidth: this.mapStringToWidth(maxWidth),
       });
     }
@@ -206,7 +294,8 @@ export class PdfParser {
 
   private parseVerticalContainer(
     elementJson: VerticalContainerElementJson,
-    variables?: Record<string, string | number>
+    data?: MultiDataRecords | DataRecord[],
+    variables?: ComplexDataRecord
   ) {
     const { styles, elements } = elementJson;
     if (!elements || !Array.isArray(elements))
@@ -218,7 +307,7 @@ export class PdfParser {
       styles,
     });
     for (const elementJson of elements) {
-      container.addElement(this.parseElement(elementJson, variables));
+      container.addElement(this.parseElement(elementJson, data, variables));
     }
     return container;
   }

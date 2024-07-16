@@ -1,4 +1,6 @@
-export interface SalarySlipReport {
+import { DataRecord } from '../../utils/pdf-utils/parser/element-json-types';
+
+export interface SalarySlipReport extends DataRecord {
   docEntry: string;
   lineId: string;
   object?: null;
@@ -47,7 +49,7 @@ export interface SalarySlipReport {
   toDate: string;
 }
 
-export interface RepeatableAllowance {
+export interface RepeatableAllowance extends DataRecord {
   employeeId: string;
   code: string;
   name: string;
@@ -59,7 +61,7 @@ export interface RepeatableAllowance {
   isAdditionalSalary: string; // "Y" or "N" string
 }
 
-export interface RepeatableDeduction {
+export interface RepeatableDeduction extends DataRecord {
   employeeId: string;
   code: string;
   name: string;
@@ -70,7 +72,7 @@ export interface RepeatableDeduction {
   deductionName: string;
 }
 
-export interface SalarySlipReportInput {
+export interface SalarySlipReportInput extends DataRecord {
   month: number;
   year: number;
 }

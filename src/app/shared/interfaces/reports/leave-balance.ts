@@ -1,4 +1,6 @@
-export interface LeaveBalanceReport {
+import { DataRecord } from '../../utils/pdf-utils/parser/element-json-types';
+
+export interface LeaveBalanceReport extends DataRecord {
   employeeId: string;
   employeeCode: string;
   fullName: string;
@@ -25,7 +27,7 @@ export interface LeaveBalanceReport {
   paidVacationValue: number; // decimal string
 }
 
-export interface LeaveBalanceReportInput {
+export interface LeaveBalanceReportInput extends DataRecord {
   leaveCode: string;
   toDate: string; // yyyy-mm-dd
 }

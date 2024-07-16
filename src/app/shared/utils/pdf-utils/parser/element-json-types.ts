@@ -31,9 +31,28 @@ export interface TableElementJson extends BaseElementJson {
 }
 
 export type DataRecord = Record<string, string | number | null | undefined>;
+export type ComplexDataRecord = Record<
+  string,
+  string | number | null | undefined | DataRecord
+>;
+export type MultiDataRecords = Record<string, DataRecord[]>;
+
 export interface ObjectTableElementJson extends BaseElementJson {
   type: 'object-table' | 'o-table' | 'obj-table';
   data: Array<DataRecord> | DataRecord;
+  rowHeaders?: boolean;
+  headerStyles?: Style;
+  cellStyles?: Style;
+  rowStyles?: ChildrenStylesSelectors;
+  columnStyles?: ChildrenStylesSelectors;
+}
+
+export type HeaderTitle = string;
+export type DataFieldKey = string;
+export interface AutoTableElementJson extends BaseElementJson {
+  type: 'auto-table' | 'a-table';
+  schema: Record<HeaderTitle, DataFieldKey>;
+  tableDataKey?: string;
   rowHeaders?: boolean;
   headerStyles?: Style;
   cellStyles?: Style;
@@ -67,19 +86,23 @@ export type ElementJson =
   | ParagraphElementJson
   | TableElementJson
   | ObjectTableElementJson
+  | AutoTableElementJson
   | HorizontalContainerElementJson
   | VerticalContainerElementJson;
 
-export interface PdfJson {
-  fileName: string;
+export type PdfJsonTemplate = {
+  name?: string;
   pageOptions?: Partial<PageOptions>;
   styles?: Style;
-  variables?: Record<string, string | number>;
-  template?: {
-    name?: string;
-    styles?: Style;
-    pageMargins?: Partial<PageMargins>;
-    elements: ElementJson[];
-  };
+  variables?: ComplexDataRecord;
+  elements: ElementJson[];
+};
+
+export interface PdfJson {
+  name: string;
+  pageOptions?: Partial<PageOptions>;
+  styles?: Style;
+  variables?: ComplexDataRecord;
+  template?: PdfJsonTemplate;
   elements: ElementJson[];
 }

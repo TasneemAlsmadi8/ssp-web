@@ -10,6 +10,7 @@ import { ParagraphElement } from './paragraph-element';
 import { TableCell, TableElement } from './table-element';
 import { HorizontalContainerElement } from './horizontal-container-element';
 import { VerticalContainerElement } from './vertical-container-element';
+import { DataRecord } from '../parser/element-json-types';
 
 export class ElementFactory {
   private pageOptions: PageOptions;
@@ -120,9 +121,7 @@ export class ElementFactory {
   }
 
   createTableFromArrayOfObjects(
-    data: Array<{
-      [key: string]: string | number | null | undefined;
-    }>,
+    data: Array<DataRecord>,
     options?: {
       rowHeaders?: boolean;
       headerStyles?: Style;

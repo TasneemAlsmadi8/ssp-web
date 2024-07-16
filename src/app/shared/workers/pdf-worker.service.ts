@@ -1,5 +1,9 @@
 import { Injectable } from '@angular/core';
-import { PdfJson } from '../utils/pdf-utils/parser/element-json-types';
+import {
+  DataRecord,
+  MultiDataRecords,
+  PdfJson,
+} from '../utils/pdf-utils/parser/element-json-types';
 
 @Injectable({
   providedIn: 'root',
@@ -15,11 +19,15 @@ export class PdfWorkerService {
       new URL('src/app/shared/workers/pdf-worker.worker', import.meta.url)
     );
   }
-  async download(pdfJson: PdfJson): Promise<void> {
-    const { fileName } = pdfJson;
+  async download(
+    pdfJson: PdfJson,
+    data: MultiDataRecords | DataRecord[],
+    input?: DataRecord
+  ): Promise<void> {
+    const { name: fileName } = pdfJson;
 
     return new Promise((resolve, reject) => {
-      this.worker.postMessage({ pdfJson });
+      this.worker.postMessage({ pdfJson, data, input });
 
       this.worker.onmessage = (event: MessageEvent) => {
         const { blob, error } = event.data;

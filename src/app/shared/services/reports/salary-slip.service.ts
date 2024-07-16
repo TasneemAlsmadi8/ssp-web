@@ -42,9 +42,11 @@ export class SalarySlipReportService extends BaseService {
   getReport(
     input: SalarySlipReportInput,
     download: boolean = true
-  ): Observable<
-    [SalarySlipReport, RepeatableAllowance[], RepeatableDeduction[]]
-  > {
+  ): Observable<{
+    reportData: SalarySlipReport[];
+    repAllowanceDetails: RepeatableAllowance[];
+    repDeductionsDetails: RepeatableDeduction[];
+  }> {
     return forkJoin([
       this.getReportData(input),
       this.getRepeatableAllowanceDetails(input).pipe(
@@ -60,6 +62,13 @@ export class SalarySlipReportService extends BaseService {
         })
       ),
     ]).pipe(
+      map((data) => {
+        return {
+          reportData: data[0],
+          repAllowanceDetails: data[1],
+          repDeductionsDetails: data[2],
+        };
+      }),
       tap((data) => {
         if (download) this.downloadPdf(input, data);
       })
@@ -68,14 +77,14 @@ export class SalarySlipReportService extends BaseService {
 
   private getReportData(
     input: SalarySlipReportInput
-  ): Observable<SalarySlipReport> {
+  ): Observable<SalarySlipReport[]> {
     let { month, year } = input;
     const url =
       this.url +
       `/GetSalarySlipReport?EmployeeID=${this.user.id}&Month=${month}&Year=${year}&UILang=???`;
     return this.http
       .get<SalarySlipReportApi[]>(url, this.httpOptions)
-      .pipe(map((response) => SalarySlipAdapter.apiToModel(response[0])));
+      .pipe(map((response) => response.map(SalarySlipAdapter.apiToModel)));
   }
 
   private getRepeatableAllowanceDetails(
@@ -111,9 +120,18 @@ export class SalarySlipReportService extends BaseService {
 
   private async downloadPdf(
     input: SalarySlipReportInput,
-    data: [SalarySlipReport, RepeatableAllowance[], RepeatableDeduction[]]
+    data: {
+      reportData: SalarySlipReport[];
+      repAllowanceDetails: RepeatableAllowance[];
+      repDeductionsDetails: RepeatableDeduction[];
+    }
   ) {
-    const [reportData, repAllowanceDetails, repDeductionsDetails] = data;
+    let {
+      reportData: reportDataArray,
+      repAllowanceDetails,
+      repDeductionsDetails,
+    } = data;
+    const reportData = reportDataArray[0];
     const table1Data = {
       'Employee Code:': reportData.employeeCode,
       'Employee Name:': reportData.fullName,
@@ -159,7 +177,7 @@ export class SalarySlipReportService extends BaseService {
       {}
     );
     const salarySlipReportJson: PdfJson = {
-      fileName: 'Salary Slip Report.pdf',
+      name: 'Salary Slip Report.pdf',
       pageOptions: {
         marginTop: 90,
         marginBottom: 50,
@@ -172,7 +190,7 @@ export class SalarySlipReportService extends BaseService {
         date: this.formatDateToDisplay(new Date()),
       },
       template: {
-        pageMargins: {
+        pageOptions: {
           marginTop: 50,
         },
         elements: [
@@ -501,7 +519,7 @@ export class SalarySlipReportService extends BaseService {
       ],
     };
 
-    await this.pdfWorkerService.download(salarySlipReportJson);
+    await this.pdfWorkerService.download(salarySlipReportJson, data, input);
   }
 
   private formatDateToDisplay(date: Date): string {

@@ -55,6 +55,29 @@ export function formatDateToISO(dateString: string): string {
 }
 
 /**
+ * Converts a date string from various formats to display format (dd/mm/yyyy).
+ * @param {string} dateString - The date string in ISO format or one of the supported formats.
+ * @returns {string} The date string converted to display format (dd/mm/yyyy).
+ * @throws {Error} Throws an error if the input date format is invalid.
+ *
+ * Supported formats:
+ * - "dd/mm/yyyy": Date format with day, month, and year separated by slashes.
+ * - "yyyy/mm/dd": Date format with year, month, and day separated by slashes.
+ * - "yyyy-mm-dd": Date format with year, month, and day separated by hyphens.
+ * - "dd-mm-yyyy": Date format with day, month, and year separated by hyphens.
+ * - Any of the above with time separated by 'T' or ' ' (a space)
+ */
+export function formatDateToDisplay(dateString: string): string {
+  const isoDate = formatDateToISO(dateString); // Convert to ISO format first
+
+  // Extract year, month, and day from the ISO format
+  const [year, month, day] = isoDate.split('-');
+
+  // Return the date string in the display format
+  return `${day}/${month}/${year}`;
+}
+
+/**
  * Converts a time string to HH:mm format.
  *
  * This function takes a time string in various formats (HHmm, Hmm, mm, or m)

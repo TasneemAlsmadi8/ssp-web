@@ -1,6 +1,7 @@
 import { Element } from '../elements/abstract-element';
 import { ParagraphElement } from '../elements/paragraph-element';
 import {
+  ComplexDataRecord,
   DataRecord,
   HeadingElementJson,
   ObjectTableElementJson,
@@ -14,10 +15,37 @@ interface TemplateVariables {
 }
 
 export class PdfTemplateResolver {
-  private variables: TemplateVariables = {};
+  private variables: DataRecord = {};
 
-  constructor(variables?: Record<string, string | number>) {
+  constructor(variables?: ComplexDataRecord) {
     if (variables) this.setVariables(variables);
+  }
+
+  setVariables(variables: ComplexDataRecord) {
+    for (const varName in variables) {
+      if (Object.prototype.hasOwnProperty.call(variables, varName)) {
+        const value = variables[varName];
+        if (value && typeof value === 'object') {
+          const innerDataRecord = Object.fromEntries(
+            Object.entries(value).map((keyValue) => [
+              `${varName}.${keyValue[0]}`,
+              keyValue[1],
+            ])
+          );
+          this.setVariables(innerDataRecord);
+        } else {
+          this.variables[varName] = value;
+        }
+      }
+    }
+  }
+
+  
+
+  private resolveText(template: string): string {
+    return template.replace(/\${(\w+)}/g, (match, p1) => {
+      return p1 in this.variables ? String(this.variables[p1]) : match;
+    });
   }
 
   /**
@@ -27,17 +55,6 @@ export class PdfTemplateResolver {
    *
    * @param element - The root element whose text content and children's text content will be processed.
    */
-
-  setVariables(variables: Record<string, string | number>) {
-    this.variables = { ...this.variables, ...variables };
-  }
-
-  private resolveText(template: string): string {
-    return template.replace(/\${(\w+)}/g, (match, p1) => {
-      return p1 in this.variables ? String(this.variables[p1]) : match;
-    });
-  }
-
   resolveElement(element: Element): Element {
     // Replace placeholders in the text content of ParagraphElement instances
     if (element instanceof ParagraphElement) {

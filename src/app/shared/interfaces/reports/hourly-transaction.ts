@@ -1,6 +1,7 @@
+import { DataRecord } from '../../utils/pdf-utils/parser/element-json-types';
 import { ItemType } from '../generic-item';
 
-export interface HourlyTransactionReport {
+export interface HourlyTransactionReport extends DataRecord {
   employeeCode: string;
   fullName: string;
   transactionCode: string;
@@ -13,7 +14,7 @@ export interface HourlyTransactionReport {
   batchNumber: string;
 }
 
-export interface HourlyTransactionReportInput {
+export interface HourlyTransactionReportInput extends DataRecord {
   transactionType: string;
   fromDate: string;
   toDate: string;

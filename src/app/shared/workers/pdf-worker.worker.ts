@@ -3,11 +3,11 @@
 import { PdfParser } from '../utils/pdf-utils/parser/pdf-parser';
 
 addEventListener('message', async (event: MessageEvent) => {
-  const { pdfJson } = event.data;
+  const { pdfJson, data, input } = event.data;
 
   try {
     const parser = new PdfParser();
-    const pdfBuilder = parser.parse(pdfJson);
+    const pdfBuilder = parser.parse(pdfJson, data, input);
 
     // pdfBuilder.elements[1].children.forEach(
     //   (child) => (child.showBoxes = true)

@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { BaseService } from '../../base/base.service';
 import { HttpClient } from '@angular/common/http';
 import { LocalUserService } from '../local-user.service';
-import { Observable, catchError, map, of, tap } from 'rxjs';
+import { Observable, map, tap } from 'rxjs';
 import {
   HourlyTransactionReport,
   HourlyTransactionReportApi,
@@ -10,7 +10,9 @@ import {
 } from '../../interfaces/reports/hourly-transaction';
 import { DatePipe } from '@angular/common';
 import { PdfJson } from '../../utils/pdf-utils/parser/element-json-types';
-import { formatDateToISO } from '../../utils/data-formatter';
+import {
+  formatDateToDisplay,
+} from '../../utils/data-formatter';
 import { UserAlertService } from '../user-alert.service';
 import { PdfWorkerService } from '../../workers/pdf-worker.service';
 
@@ -71,8 +73,8 @@ export class HourlyTransactionReportService extends BaseService {
         'Employee Name': row.fullName,
         'Tran Code': row.transactionCode,
         Transaction: row.transactionName,
-        'From Date': this.formatDateToDisplay(row.fromDate),
-        'To Date': this.formatDateToDisplay(row.toDate),
+        'From Date': row.fromDate,
+        'To Date': row.toDate,
         'No of Hours': row.numberOfHours,
         'O.T. Hours': row.overtimeHours,
         'Salary Batch No.': row.batchNumber,
@@ -80,7 +82,7 @@ export class HourlyTransactionReportService extends BaseService {
       };
     });
     const hourlyTransactionReportJson: PdfJson = {
-      fileName: 'Hourly Transactions Report.pdf',
+      name: 'Hourly Transactions Report.pdf',
       pageOptions: {
         marginTop: 110,
         marginBottom: 50,
@@ -90,10 +92,9 @@ export class HourlyTransactionReportService extends BaseService {
       },
       variables: {
         title: 'Hourly Transactions Report',
-        date: this.formatDateToDisplay(new Date()),
       },
       template: {
-        pageMargins: {
+        pageOptions: {
           marginTop: 70,
         },
         elements: [
@@ -143,8 +144,19 @@ export class HourlyTransactionReportService extends BaseService {
       },
       elements: [
         {
-          type: 'object-table',
-          data: tableData,
+          type: 'auto-table',
+          schema: {
+            'Employee Code': 'employeeCode',
+            'Employee Name': 'fullName',
+            'Tran Code': 'transactionCode',
+            Transaction: 'transactionName',
+            'From Date': 'fromDate',
+            'To Date': 'toDate',
+            'No of Hours': 'numberOfHours',
+            'O.T. Hours': 'overtimeHours',
+            'Salary Batch No.': 'batchNumber',
+            Remarks: 'remarks',
+          },
           rowHeaders: true,
           cellStyles: {
             'align-content-horizontally': 'center',
@@ -167,15 +179,11 @@ export class HourlyTransactionReportService extends BaseService {
       ],
     };
 
-    await this.pdfWorkerService.download(hourlyTransactionReportJson);
-  }
-
-  private formatDateToDisplay(date: Date | string): string {
-    if (typeof date === 'string') date = new Date(date);
-    const result = this.datePipe.transform(date, 'dd/MM/yyyy');
-    if (!result) throw new Error('Invalid Date');
-
-    return result;
+    await this.pdfWorkerService.download(
+      hourlyTransactionReportJson,
+      data,
+      input
+    );
   }
 }
 
@@ -188,8 +196,8 @@ class HourlyTransactionAdapter {
       fullName: apiSchema.fullName,
       transactionCode: apiSchema.tranCode,
       transactionName: apiSchema.tranName,
-      fromDate: formatDateToISO(apiSchema.u_FromDate),
-      toDate: formatDateToISO(apiSchema.u_ToDate),
+      fromDate: formatDateToDisplay(apiSchema.u_FromDate),
+      toDate: formatDateToDisplay(apiSchema.u_ToDate),
       overtimeHours: parseFloat(apiSchema.overtimeHours),
       batchNumber: apiSchema.u_BatchNo,
       numberOfHours: apiSchema.noOfHours

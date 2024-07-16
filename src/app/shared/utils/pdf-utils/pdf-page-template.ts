@@ -1,10 +1,11 @@
 import { PDFDocument } from 'pdf-lib';
 import { PdfBuilder } from './pdf-builder';
 import { PdfTemplateResolver } from './parser/pdf-template-resolver';
+import { ComplexDataRecord } from './parser/element-json-types';
 
 export class PdfPageTemplateBuilder extends PdfBuilder {
   private pdfTemplateResolver = new PdfTemplateResolver();
-  setVariables(variables: Record<string, string | number>) {
+  setVariables(variables: ComplexDataRecord) {
     this.pdfTemplateResolver.setVariables(variables);
   }
   async renderTemplatePages(pdfDoc: PDFDocument) {

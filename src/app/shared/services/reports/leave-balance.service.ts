@@ -35,14 +35,14 @@ export class LeaveBalanceReportService extends BaseService {
   getReport(
     input: LeaveBalanceReportInput,
     download: boolean = true
-  ): Observable<LeaveBalanceReport> {
+  ): Observable<LeaveBalanceReport[]> {
     let { leaveCode, toDate } = input;
     toDate = toDate.replaceAll('-', '');
     const url =
       this.url +
       `/LeaveBalanceReport?EmployeeID=${this.user.id}&LeaveType=${leaveCode}&ToDate=${toDate}&UILang=???`;
     return this.http.get<LeaveBalanceReportApi[]>(url, this.httpOptions).pipe(
-      map((response) => LeaveBalanceAdapter.apiToModel(response[0])),
+      map((response) => response.map(LeaveBalanceAdapter.apiToModel)),
       tap((data) => {
         if (download) this.downloadPdf(input, data);
       })
@@ -51,23 +51,24 @@ export class LeaveBalanceReportService extends BaseService {
 
   private async downloadPdf(
     input: LeaveBalanceReportInput,
-    data: LeaveBalanceReport
+    data: LeaveBalanceReport[]
   ) {
+    const reportData = data[0];
     const tableObj = {
       'S.N.': 1,
-      'Employee Code': data.employeeCode,
-      'Employee Name': data.fullName,
-      'Leave Type': data.leaveName,
-      Entitlement: data.entitlement,
-      'Opening Balance': data.openingBalance,
-      'Earned Leaves': data.earnedLeaves,
-      'Taken Leaves': data.takenLeaves,
-      'Encashed Leaves': data.encashedDays,
-      'Leave Balance': data.leaveBalance,
-      'Vacation Value': data.paidVacationValue,
+      'Employee Code': reportData.employeeCode,
+      'Employee Name': reportData.fullName,
+      'Leave Type': reportData.leaveName,
+      Entitlement: reportData.entitlement,
+      'Opening Balance': reportData.openingBalance,
+      'Earned Leaves': reportData.earnedLeaves,
+      'Taken Leaves': reportData.takenLeaves,
+      'Encashed Leaves': reportData.encashedDays,
+      'Leave Balance': reportData.leaveBalance,
+      'Vacation Value': reportData.paidVacationValue,
     };
     const leaveBalanceReportJson: PdfJson = {
-      fileName: 'Leave Balance Report.pdf',
+      name: 'Leave Balance Report.pdf',
       pageOptions: {
         marginTop: 90,
         marginBottom: 50,
@@ -79,7 +80,7 @@ export class LeaveBalanceReportService extends BaseService {
         date: this.formatDateToDisplay(new Date()),
       },
       template: {
-        pageMargins: {
+        pageOptions: {
           marginTop: 70,
         },
         elements: [
@@ -160,7 +161,7 @@ export class LeaveBalanceReportService extends BaseService {
       ],
     };
 
-    await this.pdfWorkerService.download(leaveBalanceReportJson);
+    await this.pdfWorkerService.download(leaveBalanceReportJson, data, input);
   }
 
   private formatDateToDisplay(date: Date): string {
