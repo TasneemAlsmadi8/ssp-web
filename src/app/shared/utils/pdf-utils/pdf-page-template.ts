@@ -1,6 +1,6 @@
 import { PDFDocument } from 'pdf-lib';
 import { PdfBuilder } from './pdf-builder';
-import { PdfTemplateResolver } from './pdf-template-resolver';
+import { PdfTemplateResolver } from './parser/pdf-template-resolver';
 
 export class PdfPageTemplateBuilder extends PdfBuilder {
   private pdfTemplateResolver = new PdfTemplateResolver();

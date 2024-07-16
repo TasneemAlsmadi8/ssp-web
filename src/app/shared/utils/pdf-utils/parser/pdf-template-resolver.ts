@@ -1,5 +1,5 @@
-import { Element } from './elements/abstract-element';
-import { ParagraphElement } from './elements/paragraph-element';
+import { Element } from '../elements/abstract-element';
+import { ParagraphElement } from '../elements/paragraph-element';
 import {
   DataRecord,
   HeadingElementJson,
@@ -7,7 +7,7 @@ import {
   ParagraphElementJson,
   TableCell,
   TableElementJson,
-} from './parser/element-json-types';
+} from './element-json-types';
 
 interface TemplateVariables {
   [key: string]: string | number;

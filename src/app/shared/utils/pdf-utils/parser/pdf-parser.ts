@@ -17,7 +17,7 @@ import {
 } from './element-json-types';
 import { ElementFactory } from '../elements/element-factory';
 import { PdfPageTemplateBuilder } from '../pdf-page-template';
-import { PdfTemplateResolver } from '../pdf-template-resolver';
+import { PdfTemplateResolver } from './pdf-template-resolver';
 
 export class PdfParser {
   private elementFactory!: ElementFactory;
