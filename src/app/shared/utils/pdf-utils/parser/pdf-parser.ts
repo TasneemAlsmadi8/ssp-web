@@ -61,46 +61,24 @@ export class PdfParser {
     elementJson: ElementJson,
     variables?: Record<string, string | number>
   ): Element {
-    const resolver = new PdfTemplateResolver();
-    if (variables) resolver.setVariables(variables);
-    const resolveText = <T extends { text: string }>(element: {
-      text: string;
-    }): T => {
-      element.text = resolver.resolveStringVars(element.text);
-      return element as T;
-    };
-    const resolveRecordText = (record: DataRecord): DataRecord => {
-      return Object.fromEntries(
-        Object.entries(record).map(([key, value]) => [
-          resolver.resolveStringVars(key),
-          typeof value === 'string' ? resolver.resolveStringVars(value) : value,
-        ])
-      ) as DataRecord;
-    };
+    const resolver = new PdfTemplateResolver(variables);
 
     switch (elementJson.type) {
       case 'heading':
       case 'h':
-        elementJson = resolveText<HeadingElementJson>(elementJson);
-        return this.parseHeading(elementJson);
+        return this.parseHeading(resolver.resolveHeadingJson(elementJson));
       case 'paragraph':
       case 'p':
-        elementJson = resolveText<ParagraphElementJson>(elementJson);
-        return this.parseParagraph(elementJson);
+        return this.parseParagraph(resolver.resolveParagraphJson(elementJson));
       case 'table':
       case 't':
-        elementJson.data = elementJson.data.map((row) =>
-          row.map((cell) => resolveText<TableCell>(cell))
-        );
-        return this.parseTable(elementJson);
+        return this.parseTable(resolver.resolveTableJson(elementJson));
       case 'object-table':
       case 'obj-table':
       case 'o-table':
-        let data = elementJson.data;
-        if (!(data instanceof Array)) data = [data];
-
-        elementJson.data = data.map((record) => resolveRecordText(record));
-        return this.parseObjectTable(elementJson);
+        return this.parseObjectTable(
+          resolver.resolveObjectTableJson(elementJson)
+        );
       case 'horizontal-container':
       case 'h-container':
         return this.parseHorizontalContainer(elementJson, variables);
@@ -109,10 +87,11 @@ export class PdfParser {
         return this.parseVerticalContainer(elementJson, variables);
       default:
         throw new Error(
-          `Unknown element type: ${(elementJson as BaseElementJson).type}`
+          `Unknown element type: ${(elementJson as BaseElementJson).type}}`
         );
     }
   }
+
   private parseHeading(elementJson: HeadingElementJson) {
     const { level, text, styles } = elementJson;
     if (!text) throw new Error("Heading element must have a 'text' field");

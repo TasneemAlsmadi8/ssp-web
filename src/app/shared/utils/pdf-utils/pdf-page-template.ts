@@ -17,7 +17,7 @@ export class PdfPageTemplateBuilder extends PdfBuilder {
         pageNumber,
         totalPages,
       });
-      this.pdfTemplateResolver.resolve(this.body);
+      this.pdfTemplateResolver.resolveElement(this.body);
       await this.renderElementsToPDF(page);
 
       this.body = bodyWithTemplates;
