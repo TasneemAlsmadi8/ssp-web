@@ -19,18 +19,20 @@ export class PdfWorkerService {
       new URL('src/app/shared/workers/pdf-worker.worker', import.meta.url)
     );
   }
+
   async download(
     pdfJson: PdfJson,
     data: MultiDataRecords | DataRecord[],
     input?: DataRecord
   ): Promise<void> {
-    const { name: fileName } = pdfJson;
-
     return new Promise((resolve, reject) => {
-      this.worker.postMessage({ pdfJson, data, input });
+      this.worker.postMessage({
+        functionName: 'parsePdfJson',
+        args: [pdfJson, data, input],
+      });
 
-      this.worker.onmessage = (event: MessageEvent) => {
-        const { blob, error } = event.data;
+      this.worker.onmessage = (event) => {
+        const { fileName, blob, error } = event.data;
 
         if (error) {
           console.error('Error generating PDF:', error);
@@ -51,11 +53,50 @@ export class PdfWorkerService {
         resolve();
       };
 
-      this.worker.onerror = function (error) {
-        console.error('Worker error:', this, error);
+      this.worker.onerror = (error) => {
+        console.error('Worker error:', error);
         reject(new Error(`Worker error: ${error}`));
       };
     });
   }
-  // webpack:///src/app/shared/utils/pdf-utils/parse-pdf-in-worker.ts
+
+  async downloadFromFile(
+    jsonFileName: string,
+    data: MultiDataRecords | DataRecord[],
+    input?: DataRecord
+  ): Promise<void> {
+    return new Promise((resolve, reject) => {
+      this.worker.postMessage({
+        functionName: 'parseFromFile',
+        args: [jsonFileName, data, input],
+      });
+
+      this.worker.onmessage = (event) => {
+        const { fileName, blob, error } = event.data;
+
+        if (error) {
+          console.error('Error generating PDF:', error);
+          reject(new Error(`Error generating PDF: ${error}`));
+          return;
+        }
+
+        // Download the PDF
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.URL.revokeObjectURL(url);
+
+        resolve();
+      };
+
+      this.worker.onerror = (error) => {
+        console.error('Worker error:', error);
+        reject(new Error(`Worker error: ${error}`));
+      };
+    });
+  }
 }

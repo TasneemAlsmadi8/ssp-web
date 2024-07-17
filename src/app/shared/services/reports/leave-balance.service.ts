@@ -68,7 +68,7 @@ export class LeaveBalanceReportService extends BaseService {
       'Vacation Value': reportData.paidVacationValue,
     };
     const leaveBalanceReportJson: PdfJson = {
-      name: 'Leave Balance Report.pdf',
+      fileName: 'Leave Balance Report.pdf',
       pageOptions: {
         marginTop: 90,
         marginBottom: 50,

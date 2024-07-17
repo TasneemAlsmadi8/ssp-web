@@ -1,0 +1,52 @@
+{
+  "fileName": "Hourly Transactions Report.pdf",
+  "pageOptions": {
+    "marginTop": 110,
+    "marginBottom": 50,
+    "marginLeft": 20,
+    "marginRight": 20,
+    "landscape": true
+  },
+  "variables": {
+    "title": "Hourly Transactions Report"
+  },
+  "templateFileName": "/assets/report-json/default.template.pdf.json",
+  "styles": {
+    "font-size": 8
+  },
+  "elements": [
+    {
+      "type": "auto-table",
+      "schema": {
+        "Employee Code": "employeeCode",
+        "Employee Name": "fullName",
+        "Tran Code": "transactionCode",
+        "Transaction": "transactionName",
+        "From Date": "fromDate",
+        "To Date": "toDate",
+        "No of Hours": "numberOfHours",
+        "O.T. Hours": "overtimeHours",
+        "Salary Batch No.": "batchNumber",
+        "Remarks": "remarks"
+      },
+      "rowHeaders": true,
+      "cellStyles": {
+        "align-content-horizontally": "center",
+        "font": "Noto Sans",
+        "border": 0,
+        "padding-top": 2,
+        "padding-bottom": 2
+      },
+      "headerStyles": {
+        "font-weight": "bold",
+        "border-top": 1,
+        "border-bottom": 1
+      },
+      "rowStyles": {
+        "even": {
+          "background-color": "#eeeeee"
+        }
+      }
+    }
+  ]
+}

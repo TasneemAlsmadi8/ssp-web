@@ -1,22 +1,75 @@
 /// <reference lib="webworker" />
 
+import {
+  DataRecord,
+  MultiDataRecords,
+  PdfJson,
+} from '../utils/pdf-utils/parser/element-json-types';
 import { PdfParser } from '../utils/pdf-utils/parser/pdf-parser';
 
-addEventListener('message', async (event: MessageEvent) => {
-  const { pdfJson, data, input } = event.data;
+interface WorkerMessage {
+  functionName: string;
+  args: any[];
+}
+
+interface WorkerResponse {
+  fileName?: string;
+  blob?: Blob;
+  error?: string;
+}
+
+// Function implementations
+async function parsePdfJson(
+  pdfJson: PdfJson,
+  data: MultiDataRecords | DataRecord[],
+  input?: DataRecord
+): Promise<{ fileName: string; blob: Blob }> {
+  const parser = new PdfParser();
+  const pdfBuilder = parser.parse(pdfJson, data, input);
+  const blob = await pdfBuilder.getPdfBlob();
+  return {
+    fileName: pdfBuilder.fileName,
+    blob,
+  };
+}
+
+async function parseFromFile(
+  jsonFileName: string,
+  data: MultiDataRecords | DataRecord[],
+  input?: DataRecord
+): Promise<{ fileName: string; blob: Blob }> {
+  const parser = new PdfParser();
+  const pdfBuilder = await parser.parseFromFile(jsonFileName, data, input);
+  const blob = await pdfBuilder.getPdfBlob();
+  return {
+    fileName: pdfBuilder.fileName,
+    blob,
+  };
+}
+
+// Mapping of function names to implementations
+const functionsMap: { [key: string]: (...args: any[]) => Promise<any> } = {
+  parsePdfJson,
+  parseFromFile,
+};
+
+// Event listener
+addEventListener('message', async (event: MessageEvent<WorkerMessage>) => {
+  const { functionName, args } = event.data;
 
   try {
-    const parser = new PdfParser();
-    const pdfBuilder = parser.parse(pdfJson, data, input);
-
-    // pdfBuilder.elements[1].children.forEach(
-    //   (child) => (child.showBoxes = true)
-    // );
-
-    const blob = await pdfBuilder.getPdfBlob();
-
-    self.postMessage({ blob });
+    if (functionsMap[functionName]) {
+      const result = await functionsMap[functionName](...args);
+      const response: WorkerResponse = {
+        fileName: result['fileName'],
+        blob: result['blob'],
+      };
+      self.postMessage(response);
+    } else {
+      throw new Error(`Function ${functionName} not found`);
+    }
   } catch (error: any) {
-    self.postMessage({ error: error.message });
+    const response: WorkerResponse = { error: error.message };
+    self.postMessage(response);
   }
 });

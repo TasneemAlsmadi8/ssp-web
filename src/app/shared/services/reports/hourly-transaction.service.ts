@@ -9,10 +9,7 @@ import {
   HourlyTransactionReportInput,
 } from '../../interfaces/reports/hourly-transaction';
 import { DatePipe } from '@angular/common';
-import { PdfJson } from '../../utils/pdf-utils/parser/element-json-types';
-import {
-  formatDateToDisplay,
-} from '../../utils/data-formatter';
+import { formatDateToDisplay } from '../../utils/data-formatter';
 import { UserAlertService } from '../user-alert.service';
 import { PdfWorkerService } from '../../workers/pdf-worker.service';
 
@@ -67,120 +64,9 @@ export class HourlyTransactionReportService extends BaseService {
     input: HourlyTransactionReportInput,
     data: HourlyTransactionReport[]
   ) {
-    const tableData = data.map((row) => {
-      return {
-        'Employee Code': row.employeeCode,
-        'Employee Name': row.fullName,
-        'Tran Code': row.transactionCode,
-        Transaction: row.transactionName,
-        'From Date': row.fromDate,
-        'To Date': row.toDate,
-        'No of Hours': row.numberOfHours,
-        'O.T. Hours': row.overtimeHours,
-        'Salary Batch No.': row.batchNumber,
-        Remarks: row.remarks,
-      };
-    });
-    const hourlyTransactionReportJson: PdfJson = {
-      name: 'Hourly Transactions Report.pdf',
-      pageOptions: {
-        marginTop: 110,
-        marginBottom: 50,
-        marginLeft: 20,
-        marginRight: 20,
-        landscape: true,
-      },
-      variables: {
-        title: 'Hourly Transactions Report',
-      },
-      template: {
-        pageOptions: {
-          marginTop: 70,
-        },
-        elements: [
-          {
-            type: 'horizontal-container',
-            elements: [
-              {
-                type: 'p',
-                text: '${title}',
-                styles: {
-                  'margin-left': 30,
-                  'font-size': 14,
-                  'font-weight': 'bold',
-                  'align-content-horizontally': 'center',
-                  'align-content-vertically': 'center',
-                },
-              },
-              {
-                type: 'vertical-container',
-                elements: [
-                  {
-                    type: 'paragraph',
-                    text: 'Page ${pageNumber} of ${totalPages}',
-                    styles: {
-                      'margin-bottom': 3,
-                      'font-size': 8,
-                      'align-content-horizontally': 'end',
-                    },
-                  },
-                  {
-                    type: 'paragraph',
-                    text: '${date}',
-                    styles: {
-                      'font-size': 8,
-                      'align-content-horizontally': 'end',
-                    },
-                  },
-                ],
-              },
-            ],
-            widths: ['100%-50', '50'],
-          },
-        ],
-      },
-      styles: {
-        'font-size': 8,
-      },
-      elements: [
-        {
-          type: 'auto-table',
-          schema: {
-            'Employee Code': 'employeeCode',
-            'Employee Name': 'fullName',
-            'Tran Code': 'transactionCode',
-            Transaction: 'transactionName',
-            'From Date': 'fromDate',
-            'To Date': 'toDate',
-            'No of Hours': 'numberOfHours',
-            'O.T. Hours': 'overtimeHours',
-            'Salary Batch No.': 'batchNumber',
-            Remarks: 'remarks',
-          },
-          rowHeaders: true,
-          cellStyles: {
-            'align-content-horizontally': 'center',
-            font: 'Noto Sans',
-            border: 0,
-            'padding-top': 2,
-            'padding-bottom': 2,
-          },
-          headerStyles: {
-            'font-weight': 'bold',
-            'border-top': 1,
-            'border-bottom': 1,
-          },
-          rowStyles: {
-            even: {
-              'background-color': '#eeeeee',
-            },
-          },
-        },
-      ],
-    };
 
-    await this.pdfWorkerService.download(
-      hourlyTransactionReportJson,
+    await this.pdfWorkerService.downloadFromFile(
+      '/assets/report-json/hourly-transactions.pdf.json',
       data,
       input
     );

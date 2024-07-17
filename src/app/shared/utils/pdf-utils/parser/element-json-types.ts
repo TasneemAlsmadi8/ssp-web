@@ -99,10 +99,11 @@ export type PdfJsonTemplate = {
 };
 
 export interface PdfJson {
-  name: string;
+  fileName: string;
   pageOptions?: Partial<PageOptions>;
   styles?: Style;
   variables?: ComplexDataRecord;
   template?: PdfJsonTemplate;
+  templateFileName?: string;
   elements: ElementJson[];
 }

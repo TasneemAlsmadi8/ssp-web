@@ -176,8 +176,9 @@ export class SalarySlipReportService extends BaseService {
       },
       {}
     );
+    
     const salarySlipReportJson: PdfJson = {
-      name: 'Salary Slip Report.pdf',
+      fileName: 'Salary Slip Report.pdf',
       pageOptions: {
         marginTop: 90,
         marginBottom: 50,
