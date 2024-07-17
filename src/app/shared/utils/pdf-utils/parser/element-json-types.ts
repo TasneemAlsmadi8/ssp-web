@@ -1,4 +1,7 @@
-import { ChildrenStylesSelectors, Style } from '../elements/element-styles';
+import {
+  ChildrenStylesSelectors,
+  Style,
+} from '../elements/element-styles';
 import { PageMargins, PageOptions } from '../elements/element-styles';
 
 export interface BaseElementJson extends Record<string, any> {
@@ -94,10 +97,11 @@ export type ElementJson =
 
 export type PdfJsonTemplate = {
   name?: string;
+  pageMargins?: Partial<PageMargins>;
   pageOptions?: Partial<PageOptions>;
   styles?: Style;
   variables?: ComplexDataRecord;
-  elements: ElementJson[];
+  elements?: ElementJson[];
 };
 
 export interface PdfJson {

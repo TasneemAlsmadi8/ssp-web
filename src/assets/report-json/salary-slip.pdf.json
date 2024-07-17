@@ -1,0 +1,335 @@
+{
+  "fileName": "Salary Slip Report.pdf",
+  "pageOptions": {
+    "marginTop": 90,
+    "marginBottom": 50,
+    "marginLeft": 20,
+    "marginRight": 20,
+    "pageOrientation": "landscape"
+  },
+  "variables": {
+    "title": "Salary Slip Report"
+  },
+  "templateFileName": "/assets/report-json/default.template.pdf.json",
+  "template": {
+    "pageMargins": {
+      "marginTop": 50
+    }
+  },
+  "styles": {
+    "font-size": 9
+  },
+  "elements": [
+    {
+      "type": "h-container",
+      "styles": {
+        "padding": 5,
+        "border-bottom": 2
+      },
+      "widths": ["40%", "30%", "30%"],
+      "elements": [
+        {
+          "type": "obj-table",
+          "data": {
+            "Employee Code:": "{{data.reportData.employeeCode}}",
+            "Employee Name:": "{{data.reportData.fullName}}",
+            "Month:": "{{input.month}}",
+            "Year:": "{{input.year}}",
+            "Employment Date:": "{{data.reportData.employmentDate}}",
+            "Position:": "{{data.reportData.position}}",
+            "Department:": "{{data.reportData.departmentName}}",
+            "Branch:": "{{data.reportData.branch}}"
+          },
+          "headersPlacement": "column",
+          "cellStyles": {
+            "border": 0
+          },
+          "headerStyles": {
+            "font-weight": "bold",
+            "text-decoration": "underline"
+          }
+        },
+        {
+          "type": "obj-table",
+          "data": {
+            "Period:": "{{startDate}}   To   {{endDate}}",
+            "Month Days:": "{{data.reportData.workUnitNo}}",
+            "Working Days:": "{{data.reportData.days}}    {{data.reportData.workUnit}}",
+            "Basic Salary:": "{{data.reportData.basicSalary}}",
+            "Worth Salary:": "{{data.reportData.worthSalary}}",
+            "Paid Vacation:": "{{data.reportData.paidVacation}}",
+            "Additional Salary:": "{{data.reportData.additionalSalary}}"
+          },
+          "headersPlacement": "column",
+          "cellStyles": {
+            "border": 0
+          },
+          "headerStyles": {
+            "font-weight": "bold",
+            "text-decoration": "underline"
+          }
+        },
+        {
+          "type": "obj-table",
+          "data": {
+            "Payment Method:": "{{data.reportData.payMethod}}"
+          },
+          "headersPlacement": "column",
+          "cellStyles": {
+            "border": 0
+          },
+          "headerStyles": {
+            "font-weight": "bold",
+            "text-decoration": "underline"
+          }
+        }
+      ]
+    },
+    {
+      "type": "h-container",
+      "styles": {
+        "margin": 5,
+        "padding": 2,
+        "margin-bottom": 20
+      },
+      "widths": ["35%", "35%"],
+      "elements": [
+        {
+          "type": "v-container",
+          "styles": {
+            "padding-right": 60
+          },
+          "elements": [
+            {
+              "type": "p",
+              "text": "Repeatable Allowances Details:",
+              "styles": {
+                "font-weight": "bold",
+                "text-decoration": "underline",
+                "background-color": "#dddddd"
+              }
+            },
+            {
+              "type": "auto-table",
+              "schema": {
+                "allowance name": "allowanceName",
+                "allowance value": "value"
+              },
+              "hideHeaders": true,
+              "tableDataKey": "repAllowanceDetails",
+              "headersPlacement": "row",
+              "styles": {
+                "padding-bottom": 3,
+                "border-bottom": 1.3
+              },
+              "cellStyles": {
+                "border": 0
+              },
+              "columnStyles": {
+                "first": {
+                  "align-content-horizontally": "start"
+                },
+                "last": {
+                  "align-content-horizontally": "end"
+                }
+              }
+            },
+            {
+              "type": "obj-table",
+              "data": {
+                "Total": "{{data.reportData.repeatableAllowance}}"
+              },
+              "headersPlacement": "column",
+              "cellStyles": {
+                "border": 0,
+                "font-weight": "bold",
+                "align-content-horizontally": "end"
+              },
+              "headerStyles": {
+                "align-content-horizontally": "start"
+              }
+            }
+          ]
+        },
+        {
+          "type": "v-container",
+          "styles": {
+            "padding-right": 60
+          },
+          "elements": [
+            {
+              "type": "p",
+              "text": "Repeatable Deductions Details:",
+              "styles": {
+                "font-weight": "bold",
+                "text-decoration": "underline",
+                "background-color": "#dddddd"
+              }
+            },
+            {
+              "type": "auto-table",
+              "schema": {
+                "allowance name": "deductionName",
+                "allowance value": "value"
+              },
+              "hideHeaders": true,
+              "tableDataKey": "repDeductionsDetails",
+              "headersPlacement": "row",
+              "styles": {
+                "padding-bottom": 3,
+                "border-bottom": 1.3
+              },
+              "cellStyles": {
+                "border": 0
+              },
+              "columnStyles": {
+                "first": {
+                  "align-content-horizontally": "start"
+                },
+                "last": {
+                  "align-content-horizontally": "end"
+                }
+              }
+            },
+            {
+              "type": "obj-table",
+              "data": {
+                "Total": "{{data.reportData.repeatableDeductions}}"
+              },
+              "headersPlacement": "column",
+              "cellStyles": {
+                "border": 0,
+                "font-weight": "bold",
+                "align-content-horizontally": "end"
+              },
+              "headerStyles": {
+                "align-content-horizontally": "start"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "h-container",
+      "styles": {
+        "margin": 5,
+        "padding": 2
+      },
+      "widths": ["35%", "35%"],
+      "elements": [
+        {
+          "type": "h-container",
+          "widths": ["80%", "20%"],
+          "styles": {
+            "background-color": "#dddddd",
+            "margin-right": 60
+          },
+          "elements": [
+            {
+              "type": "p",
+              "text": "Non-Repeatable Allowances Details:",
+              "styles": {
+                "font-weight": "bold",
+                "text-decoration": "underline"
+              }
+            },
+            {
+              "type": "p",
+              "text": "{{data.reportData.nonRepeatableAllowances}}"
+            }
+          ]
+        },
+        {
+          "type": "h-container",
+          "widths": ["80%", "20%"],
+          "styles": {
+            "background-color": "#dddddd",
+            "margin-right": 60
+          },
+          "elements": [
+            {
+              "type": "p",
+              "text": "Non-Repeatable Deductions Details:",
+              "styles": {
+                "font-weight": "bold",
+                "text-decoration": "underline"
+              }
+            },
+            {
+              "type": "p",
+              "text": "{{data.reportData.nonRepeatableDeductions}}"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "h-container",
+      "styles": {
+        "position": "fixed",
+        "bottom": 0,
+        "padding-top": 8,
+        "padding-left": 10,
+        "padding-right": 10,
+        "margin-bottom": 20,
+        "border-top": 2,
+        "font-weight": "bold"
+      },
+      "widths": ["32%", "36%", "32%"],
+      "elements": [
+        {
+          "type": "h-container",
+          "widths": ["80%", "20%"],
+          "styles": {
+            "border": 1,
+            "padding": 1.5,
+            "padding-left": 7,
+            "padding-right": 7
+          },
+          "elements": [
+            {
+              "type": "p",
+              "text": "Total Salary:"
+            },
+            {
+              "type": "p",
+              "text": "{{data.reportData.totalSalary}}",
+              "styles": {
+                "align-content-horizontally": "end"
+              }
+            }
+          ]
+        },
+        {
+          "type": "v-container",
+          "elements": []
+        },
+        {
+          "type": "h-container",
+          "widths": ["80%", "20%"],
+          "styles": {
+            "border": 1,
+            "padding": 1.5,
+            "padding-left": 7,
+            "padding-right": 7,
+            "font-weight": "bold"
+          },
+          "elements": [
+            {
+              "type": "p",
+              "text": "Net Salary:"
+            },
+            {
+              "type": "p",
+              "text": "{{data.reportData.netSalary}}",
+              "styles": {
+                "align-content-horizontally": "end"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

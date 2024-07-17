@@ -27,7 +27,7 @@ export class PdfBuilder {
     };
     if (pageOptions) this.pageOptions = { ...this.pageOptions, ...pageOptions };
     if (
-      pageOptions?.landscape &&
+      pageOptions?.pageOrientation === 'landscape' &&
       this.pageOptions.height > this.pageOptions.width
     ) {
       [this.pageOptions.width, this.pageOptions.height] = [

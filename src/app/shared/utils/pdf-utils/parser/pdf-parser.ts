@@ -41,16 +41,12 @@ export class PdfParser {
     additionalVariables?: DataRecord
   ) {
     const pdfJson = await this.readJSONFile<PdfJson>(jsonFileName);
-    if (pdfJson.template && pdfJson.templateFileName)
-      throw new Error(
-        'PdfJson Conflict! Can not specify both template and templateFileName'
-      );
 
     if (pdfJson.templateFileName) {
       const template = await this.readJSONFile<PdfJsonTemplate>(
         pdfJson.templateFileName
       );
-      pdfJson.template = template;
+      pdfJson.template = { ...template, ...pdfJson.template };
     }
 
     return this.parse(pdfJson, data, input, additionalVariables);
@@ -101,17 +97,19 @@ export class PdfParser {
       templateBuilder = new PdfPageTemplateBuilder(
         template?.name ?? 'template',
         {
-          ...pageOptions,
           ...template.pageOptions,
+          ...pageOptions,
+          ...template.pageMargins,
         }
       );
 
       if (template.styles) templateBuilder.setStyles(template.styles);
       if (variables) templateBuilder.setVariables(variables);
 
-      for (const elementJson of template.elements) {
-        templateBuilder.addElement(this.parseElement(elementJson));
-      }
+      if (template.elements)
+        for (const elementJson of template.elements) {
+          templateBuilder.addElement(this.parseElement(elementJson));
+        }
 
       // inherit defaults from template
       pageOptions = {

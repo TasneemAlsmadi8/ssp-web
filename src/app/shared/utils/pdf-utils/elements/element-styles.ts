@@ -15,7 +15,7 @@ export interface PageMargins {
 
 export interface PageOptions extends PageDimensions, PageMargins {
   templateUrl?: string;
-  landscape?: true;
+  pageOrientation?: 'portrait' | 'landscape';
 }
 
 export interface Style {

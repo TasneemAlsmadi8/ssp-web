@@ -5,7 +5,7 @@
     "marginBottom": 50,
     "marginLeft": 20,
     "marginRight": 20,
-    "landscape": true
+    "pageOrientation": "landscape"
   },
   "variables": {
     "title": "Hourly Transactions Report"

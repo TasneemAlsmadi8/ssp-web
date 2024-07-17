@@ -80,7 +80,7 @@ export class LeaveBalanceReportService extends BaseService {
         date: this.formatDateToDisplay(new Date()),
       },
       template: {
-        pageOptions: {
+        pageMargins: {
           marginTop: 70,
         },
         elements: [
