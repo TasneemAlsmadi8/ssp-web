@@ -18,12 +18,12 @@ export class HorizontalContainerElement
   }
 
   get contentHeight(): number {
-    if (!this.children || this.children.length === 0) {
+    if (!this._children || this._children.length === 0) {
       return 0;
     }
-    return this.children.reduce(
+    return this._children.reduce(
       (max, cur) => (max > cur.height ? max : cur.height),
-      this.children[0].height
+      this._children[0].height
     );
   }
 
@@ -66,30 +66,28 @@ export class HorizontalContainerElement
   }
 
   override preRender(preRenderArgs: {
-    x?: number | undefined;
-    y?: number | undefined;
-    maxWidth?: number | undefined;
+    x: number;
+    y: number;
+    maxWidth: number;
   }): void {
     super.preRender(preRenderArgs);
-    for (let index = 0; index < this.children.length; index++) {
-      const child = this.children[index];
+    if (!this._children || this._children.length === 0) return;
+    let cursorY = this.position.y + this.positionAdjustment.contentY;
+    let cursorX = this.position.x + this.positionAdjustment.contentX;
+    for (let index = 0; index < this._children.length; index++) {
+      const child = this._children[index];
       const maxWidth = this.calculateWidth(this.childrenWidth[index]);
       // TODO: check why problem happened (which required to add 'true')
-      child.setHeight(this.contentHeight, true); 
-      child.preRender({ maxWidth });
+      child.setHeight(this.contentHeight, true);
+      child.preRender({ x: cursorX, y: cursorY, maxWidth });
+      cursorX += child.width;
     }
   }
 
   async draw() {
-    let cursorY = this.position.y + this.positionAdjustment.contentY;
-    let cursorX = this.position.x + this.positionAdjustment.contentX;
-
-    for (let index = 0; index < this.children.length; index++) {
-      const child = this.children[index];
-
-      await child.render({ x: cursorX, y: cursorY });
-
-      cursorX += child.width;
+    if (!this._children || this._children.length === 0) return;
+    for (const child of this._children) {
+      await child.render();
     }
   }
 

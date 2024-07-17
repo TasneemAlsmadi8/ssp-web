@@ -104,11 +104,12 @@ export class PdfBuilder {
       this.pageOptions.marginRight;
 
     await this.body.init(page, this.addPage.bind(this));
-    await this.body.render({
+    this.body.preRender({
       x: this.pageOptions.marginLeft,
       y: yOffset,
       maxWidth: writableWidth,
     });
+    await this.body.render();
 
     if (this.pageTemplateBuilder)
       await this.pageTemplateBuilder.renderTemplatePages(this.pdfDoc);

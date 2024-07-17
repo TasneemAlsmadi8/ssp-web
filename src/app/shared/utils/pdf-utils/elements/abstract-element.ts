@@ -54,6 +54,13 @@ export abstract class Element {
   protected maxWidth!: number;
   protected position!: { x: number; y: number };
 
+  get positionX() {
+    return this.position.x;
+  }
+  get positionY() {
+    return this.position.y;
+  }
+
   private _widthDiff?: number;
   private isWidthFitContent = false;
   private _heightDiff?: number;
@@ -78,8 +85,21 @@ export abstract class Element {
   }
 
   private get overflowY(): number {
+    if (this.styles.position === 'fixed') return 0;
+    // if parent does not overflow then children do not too
+    // important ub case of fixed/relative parents
+    if (this.parent?.overflowY === 0) return 0;
+
     const pageLowerY = 0 + this.pageOptions.marginBottom; // pdf-lib y offset starts from bottom of page
-    const elementLowerY = this.position.y - this.height;
+    let elementLowerY = this.position.y - this.height;
+
+    if (this.styles.position === 'relative') {
+      // reverse relative adjustment to compute overflow based on static position
+      const { top, bottom } = this.styles;
+      if (top) elementLowerY += top;
+      if (bottom) elementLowerY -= bottom;
+    }
+
     if (elementLowerY >= pageLowerY) return 0;
     return pageLowerY - elementLowerY;
   }
@@ -103,8 +123,6 @@ export abstract class Element {
 
   setHeight(value: number, inPreRender = false) {
     if (this.isPreRenderDone && !inPreRender) {
-      debugger;
-      this.isPreRenderDone;
       throw new Error('Can not change height after preRender');
     }
     // if( value < this.height) throw new Error("Can not set height smaller than content");
@@ -179,11 +197,7 @@ export abstract class Element {
     this.isInitDone = true;
   }
 
-  preRender(preRenderArgs: {
-    x?: number;
-    y?: number;
-    maxWidth?: number;
-  }): void {
+  preRender(preRenderArgs: { x: number; y: number; maxWidth: number }): void {
     const { x, y, maxWidth } = preRenderArgs;
     if (!this.isInitDone)
       throw new Error('Element must be initialized before rendering');
@@ -219,9 +233,7 @@ export abstract class Element {
       this.computedStyles.borderTop +
       this.computedStyles.marginTop +
       this.computedStyles.paddingTop;
-
     const availableHeight = this.height - this.overflowY - offsetTop;
-
     const splitElement = await this.splitElementOnOverflow({
       availableHeight,
       clone,
@@ -245,15 +257,10 @@ export abstract class Element {
   }
 
   @Element.UseFallbackFont
-  async render(preRenderArgs?: {
-    x?: number;
-    y?: number;
-    maxWidth?: number;
-  }): Promise<void> {
-    if (preRenderArgs) this.preRender(preRenderArgs);
+  async render(): Promise<void> {
     if (!this.isPreRenderDone)
       throw new Error(
-        'Pre render calculation is not fully done.\nEither call preRender with all arguments, or fully provide preRenderArgs'
+        'Pre render calculation is not fully done.\nPlease call preRender before rendering'
       );
 
     if (this.overflowY > 0) {

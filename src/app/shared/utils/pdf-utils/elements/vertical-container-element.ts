@@ -33,16 +33,13 @@ export class VerticalContainerElement
   }
 
   override preRender(preRenderArgs: {
-    x?: number | undefined;
-    y?: number | undefined;
-    maxWidth?: number | undefined;
+    x: number;
+    y: number;
+    maxWidth: number;
   }): void {
     super.preRender(preRenderArgs);
-    let cursorX, cursorY;
-    if (preRenderArgs.y)
-      cursorY = this.position.y + this.positionAdjustment.contentY;
-    if (preRenderArgs.x)
-      cursorX = this.position.x + this.positionAdjustment.contentX;
+    let cursorY = this.position.y + this.positionAdjustment.contentY;
+    let cursorX = this.position.x + this.positionAdjustment.contentX;
 
     for (const child of this.children) {
       child.preRender({
@@ -50,26 +47,13 @@ export class VerticalContainerElement
         y: cursorY,
         maxWidth: this.contentWidth,
       });
-      if (cursorY) cursorY -= child.heightOffset;
+      cursorY -= child.heightOffset;
     }
   }
 
   async draw() {
-    // let cursorY = this.position.y + this.positionAdjustment.contentY;
-    // let cursorX = this.position.x + this.positionAdjustment.contentX;
-
-    for (let index = 0; index < this.children.length; index++) {
-      const child = this.children[index];
-
-      await child
-        .render
-        // {
-        // x: cursorX,
-        // y: cursorY,
-        // }
-        ();
-
-      // cursorY -= child.heightOffset;
+    for (const child of this.children) {
+      await child.render();
     }
   }
 
