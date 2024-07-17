@@ -123,7 +123,8 @@ export class ElementFactory {
   createTableFromArrayOfObjects(
     data: Array<DataRecord>,
     options?: {
-      rowHeaders?: boolean;
+      headersPlacement?: 'row' | 'column';
+      hideHeaders?: boolean;
       headerStyles?: Style;
       cellStyles?: Style;
       rowStyles?: ChildrenStylesSelectors;
@@ -132,7 +133,8 @@ export class ElementFactory {
     }
   ): TableElement {
     let {
-      rowHeaders,
+      headersPlacement,
+      hideHeaders,
       headerStyles,
       cellStyles,
       rowStyles,
@@ -155,13 +157,13 @@ export class ElementFactory {
 
     const keys = Object.keys(data[0]);
 
-    if (rowHeaders) {
+    if (headersPlacement === 'row' || headersPlacement === undefined) {
       // Add headers as the first row
       const headerRow: TableCell[] = keys.map((key) => ({
         text: key,
         styles: headerStyles,
       }));
-      tableData.push(headerRow);
+      if (!hideHeaders) tableData.push(headerRow);
 
       data.forEach((obj) => {
         const row: TableCell[] = keys.map((key) => ({
@@ -173,7 +175,8 @@ export class ElementFactory {
     } else {
       // Add headers as the first column
       for (let i = 0; i < keys.length; i++) {
-        const row: TableCell[] = [{ text: keys[i], styles: headerStyles }];
+        const row: TableCell[] = [];
+        if (!hideHeaders) row.push({ text: keys[i], styles: headerStyles });
         data.forEach((obj) => {
           row.push({
             text: obj[keys[i]]?.toString() ?? '-',

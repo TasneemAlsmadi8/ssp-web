@@ -23,12 +23,13 @@ export class PdfWorkerService {
   async download(
     pdfJson: PdfJson,
     data: MultiDataRecords | DataRecord[],
-    input?: DataRecord
+    input?: DataRecord,
+    additionalVariables?: DataRecord
   ): Promise<void> {
     return new Promise((resolve, reject) => {
       this.worker.postMessage({
         functionName: 'parsePdfJson',
-        args: [pdfJson, data, input],
+        args: [pdfJson, data, input, additionalVariables],
       });
 
       this.worker.onmessage = (event) => {
@@ -63,12 +64,13 @@ export class PdfWorkerService {
   async downloadFromFile(
     jsonFileName: string,
     data: MultiDataRecords | DataRecord[],
-    input?: DataRecord
+    input?: DataRecord,
+    additionalVariables?: DataRecord
   ): Promise<void> {
     return new Promise((resolve, reject) => {
       this.worker.postMessage({
         functionName: 'parseFromFile',
-        args: [jsonFileName, data, input],
+        args: [jsonFileName, data, input, additionalVariables],
       });
 
       this.worker.onmessage = (event) => {

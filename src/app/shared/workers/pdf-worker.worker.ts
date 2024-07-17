@@ -22,10 +22,12 @@ interface WorkerResponse {
 async function parsePdfJson(
   pdfJson: PdfJson,
   data: MultiDataRecords | DataRecord[],
-  input?: DataRecord
+  input?: DataRecord,
+  additionalVariables?: DataRecord
 ): Promise<{ fileName: string; blob: Blob }> {
   const parser = new PdfParser();
-  const pdfBuilder = parser.parse(pdfJson, data, input);
+  additionalVariables;
+  const pdfBuilder = parser.parse(pdfJson, data, input, additionalVariables);
   const blob = await pdfBuilder.getPdfBlob();
   return {
     fileName: pdfBuilder.fileName,
@@ -36,10 +38,16 @@ async function parsePdfJson(
 async function parseFromFile(
   jsonFileName: string,
   data: MultiDataRecords | DataRecord[],
-  input?: DataRecord
+  input?: DataRecord,
+  additionalVariables?: DataRecord
 ): Promise<{ fileName: string; blob: Blob }> {
   const parser = new PdfParser();
-  const pdfBuilder = await parser.parseFromFile(jsonFileName, data, input);
+  const pdfBuilder = await parser.parseFromFile(
+    jsonFileName,
+    data,
+    input,
+    additionalVariables
+  );
   const blob = await pdfBuilder.getPdfBlob();
   return {
     fileName: pdfBuilder.fileName,

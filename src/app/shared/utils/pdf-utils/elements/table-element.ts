@@ -82,6 +82,7 @@ export class TableElement extends Element implements ParentElement {
     );
   }
 
+  @Element.UseFallbackFont
   override preRender(preRenderArgs: {
     x: number;
     y: number;

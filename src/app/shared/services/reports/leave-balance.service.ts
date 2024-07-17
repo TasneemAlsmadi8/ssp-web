@@ -89,7 +89,7 @@ export class LeaveBalanceReportService extends BaseService {
             elements: [
               {
                 type: 'p',
-                text: '${title}',
+                text: '{{title}}',
                 styles: {
                   'margin-left': 30,
                   'font-size': 14,
@@ -103,7 +103,7 @@ export class LeaveBalanceReportService extends BaseService {
                 elements: [
                   {
                     type: 'paragraph',
-                    text: 'Page ${pageNumber} of ${totalPages}',
+                    text: 'Page {{pageNumber}} of {{totalPages}}',
                     styles: {
                       'margin-bottom': 3,
                       'font-size': 8,
@@ -112,7 +112,7 @@ export class LeaveBalanceReportService extends BaseService {
                   },
                   {
                     type: 'paragraph',
-                    text: '${date}',
+                    text: '{{date}}',
                     styles: {
                       'font-size': 8,
                       'align-content-horizontally': 'end',
@@ -140,7 +140,7 @@ export class LeaveBalanceReportService extends BaseService {
         {
           type: 'object-table',
           data: [tableObj],
-          rowHeaders: true,
+          headersPlacement: 'row',
           cellStyles: {
             'align-content-horizontally': 'center',
             font: 'Noto Sans',

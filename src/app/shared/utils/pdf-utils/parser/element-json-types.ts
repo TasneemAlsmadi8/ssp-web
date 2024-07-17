@@ -40,7 +40,8 @@ export type MultiDataRecords = Record<string, DataRecord[]>;
 export interface ObjectTableElementJson extends BaseElementJson {
   type: 'object-table' | 'o-table' | 'obj-table';
   data: Array<DataRecord> | DataRecord;
-  rowHeaders?: boolean;
+  headersPlacement?: 'row' | 'column'; // default: row
+  hideHeaders?: boolean; // default: false
   headerStyles?: Style;
   cellStyles?: Style;
   rowStyles?: ChildrenStylesSelectors;
@@ -53,7 +54,8 @@ export interface AutoTableElementJson extends BaseElementJson {
   type: 'auto-table' | 'a-table';
   schema: Record<HeaderTitle, DataFieldKey>;
   tableDataKey?: string;
-  rowHeaders?: boolean;
+  headersPlacement?: 'row' | 'column'; // default: row
+  hideHeaders?: boolean; // default: false
   headerStyles?: Style;
   cellStyles?: Style;
   rowStyles?: ChildrenStylesSelectors;

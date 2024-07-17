@@ -29,7 +29,7 @@
         "Salary Batch No.": "batchNumber",
         "Remarks": "remarks"
       },
-      "rowHeaders": true,
+      "headersPlacement": "row",
       "cellStyles": {
         "align-content-horizontally": "center",
         "font": "Noto Sans",

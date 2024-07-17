@@ -40,18 +40,28 @@ export class PdfTemplateResolver {
     }
   }
 
-  
-
   private resolveText(template: string): string {
-    return template.replace(/\${(\w+)}/g, (match, p1) => {
-      return p1 in this.variables ? String(this.variables[p1]) : match;
+    return template.replace(/{{((\w|[.])+)}}/g, (match, variableName) => {
+      if (variableName in this.variables) {
+        return String(this.variables[variableName]);
+      } else {
+        const closestMatch = findClosestMatch(
+          variableName,
+          Object.keys(this.variables)
+        );
+        console.error(
+          `Variable "${variableName}" not found in template. Did you mean "${closestMatch}"?`
+        );
+        console.log('Available Variables:\n', this.variables);
+        return match; // Return the original placeholder if the variable is not found
+      }
     });
   }
 
   /**
    * Replaces placeholders in the text content of an element and its children with corresponding values from the variables object.
    *
-   * Placeholders follow the format ${variableName}, where variableName corresponds to a key in the variables object.
+   * Placeholders follow the format {{variableName}}, where variableName corresponds to a key in the variables object.
    *
    * @param element - The root element whose text content and children's text content will be processed.
    */
@@ -105,4 +115,43 @@ export class PdfTemplateResolver {
     });
     return elementJson;
   }
+}
+
+function calculateLevenshteinDistance(str1: string, str2: string): number {
+  const len1 = str1.length;
+  const len2 = str2.length;
+  const matrix: number[][] = Array.from({ length: len2 + 1 }, (_, i) => [i]);
+
+  for (let j = 0; j <= len1; j++) {
+    matrix[0][j] = j;
+  }
+
+  for (let i = 1; i <= len2; i++) {
+    for (let j = 1; j <= len1; j++) {
+      const cost = str1[j - 1] === str2[i - 1] ? 0 : 1;
+      matrix[i][j] = Math.min(
+        matrix[i - 1][j] + 1, // deletion
+        matrix[i][j - 1] + 1, // insertion
+        matrix[i - 1][j - 1] + cost // substitution
+      );
+    }
+  }
+
+  return matrix[len2][len1];
+}
+
+// Helper function to find the closest matching key
+function findClosestMatch(target: string, available: string[]): string | null {
+  let closestStr: string | null = null;
+  let minDistance = Infinity;
+
+  for (const str of available) {
+    const distance = calculateLevenshteinDistance(target, str);
+    if (distance < minDistance) {
+      minDistance = distance;
+      closestStr = str;
+    }
+  }
+
+  return closestStr;
 }

@@ -37,7 +37,8 @@ export class PdfParser {
   async parseFromFile(
     jsonFileName: string,
     data: MultiDataRecords | DataRecord[],
-    input?: DataRecord
+    input?: DataRecord,
+    additionalVariables?: DataRecord
   ) {
     const pdfJson = await this.readJSONFile<PdfJson>(jsonFileName);
     if (pdfJson.template && pdfJson.templateFileName)
@@ -52,13 +53,33 @@ export class PdfParser {
       pdfJson.template = template;
     }
 
-    return this.parse(pdfJson, data, input);
+    return this.parse(pdfJson, data, input, additionalVariables);
+  }
+
+  addDataToVariables(
+    resolver: PdfTemplateResolver,
+    data: MultiDataRecords | DataRecord[]
+  ) {
+    if (Array.isArray(data) && data.length === 1) {
+      resolver.setVariables({ data: data[0] });
+    } else if (!Array.isArray(data)) {
+      for (const key in data) {
+        if (Object.prototype.hasOwnProperty.call(data, key)) {
+          const tableData = data[key];
+          if (Array.isArray(tableData) && tableData.length === 1) {
+            const varKey = `data.${key}`;
+            resolver.setVariables({ [varKey]: tableData[0] });
+          }
+        }
+      }
+    }
   }
 
   parse(
     pdfJson: PdfJson,
     data: MultiDataRecords | DataRecord[],
-    input?: DataRecord
+    input?: DataRecord,
+    additionalVariables?: DataRecord
   ): PdfBuilder {
     const { template, fileName } = pdfJson;
     let { variables, styles, pageOptions } = pdfJson;
@@ -70,6 +91,8 @@ export class PdfParser {
     else if (!variables['date'])
       variables['date'] = formatDateToDisplay(new Date().toISOString());
     if (input) variables['input'] = input;
+    if (additionalVariables)
+      variables = { ...variables, ...additionalVariables };
 
     this.elementFactory = new ElementFactory(pageOptions);
 
@@ -117,23 +140,27 @@ export class PdfParser {
     variables?: ComplexDataRecord
   ): Element {
     const resolver = new PdfTemplateResolver(variables);
+    if (data) this.addDataToVariables(resolver, data);
 
     switch (elementJson.type) {
       case 'heading':
       case 'h':
-        return this.parseHeading(resolver.resolveHeadingJson(elementJson));
+        if (variables) elementJson = resolver.resolveHeadingJson(elementJson);
+        return this.parseHeading(elementJson);
       case 'paragraph':
       case 'p':
-        return this.parseParagraph(resolver.resolveParagraphJson(elementJson));
+        if (variables) elementJson = resolver.resolveParagraphJson(elementJson);
+        return this.parseParagraph(elementJson);
       case 'table':
       case 't':
-        return this.parseTable(resolver.resolveTableJson(elementJson));
+        if (variables) elementJson = resolver.resolveTableJson(elementJson);
+        return this.parseTable(elementJson);
       case 'object-table':
       case 'obj-table':
       case 'o-table':
-        return this.parseObjectTable(
-          resolver.resolveObjectTableJson(elementJson)
-        );
+        if (variables)
+          elementJson = resolver.resolveObjectTableJson(elementJson);
+        return this.parseObjectTable(elementJson);
       case 'auto-table':
       case 'a-table':
         if (!data)
@@ -185,7 +212,8 @@ export class PdfParser {
   private parseObjectTable(elementJson: ObjectTableElementJson) {
     let {
       data,
-      rowHeaders,
+      headersPlacement,
+      hideHeaders,
       headerStyles,
       cellStyles,
       rowStyles,
@@ -200,7 +228,8 @@ export class PdfParser {
     if (!(data instanceof Array)) data = [data];
 
     return this.elementFactory.createTableFromArrayOfObjects(data, {
-      rowHeaders,
+      headersPlacement,
+      hideHeaders,
       headerStyles,
       cellStyles,
       rowStyles,
@@ -216,7 +245,8 @@ export class PdfParser {
     let {
       schema,
       tableDataKey,
-      rowHeaders,
+      headersPlacement,
+      hideHeaders,
       headerStyles,
       cellStyles,
       rowStyles,
@@ -258,7 +288,8 @@ export class PdfParser {
 
     // const data: Array<DataRecord> = [];
     return this.elementFactory.createTableFromArrayOfObjects(tableData, {
-      rowHeaders,
+      headersPlacement,
+      hideHeaders,
       headerStyles,
       cellStyles,
       rowStyles,
