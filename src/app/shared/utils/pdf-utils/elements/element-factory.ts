@@ -72,25 +72,28 @@ export class ElementFactory {
   ): TableElement {
     const { styles, cellStyles, rowStyles, columnStyles } = options ?? {};
 
-    //TODO implement coll styles
-    if (columnStyles) console.error('Column styles not implemented yet');
-
     const elem = new TableElement(this.pageOptions);
 
     const rowCount = data.length;
-    let childrenStyles: Style[] = [];
+    const colCount = data?.[0].length ?? 0;
+
+    let resolvedRowStyles: Style[] | undefined;
     if (rowStyles)
-      childrenStyles = ElementStyleCalculator.resolveChildrenStyles(
+      resolvedRowStyles = ElementStyleCalculator.resolveChildrenStyles(
         rowCount,
         rowStyles
+      );
+    let resolvedColumnStyles: Style[] | undefined;
+    if (columnStyles)
+      resolvedColumnStyles = ElementStyleCalculator.resolveChildrenStyles(
+        colCount,
+        columnStyles
       );
 
     for (let index = 0; index < rowCount; index++) {
       const rowData = data[index];
 
-      if (childrenStyles.length > 0)
-        elem.addRow(rowData, childrenStyles[index]);
-      else elem.addRow(rowData);
+      elem.addRow(rowData, resolvedRowStyles?.[index], resolvedColumnStyles);
     }
     if (cellStyles) elem.setCellStyles(cellStyles);
     if (styles) elem.setStyles(styles);

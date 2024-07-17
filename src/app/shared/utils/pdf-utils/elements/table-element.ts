@@ -53,12 +53,13 @@ export class TableElement extends Element implements ParentElement {
     );
   }
 
-  addRow(cells: TableCell[], styles?: Style) {
-    const elements: TableCellElement[] = cells.map((value) => {
+  addRow(cells: TableCell[], rowStyles?: Style, columnStyles?: Style[]) {
+    const elements: TableCellElement[] = cells.map((value, index) => {
       const elem = new TableCellElement(this.pageOptions);
       elem.setTextContent(value.text);
       if (this.cellStyles) elem.setStyles(this.cellStyles);
-      if (styles) elem.setStyles(styles);
+      if (columnStyles) elem.setStyles(columnStyles[index]);
+      if (rowStyles) elem.setStyles(rowStyles);
       if (value.styles) elem.setStyles(value.styles);
       return elem;
     });
