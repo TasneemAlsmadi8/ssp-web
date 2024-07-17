@@ -1,0 +1,56 @@
+{
+  "fileName": "Leave Balance Report.pdf",
+  "pageOptions": {
+    "marginTop": 90,
+    "marginBottom": 50,
+    "marginLeft": 20,
+    "marginRight": 20
+  },
+  "variables": {
+    "title": "Leave Balance Report"
+  },
+  "templateFileName": "/assets/report-json/default.template.pdf.json",
+  "elements": [
+    {
+      "type": "paragraph",
+      "text": "To Date:  {{input.toDate}}",
+      "styles": {
+        "font-size": 12,
+        "font-weight": "bold",
+        "margin-bottom": 5,
+        "padding": 10,
+        "border-bottom": 2
+      }
+    },
+    {
+      "type": "auto-table",
+      "schema": {
+        "Employee Code": "employeeCode",
+        "Employee Name": "fullName",
+        "Leave Type": "leaveName",
+        "Entitlement": "entitlement",
+        "Opening Balance": "openingBalance",
+        "Earned Leaves": "earnedLeaves",
+        "Taken Leaves": "takenLeaves",
+        "Encashed Leaves": "encashedDays",
+        "Leave Balance": "leaveBalance",
+        "Vacation Value": "paidVacationValue"
+      },
+      "headersPlacement": "row",
+      "cellStyles": {
+        "align-content-horizontally": "center",
+        "font": "Noto Sans",
+        "font-size": 8,
+        "background-color": "#dddddd",
+        "border": 0
+      },
+      "headerStyles": {
+        "align-content-horizontally": "center",
+        "font-size": 8,
+        "background-color": "#ffffff",
+        "font-weight": "bold",
+        "border": 0
+      }
+    }
+  ]
+}
