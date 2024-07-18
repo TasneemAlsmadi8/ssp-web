@@ -9,8 +9,6 @@ import {
   LeaveBalanceReportInput,
 } from '../../interfaces/reports/leave-balance';
 import { DatePipe } from '@angular/common';
-import { PdfJson } from '../../utils/pdf-utils/parser/element-json-types';
-import { PdfParser } from '../../utils/pdf-utils/parser/pdf-parser';
 import { PdfWorkerService } from '../../workers/pdf-worker.service';
 
 @Injectable({
@@ -22,8 +20,7 @@ export class LeaveBalanceReportService extends BaseService {
   constructor(
     private http: HttpClient,
     private pdfWorkerService: PdfWorkerService,
-    private userService: LocalUserService,
-    private datePipe: DatePipe
+    private userService: LocalUserService
   ) {
     super();
   }
@@ -92,28 +89,4 @@ class LeaveBalanceAdapter {
     };
     return obj;
   }
-}
-
-function camelCaseToSentence(camelCaseStr: string): string {
-  // Replace camel case parts with space and the same letter in uppercase
-  const sentence = camelCaseStr
-    .replace(/([a-z])([A-Z])/g, '$1 $2') // Add space before uppercase letters
-    .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2'); // Handle consecutive uppercase letters
-
-  // Capitalize the first letter of the sentence
-  return sentence.charAt(0).toUpperCase() + sentence.slice(1);
-}
-function convertObjectKeysToSentences(
-  obj: Record<string, any>
-): Record<string, any> {
-  const newObj: Record<string, any> = {};
-
-  for (const key in obj) {
-    if (obj.hasOwnProperty(key)) {
-      const newKey = camelCaseToSentence(key);
-      newObj[newKey] = obj[key];
-    }
-  }
-
-  return newObj;
 }

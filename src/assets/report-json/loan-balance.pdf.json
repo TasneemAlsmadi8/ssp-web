@@ -1,0 +1,111 @@
+{
+  "fileName": "Loan Balance Report.pdf",
+  "pageOptions": {
+    "marginTop": 90,
+    "marginBottom": 50,
+    "marginLeft": 20,
+    "marginRight": 20
+  },
+  "variables": {
+    "title": "Loan Balance Report"
+  },
+  "templateFileName": "/assets/report-json/default.template.pdf.json",
+  "template": {
+    "pageMargins": {
+      "marginTop": 70
+    }
+  },
+  "elements": [
+    {
+      "type": "h-container",
+      "styles": {
+        "padding": 5,
+        "border-top": 1
+      },
+      "widths": ["50%"],
+      "elements": [
+        {
+          "type": "object-table",
+          "data": {
+            "Name of Employee:": "{{data.fullName}}",
+            "Employee Code:": "{{data.employeeCode}}",
+            "Department:": ""
+          },
+          "headersPlacement": "column",
+          "cellStyles": {
+            "font-size": 9,
+            "font-weight": "bold",
+            "border": 0
+          }
+        }
+      ]
+    },
+    {
+      "type": "h-container",
+      "styles": {
+        "padding": 5,
+        "border-top": 1,
+        "border-bottom": 1,
+        "marginLeft": 10,
+        "marginRight": 10
+      },
+      "widths": ["50%", "50%"],
+      "elements": [
+        {
+          "type": "object-table",
+          "data": {
+            "Transaction ID:": "{{data.multiTranID}}",
+            "Transaction Type:": "{{data.loanName}}",
+            "Total Amount:": "{{data.loanAmount}}"
+          },
+          "headersPlacement": "column",
+          "cellStyles": {
+            "font-size": 9,
+            "border": 0
+          },
+          "headerStyles": {
+            "font-weight": "bold"
+          }
+        },
+        {
+          "type": "object-table",
+          "data": {
+            "Remarks:": "{{data.remarks}}",
+            "": "",
+            "Balance:": "{{data.loanBalance}}"
+          },
+          "headersPlacement": "column",
+          "cellStyles": {
+            "font-size": 9,
+            "border": 0
+          },
+          "headerStyles": {
+            "font-weight": "bold"
+          }
+        }
+      ]
+    },
+    {
+      "type": "auto-table",
+      "schema": {
+        "Transaction Date": "{{row.transactionDate}}",
+        "Debit": "{{row.transactionValue}}",
+        "Credit": "{{row.transactionValue}}",
+        "Batch No.": "{{row.batchNumber}}",
+        "Value Transaction ID": "{{row.docEntry}}"
+      },
+      "headersPlacement": "row",
+      "cellStyles": {
+        "align-content-horizontally": "center",
+        "font": "Noto Sans",
+        "font-size": 8,
+        "border": 0
+      },
+      "headerStyles": {
+        "align-content-horizontally": "center",
+        "font-size": 9,
+        "font-weight": "bold"
+      }
+    }
+  ]
+}

@@ -40,8 +40,8 @@ export class PdfTemplateResolver {
     }
   }
 
-  private resolveText(template: string): string {
-    return template.replace(/{{((\w|[.])+)}}/g, (match, variableName) => {
+  resolveText(text: string): string {
+    return text.replace(/{{((\w|[.])+)}}/g, (match, variableName) => {
       if (variableName in this.variables) {
         return String(this.variables[variableName]);
       } else {
