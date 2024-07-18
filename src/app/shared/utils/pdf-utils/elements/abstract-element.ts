@@ -68,11 +68,13 @@ export abstract class Element {
   showBoxes: boolean = false;
 
   private isInitDone = false;
-  private isPreRenderVisited = false;
+  private isPreRenderDimensionsDone = false;
+  private isPreRenderPositionDone = false;
 
   private get isPreRenderDone(): boolean {
     return (
-      this.isPreRenderVisited &&
+      this.isPreRenderDimensionsDone &&
+      this.isPreRenderPositionDone &&
       this.maxWidth !== undefined &&
       // this._widthDiff !== undefined &&
       this.position?.x !== undefined &&
@@ -197,25 +199,39 @@ export abstract class Element {
     this.isInitDone = true;
   }
 
+  preRenderDimensions(args: { maxWidth: number }): void {
+    if (!this.isInitDone)
+      throw new Error('Element must be initialized before rendering');
+
+    this.maxWidth = args.maxWidth;
+    this.setWidth(args.maxWidth, true);
+    this.isPreRenderDimensionsDone = true;
+  }
+
+  preRenderPosition(position: { x: number; y: number }): void {
+    if (!this.isInitDone)
+      throw new Error('Element must be initialized before rendering');
+
+    this.position = ElementStyleCalculator.calculatePosition(
+      this.styles,
+      position,
+      { width: this.width, height: this.height },
+      this.pageOptions
+    );
+    this.isPreRenderPositionDone = true;
+  }
+
   preRender(preRenderArgs: { x: number; y: number; maxWidth: number }): void {
     const { x, y, maxWidth } = preRenderArgs;
     if (!this.isInitDone)
       throw new Error('Element must be initialized before rendering');
 
     if (maxWidth) {
-      this.maxWidth = maxWidth;
-      this.setWidth(maxWidth, true);
+      this.preRenderDimensions({ maxWidth });
     }
     if (x && y) {
-      this.position = ElementStyleCalculator.calculatePosition(
-        this.styles,
-        { x, y },
-        { width: this.width, height: this.height },
-        this.pageOptions
-      );
+      this.preRenderPosition({ x, y });
     }
-
-    this.isPreRenderVisited = true;
   }
 
   protected abstract splitElementOnOverflow({
@@ -575,7 +591,8 @@ export abstract class Element {
     cloned.showBoxes = this.showBoxes;
 
     cloned.isInitDone = this.isInitDone;
-    cloned.isPreRenderVisited = this.isPreRenderVisited;
+    cloned.isPreRenderDimensionsDone = this.isPreRenderDimensionsDone;
+    cloned.isPreRenderPositionDone = this.isPreRenderPositionDone;
     cloned._children = this._children?.map((child) => child.clone());
 
     return cloned;

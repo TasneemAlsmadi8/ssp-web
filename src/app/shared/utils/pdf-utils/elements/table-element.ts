@@ -84,32 +84,33 @@ export class TableElement extends Element implements ParentElement {
   }
 
   @Element.UseFallbackFont
-  override preRender(preRenderArgs: {
-    x: number;
-    y: number;
-    maxWidth: number;
-  }) {
-    super.preRender(preRenderArgs);
+  override preRenderDimensions(args: { maxWidth: number }): void {
+    super.preRenderDimensions(args);
     if (this.rows.length === 0) return;
 
     const tableWidth = this.contentWidth;
     const colCount = this.rows[0].cells.length;
     const cellWidth = tableWidth / colCount; // Adjust for table width and column count
 
+    for (let index = 0; index < this.rows.length; index++) {
+      const row = this.rows[index];
+      for (const cell of row.cells) {
+        cell.preRenderDimensions({ maxWidth: cellWidth });
+      }
+    }
+  }
+
+  override preRenderPosition(position: { x: number; y: number }): void {
+    super.preRenderPosition(position);
     let cursorY = this.position.y + this.positionAdjustment.contentY; //+ this.contentHeight;
     for (let index = 0; index < this.rows.length; index++) {
       const row = this.rows[index];
+      const rowHeight = this.getRowHeight(index);
       let cursorX = this.position.x + this.positionAdjustment.contentX;
       for (const cell of row.cells) {
-        cell.preRender({ x: cursorX, y: cursorY, maxWidth: cellWidth });
-        cursorX += cell.width;
-      }
-
-      // count for change in row height (text wrap)
-      const rowHeight = this.getRowHeight(index);
-      for (const cell of row.cells) {
         cell.setHeight(rowHeight, true);
-        cell.preRender({ x: cell.positionX, y: cursorY, maxWidth: cellWidth });
+        cell.preRenderPosition({ x: cursorX, y: cursorY });
+        cursorX += cell.width;
       }
       cursorY -= rowHeight;
     }

@@ -65,21 +65,28 @@ export class HorizontalContainerElement
     return result;
   }
 
-  override preRender(preRenderArgs: {
-    x: number;
-    y: number;
-    maxWidth: number;
-  }): void {
-    super.preRender(preRenderArgs);
+  @Element.UseFallbackFont
+  override preRenderDimensions(args: { maxWidth: number }): void {
+    super.preRenderDimensions(args);
     if (!this._children || this._children.length === 0) return;
-    let cursorY = this.position.y + this.positionAdjustment.contentY;
-    let cursorX = this.position.x + this.positionAdjustment.contentX;
     for (let index = 0; index < this._children.length; index++) {
       const child = this._children[index];
       const maxWidth = this.calculateWidth(this.childrenWidth[index]);
       // TODO: check why problem happened (which required to add 'true')
       child.setHeight(this.contentHeight, true);
-      child.preRender({ x: cursorX, y: cursorY, maxWidth });
+      child.preRenderDimensions({ maxWidth });
+    }
+  }
+
+  override preRenderPosition(position: { x: number; y: number }): void {
+    super.preRenderPosition(position);
+    if (!this._children || this._children.length === 0) return;
+    let cursorY = this.position.y + this.positionAdjustment.contentY;
+    let cursorX = this.position.x + this.positionAdjustment.contentX;
+    for (let index = 0; index < this._children.length; index++) {
+      const child = this._children[index];
+      // TODO: check why problem happened (which required to add 'true')
+      child.preRenderPosition({ x: cursorX, y: cursorY });
       cursorX += child.width;
     }
   }

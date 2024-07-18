@@ -285,12 +285,8 @@ export class ParagraphElement extends Element {
   }
 
   @Element.UseFallbackFont
-  override preRender(preRenderArgs: {
-    x: number;
-    y: number;
-    maxWidth: number;
-  }) {
-    super.preRender(preRenderArgs);
+  override preRenderDimensions(args: { maxWidth: number }): void {
+    super.preRenderDimensions(args);
     this.wrapText();
     this.setWidth(this.maxWidth, true);
   }

@@ -32,20 +32,27 @@ export class VerticalContainerElement
     this._children!.push(element);
   }
 
-  override preRender(preRenderArgs: {
-    x: number;
-    y: number;
-    maxWidth: number;
-  }): void {
-    super.preRender(preRenderArgs);
+  @Element.UseFallbackFont
+  override preRenderDimensions(args: { maxWidth: number }): void {
+    super.preRenderDimensions(args);
+    if (!this._children || this._children.length === 0) return;
+    for (const child of this._children) {
+      child.preRenderDimensions({
+        maxWidth: this.contentWidth,
+      });
+    }
+  }
+
+  override preRenderPosition(position: { x: number; y: number }): void {
+    super.preRenderPosition(position);
+    if (!this._children || this._children.length === 0) return;
     let cursorY = this.position.y + this.positionAdjustment.contentY;
     let cursorX = this.position.x + this.positionAdjustment.contentX;
 
-    for (const child of this.children) {
-      child.preRender({
+    for (const child of this._children) {
+      child.preRenderPosition({
         x: cursorX,
         y: cursorY,
-        maxWidth: this.contentWidth,
       });
       cursorY -= child.heightOffset;
     }
