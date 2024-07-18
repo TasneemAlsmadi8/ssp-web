@@ -86,24 +86,28 @@ export abstract class Element {
     this._styles = {};
   }
 
+  private _overflowY?: number;
   private get overflowY(): number {
-    if (this.styles.position === 'fixed') return 0;
-    // if parent does not overflow then children do not too
-    // important ub case of fixed/relative parents
-    if (this.parent?.overflowY === 0) return 0;
+    if (this._overflowY === undefined) {
+      if (this.styles.position === 'fixed') return 0;
+      // if parent does not overflow then children do not too
+      // important ub case of fixed/relative parents
+      if (this.parent?.overflowY === 0) return 0;
 
-    const pageLowerY = 0 + this.pageOptions.marginBottom; // pdf-lib y offset starts from bottom of page
-    let elementLowerY = this.position.y - this.height;
+      const pageLowerY = 0 + this.pageOptions.marginBottom; // pdf-lib y offset starts from bottom of page
+      let elementLowerY = this.position.y - this.height;
 
-    if (this.styles.position === 'relative') {
-      // reverse relative adjustment to compute overflow based on static position
-      const { top, bottom } = this.styles;
-      if (top) elementLowerY += top;
-      if (bottom) elementLowerY -= bottom;
+      if (this.styles.position === 'relative') {
+        // reverse relative adjustment to compute overflow based on static position
+        const { top, bottom } = this.styles;
+        if (top) elementLowerY += top;
+        if (bottom) elementLowerY -= bottom;
+      }
+
+      if (elementLowerY >= pageLowerY) return 0;
+      this._overflowY = pageLowerY - elementLowerY;
     }
-
-    if (elementLowerY >= pageLowerY) return 0;
-    return pageLowerY - elementLowerY;
+    return this._overflowY;
   }
 
   setStyle(name: keyof Style, value: string | number) {
@@ -250,7 +254,7 @@ export abstract class Element {
       this.computedStyles.marginTop +
       this.computedStyles.paddingTop;
     const availableHeight = this.height - this.overflowY - offsetTop;
-    const splitElement = await this.splitElementOnOverflow({
+        const splitElement = await this.splitElementOnOverflow({
       availableHeight,
       clone,
     });
@@ -258,8 +262,10 @@ export abstract class Element {
     if (!this.parent) {
       const newPage = await this.pageFactory();
       splitElement.changePage(newPage);
-      splitElement.position.y =
-        this.pageOptions.height - this.pageOptions.marginTop;
+      splitElement.preRenderPosition({
+        x: splitElement.position.x,
+        y: this.pageOptions.height - this.pageOptions.marginTop,
+      });
     }
 
     this.computedStyles.borderBottom = 0;
@@ -269,6 +275,8 @@ export abstract class Element {
     splitElement.computedStyles.marginTop = 0;
     splitElement.computedStyles.paddingTop = 0;
 
+    // void previous overflow calculation
+    this._overflowY = undefined;
     return splitElement;
   }
 
