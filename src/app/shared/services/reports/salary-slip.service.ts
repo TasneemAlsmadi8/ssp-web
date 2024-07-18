@@ -133,8 +133,8 @@ export class SalarySlipReportService extends BaseService {
   ) {
     const inputDate = new Date(input.year, input.month - 1);
 
-    const startDate = format(startOfMonth(inputDate), 'dd/MM/yyyy');
-    const endDate = format(endOfMonth(inputDate), 'dd/MM/yyyy');
+    const startDate = startOfMonth(inputDate).toISOString();
+    const endDate = endOfMonth(inputDate).toISOString();
 
     await this.pdfWorkerService.downloadFromFile(
       '/assets/report-json/salary-slip.pdf.json',

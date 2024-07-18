@@ -35,5 +35,5 @@ export interface HourlyTransactionReportApi {
   noOfHours: null | string;
   overtimeHours: string;
   u_Remarks: null | string;
-  u_BatchNo: string;
+  u_BatchNo: null | string;
 }

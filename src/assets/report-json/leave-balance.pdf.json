@@ -13,7 +13,7 @@
   "elements": [
     {
       "type": "paragraph",
-      "text": "To Date:  {{input.toDate}}",
+      "text": "To Date:  {{input.toDate | dd/MM/yyyy}}",
       "styles": {
         "font-size": 12,
         "font-weight": "bold",
@@ -25,16 +25,17 @@
     {
       "type": "auto-table",
       "schema": {
+        "S.N.": "{{serialNumber}}",
         "Employee Code": "{{row.employeeCode}}",
         "Employee Name": "{{row.fullName}}",
         "Leave Type": "{{row.leaveName}}",
-        "Entitlement": "{{row.entitlement}}",
-        "Opening Balance": "{{row.openingBalance}}",
-        "Earned Leaves": "{{row.earnedLeaves}}",
-        "Taken Leaves": "{{row.takenLeaves}}",
-        "Encashed Leaves": "{{row.encashedDays}}",
-        "Leave Balance": "{{row.leaveBalance}}",
-        "Vacation Value": "{{row.paidVacationValue}}"
+        "Entitlement": "{{row.entitlement | 1.0}}",
+        "Opening Balance": "{{row.openingBalance | 1.2}}",
+        "Earned Leaves": "{{row.earnedLeaves | 1.2}}",
+        "Taken Leaves": "{{row.takenLeaves | 1.2}}",
+        "Encashed Leaves": "{{row.encashedDays | 1.2}}",
+        "Leave Balance": "{{row.leaveBalance | 1.2}}",
+        "Vacation Value": "{{row.paidVacationValue | 1.1-5}}"
       },
       "headersPlacement": "row",
       "cellStyles": {

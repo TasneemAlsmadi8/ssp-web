@@ -32,7 +32,7 @@
             },
             {
               "type": "paragraph",
-              "text": "{{date}}",
+              "text": "{{date | dd/MM/yyyy}}",
               "styles": {
                 "font-size": 8,
                 "align-content-horizontally": "end"

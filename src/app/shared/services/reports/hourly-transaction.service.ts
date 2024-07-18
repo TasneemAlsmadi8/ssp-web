@@ -84,11 +84,9 @@ class HourlyTransactionAdapter {
       fromDate: formatDateToISO(apiSchema.u_FromDate),
       toDate: formatDateToISO(apiSchema.u_ToDate),
       overtimeHours: parseFloat(apiSchema.overtimeHours),
-      batchNumber: apiSchema.u_BatchNo,
-      numberOfHours: apiSchema.noOfHours
-        ? parseFloat(apiSchema.noOfHours)
-        : undefined,
-      remarks: apiSchema.u_Remarks ?? undefined,
+      batchNumber: apiSchema.u_BatchNo ?? '-',
+      numberOfHours: apiSchema.noOfHours ? parseFloat(apiSchema.noOfHours) : 0,
+      remarks: apiSchema.u_Remarks ?? '-',
     };
     return obj;
   }
