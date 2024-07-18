@@ -76,7 +76,7 @@ export class ElementFactory {
     const elem = new TableElement(this.pageOptions);
 
     const rowCount = data.length;
-    const colCount = data?.[0].length ?? 0;
+    const colCount = data?.at(0)?.length ?? 0;
 
     let resolvedRowStyles: Style[] | undefined;
     if (rowStyles)
