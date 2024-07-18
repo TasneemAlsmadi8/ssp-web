@@ -8,7 +8,7 @@ import {
   LoanBalanceReportApi,
 } from '../../interfaces/reports/loan-balance';
 import { PdfWorkerService } from '../../workers/pdf-worker.service';
-import { formatDateToDisplay } from '../../utils/data-formatter';
+import { formatDateToISO } from '../../utils/data-formatter';
 
 @Injectable({
   providedIn: 'root',
@@ -52,12 +52,12 @@ class LoanBalanceAdapter {
     const obj: LoanBalanceReport = {
       employeeId: apiSchema.empID,
       employeeCode: apiSchema.u_EmpCode,
-      transactionDate: formatDateToDisplay(apiSchema.u_TransactionDate),
+      transactionDate: formatDateToISO(apiSchema.u_TransactionDate),
       transactionValue: parseFloat(apiSchema.u_TransactionValue),
       remarks: apiSchema.u_Remarks ?? '-',
       paidTran: apiSchema.u_PaidTran,
       loanAmount: parseFloat(apiSchema.u_LoanAmount),
-      startDate: formatDateToDisplay(apiSchema.u_StartDate),
+      startDate: formatDateToISO(apiSchema.u_StartDate),
       settlementCount: parseInt(apiSchema.u_SettlementCount),
       loanBalance: parseFloat(apiSchema.u_LoanBalance),
       multiTranID: apiSchema.u_MultiTranID,

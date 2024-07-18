@@ -21,7 +21,7 @@ import {
 import { ElementFactory } from '../elements/element-factory';
 import { PdfPageTemplateBuilder } from '../pdf-page-template';
 import { PdfTemplateResolver } from './pdf-template-resolver';
-import { formatDateToDisplay } from '../../data-formatter';
+import { formatDateToISO } from '../../data-formatter';
 
 export class PdfParser {
   private elementFactory!: ElementFactory;
@@ -82,10 +82,10 @@ export class PdfParser {
 
     if (!variables)
       variables = {
-        date: formatDateToDisplay(new Date().toISOString()),
+        date: formatDateToISO(new Date().toISOString()),
       };
     else if (!variables['date'])
-      variables['date'] = formatDateToDisplay(new Date().toISOString());
+      variables['date'] = formatDateToISO(new Date().toISOString());
     if (input) variables['input'] = input;
     if (additionalVariables)
       variables = { ...variables, ...additionalVariables };

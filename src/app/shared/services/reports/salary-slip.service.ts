@@ -12,7 +12,7 @@ import {
   SalarySlipReportApi,
   SalarySlipReportInput,
 } from '../../interfaces/reports/salary-slip';
-import { formatDateToDisplay } from '../../utils/data-formatter';
+import { formatDateToISO } from '../../utils/data-formatter';
 import { endOfMonth, format, startOfMonth } from 'date-fns';
 import { PdfWorkerService } from '../../workers/pdf-worker.service';
 import { UserAlertService } from '../user-alert.service';
@@ -186,11 +186,11 @@ class SalarySlipAdapter {
       loan: parseFloat(apiSchema.u_Loan),
       sponsorship: apiSchema.u_Sponsorship,
       payMethod: apiSchema.u_PayMethod,
-      employmentDate: formatDateToDisplay(apiSchema.u_EmploymentDate),
+      employmentDate: formatDateToISO(apiSchema.u_EmploymentDate),
       ARNameInReport: apiSchema.u_ARNameInReport,
       ENNameInReport: apiSchema.u_ENNameInReport,
-      fromDate: formatDateToDisplay(apiSchema.u_FromDate),
-      toDate: formatDateToDisplay(apiSchema.u_ToDate),
+      fromDate: formatDateToISO(apiSchema.u_FromDate),
+      toDate: formatDateToISO(apiSchema.u_ToDate),
       object: apiSchema.object,
       fullNameForeign: apiSchema.u_FullNameF,
       position: apiSchema.position ?? '-',

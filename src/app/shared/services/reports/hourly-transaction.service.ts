@@ -9,7 +9,7 @@ import {
   HourlyTransactionReportInput,
 } from '../../interfaces/reports/hourly-transaction';
 import { DatePipe } from '@angular/common';
-import { formatDateToDisplay } from '../../utils/data-formatter';
+import { formatDateToISO } from '../../utils/data-formatter';
 import { UserAlertService } from '../user-alert.service';
 import { PdfWorkerService } from '../../workers/pdf-worker.service';
 
@@ -64,7 +64,6 @@ export class HourlyTransactionReportService extends BaseService {
     input: HourlyTransactionReportInput,
     data: HourlyTransactionReport[]
   ) {
-
     await this.pdfWorkerService.downloadFromFile(
       '/assets/report-json/hourly-transactions.pdf.json',
       data,
@@ -82,8 +81,8 @@ class HourlyTransactionAdapter {
       fullName: apiSchema.fullName,
       transactionCode: apiSchema.tranCode,
       transactionName: apiSchema.tranName,
-      fromDate: formatDateToDisplay(apiSchema.u_FromDate),
-      toDate: formatDateToDisplay(apiSchema.u_ToDate),
+      fromDate: formatDateToISO(apiSchema.u_FromDate),
+      toDate: formatDateToISO(apiSchema.u_ToDate),
       overtimeHours: parseFloat(apiSchema.overtimeHours),
       batchNumber: apiSchema.u_BatchNo,
       numberOfHours: apiSchema.noOfHours
