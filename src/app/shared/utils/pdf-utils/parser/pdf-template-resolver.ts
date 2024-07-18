@@ -240,12 +240,22 @@ function formatNumber(value: number, format: string): string {
   // Split the formatted value into whole and fraction parts
   let [wholePart, fractionPart] = formattedValue.split('.');
   wholePart = wholePart.padStart(minWholeDigits, '0');
-  fractionPart = fractionPart || '0'; // Ensure fraction part exists
 
+  fractionPart = fractionPart || ''; // Ensure fraction part exists
   // Adjust fraction part length
-  fractionPart = fractionPart
-    .slice(0, maxFractionDigits)
-    .padEnd(minFractionDigits, '0');
+  if (minFractionDigits > fractionPart.length) {
+    fractionPart = fractionPart.padEnd(minFractionDigits, '0');
+  } else {
+    // Remove trailing zeros after minFractionDigits
+    while (
+      fractionPart.length > minFractionDigits &&
+      fractionPart.endsWith('0')
+    ) {
+      fractionPart = fractionPart.slice(0, -1);
+    }
+  }
+
+  if (!fractionPart) return wholePart;
 
   return `${wholePart}.${fractionPart}`;
 }
