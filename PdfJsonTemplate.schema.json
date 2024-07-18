@@ -1,0 +1,573 @@
+{
+  "$ref": "#/definitions/PdfJsonTemplate",
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "definitions": {
+    "AutoTableElementJson": {
+      "properties": {
+        "cellStyles": {
+          "$ref": "#/definitions/Style"
+        },
+        "columnStyles": {
+          "$ref": "#/definitions/ChildrenStylesSelectors"
+        },
+        "headerStyles": {
+          "$ref": "#/definitions/Style"
+        },
+        "headersPlacement": {
+          "enum": [
+            "row",
+            "column"
+          ],
+          "type": "string"
+        },
+        "hideHeaders": {
+          "type": "boolean"
+        },
+        "rowStyles": {
+          "$ref": "#/definitions/ChildrenStylesSelectors"
+        },
+        "schema": {
+          "additionalProperties": {
+            "$ref": "#/definitions/DataFieldKey"
+          },
+          "type": "object"
+        },
+        "styles": {
+          "$ref": "#/definitions/Style"
+        },
+        "tableDataKey": {
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "auto-table",
+            "a-table"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "schema",
+        "type"
+      ],
+      "type": "object"
+    },
+    "ChildrenStylesSelectors": {
+      "additionalProperties": {
+        "$ref": "#/definitions/Style"
+      },
+      "description": "Represents styles for child elements such as row, column, etc . This type allows adding styles based on a special selection criteria such as 'odd', 'even', 'first', 'last', or using a child number from 1 to the last. Negative numbers can also be used to start from the end.",
+      "properties": {
+        "even": {
+          "$ref": "#/definitions/Style"
+        },
+        "first": {
+          "$ref": "#/definitions/Style"
+        },
+        "last": {
+          "$ref": "#/definitions/Style"
+        },
+        "odd": {
+          "$ref": "#/definitions/Style"
+        }
+      },
+      "type": "object"
+    },
+    "ComplexDataRecord": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          },
+          {
+            "not": {}
+          },
+          {
+            "$ref": "#/definitions/DataRecord"
+          }
+        ]
+      },
+      "type": "object"
+    },
+    "DataFieldKey": {
+      "type": "string"
+    },
+    "DataRecord": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "type": "null"
+          },
+          {
+            "not": {}
+          }
+        ]
+      },
+      "type": "object"
+    },
+    "ElementJson": {
+      "anyOf": [
+        {
+          "$ref": "#/definitions/HeadingElementJson"
+        },
+        {
+          "$ref": "#/definitions/ParagraphElementJson"
+        },
+        {
+          "$ref": "#/definitions/TableElementJson"
+        },
+        {
+          "$ref": "#/definitions/ObjectTableElementJson"
+        },
+        {
+          "$ref": "#/definitions/AutoTableElementJson"
+        },
+        {
+          "$ref": "#/definitions/HorizontalContainerElementJson"
+        },
+        {
+          "$ref": "#/definitions/VerticalContainerElementJson"
+        }
+      ]
+    },
+    "HeadingElementJson": {
+      "properties": {
+        "level": {
+          "type": "number"
+        },
+        "styles": {
+          "$ref": "#/definitions/Style"
+        },
+        "text": {
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "heading",
+            "h"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "level",
+        "text",
+        "type"
+      ],
+      "type": "object"
+    },
+    "HorizontalContainerElementJson": {
+      "properties": {
+        "elements": {
+          "items": {
+            "$ref": "#/definitions/ElementJson"
+          },
+          "type": "array"
+        },
+        "styles": {
+          "$ref": "#/definitions/Style"
+        },
+        "type": {
+          "enum": [
+            "horizontal-container",
+            "h-container"
+          ],
+          "type": "string"
+        },
+        "widths": {
+          "items": {
+            "$ref": "#/definitions/MaxWidth"
+          },
+          "type": "array"
+        }
+      },
+      "required": [
+        "elements",
+        "type",
+        "widths"
+      ],
+      "type": "object"
+    },
+    "MaxWidth": {
+      "type": "string"
+    },
+    "ObjectTableElementJson": {
+      "properties": {
+        "cellStyles": {
+          "$ref": "#/definitions/Style"
+        },
+        "columnStyles": {
+          "$ref": "#/definitions/ChildrenStylesSelectors"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/definitions/DataRecord"
+              },
+              "type": "array"
+            },
+            {
+              "$ref": "#/definitions/DataRecord"
+            }
+          ]
+        },
+        "headerStyles": {
+          "$ref": "#/definitions/Style"
+        },
+        "headersPlacement": {
+          "enum": [
+            "row",
+            "column"
+          ],
+          "type": "string"
+        },
+        "hideHeaders": {
+          "type": "boolean"
+        },
+        "rowStyles": {
+          "$ref": "#/definitions/ChildrenStylesSelectors"
+        },
+        "styles": {
+          "$ref": "#/definitions/Style"
+        },
+        "type": {
+          "enum": [
+            "object-table",
+            "o-table",
+            "obj-table"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "type"
+      ],
+      "type": "object"
+    },
+    "ParagraphElementJson": {
+      "properties": {
+        "styles": {
+          "$ref": "#/definitions/Style"
+        },
+        "text": {
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "paragraph",
+            "p"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "type"
+      ],
+      "type": "object"
+    },
+    "PdfJsonTemplate": {
+      "additionalProperties": false,
+      "properties": {
+        "elements": {
+          "items": {
+            "$ref": "#/definitions/ElementJson"
+          },
+          "type": "array"
+        },
+        "name": {
+          "type": "string"
+        },
+        "pageMargins": {
+          "additionalProperties": false,
+          "properties": {
+            "marginBottom": {
+              "type": "number"
+            },
+            "marginLeft": {
+              "type": "number"
+            },
+            "marginRight": {
+              "type": "number"
+            },
+            "marginTop": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "pageOptions": {
+          "additionalProperties": false,
+          "properties": {
+            "height": {
+              "type": "number"
+            },
+            "marginBottom": {
+              "type": "number"
+            },
+            "marginLeft": {
+              "type": "number"
+            },
+            "marginRight": {
+              "type": "number"
+            },
+            "marginTop": {
+              "type": "number"
+            },
+            "pageOrientation": {
+              "enum": [
+                "portrait",
+                "landscape"
+              ],
+              "type": "string"
+            },
+            "templateUrl": {
+              "type": "string"
+            },
+            "width": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "styles": {
+          "$ref": "#/definitions/Style"
+        },
+        "variables": {
+          "$ref": "#/definitions/ComplexDataRecord"
+        }
+      },
+      "type": "object"
+    },
+    "Style": {
+      "additionalProperties": {
+        "anyOf": [
+          {
+            "type": "string"
+          },
+          {
+            "type": "number"
+          },
+          {
+            "not": {}
+          }
+        ]
+      },
+      "properties": {
+        "align-content-horizontally": {
+          "enum": [
+            "start",
+            "center",
+            "end"
+          ],
+          "type": "string"
+        },
+        "align-content-vertically": {
+          "enum": [
+            "start",
+            "center",
+            "end"
+          ],
+          "type": "string"
+        },
+        "background-color": {
+          "type": "string"
+        },
+        "border": {
+          "type": "number"
+        },
+        "border-bottom": {
+          "type": "number"
+        },
+        "border-color": {
+          "type": "string"
+        },
+        "border-left": {
+          "type": "number"
+        },
+        "border-right": {
+          "type": "number"
+        },
+        "border-top": {
+          "type": "number"
+        },
+        "bottom": {
+          "type": "number"
+        },
+        "color": {
+          "type": "string"
+        },
+        "font": {
+          "type": "string"
+        },
+        "font-size": {
+          "type": "number"
+        },
+        "font-weight": {
+          "enum": [
+            "normal",
+            "bold"
+          ],
+          "type": "string"
+        },
+        "height": {
+          "const": "fit-content",
+          "type": "string"
+        },
+        "left": {
+          "type": "number"
+        },
+        "margin": {
+          "type": "number"
+        },
+        "margin-bottom": {
+          "type": "number"
+        },
+        "margin-left": {
+          "type": "number"
+        },
+        "margin-right": {
+          "type": "number"
+        },
+        "margin-top": {
+          "type": "number"
+        },
+        "padding": {
+          "type": "number"
+        },
+        "padding-bottom": {
+          "type": "number"
+        },
+        "padding-left": {
+          "type": "number"
+        },
+        "padding-right": {
+          "type": "number"
+        },
+        "padding-top": {
+          "type": "number"
+        },
+        "position": {
+          "enum": [
+            "static",
+            "relative",
+            "fixed"
+          ],
+          "type": "string"
+        },
+        "right": {
+          "type": "number"
+        },
+        "text-decoration": {
+          "enum": [
+            "none",
+            "underline"
+          ],
+          "type": "string"
+        },
+        "top": {
+          "type": "number"
+        },
+        "width": {
+          "enum": [
+            "max-width",
+            "fit-content"
+          ],
+          "type": "string"
+        }
+      },
+      "type": "object"
+    },
+    "TableCell": {
+      "additionalProperties": false,
+      "properties": {
+        "styles": {
+          "$ref": "#/definitions/Style"
+        },
+        "text": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "type": "object"
+    },
+    "TableElementJson": {
+      "properties": {
+        "cellStyles": {
+          "$ref": "#/definitions/Style"
+        },
+        "columnStyles": {
+          "$ref": "#/definitions/ChildrenStylesSelectors"
+        },
+        "data": {
+          "items": {
+            "items": {
+              "$ref": "#/definitions/TableCell"
+            },
+            "type": "array"
+          },
+          "type": "array"
+        },
+        "rowStyles": {
+          "$ref": "#/definitions/ChildrenStylesSelectors"
+        },
+        "styles": {
+          "$ref": "#/definitions/Style"
+        },
+        "type": {
+          "enum": [
+            "table",
+            "t"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "data",
+        "type"
+      ],
+      "type": "object"
+    },
+    "VerticalContainerElementJson": {
+      "properties": {
+        "elements": {
+          "items": {
+            "$ref": "#/definitions/ElementJson"
+          },
+          "type": "array"
+        },
+        "styles": {
+          "$ref": "#/definitions/Style"
+        },
+        "type": {
+          "enum": [
+            "vertical-container",
+            "v-container"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "elements",
+        "type"
+      ],
+      "type": "object"
+    }
+  }
+}

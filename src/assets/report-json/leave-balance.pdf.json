@@ -9,7 +9,7 @@
   "variables": {
     "title": "Leave Balance Report"
   },
-  "templateFileName": "/assets/report-json/default.template.pdf.json",
+  "templateFileName": "/assets/report-json/default.template.json",
   "elements": [
     {
       "type": "paragraph",

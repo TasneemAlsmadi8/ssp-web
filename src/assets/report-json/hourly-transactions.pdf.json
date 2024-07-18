@@ -10,7 +10,7 @@
   "variables": {
     "title": "Hourly Transactions Report"
   },
-  "templateFileName": "/assets/report-json/default.template.pdf.json",
+  "templateFileName": "/assets/report-json/default.template.json",
   "styles": {
     "font-size": 8
   },
