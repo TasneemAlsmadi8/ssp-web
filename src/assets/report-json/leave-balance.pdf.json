@@ -25,16 +25,16 @@
     {
       "type": "auto-table",
       "schema": {
-        "Employee Code": "employeeCode",
-        "Employee Name": "fullName",
-        "Leave Type": "leaveName",
-        "Entitlement": "entitlement",
-        "Opening Balance": "openingBalance",
-        "Earned Leaves": "earnedLeaves",
-        "Taken Leaves": "takenLeaves",
-        "Encashed Leaves": "encashedDays",
-        "Leave Balance": "leaveBalance",
-        "Vacation Value": "paidVacationValue"
+        "Employee Code": "{{row.employeeCode}}",
+        "Employee Name": "{{row.fullName}}",
+        "Leave Type": "{{row.leaveName}}",
+        "Entitlement": "{{row.entitlement}}",
+        "Opening Balance": "{{row.openingBalance}}",
+        "Earned Leaves": "{{row.earnedLeaves}}",
+        "Taken Leaves": "{{row.takenLeaves}}",
+        "Encashed Leaves": "{{row.encashedDays}}",
+        "Leave Balance": "{{row.leaveBalance}}",
+        "Vacation Value": "{{row.paidVacationValue}}"
       },
       "headersPlacement": "row",
       "cellStyles": {

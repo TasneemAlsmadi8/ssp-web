@@ -56,13 +56,13 @@ export class PdfParser {
     resolver: PdfTemplateResolver,
     data: MultiDataRecords | DataRecord[]
   ) {
-    if (Array.isArray(data) && data.length === 1) {
+    if (Array.isArray(data) && data.length >= 1) {
       resolver.setVariables({ data: data[0] });
     } else if (!Array.isArray(data)) {
       for (const key in data) {
         if (Object.prototype.hasOwnProperty.call(data, key)) {
           const tableData = data[key];
-          if (Array.isArray(tableData) && tableData.length === 1) {
+          if (Array.isArray(tableData) && tableData.length >= 1) {
             const varKey = `data.${key}`;
             resolver.setVariables({ [varKey]: tableData[0] });
           }
@@ -165,7 +165,7 @@ export class PdfParser {
           throw new Error(
             'You Can not use Auto-Table in this context (in templates).'
           );
-        return this.parseAutoTable(elementJson, data);
+        return this.parseAutoTable(elementJson, data, variables);
       case 'horizontal-container':
       case 'h-container':
         return this.parseHorizontalContainer(elementJson, data, variables);
@@ -238,7 +238,8 @@ export class PdfParser {
 
   private parseAutoTable(
     elementJson: AutoTableElementJson,
-    data: MultiDataRecords | DataRecord[]
+    data: MultiDataRecords | DataRecord[],
+    variables?: ComplexDataRecord
   ) {
     let {
       schema,
@@ -266,23 +267,24 @@ export class PdfParser {
 
       data = data[tableDataKey];
     }
-    const tableData = data.map((record): DataRecord => {
-      const res: DataRecord = {};
-      for (const schemaKey in schema) {
+
+    const resolver = new PdfTemplateResolver(variables);
+    const tableData = [];
+    for (const row of data) {
+      resolver.setVariables({ row: row });
+      const record: DataRecord = {};
+      let serialNumber = 1;
+      for (const schemaKey in schema)
         if (Object.prototype.hasOwnProperty.call(schema, schemaKey)) {
-          const dataKey = schema[schemaKey];
-          if (!Object.prototype.hasOwnProperty.call(record, dataKey))
-            throw new Error(
-              `'${dataKey}' Data Key does not exist in this reports data!\n` +
-                `Available Table Data Keys: {${Object.keys(record).join(', ')}}`
-            );
+          resolver.setVariables({ serialNumber });
+          const schemaRowContent = resolver.resolveText(schema[schemaKey]);
 
-          res[schemaKey] = record[dataKey];
+          record[schemaKey] = resolver.resolveText(schemaRowContent);
+          serialNumber++;
         }
-      }
 
-      return res;
-    });
+      tableData.push(record);
+    }
 
     // const data: Array<DataRecord> = [];
     return this.elementFactory.createTableFromArrayOfObjects(tableData, {

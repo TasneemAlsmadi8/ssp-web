@@ -112,8 +112,8 @@
             {
               "type": "auto-table",
               "schema": {
-                "allowance name": "allowanceName",
-                "allowance value": "value"
+                "allowance name": "{{row.allowanceName}}",
+                "allowance value": "{{row.value}}"
               },
               "hideHeaders": true,
               "tableDataKey": "repAllowanceDetails",
@@ -169,8 +169,8 @@
             {
               "type": "auto-table",
               "schema": {
-                "allowance name": "deductionName",
-                "allowance value": "value"
+                "allowance name": "{{row.deductionName}}",
+                "allowance value": "{{row.value}}"
               },
               "hideHeaders": true,
               "tableDataKey": "repDeductionsDetails",

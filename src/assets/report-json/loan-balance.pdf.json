@@ -90,7 +90,7 @@
       "schema": {
         "Transaction Date": "{{row.transactionDate}}",
         "Debit": "{{row.transactionValue}}",
-        "Credit": "{{row.transactionValue}}",
+        "Credit": "0.000",
         "Batch No.": "{{row.batchNumber}}",
         "Value Transaction ID": "{{row.docEntry}}"
       },

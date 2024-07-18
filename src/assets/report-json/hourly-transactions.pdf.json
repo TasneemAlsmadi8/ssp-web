@@ -18,16 +18,16 @@
     {
       "type": "auto-table",
       "schema": {
-        "Employee Code": "employeeCode",
-        "Employee Name": "fullName",
-        "Tran Code": "transactionCode",
-        "Transaction": "transactionName",
-        "From Date": "fromDate",
-        "To Date": "toDate",
-        "No of Hours": "numberOfHours",
-        "O.T. Hours": "overtimeHours",
-        "Salary Batch No.": "batchNumber",
-        "Remarks": "remarks"
+        "Employee Code": "{{row.employeeCode}}",
+        "Employee Name": "{{row.fullName}}",
+        "Tran Code": "{{row.transactionCode}}",
+        "Transaction": "{{row.transactionName}}",
+        "From Date": "{{row.fromDate}}",
+        "To Date": "{{row.toDate}}",
+        "No of Hours": "{{row.numberOfHours}}",
+        "O.T. Hours": "{{row.overtimeHours}}",
+        "Salary Batch No.": "{{row.batchNumber}}",
+        "Remarks": "{{row.remarks}}"
       },
       "headersPlacement": "row",
       "cellStyles": {
