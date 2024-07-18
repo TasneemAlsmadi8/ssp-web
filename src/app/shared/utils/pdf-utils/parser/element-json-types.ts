@@ -1,12 +1,14 @@
 import {
   ChildrenStylesSelectors,
   Style,
+  PageMargins,
+  PageOptions,
 } from '../elements/element-styles';
-import { PageMargins, PageOptions } from '../elements/element-styles';
 
 export interface BaseElementJson extends Record<string, any> {
   type: string;
   styles?: Style;
+  showBoxes: boolean;
 }
 
 export interface HeadingElementJson extends BaseElementJson {

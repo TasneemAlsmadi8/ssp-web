@@ -108,7 +108,9 @@ export class PdfParser {
 
       if (template.elements)
         for (const elementJson of template.elements) {
-          templateBuilder.addElement(this.parseElement(elementJson));
+          const elem = this.parseElement(elementJson);
+          if (elementJson.showBoxes) elem.showBoxes = true;
+          templateBuilder.addElement(elem);
         }
 
       // inherit defaults from template
@@ -127,7 +129,9 @@ export class PdfParser {
     // if (variables) builder.setVariables(variables);
 
     for (const elementJson of pdfJson.elements) {
-      builder.addElement(this.parseElement(elementJson, data, variables));
+      const elem = this.parseElement(elementJson, data, variables);
+      if (elementJson.showBoxes) elem.showBoxes = true;
+      builder.addElement(elem);
     }
     return builder;
   }
