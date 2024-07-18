@@ -1,5 +1,5 @@
 {
-  "$ref": "#/definitions/PdfJson",
+  "$ref": "#/definitions/PdfJsonTemplate",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
     "AutoTableElementJson": {
@@ -9,6 +9,12 @@
         },
         "columnStyles": {
           "$ref": "#/definitions/ChildrenStylesSelectors"
+        },
+        "columnsRatio": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
         },
         "headerStyles": {
           "$ref": "#/definitions/Style"
@@ -32,6 +38,9 @@
           },
           "type": "object"
         },
+        "showBoxes": {
+          "type": "boolean"
+        },
         "styles": {
           "$ref": "#/definitions/Style"
         },
@@ -48,6 +57,7 @@
       },
       "required": [
         "schema",
+        "showBoxes",
         "type"
       ],
       "type": "object"
@@ -147,6 +157,9 @@
         "level": {
           "type": "number"
         },
+        "showBoxes": {
+          "type": "boolean"
+        },
         "styles": {
           "$ref": "#/definitions/Style"
         },
@@ -163,6 +176,7 @@
       },
       "required": [
         "level",
+        "showBoxes",
         "text",
         "type"
       ],
@@ -175,6 +189,9 @@
             "$ref": "#/definitions/ElementJson"
           },
           "type": "array"
+        },
+        "showBoxes": {
+          "type": "boolean"
         },
         "styles": {
           "$ref": "#/definitions/Style"
@@ -195,6 +212,7 @@
       },
       "required": [
         "elements",
+        "showBoxes",
         "type",
         "widths"
       ],
@@ -210,6 +228,12 @@
         },
         "columnStyles": {
           "$ref": "#/definitions/ChildrenStylesSelectors"
+        },
+        "columnsRatio": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
         },
         "data": {
           "anyOf": [
@@ -240,6 +264,9 @@
         "rowStyles": {
           "$ref": "#/definitions/ChildrenStylesSelectors"
         },
+        "showBoxes": {
+          "type": "boolean"
+        },
         "styles": {
           "$ref": "#/definitions/Style"
         },
@@ -254,12 +281,16 @@
       },
       "required": [
         "data",
+        "showBoxes",
         "type"
       ],
       "type": "object"
     },
     "ParagraphElementJson": {
       "properties": {
+        "showBoxes": {
+          "type": "boolean"
+        },
         "styles": {
           "$ref": "#/definitions/Style"
         },
@@ -275,73 +306,9 @@
         }
       },
       "required": [
+        "showBoxes",
         "text",
         "type"
-      ],
-      "type": "object"
-    },
-    "PdfJson": {
-      "additionalProperties": false,
-      "properties": {
-        "elements": {
-          "items": {
-            "$ref": "#/definitions/ElementJson"
-          },
-          "type": "array"
-        },
-        "fileName": {
-          "type": "string"
-        },
-        "pageOptions": {
-          "additionalProperties": false,
-          "properties": {
-            "height": {
-              "type": "number"
-            },
-            "marginBottom": {
-              "type": "number"
-            },
-            "marginLeft": {
-              "type": "number"
-            },
-            "marginRight": {
-              "type": "number"
-            },
-            "marginTop": {
-              "type": "number"
-            },
-            "pageOrientation": {
-              "enum": [
-                "portrait",
-                "landscape"
-              ],
-              "type": "string"
-            },
-            "templateUrl": {
-              "type": "string"
-            },
-            "width": {
-              "type": "number"
-            }
-          },
-          "type": "object"
-        },
-        "styles": {
-          "$ref": "#/definitions/Style"
-        },
-        "template": {
-          "$ref": "#/definitions/PdfJsonTemplate"
-        },
-        "templateFileName": {
-          "type": "string"
-        },
-        "variables": {
-          "$ref": "#/definitions/ComplexDataRecord"
-        }
-      },
-      "required": [
-        "fileName",
-        "elements"
       ],
       "type": "object"
     },
@@ -580,6 +547,12 @@
         "columnStyles": {
           "$ref": "#/definitions/ChildrenStylesSelectors"
         },
+        "columnsRatio": {
+          "items": {
+            "type": "number"
+          },
+          "type": "array"
+        },
         "data": {
           "items": {
             "items": {
@@ -591,6 +564,9 @@
         },
         "rowStyles": {
           "$ref": "#/definitions/ChildrenStylesSelectors"
+        },
+        "showBoxes": {
+          "type": "boolean"
         },
         "styles": {
           "$ref": "#/definitions/Style"
@@ -605,6 +581,7 @@
       },
       "required": [
         "data",
+        "showBoxes",
         "type"
       ],
       "type": "object"
@@ -616,6 +593,9 @@
             "$ref": "#/definitions/ElementJson"
           },
           "type": "array"
+        },
+        "showBoxes": {
+          "type": "boolean"
         },
         "styles": {
           "$ref": "#/definitions/Style"
@@ -630,6 +610,7 @@
       },
       "required": [
         "elements",
+        "showBoxes",
         "type"
       ],
       "type": "object"
