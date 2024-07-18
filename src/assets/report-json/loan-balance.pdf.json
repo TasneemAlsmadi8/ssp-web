@@ -1,7 +1,7 @@
 {
   "fileName": "Loan Balance Report.pdf",
   "pageOptions": {
-    "marginTop": 110,
+    "marginTop": 100,
     "marginBottom": 50,
     "marginLeft": 20,
     "marginRight": 20
@@ -34,8 +34,10 @@
       "headersPlacement": "column",
       "cellStyles": {
         "font-weight": "bold",
-        "border": 0
-      }
+        "border": 0,
+        "padding": 3
+      },
+      "columnsRatio": [1, 4]
     },
     {
       "type": "h-container",
@@ -57,7 +59,8 @@
           },
           "headersPlacement": "column",
           "cellStyles": {
-            "border": 0
+            "border": 0,
+            "padding": 3
           },
           "headerStyles": {
             "font-weight": "bold"
@@ -89,6 +92,7 @@
         "Batch No.": "{{row.batchNumber}}",
         "Value Transaction ID": "{{row.docEntry}}"
       },
+      "columnsRatio": [1, 1, 1, 1, 1.5],
       "headersPlacement": "row",
       "styles": {
         "padding-left": 30,
@@ -118,6 +122,7 @@
         "Value Transaction ID": ""
       },
       "hideHeaders": true,
+      "columnsRatio": [1, 1, 1, 1, 1.5],
       "styles": {
         "padding-left": 35,
         "padding-right": 35,
@@ -126,6 +131,30 @@
       "cellStyles": {
         "align-content-horizontally": "center",
         "border": 0
+      }
+    },
+    {
+      "type": "obj-table",
+      "data": {
+        "Transaction Date": "Total sum:",
+        "Debit": "{{data.loanAmount}}",
+        "Credit": "0.000",
+        "Batch No.": "",
+        "Value Transaction ID": ""
+      },
+      "hideHeaders": true,
+      "columnsRatio": [1, 1, 1, 1, 1.5],
+      "styles": {
+        "padding-left": 35,
+        "padding-right": 35,
+        "margin-top": 20,
+        "padding-top": 5,
+        "border-top": 3
+      },
+      "cellStyles": {
+        "align-content-horizontally": "center",
+        "border": 0,
+        "font-weight": "bold"
       }
     }
   ]
