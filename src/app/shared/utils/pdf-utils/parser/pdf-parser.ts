@@ -221,6 +221,7 @@ export class PdfParser {
       rowStyles,
       columnStyles,
       styles,
+      columnsRatio,
     } = elementJson;
     if (!data || typeof data !== 'object')
       throw new Error(
@@ -237,6 +238,7 @@ export class PdfParser {
       rowStyles,
       columnStyles,
       styles,
+      columnsRatio,
     });
   }
 
@@ -255,6 +257,7 @@ export class PdfParser {
       rowStyles,
       columnStyles,
       styles,
+      columnsRatio,
     } = elementJson;
 
     if (!Array.isArray(data)) {
@@ -299,6 +302,7 @@ export class PdfParser {
       rowStyles,
       columnStyles,
       styles,
+      columnsRatio,
     });
   }
 

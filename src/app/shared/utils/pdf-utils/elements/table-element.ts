@@ -23,6 +23,7 @@ export class TableRow {
 
 export class TableElement extends Element implements ParentElement {
   rows: TableRow[];
+  columnsRatio!: number[];
   private cellStyles?: Style;
   constructor(pageOptions: PageOptions) {
     super(pageOptions);
@@ -34,6 +35,27 @@ export class TableElement extends Element implements ParentElement {
 
   override get children(): TableCellElement[] {
     return this.rows.flatMap((value) => value.cells);
+  }
+
+  setColumnRatio(index: number, ratio: number) {
+    if (this.rows.length === 0 || !this.columnsRatio)
+      throw new Error(
+        'Please use addRow() to set rows before specifying columns ratio'
+      );
+    if (index < 0 || index >= this.rows[0].cells.length)
+      throw new Error(
+        `Invalid column index. column index must be > 0 and < ${this.rows[0].cells.length}`
+      );
+
+    this.columnsRatio[index] = ratio;
+  }
+  setColumnsRatio(ratios: number[]) {
+    if (this.rows.length === 0 || !this.columnsRatio)
+      throw new Error(
+        'Please use addRow() to set rows before specifying columns ratio'
+      );
+
+    ratios.forEach((value, index) => (this.columnsRatio[index] = value));
   }
 
   setCellStyles(styles: Style): void {
@@ -54,6 +76,10 @@ export class TableElement extends Element implements ParentElement {
   }
 
   addRow(cells: TableCell[], rowStyles?: Style, columnStyles?: Style[]) {
+    if (!this.columnsRatio) {
+      this.columnsRatio = new Array(cells.length).fill(1);
+    }
+
     const elements: TableCellElement[] = cells.map((value, index) => {
       const elem = new TableCellElement(this.pageOptions);
       elem.setTextContent(value.text);
@@ -89,17 +115,25 @@ export class TableElement extends Element implements ParentElement {
     if (this.rows.length === 0) return;
 
     const tableWidth = this.contentWidth;
-    const colCount = this.rows[0].cells.length;
-    const cellWidth = tableWidth / colCount; // Adjust for table width and column count
+    const totalColsWeight = this.columnsRatio.reduce(
+      (sum, value) => sum + value,
+      0
+    );
+    const columnWidthPerRatioUnit = tableWidth / totalColsWeight; // Adjust for table width and column count
 
     for (let index = 0; index < this.rows.length; index++) {
       const row = this.rows[index];
-      for (const cell of row.cells) {
-        cell.preRenderDimensions({ maxWidth: cellWidth });
+      for (let columnIndex = 0; columnIndex < row.cells.length; columnIndex++) {
+        const cell = row.cells[columnIndex];
+        if (!this.columnsRatio || this.columnsRatio.length === 0) debugger;
+        const columnWidth =
+          columnWidthPerRatioUnit * this.columnsRatio[columnIndex];
+        cell.preRenderDimensions({ maxWidth: columnWidth });
       }
     }
   }
 
+  @Element.UseFallbackFont
   override preRenderPosition(position: { x: number; y: number }): void {
     super.preRenderPosition(position);
     let cursorY = this.position.y + this.positionAdjustment.contentY; //+ this.contentHeight;

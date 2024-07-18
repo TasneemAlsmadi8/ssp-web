@@ -33,6 +33,7 @@ export interface TableElementJson extends BaseElementJson {
   cellStyles?: Style;
   rowStyles?: ChildrenStylesSelectors;
   columnStyles?: ChildrenStylesSelectors;
+  columnsRatio?: number[];
 }
 
 export type DataRecord = Record<string, string | number | null | undefined>;
@@ -51,6 +52,7 @@ export interface ObjectTableElementJson extends BaseElementJson {
   cellStyles?: Style;
   rowStyles?: ChildrenStylesSelectors;
   columnStyles?: ChildrenStylesSelectors;
+  columnsRatio?: number[];
 }
 
 export type HeaderTitle = string;
@@ -65,6 +67,7 @@ export interface AutoTableElementJson extends BaseElementJson {
   cellStyles?: Style;
   rowStyles?: ChildrenStylesSelectors;
   columnStyles?: ChildrenStylesSelectors;
+  columnsRatio?: number[];
 }
 
 type PercentageString = `${number}%`;

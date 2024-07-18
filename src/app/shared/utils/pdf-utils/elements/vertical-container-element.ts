@@ -43,6 +43,7 @@ export class VerticalContainerElement
     }
   }
 
+  @Element.UseFallbackFont
   override preRenderPosition(position: { x: number; y: number }): void {
     super.preRenderPosition(position);
     if (!this._children || this._children.length === 0) return;

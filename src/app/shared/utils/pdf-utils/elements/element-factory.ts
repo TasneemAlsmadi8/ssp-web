@@ -64,13 +64,14 @@ export class ElementFactory {
     data: TableCell[][],
     options?: {
       styles?: Style;
-
       cellStyles?: Style;
       rowStyles?: ChildrenStylesSelectors;
       columnStyles?: ChildrenStylesSelectors;
+      columnsRatio?: number[];
     }
   ): TableElement {
-    const { styles, cellStyles, rowStyles, columnStyles } = options ?? {};
+    const { styles, cellStyles, rowStyles, columnStyles, columnsRatio } =
+      options ?? {};
 
     const elem = new TableElement(this.pageOptions);
 
@@ -97,6 +98,7 @@ export class ElementFactory {
     }
     if (cellStyles) elem.setCellStyles(cellStyles);
     if (styles) elem.setStyles(styles);
+    if (columnsRatio) elem.setColumnsRatio(columnsRatio);
 
     return elem;
   }
@@ -133,6 +135,7 @@ export class ElementFactory {
       rowStyles?: ChildrenStylesSelectors;
       columnStyles?: ChildrenStylesSelectors;
       styles?: Style;
+      columnsRatio?: number[];
     }
   ): TableElement {
     let {
@@ -143,6 +146,7 @@ export class ElementFactory {
       rowStyles,
       columnStyles,
       styles,
+      columnsRatio,
     } = options ?? {};
 
     headerStyles = { ...cellStyles, ...headerStyles };
@@ -155,6 +159,7 @@ export class ElementFactory {
         cellStyles: headerStyles,
         rowStyles,
         columnStyles,
+        columnsRatio,
       });
     }
 
@@ -195,6 +200,7 @@ export class ElementFactory {
       cellStyles,
       rowStyles,
       columnStyles,
+      columnsRatio,
     });
   }
 }
