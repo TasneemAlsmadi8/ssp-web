@@ -35,10 +35,17 @@
       <!-- } @if (isLoggedIn) { -->
       <div *ngIf="isLoggedIn" [dir]="selectedLangDir">
         <button
-          class="w-9 h-9 border rounded-full text-xl"
+          class="w-9 h-9 border-[2px] rounded-full text-xl"
           (click)="toggleProfileMenuOpen()"
         >
-          <fa-icon class="relative bottom-0.5" [icon]="faUser"></fa-icon>
+          <img
+            src="/assets/icons/user.png"
+            class="m-auto"
+            width="37"
+            height="37"
+            alt=""
+          />
+          <!-- <fa-icon class="relative bottom-0.5" [icon]="faUser"></fa-icon> -->
         </button>
         <ul
           class="from-secondary-400 to-primary-400 bg-gradient-to-bl w-52 py-1 px-2 border border-gray-400 absolute top-12 right-12 z-10 rounded flex-col hi"
