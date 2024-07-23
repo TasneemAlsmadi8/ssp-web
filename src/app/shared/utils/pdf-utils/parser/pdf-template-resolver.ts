@@ -1,3 +1,4 @@
+import { AutoTableElementJson } from 'json-schemas/interfaces';
 import { Element } from '../elements/abstract-element';
 import { ParagraphElement } from '../elements/paragraph-element';
 import {
@@ -180,6 +181,19 @@ export class PdfTemplateResolver {
         ])
       ) as DataRecord;
     });
+    return elementJson;
+  }
+
+  resolveAutoTableJson(
+    elementJson: AutoTableElementJson
+  ): AutoTableElementJson {
+    elementJson.schema = Object.fromEntries(
+      Object.entries(elementJson.schema).map(([key, value]) => [
+        this.resolveText(key),
+        value,
+      ])
+    );
+
     return elementJson;
   }
 }

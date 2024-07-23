@@ -169,6 +169,9 @@ export class PdfParser {
           throw new Error(
             'You Can not use Auto-Table in this context (in templates).'
           );
+        if (variables)
+          elementJson = resolver.resolveAutoTableJson(elementJson);
+
         return this.parseAutoTable(elementJson, data, variables);
       case 'horizontal-container':
       case 'h-container':
