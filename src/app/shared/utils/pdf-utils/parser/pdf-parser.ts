@@ -39,7 +39,7 @@ export class PdfParser {
     data: MultiDataRecords | DataRecord[],
     input?: DataRecord,
     additionalVariables?: DataRecord
-  ) {
+  ): Promise<PdfBuilder> {
     const pdfJson = await this.readJSONFile<PdfJson>(jsonFileName);
 
     if (pdfJson.templateFileName) {

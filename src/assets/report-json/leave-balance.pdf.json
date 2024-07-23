@@ -13,7 +13,7 @@
   "elements": [
     {
       "type": "paragraph",
-      "text": "To Date:  {{input.toDate | dd/MM/yyyy}}",
+      "text": "To Date:  {{input.toDate | date : dd/MM/yyyy}}",
       "styles": {
         "font-size": 12,
         "font-weight": "bold",
@@ -29,13 +29,13 @@
         "Employee Code": "{{row.employeeCode}}",
         "Employee Name": "{{row.fullName}}",
         "Leave Type": "{{row.leaveName}}",
-        "Entitlement": "{{row.entitlement | 1.0}}",
-        "Opening Balance": "{{row.openingBalance | 1.2}}",
-        "Earned Leaves": "{{row.earnedLeaves | 1.2}}",
-        "Taken Leaves": "{{row.takenLeaves | 1.2}}",
-        "Encashed Leaves": "{{row.encashedDays | 1.2}}",
-        "Leave Balance": "{{row.leaveBalance | 1.2}}",
-        "Vacation Value": "{{row.paidVacationValue | 1.1-5}}"
+        "Entitlement": "{{row.entitlement | number : 1.0}}",
+        "Opening Balance": "{{row.openingBalance | number : 1.2}}",
+        "Earned Leaves": "{{row.earnedLeaves | number : 1.2}}",
+        "Taken Leaves": "{{row.takenLeaves | number : 1.2}}",
+        "Encashed Leaves": "{{row.encashedDays | number : 1.2}}",
+        "Leave Balance": "{{row.leaveBalance | number : 1.2}}",
+        "Vacation Value": "{{row.paidVacationValue | number : 1.1-5}}"
       },
       "headersPlacement": "row",
       "cellStyles": {

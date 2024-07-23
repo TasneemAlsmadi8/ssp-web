@@ -11,11 +11,55 @@ import {
   TableElementJson,
 } from './element-json-types';
 
+type PipeFunction = (value: DataRecordValue, args: string[]) => string;
+
+type DataRecordValue = string | number | null | undefined;
+
 export class PdfTemplateResolver {
   private variables: DataRecord = {};
+  private pipes: Record<string, PipeFunction> = {};
 
   constructor(variables?: ComplexDataRecord) {
     if (variables) this.setVariables(variables);
+
+    this.registerPipe('number', (value, args) => {
+      if (typeof value !== 'number') {
+        console.error(`Value us not a number: '${value}'`);
+        return String(value);
+      }
+      return formatNumber(value, args[0]);
+    });
+    this.registerPipe('date', (value, args) => {
+      if (typeof value !== 'string') {
+        console.error(`Value us not a date string: '${value}'`);
+        return String(value);
+      }
+      let date = new Date(value);
+      if (isNaN(date.getTime())) {
+        console.error(`Value us not a date string: '${value}'`);
+        return value; // If the date string is invalid, return it as is
+      }
+
+      return formatDate(date, args[0]);
+    });
+  }
+
+  registerPipe(name: string, pipeFunction: PipeFunction) {
+    this.pipes[name] = pipeFunction;
+  }
+
+  executePipe(name: string, value: DataRecordValue, args: string): string {
+    if (!Object.prototype.hasOwnProperty.call(this.pipes, name)) {
+      console.error(
+        `Pipe: ${name} Not Found!\nReturning value as is. value = ${value}`
+      );
+      return String(value);
+    }
+
+    let argsArray: string[] = [];
+    if (args.trim().length > 0) argsArray = args.trim().split(/\s+/);
+
+    return this.pipes[name](value, argsArray);
   }
 
   setVariables(variables: ComplexDataRecord) {
@@ -38,40 +82,46 @@ export class PdfTemplateResolver {
   }
 
   /**
-   * Replaces placeholders in the format {{variableName}}, {{variableName:decimalFormat}}, or
-   * {{variableName:dateFormat}} in the given text with corresponding values from the `this.variables` object.
-   * Supports formatting for both numbers and dates.
+   * Replaces placeholders in the format {{variableName}}, {{variableName|pipeName:args}} in the given text with corresponding values from the `this.variables` object.
+   * Supports formatting for both numbers and dates, as well as custom pipes.
    *
    * @param {string} text - The input text containing placeholders.
    * @returns {string} - The text with placeholders replaced by corresponding values.
    *
-   * Placeholders:
-   * - {{variableName}}: Replaces with the value of `variableName` from `this.variables`.
-   * - {{variableName:decimalFormat}}: Replaces with the formatted value of `variableName`.
+   * Default Pipes:
+   * - `number`: Formats a number according to the provided format.
+   *   - Example: {{price|number:1.2-4}}
    *   - `variableName` should be a number.
-   *   - `decimalFormat` specifies the number format in the format 1.2-4.
+   *   - `format` specifies the number format in the format 1.2-4.
    *     - 1: minimum integer digits
    *     - 2: minimum fraction digits
    *     - 4: maximum fraction digits
-   *
-   * - {{variableName:dateFormat}}: Replaces with the formatted value of `variableName`.
+   * - `date`: Formats a date according to the provided format.
+   *   - Example: {{date|date:dd/MM/yyyy}}
    *   - `variableName` should be a date string.
-   *   - `dateFormat` specifies the format for the date using yyyy, MM, dd, HH, mm, ss.
+   *   - `format` specifies the format for the date using yyyy, MM, dd, HH, mm, ss.
+   *
+   * Custom Pipes:
+   * - {{variableName|pipeName:args}}: Replaces with the result of the custom pipe.
+   *   - `pipeName` should be a function defined in `this.customPipes`.
+   *   - `args` are optional arguments to pass to the custom pipe.
    *
    * Example:
-   * this.variables = { price: 12.567, date: '2023-07-18T00:00:00Z' };
-   * text = "The price is {{price:3.0}} USD, or {{price:1.2-4}} starting from {{date:dd/MM/yyyy}}";
-   * resolveText(text) => "The price is 012 USD, or 12.56 starting from 18/07/2024"
+   * this.variables = { price: 12.567, date: '2023-07-18T00:00:00Z', product: 'water' };
+   * text = "The price is {{price|number:3.0}} USD, or {{price|number:1.2-4}} starting from {{date|date:dd/MM/yyyy}}, uppercased product: {{product|toUpperCase}}, formatted price: {{price|formatCurrency:USD}}";
+   * resolveText(text) => "The price is 012 USD, or 12.56 starting from 18/07/2023, uppercased product: PRODUCT, formatted price: USD 12.57"
    */
+
   resolveText(text: string): string {
     return text.replace(
-      /{{\s*([._a-zA-Z0-9]+)\s*([:|]\s*[^}]+)?\s*}}/g,
-      (match, variableName: string, format?: string) => {
-        format = format?.slice(1).trim();
-        if (format?.length === 0) {
-          console.warn('You have provided an empty format!');
-          format = undefined;
-        }
+      /{{\s*([._a-zA-Z0-9]+)\s*(|\s*([^}:]+)\s*(:\s*[^}]+)?)?\s*}}/g,
+      (
+        match,
+        variableName: string,
+        pipeString?: string,
+        pipeName?: string,
+        pipeArgs?: string
+      ) => {
         if (!(variableName in this.variables)) {
           const closestMatch = findClosestMatch(
             variableName,
@@ -85,25 +135,25 @@ export class PdfTemplateResolver {
         }
 
         let value = this.variables[variableName];
-        if (!format) {
+        if (!pipeString) {
           return String(value);
         }
 
-        if (typeof value === 'number') {
-          return formatNumber(value, format);
+        pipeName = pipeName?.slice(1).trim();
+        if (pipeName?.length === 0) {
+          console.warn('You did not provide a pipe name!');
+          pipeName = undefined;
+        }
+        pipeArgs = pipeArgs?.slice(1).trim();
+        if (!pipeArgs) {
+          pipeArgs = '';
         }
 
-        if (typeof value === 'string') {
-          let date = new Date(value);
-          if (isNaN(date.getTime())) {
-            console.error(`Value us not a date string: '${value}'`);
-            return value; // If the date string is invalid, return it as is
-          }
-
-          return formatDate(date, format);
+        if (!pipeName) {
+          return String(value);
         }
 
-        return String(value);
+        return this.executePipe(pipeName, value, pipeArgs);
       }
     );
   }
