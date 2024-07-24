@@ -1,10 +1,6 @@
 /// <reference lib="webworker" />
 
-import {
-  DataRecord,
-  MultiDataRecords,
-  PdfJson,
-} from '../utils/pdf-utils/parser/element-json-types';
+import { PdfJson } from '../utils/pdf-utils/parser/element-json-types';
 import { PdfParser } from '../utils/pdf-utils/parser/pdf-parser';
 
 interface WorkerMessage {
@@ -20,14 +16,10 @@ interface WorkerResponse {
 
 // Function implementations
 async function parsePdfJson(
-  pdfJson: PdfJson,
-  data: MultiDataRecords | DataRecord[],
-  input?: DataRecord,
-  additionalVariables?: DataRecord
+  pdfJson: PdfJson
 ): Promise<{ fileName: string; blob: Blob }> {
   const parser = new PdfParser();
-  additionalVariables;
-  const pdfBuilder = parser.parse(pdfJson, data, input, additionalVariables);
+  const pdfBuilder = parser.parse(pdfJson);
   const blob = await pdfBuilder.getPdfBlob();
   return {
     fileName: pdfBuilder.fileName,
@@ -35,30 +27,11 @@ async function parsePdfJson(
   };
 }
 
-async function parseFromFile(
-  jsonFileName: string,
-  data: MultiDataRecords | DataRecord[],
-  input?: DataRecord,
-  additionalVariables?: DataRecord
-): Promise<{ fileName: string; blob: Blob }> {
-  const parser = new PdfParser();
-  const pdfBuilder = await parser.parseFromFile(
-    jsonFileName,
-    data,
-    input,
-    additionalVariables
-  );
-  const blob = await pdfBuilder.getPdfBlob();
-  return {
-    fileName: pdfBuilder.fileName,
-    blob,
-  };
-}
 
 // Mapping of function names to implementations
 const functionsMap: { [key: string]: (...args: any[]) => Promise<any> } = {
   parsePdfJson,
-  parseFromFile,
+  // parseFromFile,
 };
 
 // Event listener

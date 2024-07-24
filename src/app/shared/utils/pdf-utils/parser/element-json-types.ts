@@ -117,4 +117,6 @@ export interface PdfJson {
   template?: PdfJsonTemplate;
   templateFileName?: string;
   elements: ElementJson[];
+  data?: MultiDataRecords | DataRecord[];
+  input?: DataRecord;
 }

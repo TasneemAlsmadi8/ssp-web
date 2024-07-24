@@ -28,56 +28,36 @@ export class PdfParser {
 
   constructor() {}
 
-  private async readJSONFile<T = any>(fileName: string): Promise<T> {
-    const response = await fetch(fileName);
-    const data = await response.json();
-    return data as T;
-  }
-
-  async parseFromFile(
-    jsonFileName: string,
-    data: MultiDataRecords | DataRecord[],
-    input?: DataRecord,
-    additionalVariables?: DataRecord
-  ): Promise<PdfBuilder> {
-    const pdfJson = await this.readJSONFile<PdfJson>(jsonFileName);
-
-    if (pdfJson.templateFileName) {
-      const template = await this.readJSONFile<PdfJsonTemplate>(
-        pdfJson.templateFileName
-      );
-      pdfJson.template = { ...template, ...pdfJson.template };
-    }
-
-    return this.parse(pdfJson, data, input, additionalVariables);
-  }
-
   addDataToVariables(
     resolver: PdfTemplateResolver,
     data: MultiDataRecords | DataRecord[]
   ) {
     if (Array.isArray(data) && data.length >= 1) {
       resolver.setVariables({ data: data[0] });
+      for (let index = 0; index < data.length; index++) {
+        resolver.setVariables({ [`data.${index}`]: data[0] });
+      }
     } else if (!Array.isArray(data)) {
-      for (const key in data) {
-        if (Object.prototype.hasOwnProperty.call(data, key)) {
-          const tableData = data[key];
+      for (const tableKey in data) {
+        if (Object.prototype.hasOwnProperty.call(data, tableKey)) {
+          const tableData = data[tableKey];
           if (Array.isArray(tableData) && tableData.length >= 1) {
-            const varKey = `data.${key}`;
-            resolver.setVariables({ [varKey]: tableData[0] });
+            resolver.setVariables({
+              [`data.${tableKey}`]: tableData[0],
+            });
+            for (let index = 0; index < tableData.length; index++) {
+              resolver.setVariables({
+                [`data.${tableKey}.${index}`]: tableData[index],
+              });
+            }
           }
         }
       }
     }
   }
 
-  parse(
-    pdfJson: PdfJson,
-    data: MultiDataRecords | DataRecord[],
-    input?: DataRecord,
-    additionalVariables?: DataRecord
-  ): PdfBuilder {
-    const { template, fileName } = pdfJson;
+  parse(pdfJson: PdfJson): PdfBuilder {
+    const { template, fileName, data, input } = pdfJson;
     let { variables, styles, pageOptions } = pdfJson;
 
     if (!variables)
@@ -87,8 +67,6 @@ export class PdfParser {
     else if (!variables['date'])
       variables['date'] = formatDateToISO(new Date().toISOString());
     if (input) variables['input'] = input;
-    if (additionalVariables)
-      variables = { ...variables, ...additionalVariables };
 
     this.elementFactory = new ElementFactory(pageOptions);
 
@@ -169,8 +147,7 @@ export class PdfParser {
           throw new Error(
             'You Can not use Auto-Table in this context (in templates).'
           );
-        if (variables)
-          elementJson = resolver.resolveAutoTableJson(elementJson);
+        if (variables) elementJson = resolver.resolveAutoTableJson(elementJson);
 
         return this.parseAutoTable(elementJson, data, variables);
       case 'horizontal-container':
