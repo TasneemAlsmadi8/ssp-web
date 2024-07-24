@@ -12,42 +12,42 @@ export interface PageMargins {
 
 export interface PageOptions extends PageDimensions, PageMargins {
   templateUrl?: string;
-  pageOrientation?: "portrait" | "landscape";
+  pageOrientation?: 'portrait' | 'landscape';
 }
 
 export interface Style {
   [key: string]: string | number | undefined;
-  font?: "TimesRoman" | "Helvetica" | "Courier" | string;
-  "font-size"?: number;
-  "font-weight"?: "normal" | "bold";
-  "text-decoration"?: "none" | "underline";
+  font?: 'TimesRoman' | 'Helvetica' | 'Courier' | string;
+  'font-size'?: number;
+  'font-weight'?: 'normal' | 'bold';
+  'text-decoration'?: 'none' | 'underline';
   color?: string;
-  "background-color"?: string;
+  'background-color'?: string;
   margin?: number;
-  "margin-top"?: number;
-  "margin-right"?: number;
-  "margin-bottom"?: number;
-  "margin-left"?: number;
+  'margin-top'?: number;
+  'margin-right'?: number;
+  'margin-bottom'?: number;
+  'margin-left'?: number;
   padding?: number;
-  "padding-top"?: number;
-  "padding-right"?: number;
-  "padding-bottom"?: number;
-  "padding-left"?: number;
+  'padding-top'?: number;
+  'padding-right'?: number;
+  'padding-bottom'?: number;
+  'padding-left'?: number;
   border?: number;
-  "border-color"?: string;
-  "border-top"?: number;
-  "border-right"?: number;
-  "border-bottom"?: number;
-  "border-left"?: number;
-  "align-content-horizontally"?: "start" | "center" | "end";
-  "align-content-vertically"?: "start" | "center" | "end";
-  position?: "static" | "relative" | "fixed";
+  'border-color'?: string;
+  'border-top'?: number;
+  'border-right'?: number;
+  'border-bottom'?: number;
+  'border-left'?: number;
+  'align-content-horizontally'?: 'start' | 'center' | 'end';
+  'align-content-vertically'?: 'start' | 'center' | 'end';
+  position?: 'static' | 'relative' | 'fixed';
   top?: number;
   right?: number;
   bottom?: number;
   left?: number;
-  width?: "max-width" | "fit-content";
-  height?: "fit-content";
+  width?: 'max-width' | 'fit-content';
+  height?: 'fit-content';
 }
 
 /**
@@ -57,7 +57,7 @@ export interface Style {
  * Negative numbers can also be used to start from the end.
  */
 export type ChildrenStylesSelectors = Partial<
-  Record<`${number}` | "odd" | "even" | "first" | "last", Style>
+  Record<`${number}` | 'odd' | 'even' | 'first' | 'last', Style>
 >;
 
 export interface BaseElementJson extends Record<string, any> {
@@ -67,13 +67,13 @@ export interface BaseElementJson extends Record<string, any> {
 }
 
 export interface HeadingElementJson extends BaseElementJson {
-  type: "heading" | "h";
+  type: 'heading' | 'h';
   level: number;
   text: string;
 }
 
 export interface ParagraphElementJson extends BaseElementJson {
-  type: "paragraph" | "p";
+  type: 'paragraph' | 'p';
   text: string;
 }
 
@@ -83,7 +83,7 @@ export interface TableCell {
 }
 
 export interface TableElementJson extends BaseElementJson {
-  type: "table" | "t";
+  type: 'table' | 't';
   data: TableCell[][];
   cellStyles?: Style;
   rowStyles?: ChildrenStylesSelectors;
@@ -99,9 +99,9 @@ export type ComplexDataRecord = Record<
 export type MultiDataRecords = Record<string, DataRecord[]>;
 
 export interface ObjectTableElementJson extends BaseElementJson {
-  type: "object-table" | "o-table" | "obj-table";
+  type: 'object-table' | 'o-table' | 'obj-table';
   data: Array<DataRecord> | DataRecord;
-  headersPlacement?: "row" | "column"; // default: row
+  headersPlacement?: 'row' | 'column'; // default: row
   hideHeaders?: boolean; // default: false
   headerStyles?: Style;
   cellStyles?: Style;
@@ -113,10 +113,10 @@ export interface ObjectTableElementJson extends BaseElementJson {
 export type HeaderTitle = string;
 export type DataFieldKey = string;
 export interface AutoTableElementJson extends BaseElementJson {
-  type: "auto-table" | "a-table";
+  type: 'auto-table' | 'a-table';
   schema: Record<HeaderTitle, DataFieldKey>;
   tableDataKey?: string;
-  headersPlacement?: "row" | "column"; // default: row
+  headersPlacement?: 'row' | 'column'; // default: row
   hideHeaders?: boolean; // default: false
   headerStyles?: Style;
   cellStyles?: Style;
@@ -136,13 +136,13 @@ type NumberPercentageString =
 export type MaxWidth = NumberString | PercentageString | NumberPercentageString;
 
 export interface HorizontalContainerElementJson extends BaseElementJson {
-  type: "horizontal-container" | "h-container";
+  type: 'horizontal-container' | 'h-container';
   widths: MaxWidth[];
   elements: ElementJson[];
 }
 
 export interface VerticalContainerElementJson extends BaseElementJson {
-  type: "vertical-container" | "v-container";
+  type: 'vertical-container' | 'v-container';
   elements: ElementJson[];
 }
 

@@ -48,7 +48,11 @@ export class PdfTemplateResolver {
     this.pipes[name] = pipeFunction;
   }
 
-  executePipe(name: string, value: DataRecordValue, args: string): string {
+  private executePipe(
+    name: string,
+    value: DataRecordValue,
+    args: string
+  ): string {
     if (!Object.prototype.hasOwnProperty.call(this.pipes, name)) {
       console.error(
         `Pipe: ${name} Not Found!\nReturning value as is. value = ${value}`
@@ -103,7 +107,9 @@ export class PdfTemplateResolver {
    *
    * Custom Pipes:
    * - {{variableName|pipeName:args}}: Replaces with the result of the custom pipe.
-   *   - `pipeName` should be a function defined in `this.customPipes`.
+   *   - `pipeName` should be a function registered using registerPipe(name: string, pipeFunction: PipeFunction)
+   *      - type PipeFunction = (value: DataRecordValue, args: string[]) => string;
+   *      - type DataRecordValue = string | number | null | undefined;
    *   - `args` are optional arguments to pass to the custom pipe.
    *
    * Example:
@@ -111,7 +117,6 @@ export class PdfTemplateResolver {
    * text = "The price is {{price|number:3.0}} USD, or {{price|number:1.2-4}} starting from {{date|date:dd/MM/yyyy}}, uppercased product: {{product|toUpperCase}}, formatted price: {{price|formatCurrency:USD}}";
    * resolveText(text) => "The price is 012 USD, or 12.56 starting from 18/07/2023, uppercased product: PRODUCT, formatted price: USD 12.57"
    */
-
   resolveText(text: string): string {
     return text.replace(
       /{{\s*([._a-zA-Z0-9]+)\s*(|\s*([^}:]+)\s*(:\s*[^}]+)?)?\s*}}/g,
