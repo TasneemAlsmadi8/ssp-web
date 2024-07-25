@@ -23,20 +23,27 @@ export class PdfTemplateResolver {
     if (variables) this.setVariables(variables);
 
     PdfTemplateResolver.registerPipe('number', (value, args) => {
+      if (
+        typeof value === 'string' &&
+        !isNaN(parseFloat(value)) &&
+        isFinite(Number(value))
+      ) {
+        value = parseFloat(value);
+      }
       if (typeof value !== 'number') {
-        console.error(`Value us not a number: '${value}'`);
+        console.error(`Value is not a number: '${value}'`);
         return String(value);
       }
       return formatNumber(value, args[0]);
     });
     PdfTemplateResolver.registerPipe('date', (value, args) => {
       if (typeof value !== 'string') {
-        console.error(`Value us not a date string: '${value}'`);
+        console.error(`Value is not a date string: '${value}'`);
         return String(value);
       }
       let date = new Date(value);
       if (isNaN(date.getTime())) {
-        console.error(`Value us not a date string: '${value}'`);
+        console.error(`Value is not a date string: '${value}'`);
         return value; // If the date string is invalid, return it as is
       }
 
