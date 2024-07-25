@@ -20,7 +20,7 @@ import {
 } from './element-json-types';
 import { ElementFactory } from '../elements/element-factory';
 import { PdfPageTemplateBuilder } from '../pdf-page-template';
-import { PdfTemplateResolver } from './pdf-template-resolver';
+import { PdfVariableResolver } from './pdf-template-resolver';
 import { formatDateToISO } from '../../data-formatter';
 
 export class PdfParser {
@@ -29,7 +29,7 @@ export class PdfParser {
   constructor() {}
 
   addDataToVariables(
-    resolver: PdfTemplateResolver,
+    resolver: PdfVariableResolver,
     data: MultiDataRecords | DataRecord[]
   ) {
     if (Array.isArray(data) && data.length >= 1) {
@@ -119,7 +119,7 @@ export class PdfParser {
     data?: MultiDataRecords | DataRecord[],
     variables?: ComplexDataRecord
   ): Element {
-    const resolver = new PdfTemplateResolver(variables);
+    const resolver = new PdfVariableResolver(variables);
     if (data) this.addDataToVariables(resolver, data);
 
     switch (elementJson.type) {
@@ -255,7 +255,7 @@ export class PdfParser {
       data = data[tableDataKey];
     }
 
-    const resolver = new PdfTemplateResolver(variables);
+    const resolver = new PdfVariableResolver(variables);
     const tableData = [];
     for (const row of data) {
       resolver.setVariables({ row: row });

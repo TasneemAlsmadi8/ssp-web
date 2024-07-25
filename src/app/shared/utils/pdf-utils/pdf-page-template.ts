@@ -1,12 +1,12 @@
 import { PDFDocument } from 'pdf-lib';
 import { PdfBuilder } from './pdf-builder';
-import { PdfTemplateResolver } from './parser/pdf-template-resolver';
+import { PdfVariableResolver } from './parser/pdf-template-resolver';
 import { ComplexDataRecord } from './parser/element-json-types';
 
 export class PdfPageTemplateBuilder extends PdfBuilder {
-  private pdfTemplateResolver = new PdfTemplateResolver();
+  private pdfVariableResolver = new PdfVariableResolver();
   setVariables(variables: ComplexDataRecord) {
-    this.pdfTemplateResolver.setVariables(variables);
+    this.pdfVariableResolver.setVariables(variables);
   }
   async renderTemplatePages(pdfDoc: PDFDocument) {
     let pageNumber = 1;
@@ -18,7 +18,7 @@ export class PdfPageTemplateBuilder extends PdfBuilder {
         pageNumber,
         totalPages,
       });
-      this.pdfTemplateResolver.resolveElement(this.body);
+      this.pdfVariableResolver.resolveElement(this.body);
       await this.renderElementsToPDF(page);
 
       this.body = bodyWithTemplates;

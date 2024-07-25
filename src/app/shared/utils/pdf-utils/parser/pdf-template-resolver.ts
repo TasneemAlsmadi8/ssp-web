@@ -15,14 +15,14 @@ type PipeFunction = (value: DataRecordValue, args: string[]) => string;
 
 type DataRecordValue = string | number | null | undefined;
 
-export class PdfTemplateResolver {
+export class PdfVariableResolver {
   private variables: DataRecord = {};
   private static pipes: Record<string, PipeFunction> = {};
 
   constructor(variables?: ComplexDataRecord) {
     if (variables) this.setVariables(variables);
 
-    PdfTemplateResolver.registerPipe('number', (value, args) => {
+    PdfVariableResolver.registerPipe('number', (value, args) => {
       if (
         typeof value === 'string' &&
         !isNaN(parseFloat(value)) &&
@@ -36,7 +36,7 @@ export class PdfTemplateResolver {
       }
       return formatNumber(value, args[0]);
     });
-    PdfTemplateResolver.registerPipe('date', (value, args) => {
+    PdfVariableResolver.registerPipe('date', (value, args) => {
       if (typeof value !== 'string') {
         console.error(`Value is not a date string: '${value}'`);
         return String(value);
@@ -52,7 +52,7 @@ export class PdfTemplateResolver {
   }
 
   static registerPipe(name: string, pipeFunction: PipeFunction): void {
-    PdfTemplateResolver.pipes[name] = pipeFunction;
+    PdfVariableResolver.pipes[name] = pipeFunction;
   }
 
   private executePipe(
@@ -61,7 +61,7 @@ export class PdfTemplateResolver {
     args: string
   ): string {
     if (
-      !Object.prototype.hasOwnProperty.call(PdfTemplateResolver.pipes, name)
+      !Object.prototype.hasOwnProperty.call(PdfVariableResolver.pipes, name)
     ) {
       console.error(
         `Pipe: ${name} Not Found!\nReturning value as is. value = ${value}`
@@ -72,7 +72,7 @@ export class PdfTemplateResolver {
     let argsArray: string[] = [];
     if (args.trim().length > 0) argsArray = args.trim().split(/\s+/);
 
-    return PdfTemplateResolver.pipes[name](value, argsArray);
+    return PdfVariableResolver.pipes[name](value, argsArray);
   }
 
   setVariables(variables: ComplexDataRecord) {
