@@ -17,19 +17,19 @@ type DataRecordValue = string | number | null | undefined;
 
 export class PdfTemplateResolver {
   private variables: DataRecord = {};
-  private pipes: Record<string, PipeFunction> = {};
+  private static pipes: Record<string, PipeFunction> = {};
 
   constructor(variables?: ComplexDataRecord) {
     if (variables) this.setVariables(variables);
 
-    this.registerPipe('number', (value, args) => {
+    PdfTemplateResolver.registerPipe('number', (value, args) => {
       if (typeof value !== 'number') {
         console.error(`Value us not a number: '${value}'`);
         return String(value);
       }
       return formatNumber(value, args[0]);
     });
-    this.registerPipe('date', (value, args) => {
+    PdfTemplateResolver.registerPipe('date', (value, args) => {
       if (typeof value !== 'string') {
         console.error(`Value us not a date string: '${value}'`);
         return String(value);
@@ -44,8 +44,8 @@ export class PdfTemplateResolver {
     });
   }
 
-  registerPipe(name: string, pipeFunction: PipeFunction) {
-    this.pipes[name] = pipeFunction;
+  static registerPipe(name: string, pipeFunction: PipeFunction): void {
+    PdfTemplateResolver.pipes[name] = pipeFunction;
   }
 
   private executePipe(
@@ -53,7 +53,9 @@ export class PdfTemplateResolver {
     value: DataRecordValue,
     args: string
   ): string {
-    if (!Object.prototype.hasOwnProperty.call(this.pipes, name)) {
+    if (
+      !Object.prototype.hasOwnProperty.call(PdfTemplateResolver.pipes, name)
+    ) {
       console.error(
         `Pipe: ${name} Not Found!\nReturning value as is. value = ${value}`
       );
@@ -63,7 +65,7 @@ export class PdfTemplateResolver {
     let argsArray: string[] = [];
     if (args.trim().length > 0) argsArray = args.trim().split(/\s+/);
 
-    return this.pipes[name](value, argsArray);
+    return PdfTemplateResolver.pipes[name](value, argsArray);
   }
 
   setVariables(variables: ComplexDataRecord) {

@@ -50,7 +50,7 @@ export class PdfBuilder {
     name: string;
     fontUrls: { normal: string; bold?: string };
     fromCssFile?: boolean;
-  }) {
+  }): Promise<void> {
     await ElementStyleCalculator.addFontFromUrl(options);
   }
 

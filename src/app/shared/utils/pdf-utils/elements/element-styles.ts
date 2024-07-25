@@ -143,14 +143,14 @@ export class ElementStyleCalculator {
     );
   }
 
-  static addCustomFont(customFont: CustomFont) {
+  static addCustomFont(customFont: CustomFont): void {
     ElementStyleCalculator.customFonts.push(customFont);
   }
 
   static async addFontFromUrl(options: {
     name: string;
     fontUrls: { normal: string; bold?: string };
-  }) {
+  }): Promise<void> {
     const { name, fontUrls } = options;
     let actualFontUrl = fontUrls;
 
