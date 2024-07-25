@@ -155,7 +155,9 @@ export class PdfVariableResolver {
 
         pipeName = pipeName?.slice(1).trim();
         if (pipeName?.length === 0) {
-          console.warn('You did not provide a pipe name!');
+          console.warn(
+            'You did not provide a pipe name! Variable template: ' + match
+          );
           pipeName = undefined;
         }
         pipeArgs = pipeArgs?.slice(1).trim();

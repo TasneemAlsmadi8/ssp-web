@@ -19,14 +19,13 @@ async function parsePdfJson(
   pdfJson: PdfJson
 ): Promise<{ fileName: string; blob: Blob }> {
   const parser = new PdfParser();
-  const pdfBuilder = parser.parse(pdfJson);
+  const pdfBuilder = await parser.parse(pdfJson);
   const blob = await pdfBuilder.getPdfBlob();
   return {
     fileName: pdfBuilder.fileName,
     blob,
   };
 }
-
 
 // Mapping of function names to implementations
 const functionsMap: { [key: string]: (...args: any[]) => Promise<any> } = {

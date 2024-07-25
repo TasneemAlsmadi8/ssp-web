@@ -33,7 +33,7 @@
           "data": {
             "Employee Code:": "{{data.reportData.employeeCode}}",
             "Employee Name:": "{{data.reportData.fullName}}",
-            "Month:": "{{input.month : 2.0}}",
+            "Month:": "{{input.month | number : 2.0}}",
             "Year:": "{{input.year}}",
             "Employment Date:": "{{data.reportData.employmentDate | date : dd/MM/yyyy}}",
             "Position:": "{{data.reportData.position}}",

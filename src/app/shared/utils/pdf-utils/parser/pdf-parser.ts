@@ -27,6 +27,11 @@ export class PdfParser {
   private elementFactory!: ElementFactory;
 
   constructor() {}
+  private async readJSONFile<T = any>(url: string): Promise<T> {
+    const response = await fetch(url);
+    const data = await response.json();
+    return data as T;
+  }
 
   addDataToVariables(
     resolver: PdfVariableResolver,
@@ -56,9 +61,9 @@ export class PdfParser {
     }
   }
 
-  parse(pdfJson: PdfJson): PdfBuilder {
-    const { template, fileName, data, input } = pdfJson;
-    let { variables, styles, pageOptions } = pdfJson;
+  async parse(pdfJson: PdfJson): Promise<PdfBuilder> {
+    const { templateFileName, fileName, data, input } = pdfJson;
+    let { template, variables, styles, pageOptions } = pdfJson;
 
     if (!variables)
       variables = {
@@ -69,6 +74,11 @@ export class PdfParser {
     if (input) variables['input'] = input;
 
     this.elementFactory = new ElementFactory(pageOptions);
+
+    if (templateFileName) {
+      const templateFromFile = await this.readJSONFile<PdfJsonTemplate>(templateFileName);
+      template = { ...templateFromFile, ...template };
+    }
 
     let templateBuilder: PdfPageTemplateBuilder | undefined;
     if (template) {
