@@ -1,5 +1,5 @@
 {
-  "$ref": "#/definitions/PdfJsonTemplate",
+  "$ref": "#/definitions/PdfJson",
   "$schema": "http://json-schema.org/draft-07/schema#",
   "definitions": {
     "AutoTableElementJson": {
@@ -218,6 +218,15 @@
     "MaxWidth": {
       "type": "string"
     },
+    "MultiDataRecords": {
+      "additionalProperties": {
+        "items": {
+          "$ref": "#/definitions/DataRecord"
+        },
+        "type": "array"
+      },
+      "type": "object"
+    },
     "ObjectTableElementJson": {
       "properties": {
         "cellStyles": {
@@ -304,6 +313,87 @@
       "required": [
         "text",
         "type"
+      ],
+      "type": "object"
+    },
+    "PdfJson": {
+      "additionalProperties": false,
+      "properties": {
+        "data": {
+          "anyOf": [
+            {
+              "$ref": "#/definitions/MultiDataRecords"
+            },
+            {
+              "items": {
+                "$ref": "#/definitions/DataRecord"
+              },
+              "type": "array"
+            }
+          ]
+        },
+        "elements": {
+          "items": {
+            "$ref": "#/definitions/ElementJson"
+          },
+          "type": "array"
+        },
+        "fileName": {
+          "type": "string"
+        },
+        "input": {
+          "$ref": "#/definitions/DataRecord"
+        },
+        "pageOptions": {
+          "additionalProperties": false,
+          "properties": {
+            "height": {
+              "type": "number"
+            },
+            "marginBottom": {
+              "type": "number"
+            },
+            "marginLeft": {
+              "type": "number"
+            },
+            "marginRight": {
+              "type": "number"
+            },
+            "marginTop": {
+              "type": "number"
+            },
+            "pageOrientation": {
+              "enum": [
+                "portrait",
+                "landscape"
+              ],
+              "type": "string"
+            },
+            "templateUrl": {
+              "type": "string"
+            },
+            "width": {
+              "type": "number"
+            }
+          },
+          "type": "object"
+        },
+        "styles": {
+          "$ref": "#/definitions/Style"
+        },
+        "template": {
+          "$ref": "#/definitions/PdfJsonTemplate"
+        },
+        "templateFileName": {
+          "type": "string"
+        },
+        "variables": {
+          "$ref": "#/definitions/ComplexDataRecord"
+        }
+      },
+      "required": [
+        "fileName",
+        "elements"
       ],
       "type": "object"
     },
