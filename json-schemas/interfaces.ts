@@ -63,7 +63,7 @@ export type ChildrenStylesSelectors = Partial<
 export interface BaseElementJson extends Record<string, any> {
   type: string;
   styles?: Style;
-  showBoxes: boolean;
+  showBoxes?: boolean;
 }
 
 export interface HeadingElementJson extends BaseElementJson {
@@ -172,4 +172,6 @@ export interface PdfJson {
   template?: PdfJsonTemplate;
   templateFileName?: string;
   elements: ElementJson[];
+  data?: MultiDataRecords | DataRecord[];
+  input?: DataRecord;
 }
