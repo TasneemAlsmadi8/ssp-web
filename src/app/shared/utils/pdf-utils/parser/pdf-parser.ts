@@ -20,7 +20,7 @@ import {
 } from './element-json-types';
 import { ElementFactory } from '../elements/element-factory';
 import { PdfPageTemplateBuilder } from '../pdf-page-template';
-import { PdfVariableResolver } from './pdf-template-resolver';
+import { PdfVariableResolver } from './pdf-variable-resolver';
 import { formatDateToISO } from '../../data-formatter';
 
 export class PdfParser {

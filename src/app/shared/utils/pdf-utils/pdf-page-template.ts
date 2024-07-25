@@ -1,6 +1,6 @@
 import { PDFDocument } from 'pdf-lib';
 import { PdfBuilder } from './pdf-builder';
-import { PdfVariableResolver } from './parser/pdf-template-resolver';
+import { PdfVariableResolver } from './parser/pdf-variable-resolver';
 import { ComplexDataRecord } from './parser/element-json-types';
 
 export class PdfPageTemplateBuilder extends PdfBuilder {
