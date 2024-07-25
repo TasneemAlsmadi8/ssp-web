@@ -8,7 +8,7 @@ import {
 export interface BaseElementJson extends Record<string, any> {
   type: string;
   styles?: Style;
-  showBoxes: boolean;
+  showBoxes?: boolean;
 }
 
 export interface HeadingElementJson extends BaseElementJson {
