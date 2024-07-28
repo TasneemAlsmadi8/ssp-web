@@ -1,0 +1,109 @@
+{
+  "fileName": "Value Transactions Report.pdf",
+  "pageOptions": {
+    "marginTop": 90,
+    "marginBottom": 50,
+    "marginLeft": 20,
+    "marginRight": 20,
+    "pageOrientation": "portrait"
+  },
+  "variables": {
+    "title": "Value Transactions Report"
+  },
+  "templateFileName": "/assets/report-json/default.template.json",
+  "template": {
+    "pageMargins": {
+      "marginTop": 50
+    }
+  },
+  "styles": {
+    "font-size": 7.5
+  },
+  "elements": [
+    {
+      "type": "obj-table",
+      "data": {
+        "Employee Code": "{{data.0.empCode}}",
+        "Employee Name": "{{data.0.fullName}}"
+      },
+      "headersPlacement": "column",
+      "cellStyles": {
+        "border": 0
+      },
+      "headerStyles": {
+        "font-weight": "bold"
+      },
+      "columnsRatio": [1, 6],
+      "styles": {
+        "border-top": 1,
+        "margin-bottom": 10,
+        "padding-top": 2,
+        "font-size": 8
+      }
+    },
+    {
+      "type": "auto-table",
+      "columnsRatio": [1.5, 3, 1, 1, 1, 0.8, 4],
+      "schema": {
+        "Tran Code": "{{row.tranCode}}",
+        "Transaction": "{{row.tranName}}",
+        "Tran Date": "{{row.tranDate | date : dd/MM/yyyy}}",
+        "Debit": "{{row.debit | number : 1.3}}",
+        "Credit": "{{row.credit | number : 1.3}}",
+        "Salary Batch No.": "{{row.u_BatchNo | replaceEmpty : - }}",
+        "Remarks": "{{row.u_Remarks | replaceEmpty}}"
+      },
+      "headersPlacement": "row",
+      "styles": {
+        "border-bottom": 1
+      },
+      "cellStyles": {
+        "font": "Noto Sans",
+        "border": 0,
+        "padding": 3
+      },
+      "headerStyles": {
+        "font-weight": "bold",
+        "border-top": 1,
+        "border-bottom": 1,
+        "align-content-vertically": "center"
+      },
+      "rowStyles": {
+        "even": {
+          "background-color": "#eeeeee"
+        }
+      },
+      "columnStyles": {
+        "4": {
+          "align-content-horizontally": "center"
+        },
+        "5": {
+          "align-content-horizontally": "center"
+        },
+        "6": {
+          "align-content-horizontally": "center"
+        }
+      }
+    },
+    {
+      "type": "obj-table",
+      "columnsRatio": [3.5, 2, 1, 1, 0.8, 4],
+      "data": {
+        "1": "",
+        "title": "Total ",
+        "total debit": "{{totalDebit | number : 1.3 }}",
+        "total credit": "{{totalCredit | number : 1.3 }}"
+      },
+      "hideHeaders": true,
+      "cellStyles": {
+        "border": 0,
+        "align-content-horizontally": "center",
+        "font-weight": "bold",
+        "padding": 3
+      },
+      "styles": {
+        "border-bottom": 1
+      }
+    }
+  ]
+}

@@ -159,6 +159,14 @@ const routes: Routes = [
             './reports/reports-loan-balance/reports-loan-balance.component'
           ).then((m) => m.ReportsLoanBalanceComponent),
       },
+      {
+        path: 'reports/value-transactions',
+        title: 'Value Transactions Report',
+        loadComponent: () =>
+          import(
+            './reports/reports-value-transactions/reports-value-transactions.component'
+          ).then((m) => m.ReportsValueTransactionsComponent),
+      },
       { path: '**', component: PageNotFoundComponent },
     ],
   },
