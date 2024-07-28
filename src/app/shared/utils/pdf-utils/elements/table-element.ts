@@ -84,7 +84,9 @@ export class TableElement extends Element implements ParentElement {
       const elem = new TableCellElement(this.pageOptions);
       elem.setTextContent(value.text);
       if (this.cellStyles) elem.setStyles(this.cellStyles);
-      if (columnStyles) elem.setStyles(columnStyles[index]);
+      if (columnStyles) {
+        elem.setStyles(columnStyles[index]);
+      }
       if (rowStyles) elem.setStyles(rowStyles);
       if (value.styles) elem.setStyles(value.styles);
       return elem;
@@ -125,7 +127,7 @@ export class TableElement extends Element implements ParentElement {
       const row = this.rows[index];
       for (let columnIndex = 0; columnIndex < row.cells.length; columnIndex++) {
         const cell = row.cells[columnIndex];
-        if (!this.columnsRatio || this.columnsRatio.length === 0) debugger;
+        // if (!this.columnsRatio || this.columnsRatio.length === 0) debugger;
         const columnWidth =
           columnWidthPerRatioUnit * this.columnsRatio[columnIndex];
         cell.preRenderDimensions({ maxWidth: columnWidth });

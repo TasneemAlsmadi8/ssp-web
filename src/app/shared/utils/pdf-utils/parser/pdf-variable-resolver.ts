@@ -11,17 +11,22 @@ import {
   TableElementJson,
 } from './element-json-types';
 
-type PipeFunction = (value: DataRecordValue, args: string[]) => string;
+export type PipeFunction = (value: DataRecordValue, args: string[]) => string;
 
 type DataRecordValue = string | number | null | undefined;
 
 export class PdfVariableResolver {
   private variables: DataRecord = {};
-  private static pipes: Record<string, PipeFunction> = {};
+  private static _pipes: Map<string, PipeFunction>;
+  public static get pipes(): Map<string, PipeFunction> {
+    if (!PdfVariableResolver._pipes) {
+      PdfVariableResolver._pipes = new Map();
+    }
+    return PdfVariableResolver._pipes;
+  }
 
   constructor(variables?: ComplexDataRecord) {
     if (variables) this.setVariables(variables);
-
     PdfVariableResolver.registerPipe('number', (value, args) => {
       if (
         typeof value === 'string' &&
@@ -52,7 +57,7 @@ export class PdfVariableResolver {
   }
 
   static registerPipe(name: string, pipeFunction: PipeFunction): void {
-    PdfVariableResolver.pipes[name] = pipeFunction;
+    PdfVariableResolver.pipes.set(name, pipeFunction);
   }
 
   private executePipe(
@@ -60,9 +65,8 @@ export class PdfVariableResolver {
     value: DataRecordValue,
     args: string
   ): string {
-    if (
-      !Object.prototype.hasOwnProperty.call(PdfVariableResolver.pipes, name)
-    ) {
+    const pipeFunction = PdfVariableResolver.pipes.get(name);
+    if (!pipeFunction) {
       console.error(
         `Pipe: ${name} Not Found!\nReturning value as is. value = ${value}`
       );
@@ -72,7 +76,7 @@ export class PdfVariableResolver {
     let argsArray: string[] = [];
     if (args.trim().length > 0) argsArray = args.trim().split(/\s+/);
 
-    return PdfVariableResolver.pipes[name](value, argsArray);
+    return pipeFunction(value, argsArray);
   }
 
   setVariables(variables: ComplexDataRecord) {
@@ -320,6 +324,9 @@ function formatNumber(value: number, format: string): string {
   // Split the formatted value into whole and fraction parts
   let [wholePart, fractionPart] = formattedValue.split('.');
   wholePart = wholePart.padStart(minWholeDigits, '0');
+
+  // Add commas to the whole part
+  wholePart = wholePart.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 
   fractionPart = fractionPart || ''; // Ensure fraction part exists
   // Adjust fraction part length

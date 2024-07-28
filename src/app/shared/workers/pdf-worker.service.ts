@@ -6,6 +6,8 @@ import {
 } from '../utils/pdf-utils/parser/element-json-types';
 import { HttpClient } from '@angular/common/http';
 import { lastValueFrom } from 'rxjs';
+import { PdfVariableResolver } from '../utils/pdf-utils/parser/pdf-variable-resolver';
+import { ElementStyleCalculator } from '../utils/pdf-utils/elements/element-styles';
 
 @Injectable({
   providedIn: 'root',
@@ -22,6 +24,17 @@ export class PdfWorkerService {
     );
   }
 
+  private initStaticProperties() {
+    // Transfer static properties
+    const pipesArray = Array.from(PdfVariableResolver.pipes.entries()).map(
+      ([key, func]) => [key, func.toString()]
+    );
+    this.worker.postMessage({
+      functionName: 'initStaticProperties',
+      args: [pipesArray, ElementStyleCalculator.customFonts],
+    });
+  }
+
   async download(
     pdfJson: PdfJson,
     data: MultiDataRecords | DataRecord[],
@@ -32,13 +45,16 @@ export class PdfWorkerService {
     pdfJson.input = input;
     pdfJson.variables = { ...pdfJson.variables, ...additionalVariables };
     return new Promise((resolve, reject) => {
+      this.initStaticProperties();
       this.worker.postMessage({
         functionName: 'parsePdfJson',
         args: [pdfJson],
       });
 
       this.worker.onmessage = (event) => {
-        const { fileName, blob, error } = event.data;
+        const { functionName, result, error } = event.data;
+        if (functionName !== 'parsePdfJson') return;
+        const { fileName, blob } = result;
 
         if (error) {
           console.error('Error generating PDF:', error);

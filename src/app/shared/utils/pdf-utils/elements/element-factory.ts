@@ -74,6 +74,7 @@ export class ElementFactory {
       options ?? {};
 
     const elem = new TableElement(this.pageOptions);
+    if (cellStyles) elem.setCellStyles(cellStyles);
 
     const rowCount = data.length;
     const colCount = data?.at(0)?.length ?? 0;
@@ -149,7 +150,7 @@ export class ElementFactory {
       columnsRatio,
     } = options ?? {};
 
-    headerStyles = { ...cellStyles, ...headerStyles };
+    // headerStyles = { ...cellStyles, ...headerStyles };
 
     const tableData: TableCell[][] = [];
 
@@ -175,8 +176,7 @@ export class ElementFactory {
 
       data.forEach((obj) => {
         const row: TableCell[] = keys.map((key) => ({
-          text: obj[key]?.toString() ?? '-',
-          styles: cellStyles,
+          text: obj[key]?.toString() ?? '',
         }));
         tableData.push(row);
       });
@@ -187,8 +187,7 @@ export class ElementFactory {
         if (!hideHeaders) row.push({ text: keys[i], styles: headerStyles });
         data.forEach((obj) => {
           row.push({
-            text: obj[keys[i]]?.toString() ?? '-',
-            styles: cellStyles,
+            text: obj[keys[i]]?.toString() ?? '',
           });
         });
         tableData.push(row);
@@ -196,7 +195,7 @@ export class ElementFactory {
     }
 
     return this.createTable(tableData, {
-      styles: styles,
+      styles,
       cellStyles,
       rowStyles,
       columnStyles,

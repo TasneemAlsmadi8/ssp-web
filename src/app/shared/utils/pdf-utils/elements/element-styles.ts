@@ -130,7 +130,7 @@ export interface ElementDimensions
     ElementWidthDimensions {}
 
 export class ElementStyleCalculator {
-  private static customFonts: CustomFont[] = [];
+  public static customFonts: CustomFont[] = [];
   private static fallbackFontName = 'Noto Sans';
 
   static getFallbackFont(styles: Style): {
