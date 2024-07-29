@@ -167,6 +167,14 @@ const routes: Routes = [
             './reports/reports-value-transactions/reports-value-transactions.component'
           ).then((m) => m.ReportsValueTransactionsComponent),
       },
+      {
+        path: 'reports/salary-history',
+        title: 'Salary History Report',
+        loadComponent: () =>
+          import(
+            './reports/reports-salary-history/reports-salary-history.component'
+          ).then((m) => m.ReportsSalaryHistoryComponent),
+      },
       { path: '**', component: PageNotFoundComponent },
     ],
   },
