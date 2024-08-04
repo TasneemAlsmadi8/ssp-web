@@ -217,8 +217,8 @@ class LeaveRequestAdapter {
     const obj: LeaveRequestAddApi = {
       u_EmployeeID: employeeId,
       u_LeaveType: addSchema.leaveCode,
-      u_FromDate: addSchema.fromDate,
-      u_ToDate: addSchema.toDate,
+      u_FromDate: addSchema.fromDate.replaceAll('-', ''),
+      u_ToDate: addSchema.toDate.replaceAll('-', ''),
       u_FromTime: addSchema.fromTime,
       u_ToTime: addSchema.toTime,
       u_Remarks: addSchema.remarks,
@@ -230,8 +230,8 @@ class LeaveRequestAdapter {
     const obj: LeaveRequestUpdateApi = {
       docEntry: updateSchema.id,
       u_LeaveType: updateSchema.leaveCode,
-      u_FromDate: updateSchema.fromDate,
-      u_ToDate: updateSchema.toDate,
+      u_FromDate: updateSchema.fromDate?.replaceAll('-', ''),
+      u_ToDate: updateSchema.toDate?.replaceAll('-', ''),
       u_FromTime: updateSchema.fromTime,
       u_ToTime: updateSchema.toTime,
       u_Remarks: updateSchema.remarks,

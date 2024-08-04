@@ -179,7 +179,7 @@ class LoanRequestAdapter {
       u_LoanType: addSchema.loanCode,
       u_TotalAmount: addSchema.totalAmount.toString(),
       u_InstallmentCount: addSchema.installmentCount.toString(),
-      u_StartDate: addSchema.startDate,
+      u_StartDate: addSchema.startDate.replaceAll('-', ''),
       u_Remarks: addSchema.remarks,
     };
     return obj;
@@ -191,7 +191,7 @@ class LoanRequestAdapter {
       u_LoanType: updateSchema.loanCode,
       u_TotalAmount: updateSchema.totalAmount?.toString(),
       u_InstallmentCount: updateSchema.installmentCount?.toString(),
-      u_StartDate: updateSchema.startDate,
+      u_StartDate: updateSchema.startDate?.replaceAll('-', ''),
       u_Remarks: updateSchema.remarks,
       u_Status: ItemStatus.Pending,
     };

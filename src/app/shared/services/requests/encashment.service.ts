@@ -189,7 +189,7 @@ class EncashmentRequestAdapter {
     const obj: EncashmentRequestAddApi = {
       u_EmployeeID: employeeId,
       u_EncashType: addSchema.encashCode,
-      u_Date: addSchema.date,
+      u_Date: addSchema.date.replaceAll('-', ''),
       u_UnitPrice: addSchema.unitPrice.toString(),
       u_UnitCount: addSchema.unitCount.toString(),
       u_ProjectCode: addSchema.projectCode,
@@ -205,7 +205,7 @@ class EncashmentRequestAdapter {
     const obj: EncashmentRequestUpdateApi = {
       docEntry: updateSchema.id,
       u_EncashType: updateSchema.encashCode,
-      u_Date: updateSchema.date,
+      u_Date: updateSchema.date?.replaceAll('-', ''),
       u_UnitPrice: updateSchema.unitPrice?.toString(),
       u_UnitCount: updateSchema.unitCount?.toString(),
       u_ProjectCode: updateSchema.projectCode,

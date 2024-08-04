@@ -179,8 +179,8 @@ class OvertimeRequestAdapter {
     const obj: OvertimeRequestAddApi = {
       u_EmployeeID: employeeId,
       u_OvType: addSchema.overtimeCode,
-      u_FromDate: addSchema.fromDate,
-      u_ToDate: addSchema.toDate,
+      u_FromDate: addSchema.fromDate.replaceAll('-', ''),
+      u_ToDate: addSchema.toDate.replaceAll('-', ''),
       u_OvHour: addSchema.hour.toString(),
       u_OvMin: addSchema.minute.toString(),
       u_ProjectCode: addSchema.projectCode,
@@ -195,8 +195,8 @@ class OvertimeRequestAdapter {
     const obj: OvertimeRequestUpdateApi = {
       docEntry: updateSchema.id,
       u_OvType: updateSchema.overtimeCode,
-      u_FromDate: updateSchema.fromDate,
-      u_ToDate: updateSchema.toDate,
+      u_FromDate: updateSchema.fromDate?.replaceAll('-', ''),
+      u_ToDate: updateSchema.toDate?.replaceAll('-', ''),
       u_OvHour: updateSchema.hour?.toString(),
       u_OvMin: updateSchema.minute?.toString(),
       u_ProjectCode: updateSchema.projectCode,

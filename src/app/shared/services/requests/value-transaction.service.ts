@@ -170,7 +170,7 @@ class ValueTransactionRequestAdapter {
       u_EmployeeID: employeeId,
       u_ValueTranType: addSchema.valueTranCode,
       u_TranValue: addSchema.value.toString(),
-      u_Date: addSchema.date,
+      u_Date: addSchema.date.replaceAll('-', ''),
       u_ProjectCode: addSchema.projectCode,
       u_Remarks: addSchema.remarks,
     };
@@ -184,7 +184,7 @@ class ValueTransactionRequestAdapter {
       docEntry: updateSchema.id,
       u_ValueTranType: updateSchema.valueTranCode,
       u_TranValue: updateSchema.value?.toString(),
-      u_Date: updateSchema.date,
+      u_Date: updateSchema.date?.replaceAll('-', ''),
       u_ProjectCode: updateSchema.projectCode,
       u_Remarks: updateSchema.remarks,
       u_Status: ItemStatus.Pending,
