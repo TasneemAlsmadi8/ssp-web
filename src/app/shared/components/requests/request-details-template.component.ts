@@ -208,7 +208,7 @@ export abstract class RequestDetailsComponentTemplate<
           this.onSubmitSuccess.emit(this.item);
         },
         error: (err: HttpErrorResponse) => {
-          this.userAlertService.showError('Error!');
+          this.userAlertService.showError('Error!', err.error);
           console.log(err);
           this.onSubmitFail.emit(this.item);
         },
