@@ -118,7 +118,7 @@
               [ngClass]="{ 'invalid-input': shouldDisplayError('project') }"
             >
               <option *ngFor="let project of projects" [value]="project.code">
-                {{ project.name }}
+                {{ project.name || project.code }}
               </option>
             </select>
             <span *ngIf="shouldDisplayError('project')" class="error-message">
