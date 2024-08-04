@@ -19,7 +19,7 @@
             }"
           >
             <option *ngFor="let type of transactionTypes" [value]="type.code">
-              {{ type.name }}
+              {{ type.name || type.code }}
             </option>
           </select>
         </div>

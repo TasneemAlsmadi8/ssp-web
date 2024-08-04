@@ -52,7 +52,7 @@
               }"
             >
               <option *ngFor="let type of overtimeTypes" [value]="type.code">
-                {{ type.name }}
+                {{ type.name || type.code }}
               </option>
             </select>
             <span
@@ -134,7 +134,7 @@
                 {{ getErrorMessage("project") }}
               </span>
               <option *ngFor="let project of projects" [value]="project.code">
-                {{ project.name }}
+                {{ project.name || project.code }}
               </option>
             </select>
           </div>

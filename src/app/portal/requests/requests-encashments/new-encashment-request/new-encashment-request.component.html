@@ -47,7 +47,7 @@
             }"
           >
             <option *ngFor="let type of encashmentTypes" [value]="type.code">
-              {{ type.name }}
+              {{ type.name || type.code }}
             </option>
           </select>
           <span

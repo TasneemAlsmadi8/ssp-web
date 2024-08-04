@@ -58,7 +58,7 @@
                 *ngFor="let type of valueTransactionTypes"
                 [value]="type.code"
               >
-                {{ type.name }}
+                {{ type.name || type.code }}
               </option>
             </select>
             <span

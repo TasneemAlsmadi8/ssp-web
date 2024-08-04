@@ -17,7 +17,7 @@
             [ngClass]="{ 'invalid-input': shouldDisplayError('leaveType') }"
           >
             <option *ngFor="let type of leaveTypes" [value]="type.code">
-              {{ type.name }}
+              {{ type.name || type.code }}
             </option>
           </select>
         </div>
