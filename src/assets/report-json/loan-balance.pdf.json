@@ -55,7 +55,7 @@
           "data": {
             "Transaction ID:": "{{data.multiTranID}}",
             "Transaction Type:": "{{data.loanName}}",
-            "Total Amount:": "{{data.loanAmount:1.3}}"
+            "Total Amount:": "{{data.loanAmount | number : 1.3}}"
           },
           "headersPlacement": "column",
           "cellStyles": {

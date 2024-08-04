@@ -172,7 +172,7 @@ export abstract class NewRequestComponentTemplate<
           this.onSave.emit(this.item);
         },
         error: (err: HttpErrorResponse) => {
-          this.userAlertService.showError('Error!');
+          this.userAlertService.showError('Error!', err.error);
           console.log(err);
         },
       })
