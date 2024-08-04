@@ -105,6 +105,11 @@ export class OvertimeRequestService
     return this.http.get<OvertimeRequestType[]>(url, this.httpOptions);
   }
 
+  getAllTypes(): Observable<OvertimeRequestType[]> {
+    const url = this.url + '/GetOvertimeTypes';
+    return this.http.get<OvertimeRequestType[]>(url, this.httpOptions);
+  }
+
   update(data: OvertimeRequestUpdate): Observable<any> {
     const url = this.url + '/UpdateOvertimeRequest';
 
