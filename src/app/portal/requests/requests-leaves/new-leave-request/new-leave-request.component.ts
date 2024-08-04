@@ -94,7 +94,6 @@ export class NewLeaveRequestComponent extends NewRequestComponentTemplate<
       .pipe(takeUntil(this.destroy$))
       .subscribe((value) => {
         this.leaveTypes = value;
-        this.leaveTypes.unshift({ code: '', name: '' });
       });
   }
 

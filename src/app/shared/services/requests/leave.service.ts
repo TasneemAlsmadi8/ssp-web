@@ -92,6 +92,7 @@ export class LeaveRequestService
   getTypes(): Observable<LeaveRequestType[]> {
     if (this.leaveTypesStore.getValue().length == 0) {
       this.getTypesByEmployeeId(this.user.id).subscribe((value) => {
+        value.unshift({ code: '', name: '- select -' });
         this.leaveTypesStore.update(value);
       });
     }

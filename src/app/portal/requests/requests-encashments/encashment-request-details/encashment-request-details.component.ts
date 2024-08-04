@@ -66,10 +66,6 @@ export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTe
         .pipe(takeUntil(this.destroy$))
         .subscribe((value) => {
           this.encashmentTypes = value;
-          this.encashmentTypes.unshift({
-            code: '',
-            name: '',
-          });
         });
     } else {
       if (!this.item.employeeId) throw new Error('employee id not specified');
@@ -78,10 +74,6 @@ export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTe
         .pipe(takeUntil(this.destroy$))
         .subscribe((value) => {
           this.encashmentTypes = value;
-          this.encashmentTypes.unshift({
-            code: '',
-            name: '',
-          });
         });
     }
     this.projectsService

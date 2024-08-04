@@ -90,7 +90,7 @@ export class EncashmentRequestService
   getTypes(): Observable<EncashmentRequestType[]> {
     if (this.encashmentTypesStore.getValue().length == 0) {
       this.getTypesByEmployeeId(this.user.id).subscribe((value) => {
-        console.log(value);
+        value.unshift({ code: '', name: '-select-' });
         this.encashmentTypesStore.update(value);
       });
     }

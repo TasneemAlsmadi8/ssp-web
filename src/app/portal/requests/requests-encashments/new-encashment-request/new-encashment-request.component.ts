@@ -93,10 +93,6 @@ export class NewEncashmentRequestComponent extends NewRequestComponentTemplate<
       .pipe(takeUntil(this.destroy$))
       .subscribe((value) => {
         this.encashmentTypes = value;
-        this.encashmentTypes.unshift({
-          code: '',
-          name: '',
-        });
       });
     this.projectsService
       .getProjects()
