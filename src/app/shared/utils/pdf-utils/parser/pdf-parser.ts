@@ -76,7 +76,9 @@ export class PdfParser {
     this.elementFactory = new ElementFactory(pageOptions);
 
     if (templateFileName) {
-      const templateFromFile = await this.readJSONFile<PdfJsonTemplate>(templateFileName);
+      const templateFromFile = await this.readJSONFile<PdfJsonTemplate>(
+        templateFileName
+      );
       template = { ...templateFromFile, ...template };
     }
 
@@ -281,6 +283,13 @@ export class PdfParser {
         }
 
       tableData.push(record);
+    }
+
+    if (tableData.length === 0) {
+      const headers = Object.fromEntries(
+        Object.entries(schema).map((v) => [v[0], ''])
+      );
+      tableData.push(headers);
     }
 
     // const data: Array<DataRecord> = [];

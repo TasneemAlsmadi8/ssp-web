@@ -160,7 +160,6 @@ export class ElementFactory {
         cellStyles: headerStyles,
         rowStyles,
         columnStyles,
-        columnsRatio,
       });
     }
 
