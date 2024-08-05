@@ -52,7 +52,7 @@ export class EmployeeInfoComponent
     const control = this.form.get(formControlName);
     if (!control) throw new Error('Invalid form Control');
 
-    if(this.showAllErrors) return control.invalid;
+    if (this.showAllErrors) return control.invalid;
     if (onlyDirty) return control.invalid && control.dirty;
     return control.invalid && (control.dirty || control.touched);
   }
@@ -109,7 +109,7 @@ export class EmployeeInfoComponent
   }
 
   onSubmit() {
-    if(this.form.invalid){
+    if (this.form.invalid) {
       this.showAllErrors = true;
       return;
     }
