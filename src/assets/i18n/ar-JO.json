@@ -14,7 +14,6 @@
   "Aggregator Daily Record": "سجل يومي للمجمع",
   "Your password doesn't meet the strength requirements. Please create a password with at least 8 characters, including one lowercase letter, one uppercase letter, one number, and one special symbol": "كلمة المرور الخاصة بك لا تستوفي متطلبات القوة. يرجى إنشاء كلمة مرور تحتوي على 8 أحرف على الأقل، بما في ذلك حرف صغير واحد، حرف كبير واحد، رقم واحد، ورمز خاص واحد",
 
-  "Show Report": "عرض التقرير",
   "Select Client Name": "اختر اسم العميل",
   "Post to sales order": "نشر إلى أمر البيع",
   "Upload File": "تحميل الملف",
@@ -177,5 +176,33 @@
   "Rejecting...": "...جارٍ الرفض",
   "Please wait while we reject request.": ".يرجى الانتظار أثناء رفض الطلب",
   "Rejected!": "!تم الرفض",
-  "There was an error rejecting request.": ".حدث خطأ أثناء رفض الطلب"
+  "There was an error rejecting request.": ".حدث خطأ أثناء رفض الطلب",
+
+  "Today": "اليوم",
+  "Year": "السنة",
+  "Month": "الشهر",
+  "Week": "الأسبوع",
+
+  "History": "سجل الطلبات",
+  "Leave Requests History": "سجل الاجازات / المغادرات",
+  "Loan Requests History": "سجل القروض",
+
+
+  "Shift System": "نظام الورديات",
+
+  "Reports": "التقارير",
+  "Show Report": "عرض التقرير",
+  "Salary Slip": "كشف الراتب",
+  "Hourly Transactions": "حركات الساعات",
+  "Salary History": "سجل الراتب",
+
+  "Salary Slip Report": "تقرير كشف الراتب",
+  "Hourly Transactions Report": "تقرير حركات الساعات",
+  "Salary History Report": "تقرير سجل الراتب",
+  "Leave Balance Report": "تقرير رصيد المغادرات",
+  "Loan Balance Report": "تقرير رصيد القروض",
+  "Value Transactions Report": "تقرير الحركات النقدية",
+  "Transaction Type": "نوع الحركة",
+
+  "There is no data to send": "لا يوجد بيانات"
 }

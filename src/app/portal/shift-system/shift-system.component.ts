@@ -29,6 +29,7 @@ import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 import { stringToColor } from 'src/app/shared/utils/color-utils';
 import { enUS } from 'date-fns/locale';
+import { TranslateModule } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-shift-system',
@@ -38,6 +39,7 @@ import { enUS } from 'date-fns/locale';
     FontAwesomeModule,
     ReactiveFormsModule,
     ModalComponent,
+    TranslateModule,
   ],
   standalone: true,
   templateUrl: './shift-system.component.html',

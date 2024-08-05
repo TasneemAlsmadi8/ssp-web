@@ -16,7 +16,7 @@ import { faCircleInfo } from '@fortawesome/free-solid-svg-icons';
     >
       <fa-icon
         [icon]="faInfo"
-        class="flex-shrink-0 inline w-4 h-4 mr-3 relative bottom-1.5 text-lg"
+        class="flex-shrink-0 inline w-4 h-4 ltr:mr-3 rtl:ml-3 relative bottom-1.5 text-lg"
         aria-hidden="true"
       ></fa-icon>
       <span class="sr-only">{{ title }}</span>

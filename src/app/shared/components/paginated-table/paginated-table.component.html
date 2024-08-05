@@ -3,7 +3,7 @@
     <ng-content />
   </table>
   <div *ngIf="true" class="w-full">
-    <app-alert [message]="errorMessage" />
+    <app-alert [message]="errorMessage | translate" />
   </div>
   <div
     *ngIf="isLoading"
