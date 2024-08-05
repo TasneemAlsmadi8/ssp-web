@@ -20,4 +20,14 @@ export class SideBarContentComponent {
   faCaretDown = faCaretDown;
 
   @Input({ required: true }) user!: User;
+
+  openDropdown: string | null = null;
+
+  toggleDropdown(name: string) {
+    this.openDropdown = this.openDropdown === name ? null : name;
+  }
+
+  isDropdownOpen(name: string): boolean {
+    return this.openDropdown === name;
+  }
 }

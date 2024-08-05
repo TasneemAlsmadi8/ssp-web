@@ -26,7 +26,11 @@
       </a>
     </li>
     <li>
-      <app-drop-down-Items>
+      <app-drop-down-Items
+        name="requests"
+        [isOpen]="isDropdownOpen('requests')"
+        (toggle)="toggleDropdown('requests')"
+      >
         <button
           type="button"
           class="flex items-center p-2 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100"
@@ -103,7 +107,11 @@
       </app-drop-down-Items>
     </li>
     <li>
-      <app-drop-down-Items>
+      <app-drop-down-Items
+        name="approvals"
+        [isOpen]="isDropdownOpen('approvals')"
+        (toggle)="toggleDropdown('approvals')"
+      >
         <button
           type="button"
           class="flex items-center p-2 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100"
@@ -180,7 +188,11 @@
       </app-drop-down-Items>
     </li>
     <li>
-      <app-drop-down-Items>
+      <app-drop-down-Items
+        name="history"
+        [isOpen]="isDropdownOpen('history')"
+        (toggle)="toggleDropdown('history')"
+      >
         <button
           type="button"
           class="flex items-center p-2 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100"
@@ -224,7 +236,11 @@
       </a>
     </li>
     <li>
-      <app-drop-down-Items>
+      <app-drop-down-Items
+        name="reports"
+        [isOpen]="isDropdownOpen('reports')"
+        (toggle)="toggleDropdown('reports')"
+      >
         <button
           type="button"
           class="flex items-center p-2 w-full text-base font-normal text-gray-900 rounded-lg transition duration-75 group hover:bg-gray-100"

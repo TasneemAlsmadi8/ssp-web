@@ -1,6 +1,10 @@
 <div (click)="toggleMenu()">
-  <ng-content select="button" />
+  <ng-content select="button"></ng-content>
 </div>
-<ul id="dropdown-pages" class="border-b ps-4 py-2 space-y-2" [hidden]="!isOpen">
-  <ng-content />
+<ul
+  id="dropdown-pages"
+  class="border-b pl-4 space-y-2 overflow-hidden transition-all duration-500 ease-in-out"
+  [ngClass]="isOpen ? 'max-h-96 opacity-100 py-2' : 'max-h-0 opacity-0 py-0'"
+>
+  <ng-content></ng-content>
 </ul>
