@@ -64,13 +64,19 @@ export class PdfWorkerService {
 
         // Download the PDF
         const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.URL.revokeObjectURL(url);
+        const tab = window.open(url, '_blank');
+        if (tab) {
+          tab.document.title = fileName; // Change the name of the opened tab
+        } else {
+          console.error('Failed to open new tab.');
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = fileName;
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+          window.URL.revokeObjectURL(url);
+        }
 
         resolve();
       };

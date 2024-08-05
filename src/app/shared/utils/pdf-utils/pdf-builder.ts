@@ -92,9 +92,13 @@ export class PdfBuilder {
 
   protected async renderElementsToPDF(page?: PDFPage) {
     this.pdfDoc = page?.doc ?? (await PDFDocument.create());
-    if (!page) this.pdfDoc.registerFontkit(fontkit);
 
-    if (!page) page = await this.addPage();
+    if (!page) {
+      this.pdfDoc.registerFontkit(fontkit);
+      this.pdfDoc.setTitle(this.fileName, { showInWindowTitleBar: true });
+
+      page = await this.addPage();
+    }
 
     let yOffset = this.pageOptions.height - this.pageOptions.marginTop;
 
