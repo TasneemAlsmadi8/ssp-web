@@ -292,15 +292,17 @@ export class ParagraphElement extends Element {
   }
 
   protected override async splitElementOnOverflow({
-    availableHeight,
+    availableContentHeight,
     clone,
   }: {
-    availableHeight: number;
+    availableContentHeight: number;
     clone: Element;
   }): Promise<Element> {
     const lines = this.textContent.split('\n');
 
-    const firstPartLineCount = Math.floor(availableHeight / this.fontHeight);
+    const firstPartLineCount = Math.floor(
+      availableContentHeight / this.fontHeight
+    );
 
     const firstPartLines = lines.slice(0, firstPartLineCount);
     this.setTextContent(firstPartLines.join('\n'));

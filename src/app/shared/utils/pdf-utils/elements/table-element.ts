@@ -172,19 +172,20 @@ export class TableElement extends Element implements ParentElement {
   }
 
   protected override async splitElementOnOverflow({
-    availableHeight,
+    availableContentHeight,
     clone,
   }: {
-    availableHeight: number;
+    availableContentHeight: number;
     clone: Element;
   }): Promise<Element> {
     const cloneRows: TableRow[] = [];
 
-    while (this.contentHeight > availableHeight) {
+    while (this.contentHeight > availableContentHeight) {
       cloneRows.unshift(this.rows!.pop()!);
     }
 
     (clone as TableElement).rows = cloneRows;
+    (clone as TableElement).children.forEach((child) => (child.parent = clone));
 
     return clone;
   }

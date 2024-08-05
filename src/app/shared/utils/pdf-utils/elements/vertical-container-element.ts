@@ -66,15 +66,15 @@ export class VerticalContainerElement
   }
 
   protected override async splitElementOnOverflow({
-    availableHeight,
+    availableContentHeight,
     clone,
   }: {
-    availableHeight: number;
+    availableContentHeight: number;
     clone: Element;
   }): Promise<Element> {
     const cloneChildren: Element[] = [];
     let childOnBoundary: Element;
-    while (this.contentHeight > availableHeight) {
+    while (this.contentHeight > availableContentHeight) {
       cloneChildren.unshift(this._children!.pop()!);
     }
     childOnBoundary = cloneChildren.shift()!;
@@ -82,6 +82,8 @@ export class VerticalContainerElement
 
     this.addElement(childOnBoundary);
     cloneChildren.unshift(splitChild);
+
+    cloneChildren.forEach((child) => (child.parent = clone));
 
     (clone as VerticalContainerElement)._children = cloneChildren;
 

@@ -239,10 +239,10 @@ export abstract class Element {
   }
 
   protected abstract splitElementOnOverflow({
-    availableHeight,
+    availableContentHeight,
     clone,
   }: {
-    availableHeight: number;
+    availableContentHeight: number;
     clone: Element;
   }): Promise<Element>;
 
@@ -253,9 +253,9 @@ export abstract class Element {
       this.computedStyles.borderTop +
       this.computedStyles.marginTop +
       this.computedStyles.paddingTop;
-    const availableHeight = this.height - this.overflowY - offsetTop;
-        const splitElement = await this.splitElementOnOverflow({
-      availableHeight,
+    const availableContentHeight = this.height - this.overflowY - offsetTop;
+    const splitElement = await this.splitElementOnOverflow({
+      availableContentHeight,
       clone,
     });
 

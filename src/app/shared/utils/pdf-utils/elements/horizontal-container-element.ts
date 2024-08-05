@@ -106,10 +106,10 @@ export class HorizontalContainerElement
   }
 
   protected override async splitElementOnOverflow({
-    availableHeight,
+    availableContentHeight,
     clone,
   }: {
-    availableHeight: number;
+    availableContentHeight: number;
     clone: Element;
   }): Promise<Element> {
     const splitChildren: Element[] = [];
@@ -117,6 +117,7 @@ export class HorizontalContainerElement
       splitChildren.push(await child.handleOverflow());
     }
 
+    splitChildren.forEach((child) => (child.parent = clone));
     (clone as HorizontalContainerElement)._children = splitChildren;
 
     return clone;
