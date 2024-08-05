@@ -111,7 +111,7 @@ export class LeaveRequestDetailsComponent extends RequestDetailsComponentTemplat
   ): string | null {
     for (let error in relativeErrorMessages) {
       if (control.hasError(error))
-        return `${inputTitle} ${this.translate.instant(
+        return `${this.translate.instant(
           relativeErrorMessages[error]
         )} ${control.getError(error)?.otherControlTitle}`;
     }

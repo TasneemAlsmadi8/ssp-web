@@ -29,6 +29,7 @@ export class EmployeeInfoComponent
 
   employee?: EmployeeInfo;
   isLoading = false;
+  showAllErrors = false;
 
   constructor(
     private employeeInfoService: EmployeeInfoService,
@@ -38,18 +39,20 @@ export class EmployeeInfoComponent
   ) {
     super();
     this.form = this.formBuilder.group({
-      mobile: ['', [Validators.required, Validators.pattern('^[+]?[0-9]+$')]],
+      mobile: ['', [Validators.pattern('^[+]?[0-9]+$')]],
       homeTel: ['', [Validators.pattern('^[+]?[0-9]+$')]],
-      homeStreet: ['', [Validators.required]],
-      homeBuild: ['', [Validators.required]],
+      homeStreet: [''],
+      homeBuild: [''],
       homeBlock: [''],
-      homeZip: ['', [Validators.required, Validators.pattern('^[0-9]+$')]],
+      homeZip: ['', [Validators.pattern('^[0-9]+$')]],
     });
   }
+
   shouldDisplayError(formControlName: string, onlyDirty = false): boolean {
     const control = this.form.get(formControlName);
     if (!control) throw new Error('Invalid form Control');
 
+    if(this.showAllErrors) return control.invalid;
     if (onlyDirty) return control.invalid && control.dirty;
     return control.invalid && (control.dirty || control.touched);
   }
@@ -106,6 +109,10 @@ export class EmployeeInfoComponent
   }
 
   onSubmit() {
+    if(this.form.invalid){
+      this.showAllErrors = true;
+      return;
+    }
     this.isLoading = true;
     const formValues = this.form.value;
     const data: EmployeeInfoUpdate = {

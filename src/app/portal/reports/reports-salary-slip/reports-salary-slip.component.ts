@@ -24,6 +24,7 @@ export class ReportsSalarySlipComponent
   form: FormGroup;
 
   isLoading = false;
+  showAllErrors = false;
 
   constructor(
     private salarySlipService: SalarySlipReportService,
@@ -42,6 +43,7 @@ export class ReportsSalarySlipComponent
     const control = this.form.get(formControlName);
     if (!control) throw new Error('Invalid form Control');
 
+    if (this.showAllErrors) return control.invalid;
     if (onlyDirty) return control.invalid && control.dirty;
     return control.invalid && (control.dirty || control.touched);
   }
@@ -77,6 +79,10 @@ export class ReportsSalarySlipComponent
   }
 
   onSubmit() {
+    if (this.form.invalid) {
+      this.showAllErrors = true;
+      return;
+    }
     this.isLoading = true;
     const { month, year } = this.form.value;
     const input = { month, year };

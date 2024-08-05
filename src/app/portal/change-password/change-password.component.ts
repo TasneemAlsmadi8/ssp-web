@@ -34,6 +34,7 @@ export class ChangePasswordComponent
 {
   @Input() class: string = '';
   form: FormGroup;
+  showAllErrors = false;
   constructor(
     private authService: AuthService,
     private fb: FormBuilder,
@@ -59,6 +60,7 @@ export class ChangePasswordComponent
     const control = this.form.get(formControlName);
     if (!control) throw new Error('Invalid form Control');
 
+    if (this.showAllErrors) return control.invalid;
     if (onlyDirty) return control.invalid && control.dirty;
     return control.invalid && (control.dirty || control.touched);
   }
@@ -101,6 +103,10 @@ export class ChangePasswordComponent
   }
 
   onSubmit() {
+    if (this.form.invalid) {
+      this.showAllErrors = true;
+      return;
+    }
     this.userAlertService.showLoading('Changing Password...');
     const oldPassword: string = this.form.value.oldPassword;
     const newPassword: string = this.form.value.newPassword;

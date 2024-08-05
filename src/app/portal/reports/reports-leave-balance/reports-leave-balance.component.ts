@@ -27,6 +27,7 @@ export class ReportsLeaveBalanceComponent
 
   leaveTypes: LeaveRequestType[] = [];
   isLoading = false;
+  showAllErrors = false;
 
   constructor(
     private leaveBalanceService: LeaveBalanceReportService,
@@ -46,6 +47,7 @@ export class ReportsLeaveBalanceComponent
     const control = this.form.get(formControlName);
     if (!control) throw new Error('Invalid form Control');
 
+    if (this.showAllErrors) return control.invalid;
     if (onlyDirty) return control.invalid && control.dirty;
     return control.invalid && (control.dirty || control.touched);
   }
@@ -81,6 +83,10 @@ export class ReportsLeaveBalanceComponent
   }
 
   onSubmit() {
+    if (this.form.invalid) {
+      this.showAllErrors = true;
+      return;
+    }
     this.isLoading = true;
     const { leaveType, toDate } = this.form.value;
     const input = { leaveCode: leaveType, toDate };

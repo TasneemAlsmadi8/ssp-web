@@ -55,6 +55,7 @@ export abstract class NewRequestComponentTemplate<
   private userService: LocalUserService;
   protected translate: TranslateService;
   private userAlertService: UserAlertService;
+  showAllErrors = false;
 
   // @Inject(null) -> to disable DI to provide values in child class
   constructor(
@@ -111,6 +112,7 @@ export abstract class NewRequestComponentTemplate<
     const control = this.form.get(formControlName);
     if (!control) throw new Error('Invalid form Control');
 
+    if (this.showAllErrors) return control.invalid;
     if (onlyDirty) return control.invalid && control.dirty;
     return control.invalid && (control.dirty || control.touched);
   }
@@ -155,6 +157,10 @@ export abstract class NewRequestComponentTemplate<
   }
 
   onSubmit() {
+    if (this.form.invalid) {
+      this.showAllErrors = true;
+      return;
+    }
     this.isLoading = true;
     const data = this.mapFormToAddRequest(this.form.value);
     this.requestService

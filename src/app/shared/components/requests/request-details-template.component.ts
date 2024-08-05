@@ -64,6 +64,7 @@ export abstract class RequestDetailsComponentTemplate<
   }
 
   isLoading: boolean = false;
+  showAllErrors = false;
   user: User;
   form: FormGroup;
 
@@ -155,6 +156,7 @@ export abstract class RequestDetailsComponentTemplate<
     const control = this.form.get(formControlName);
     if (!control) throw new Error('Invalid form Control');
 
+    if (this.showAllErrors) return control.invalid;
     if (onlyDirty) return control.invalid && control.dirty;
     return control.invalid && (control.dirty || control.touched);
   }
@@ -192,6 +194,10 @@ export abstract class RequestDetailsComponentTemplate<
   }
 
   onSubmit() {
+    if (this.form.invalid) {
+      this.showAllErrors = true;
+      return;
+    }
     this.isLoading = true;
     this.onSave.emit(this.item);
     const data = this.mapFormToUpdateRequest(this.form.value);

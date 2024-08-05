@@ -1,6 +1,8 @@
 import { AbstractControl } from '@angular/forms';
 
 export interface FormErrorMessageBehavior {
+  showAllErrors: boolean;
+
   shouldDisplayError(formControlName: string, onlyDirty: boolean): boolean;
   getErrorMessage(
     formControlName: string,

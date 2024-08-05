@@ -27,6 +27,7 @@ export class ReportsValueTransactionsComponent
 
   transactionTypes: ValueTransactionRequestType[] = [];
   isLoading = false;
+  showAllErrors = false;
 
   constructor(
     private valueTransactionService: ValueTransactionReportService,
@@ -49,6 +50,7 @@ export class ReportsValueTransactionsComponent
     const control = this.form.get(formControlName);
     if (!control) throw new Error('Invalid form Control');
 
+    if (this.showAllErrors) return control.invalid;
     if (onlyDirty) return control.invalid && control.dirty;
     return control.invalid && (control.dirty || control.touched);
   }
@@ -88,6 +90,10 @@ export class ReportsValueTransactionsComponent
   }
 
   onSubmit() {
+    if (this.form.invalid) {
+      this.showAllErrors = true;
+      return;
+    }
     this.isLoading = true;
     const { transactionType, fromDate, toDate } = this.form.value;
     const input = { transactionType, toDate, fromDate };
