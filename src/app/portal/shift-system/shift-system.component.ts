@@ -30,6 +30,7 @@ import { ModalComponent } from 'src/app/shared/components/modal/modal.component'
 import { stringToColor } from 'src/app/shared/utils/color-utils';
 import { enUS } from 'date-fns/locale';
 import { TranslateModule } from '@ngx-translate/core';
+import { LanguageService } from 'src/app/shared/services/language.service';
 
 @Component({
   selector: 'app-shift-system',
@@ -41,7 +42,7 @@ import { TranslateModule } from '@ngx-translate/core';
     ModalComponent,
     TranslateModule,
   ],
-  standalone: true,
+    standalone: true,
   templateUrl: './shift-system.component.html',
   styleUrls: ['./shift-system.component.scss'],
 })
@@ -83,7 +84,14 @@ export class ShiftSystemComponent
 
   weekendDays: number[] = [DAYS_OF_WEEK.FRIDAY, DAYS_OF_WEEK.SATURDAY];
 
-  constructor(private shiftService: ShiftSystemService) {
+  get currentLocale() {
+    return this.languageService.selectedLanguage;
+  }
+
+  constructor(
+    private shiftService: ShiftSystemService,
+    private languageService: LanguageService
+  ) {
     super();
     this.viewControl = new FormControl(this.view);
     this.viewControl.valueChanges.subscribe((view) => this.setView(view));

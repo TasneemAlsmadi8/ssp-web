@@ -9,26 +9,26 @@
     >
       {{ "Today" | translate }}
     </button>
-    <div class="flex rtl:flex-row-reverse">
-      <button
-        class="text-gray-700 text-xl hover:bg-purple-50 w-10 h-10 rounded-full"
-        mwlCalendarPreviousView
-        [view]="view"
-        [(viewDate)]="viewDate"
-      >
-        <fa-icon [icon]="faArrowLeft"></fa-icon>
-      </button>
-      <button
-        class="text-gray-700 text-xl hover:bg-purple-50 w-10 h-10 rounded-full"
-        mwlCalendarNextView
-        [view]="view"
-        [(viewDate)]="viewDate"
-      >
-        <fa-icon [icon]="faArrowRight"></fa-icon>
-      </button>
-    </div>
+    <button
+      class="text-gray-700 text-xl hover:bg-purple-50 w-10 h-10 rounded-full"
+      mwlCalendarPreviousView
+      [view]="view"
+      [(viewDate)]="viewDate"
+    >
+      <fa-icon class="rtl:hidden" [icon]="faArrowLeft"></fa-icon>
+      <fa-icon class="ltr:hidden" [icon]="faArrowRight"></fa-icon>
+    </button>
+    <button
+      class="text-gray-700 text-xl hover:bg-purple-50 w-10 h-10 rounded-full"
+      mwlCalendarNextView
+      [view]="view"
+      [(viewDate)]="viewDate"
+    >
+      <fa-icon class="ltr:hidden" [icon]="faArrowLeft"></fa-icon>
+      <fa-icon class="rtl:hidden" [icon]="faArrowRight"></fa-icon>
+    </button>
     <h3 class="text-3xl ms-5 font-semibold text-gray-900">
-      {{ viewDate | calendarDate : view + "ViewTitle" : "en" }}
+      {{ viewDate | calendarDate : view + "ViewTitle" : currentLocale }}
     </h3>
   </div>
 
@@ -66,6 +66,7 @@
       [weekendDays]="weekendDays"
       (dayClicked)="monthDayClicked($event.day)"
       (eventClicked)="viewDetails($event.event)"
+      [locale]="currentLocale"
     >
     </mwl-calendar-month-view>
     <mwl-calendar-week-view
@@ -77,6 +78,7 @@
       [weekendDays]="weekendDays"
       (dayHeaderClicked)="weekDayClicked($event.day)"
       (eventClicked)="viewDetails($event.event)"
+      [locale]="currentLocale"
     >
     </mwl-calendar-week-view>
     <mwl-calendar-day-view
@@ -85,6 +87,7 @@
       [events]="events"
       [refresh]="refresh"
       (eventClicked)="viewDetails($event.event)"
+      [locale]="currentLocale"
     >
     </mwl-calendar-day-view>
   </div>
@@ -92,24 +95,24 @@
 
 <app-modal [(isModalOpen)]="eventDetailsIsOpen">
   <div modalTitle class="font-semibold text-2xl mb-2">
-    Employee Shift Details
+    {{ "Employee Shift Details" | translate }}
   </div>
   <div class="max-w-7xl mx-auto p-4 sm:px-6 lg:px-8">
     <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
       <table class="border min-w-full divide-y divide-gray-200">
-        <thead class="bg-gray-100 rounded-t-lg">
+        <thead class="bg-gray-100 rounded-t-lg ltr:text-left rtl:text-right">
           <tr>
             <th
               scope="col"
-              class="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider"
+              class="px-6 py-3 font-medium text-gray-500 uppercase tracking-wider"
             >
-              Field
+              {{ "Field" | translate }}
             </th>
             <th
               scope="col"
-              class="px-6 py-3 text-left font-medium text-gray-500 uppercase tracking-wider"
+              class="px-6 py-3 font-medium text-gray-500 uppercase tracking-wider"
             >
-              Value
+              {{ "Value" | translate }}
             </th>
           </tr>
         </thead>
@@ -124,7 +127,7 @@
                 </tr> -->
           <tr class="hover:bg-gray-50">
             <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-              Employee Name
+              {{ "Employee Name" | translate }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-gray-500">
               {{ activeEventDetails?.employeeName }}
@@ -132,7 +135,7 @@
           </tr>
           <tr class="hover:bg-gray-50">
             <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-              Employee ID
+              {{ "Employee ID" | translate }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-gray-500">
               {{ activeEventDetails?.employeeId }}
@@ -140,7 +143,7 @@
           </tr>
           <tr class="hover:bg-gray-50">
             <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-              Employee Code
+              {{ "Employee Code" | translate }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-gray-500">
               {{ activeEventDetails?.employeeCode }}
@@ -148,7 +151,7 @@
           </tr>
           <tr class="hover:bg-gray-50">
             <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-              Date
+              {{ "Date" | translate }}
             </td>
             <td class="px-6 py-4 whitespace-nowrap text-gray-500">
               {{ activeEventDetails?.date | date : "dd/MM/yyyy" }}
@@ -156,7 +159,7 @@
           </tr>
           <tr class="hover:bg-gray-50">
             <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">
-              Shift Type
+              {{ "Shift Type" | translate }}
             </td>
             <td
               class="px-6 py-4 whitespace-nowrap text-gray-500"
@@ -164,7 +167,10 @@
                 'text-red-800 font-semibold': !activeEventDetails?.shiftType
               }"
             >
-              {{ activeEventDetails?.shiftType || "No Data Provided!" }}
+              {{
+                activeEventDetails?.shiftType ||
+                  ("No Data Provided!" | translate)
+              }}
             </td>
           </tr>
           <!-- <tr class="hover:bg-gray-50">

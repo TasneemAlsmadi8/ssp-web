@@ -8,6 +8,8 @@ import {
   availableLanguages,
   languageCodeMapping,
 } from '../interfaces/language';
+import { registerLocaleData } from '@angular/common';
+import localArJo from '@angular/common/locales/ar-JO';
 
 @Injectable({
   providedIn: 'root',
@@ -22,6 +24,8 @@ export class LanguageService {
     @Inject(PLATFORM_ID) platformId: Object
   ) {
     if (isPlatformBrowser(platformId)) {
+      registerLocaleData(localArJo);
+
       const localStorageLanguage = localStorage.getItem('Language');
 
       if (localStorageLanguage && languageCodeMapping[localStorageLanguage]) {

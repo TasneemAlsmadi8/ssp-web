@@ -187,8 +187,11 @@
   "Leave Requests History": "سجل الاجازات / المغادرات",
   "Loan Requests History": "سجل القروض",
 
-
-  "Shift System": "نظام الورديات",
+  "Shift System": "نظام المناوبات",
+  "Employee Shift Details": "تفاصيل مناوبة الموظف",
+  "Shift Type": "نوع المناوبة",
+  "Employee ID": "رقم الموظف المرجعي",
+  "Field": "الحقل",
 
   "Reports": "التقارير",
   "Show Report": "عرض التقرير",
