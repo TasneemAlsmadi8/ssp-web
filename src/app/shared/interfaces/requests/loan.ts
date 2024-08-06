@@ -51,7 +51,7 @@ export interface LoanRequestType extends ItemType {
 
 export interface LoanRequestUpdateApi {
   docEntry: string;
-  u_EmployeeID?: number;
+  u_EmployeeID: number;
   u_LoanType?: string;
   u_TotalAmount?: string;
   u_InstallmentCount?: string;

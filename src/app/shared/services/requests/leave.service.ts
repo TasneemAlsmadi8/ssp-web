@@ -66,9 +66,12 @@ export class LeaveRequestService
 
   cancel(id: string): Observable<any> {
     const url = `${this.url}/UpdateLeaveRequest`;
-    const body = {
+    const request = this.leaveRequestsStore.find((v) => v.id === id);
+    const body: LeaveRequestUpdateApi = {
       docEntry: id,
+      u_EmployeeID: this.user.id,
       u_Status: ItemStatus.Canceled,
+      u_FromDate: request?.fromDate.replaceAll('-', ''),
     };
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(
@@ -104,9 +107,13 @@ export class LeaveRequestService
     return this.http.get<LeaveRequestType[]>(url, this.httpOptions);
   }
 
-  update(data: LeaveRequestUpdate): Observable<any> {
+  update(data: LeaveRequestUpdate, employeeId?: string): Observable<any> {
+    if (!employeeId) employeeId = this.user.id;
     const url = this.url + '/UpdateLeaveRequest';
-    const body: LeaveRequestUpdateApi = LeaveRequestAdapter.updateToApi(data);
+    const body: LeaveRequestUpdateApi = LeaveRequestAdapter.updateToApi(
+      data,
+      employeeId
+    );
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(
       tap(() => {
@@ -227,9 +234,13 @@ class LeaveRequestAdapter {
     return obj;
   }
 
-  static updateToApi(updateSchema: LeaveRequestUpdate): LeaveRequestUpdateApi {
+  static updateToApi(
+    updateSchema: LeaveRequestUpdate,
+    employeeId: string
+  ): LeaveRequestUpdateApi {
     const obj: LeaveRequestUpdateApi = {
       docEntry: updateSchema.id,
+      u_EmployeeID: employeeId,
       u_LeaveType: updateSchema.leaveCode,
       u_FromDate: updateSchema.fromDate?.replaceAll('-', ''),
       u_ToDate: updateSchema.toDate?.replaceAll('-', ''),

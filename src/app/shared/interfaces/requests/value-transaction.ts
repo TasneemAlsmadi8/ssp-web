@@ -52,9 +52,9 @@ export interface ValueTransactionRequestType extends ItemType {
 }
 
 export interface ValueTransactionRequestUpdateApi {
-  u_EmployeeID?: string;
-
   docEntry: string;
+  u_EmployeeID: string;
+  
   u_ValueTranType?: string;
   u_TranValue?: string;
   u_Date?: string;

@@ -24,7 +24,7 @@ export interface GenericRequestService<
 
   getTypes(): Observable<V[]>;
 
-  update(body: U): Observable<any>;
+  update(body: U, employeeId?: string): Observable<any>;
 
   add(body: A): Observable<any>;
 }

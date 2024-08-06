@@ -66,9 +66,12 @@ export class EncashmentRequestService
   cancel(id: string): Observable<any> {
     //TODO: Check why does not work
     const url = `${this.url}/UpdateEncashRequest`;
-    const body = {
+    const request = this.encashmentRequestsStore.find((v) => v.id === id);
+    const body: EncashmentRequestUpdateApi = {
       docEntry: id,
+      u_EmployeeID: this.user.id,
       u_Status: ItemStatus.Canceled,
+      u_Date: request?.date.replaceAll('-', ''),
     };
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(
@@ -102,10 +105,11 @@ export class EncashmentRequestService
     return this.http.get<EncashmentRequestType[]>(url, this.httpOptions);
   }
 
-  update(data: EncashmentRequestUpdate): Observable<any> {
+  update(data: EncashmentRequestUpdate, employeeId?: string): Observable<any> {
+    if (!employeeId) employeeId = this.user.id;
     const url = this.url + '/UpdateEncashRequest';
     const body: EncashmentRequestUpdateApi =
-      EncashmentRequestAdapter.updateToApi(data);
+      EncashmentRequestAdapter.updateToApi(data, employeeId);
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(
       tap(() => {
@@ -200,10 +204,12 @@ class EncashmentRequestAdapter {
   }
 
   static updateToApi(
-    updateSchema: EncashmentRequestUpdate
+    updateSchema: EncashmentRequestUpdate,
+    employeeId: string
   ): EncashmentRequestUpdateApi {
     const obj: EncashmentRequestUpdateApi = {
       docEntry: updateSchema.id,
+      u_EmployeeID: employeeId,
       u_EncashType: updateSchema.encashCode,
       u_Date: updateSchema.date?.replaceAll('-', ''),
       u_UnitPrice: updateSchema.unitPrice?.toString(),

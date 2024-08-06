@@ -101,6 +101,7 @@ export interface LeaveRequestGetById {
 
 export interface LeaveRequestUpdateApi {
   docEntry: string;
+  u_EmployeeID: string;
 
   //edit for pending
   u_LeaveType?: string;
@@ -111,7 +112,6 @@ export interface LeaveRequestUpdateApi {
   u_Remarks?: string;
 
   // //static
-  u_EmployeeID?: string;
   u_PaidDays?: number;
   u_UnpaidDays?: number;
 

@@ -69,9 +69,12 @@ export class ValueTransactionRequestService
 
   cancel(id: string): Observable<any> {
     const url = `${this.url}/UpdateValueTranRequest`;
-    const body = {
+    const request = this.valueTransactionRequestsStore.find((v) => v.id === id);
+    const body: ValueTransactionRequestUpdateApi = {
       docEntry: id,
       u_Status: ItemStatus.Canceled,
+      u_EmployeeID: this.user.id,
+      u_Date: request?.date.replaceAll('-', ''),
     };
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(
@@ -106,10 +109,14 @@ export class ValueTransactionRequestService
     return this.valueTransactionTypesStore.observable$;
   }
 
-  update(data: ValueTransactionRequestUpdate): Observable<any> {
+  update(
+    data: ValueTransactionRequestUpdate,
+    employeeId?: string
+  ): Observable<any> {
+    if (!employeeId) employeeId = this.user.id;
     const url = this.url + '/UpdateValueTranRequest';
 
-    const body = ValueTransactionRequestAdapter.updateToApi(data);
+    const body = ValueTransactionRequestAdapter.updateToApi(data, employeeId);
     return this.http.patch<any>(url, body, this.httpOptions).pipe(
       tap(() => {
         const updatedValueTransactionRequests =
@@ -178,10 +185,12 @@ class ValueTransactionRequestAdapter {
   }
 
   static updateToApi(
-    updateSchema: ValueTransactionRequestUpdate
+    updateSchema: ValueTransactionRequestUpdate,
+    employeeId: string
   ): ValueTransactionRequestUpdateApi {
     const obj: ValueTransactionRequestUpdateApi = {
       docEntry: updateSchema.id,
+      u_EmployeeID: employeeId,
       u_ValueTranType: updateSchema.valueTranCode,
       u_TranValue: updateSchema.value?.toString(),
       u_Date: updateSchema.date?.replaceAll('-', ''),

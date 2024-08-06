@@ -67,7 +67,8 @@ export interface OvertimeRequestType extends ItemType {
 
 export interface OvertimeRequestUpdateApi {
   docEntry: string;
-  u_EmployeeID?: string;
+  u_EmployeeID: string;
+
   u_OvType?: string;
   u_FromDate?: string;
   u_ToDate?: string;

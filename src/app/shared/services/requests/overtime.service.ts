@@ -69,9 +69,12 @@ export class OvertimeRequestService
 
   cancel(id: string): Observable<any> {
     const url = `${this.url}/UpdateOvertimeRequest`;
-    const body = {
+    const request = this.overtimeRequestsStore.find((v) => v.id === id);
+    const body: OvertimeRequestUpdateApi = {
       docEntry: id,
       u_Status: ItemStatus.Canceled,
+      u_EmployeeID: this.user.id,
+      u_FromDate: request?.date.replaceAll('-', ''),
     };
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(
@@ -110,11 +113,14 @@ export class OvertimeRequestService
     return this.http.get<OvertimeRequestType[]>(url, this.httpOptions);
   }
 
-  update(data: OvertimeRequestUpdate): Observable<any> {
+  update(data: OvertimeRequestUpdate, employeeId?: string): Observable<any> {
+    if (!employeeId) employeeId = this.user.id;
     const url = this.url + '/UpdateOvertimeRequest';
 
-    const body: OvertimeRequestUpdateApi =
-      OvertimeRequestAdapter.updateToApi(data);
+    const body: OvertimeRequestUpdateApi = OvertimeRequestAdapter.updateToApi(
+      data,
+      employeeId
+    );
     return this.http.patch<any>(url, body, this.httpOptions).pipe(
       tap(() => {
         const updatedOvertimeRequests = this.overtimeRequestsStore
@@ -195,10 +201,12 @@ class OvertimeRequestAdapter {
   }
 
   static updateToApi(
-    updateSchema: OvertimeRequestUpdate
+    updateSchema: OvertimeRequestUpdate,
+    employeeId: string
   ): OvertimeRequestUpdateApi {
     const obj: OvertimeRequestUpdateApi = {
       docEntry: updateSchema.id,
+      u_EmployeeID: employeeId,
       u_OvType: updateSchema.overtimeCode,
       u_FromDate: updateSchema.fromDate?.replaceAll('-', ''),
       u_ToDate: updateSchema.toDate?.replaceAll('-', ''),

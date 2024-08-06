@@ -1,6 +1,6 @@
 import { Item, ItemType } from '../generic-item';
 
-export interface EncashmentRequest extends Item{
+export interface EncashmentRequest extends Item {
   id: string;
   encashName: string;
   encashCode: string;
@@ -65,16 +65,17 @@ export interface EncashmentRequestType extends ItemType {
 }
 
 export interface EncashmentRequestUpdateApi {
-  u_EmployeeID?: string;
-
   docEntry: string;
+  u_EmployeeID: string;
+
   u_EncashType?: string;
   u_Date?: string;
   u_UnitPrice?: string;
   u_UnitCount?: string;
   u_ProjectCode?: string;
   u_Remarks?: string;
-
+  u_Status?: string;
+  
   u_EncashValue?: string;
   u_AttachFile?: string;
 }

@@ -62,9 +62,13 @@ export class LoanRequestService
 
   cancel(id: string): Observable<any> {
     const url = `${this.url}/UpdateLoanRequest`;
-    const body = {
+    const request = this.loanRequestsStore.find((v) => v.id === id);
+
+    const body: LoanRequestUpdateApi = {
       docEntry: id,
+      u_EmployeeID: parseInt(this.user.id),
       u_Status: ItemStatus.Canceled,
+      u_StartDate: request?.startDate.replaceAll('-', ''),
     };
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(
@@ -96,9 +100,13 @@ export class LoanRequestService
     return this.loanTypesStore.observable$;
   }
 
-  update(data: LoanRequestUpdate): Observable<any> {
+  update(data: LoanRequestUpdate, employeeId?: string): Observable<any> {
+    if (!employeeId) employeeId = this.user.id;
     const url = this.url + '/UpdateLoanRequest';
-    const body: LoanRequestUpdateApi = LoanRequestAdapter.updateToApi(data);
+    const body: LoanRequestUpdateApi = LoanRequestAdapter.updateToApi(
+      data,
+      employeeId
+    );
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(
       tap(() => {
@@ -185,9 +193,13 @@ class LoanRequestAdapter {
     return obj;
   }
 
-  static updateToApi(updateSchema: LoanRequestUpdate): LoanRequestUpdateApi {
+  static updateToApi(
+    updateSchema: LoanRequestUpdate,
+    employeeId: string
+  ): LoanRequestUpdateApi {
     const obj: LoanRequestUpdateApi = {
       docEntry: updateSchema.id,
+      u_EmployeeID: parseInt(employeeId),
       u_LoanType: updateSchema.loanCode,
       u_TotalAmount: updateSchema.totalAmount?.toString(),
       u_InstallmentCount: updateSchema.installmentCount?.toString(),

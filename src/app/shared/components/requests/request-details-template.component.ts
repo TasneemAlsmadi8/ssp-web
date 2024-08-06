@@ -202,7 +202,7 @@ export abstract class RequestDetailsComponentTemplate<
     this.onSave.emit(this.item);
     const data = this.mapFormToUpdateRequest(this.form.value);
     this.requestService
-      .update(data)
+      .update(data, this.item.employeeId)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: (res) => {
