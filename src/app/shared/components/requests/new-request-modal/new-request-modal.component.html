@@ -1,5 +1,9 @@
 <div class="fixed end-7 bottom-6 group">
-  <app-modal [isFooterHidden]="true" (onCancel)="onCancel.emit()">
+  <app-modal
+    [isFooterHidden]="true"
+    (onCancel)="onCancel.emit()"
+    [(isModalOpen)]="isOpen"
+  >
     <button
       openButton
       title="New"

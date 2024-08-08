@@ -12,5 +12,15 @@ import { TranslateModule } from '@ngx-translate/core';
 })
 export class NewRequestModalComponent {
   @Input({ required: true }) title!: string;
+  @Input() set isOpen(value) {
+    this._isOpen = value;
+    this.isOpenChange.emit(value);
+  }
+  @Output() isOpenChange: EventEmitter<any> = new EventEmitter();
   @Output() onCancel: EventEmitter<any> = new EventEmitter();
+
+  private _isOpen = false;
+  get isOpen() {
+    return this._isOpen;
+  }
 }

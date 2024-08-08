@@ -35,6 +35,7 @@ export abstract class NewRequestComponentTemplate<
   implements OnInit, FormErrorMessageBehavior
 {
   isLoading: boolean = false;
+  isOpen: boolean = false;
   user: User;
   form: FormGroup;
 
@@ -176,6 +177,7 @@ export abstract class NewRequestComponentTemplate<
 
           this.setInputsDefaultValues();
           this.onSave.emit(this.item);
+          this.isOpen = false;
         },
         error: (err: HttpErrorResponse) => {
           this.userAlertService.showError('Error!', err.error);
