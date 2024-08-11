@@ -20,8 +20,10 @@ import {
 } from 'src/app/shared/components/requests/request-details-template.component';
 import { TranslateModule } from '@ngx-translate/core';
 import {
+  greaterThan,
   greaterThanOrEqual,
   relativeErrorMessages,
+  smallerThan,
   smallerThanOrEqual,
 } from 'src/app/shared/utils/relative-validators';
 
@@ -50,14 +52,8 @@ export class LeaveRequestDetailsComponent extends RequestDetailsComponentTemplat
   constructor(private leaveRequestService: LeaveRequestService) {
     super(leaveRequestService, {
       leaveType: ['', [Validators.required]],
-      fromTime: [
-        '',
-        [Validators.required, smallerThanOrEqual('toTime', 'To Time')],
-      ],
-      toTime: [
-        '',
-        [Validators.required, greaterThanOrEqual('fromTime', 'From Time')],
-      ],
+      fromTime: ['', [Validators.required, smallerThan('toTime', 'To Time')]],
+      toTime: ['', [Validators.required, greaterThan('fromTime', 'From Time')]],
       fromDate: [
         '',
         [Validators.required, smallerThanOrEqual('toDate', 'To Time')],

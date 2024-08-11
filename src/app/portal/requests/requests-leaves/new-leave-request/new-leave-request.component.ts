@@ -70,12 +70,9 @@ export class NewLeaveRequestComponent extends NewRequestComponentTemplate<
       leaveType: ['', [Validators.required]],
       fromTime: [
         '08:00',
-        [Validators.required, smallerThanOrEqual('toTime', 'To Time')],
+        [Validators.required, smallerThan('toTime', 'To Time')],
       ],
-      toTime: [
-        '08:00',
-        [Validators.required, greaterThanOrEqual('fromTime', 'From Time')],
-      ],
+      toTime: ['', [Validators.required, greaterThan('fromTime', 'From Time')]],
       fromDate: [
         today,
         [Validators.required, smallerThanOrEqual('toDate', 'To Time')],
