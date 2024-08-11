@@ -63,7 +63,7 @@
           >
             {{ "Password" | translate }}
           </h3>
-          <div class="relative h-11 w-full min-w-[200px]">
+          <div class="relative w-full min-w-[200px] h-fit">
             <div
               class="absolute grid w-5 h-5 place-items-center text-blue-gray-500 top-2/4 left-3 rtl:right-3 rtl:-scale-x-100 -translate-y-2/4"
             >
@@ -77,11 +77,11 @@
                 ></path>
               </svg>
             </div>
-            <input
-              type="password"
-              placeholder="password"
+            <app-password-input
+              [formGroup]="loginForm"
               formControlName="password"
-              class="ps-10 h-full w-full rounded-md border-2 border-primary-200 bg-transparent px-3 py-3 font-sans text-base font-normal transition-all disabled:border-0 disabled:bg-blue-gray-50"
+              placeholder="password"
+              customClasses="ps-10 h-11 w-full rounded-md border-2 border-primary-200 bg-transparent px-3 py-3 font-sans text-base font-normal transition-all disabled:border-0 disabled:bg-blue-gray-50"
             />
             <span
               *ngIf="

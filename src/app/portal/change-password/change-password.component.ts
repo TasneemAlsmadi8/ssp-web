@@ -20,11 +20,19 @@ import {
   matchingPasswords,
   weakPasswordValidator,
 } from 'src/app/shared/utils/password-validators';
+import { PasswordInputComponent } from 'src/app/shared/components/password-input/password-input.component';
+import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
   selector: 'app-change-password',
   standalone: true,
-  imports: [CommonModule, ModalComponent, ReactiveFormsModule, TranslateModule],
+  imports: [
+    CommonModule,
+    ModalComponent,
+    ReactiveFormsModule,
+    TranslateModule,
+    PasswordInputComponent,
+  ],
   templateUrl: './change-password.component.html',
   styleUrls: ['./change-password.component.scss'],
 })
@@ -44,7 +52,7 @@ export class ChangePasswordComponent
     super();
     this.form = this.fb.group({
       oldPassword: ['', [Validators.required]],
-      newPassword: ['', [Validators.required, weakPasswordValidator]],
+      newPassword: ['', [Validators.required /*, weakPasswordValidator*/]],
       confirmNewPassword: [
         '',
         [Validators.required, matchingPasswords('newPassword')],
@@ -110,9 +118,10 @@ export class ChangePasswordComponent
     this.userAlertService.showLoading('Changing Password...');
     const oldPassword: string = this.form.value.oldPassword;
     const newPassword: string = this.form.value.newPassword;
+    const confirmNewPassword: string = this.form.value.confirmNewPassword;
 
     this.authService
-      .changePassword(oldPassword, newPassword)
+      .changePassword(oldPassword, newPassword, confirmNewPassword)
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
@@ -121,11 +130,9 @@ export class ChangePasswordComponent
             'Password changed successfully'
           );
         },
-        error: () => {
-          this.userAlertService.showError(
-            'Error!',
-            'Failed to change password'
-          );
+        error: (err: HttpErrorResponse) => {
+          console.log(err);
+          this.userAlertService.showError('Error!', err.error);
         },
       });
   }

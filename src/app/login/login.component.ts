@@ -8,17 +8,16 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { faKey } from '@fortawesome/free-solid-svg-icons';
 import { UserLogin } from '../shared/interfaces/user';
 import { AuthService } from '../shared/services/auth.service';
 import { takeUntil } from 'rxjs';
 import { DestroyBaseComponent } from '../shared/base/destroy-base.component';
 import { Router } from '@angular/router';
 import { HttpErrorResponse, HttpStatusCode } from '@angular/common/http';
-import { InputComponent } from '../shared/components/input/input.component';
 import { TranslateModule } from '@ngx-translate/core';
 import { LanguageService } from '../shared/services/language.service';
 import { UserAlertService } from '../shared/services/user-alert.service';
+import { PasswordInputComponent } from '../shared/components/password-input/password-input.component';
 
 @Component({
   selector: 'app-login',
@@ -28,14 +27,13 @@ import { UserAlertService } from '../shared/services/user-alert.service';
     CommonModule,
     ReactiveFormsModule,
     FontAwesomeModule,
-    InputComponent,
     TranslateModule,
+    PasswordInputComponent,
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss'],
 })
 export class LoginComponent extends DestroyBaseComponent implements OnInit {
-  faCoffee = faKey;
   isLoading = false;
   loginForm = new FormGroup({
     username: new FormControl('', [Validators.required]),

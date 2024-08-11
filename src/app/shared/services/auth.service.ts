@@ -34,12 +34,17 @@ export class AuthService extends BaseService {
     this.localUserService.removeUser();
   }
 
-  changePassword(oldPassword: string, newPassword: string): Observable<any> {
+  changePassword(
+    oldPassword: string,
+    newPassword: string,
+    confirmNewPassword: string
+  ): Observable<any> {
     const url = `${this.url}/ChangePassword`;
     const body: ChangePassword = {
       employeeID: this.localUserService.getUser().id,
       oldPassword: oldPassword,
       newPassword: newPassword,
+      confirmNewPassword: confirmNewPassword,
     };
 
     return this.http.patch<any>(url, body, this.httpOptions);
