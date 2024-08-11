@@ -57,7 +57,7 @@ export abstract class RequestPageComponentTemplate<Request extends Item>
   }
 
   isEditable(item: Request): boolean {
-    return item.status === 'Pending' || item.status === 'Rejected';
+    return item.status === 'Pending';
   }
 
   isCancelable(item: Request): boolean {
