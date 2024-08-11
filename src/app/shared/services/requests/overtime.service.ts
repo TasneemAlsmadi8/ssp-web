@@ -75,6 +75,8 @@ export class OvertimeRequestService
       u_Status: ItemStatus.Canceled,
       u_EmployeeID: this.user.id,
       u_FromDate: request?.date.replaceAll('-', ''),
+      u_OvHour: request?.hour.toString(),
+      u_OvMin: request?.minute.toString(),
     };
 
     return this.http.patch<any>(url, body, this.httpOptions).pipe(

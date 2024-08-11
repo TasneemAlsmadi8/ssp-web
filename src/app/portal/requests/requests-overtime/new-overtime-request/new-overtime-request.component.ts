@@ -71,7 +71,7 @@ export class NewOvertimeRequestComponent extends NewRequestComponentTemplate<
           0,
           [Validators.required, Validators.min(0), Validators.max(59)],
         ],
-        project: ['', [Validators.required]],
+        project: [''],
         remarks: [''],
       },
       {

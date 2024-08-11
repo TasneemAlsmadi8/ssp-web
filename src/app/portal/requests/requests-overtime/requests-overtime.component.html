@@ -16,6 +16,7 @@
         <th scope="col" class="px-6 py-3">{{ "Date" | translate }}</th>
         <!-- <th scope="col" class="px-6 py-3">{{ "From Date" | translate }}</th> -->
         <!-- <th scope="col" class="px-6 py-3">{{ "To Date" | translate }}</th> -->
+        <th scope="col" class="px-6 py-3">{{ "Type" | translate }}</th>
         <th scope="col" class="px-6 py-3">{{ "Total Time" | translate }}</th>
         <!-- <th scope="col" class="px-6 py-3">{{ "Hours" | translate }}</th> -->
         <!-- <th scope="col" class="px-6 py-3">{{ "Minutes" | translate }}</th> -->
@@ -43,6 +44,7 @@
         <td class="px-6 py-4">
           {{ req.date | date : "dd/MM/yyyy" }}
         </td>
+        <td class="px-6 py-4">{{ req.overtimeType || req.overtimeCode }}</td>
         <td class="px-6 py-4">
           {{
             req.hour.toString().padStart(2, "0") +
