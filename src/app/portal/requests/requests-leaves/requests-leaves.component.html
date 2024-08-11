@@ -21,12 +21,12 @@
           {{ "From Date" | translate }}
         </th>
         <th scope="col" class="px-6 py-3 hidden xl:table-cell">
+          {{ "To Date" | translate }}
+        </th>
+        <th scope="col" class="px-6 py-3 hidden xl:table-cell">
           {{ "From Time" | translate }}
         </th>
         <th scope="col" class="px-6 py-3 xl:hidden">{{ "To" | translate }}</th>
-        <th scope="col" class="px-6 py-3 hidden xl:table-cell">
-          {{ "To Date" | translate }}
-        </th>
         <th scope="col" class="px-6 py-3 hidden xl:table-cell">
           {{ "To Time" | translate }}
         </th>
@@ -45,23 +45,23 @@
         >
           {{ req.id }}
         </th>
-
         <td class="px-6 py-4">{{ req.status }}</td>
         <td class="px-6 py-4">{{ req.leaveType }}</td>
-        <td class="px-6 py-4 xl:hidden">
-          {{ req.fromTime + " - " + (req.fromDate | date : "dd/MM/yyyy") }}
-        </td>
+
         <td class="px-6 py-4 hidden xl:table-cell">
           {{ req.fromDate | date : "dd/MM/yyyy" }}
-        </td>
-        <td class="px-6 py-4 hidden xl:table-cell">{{ req.fromTime }}</td>
-        <td class="px-6 py-4 xl:hidden">
-          {{ req.toTime + " - " + (req.toDate | date : "dd/MM/yyyy") }}
         </td>
         <td class="px-6 py-4 hidden xl:table-cell">
           {{ req.toDate | date : "dd/MM/yyyy" }}
         </td>
+        <td class="px-6 py-4 hidden xl:table-cell">{{ req.fromTime }}</td>
         <td class="px-6 py-4 hidden xl:table-cell">{{ req.toTime }}</td>
+        <td class="px-6 py-4 xl:hidden">
+          {{ req.fromTime + " - " + (req.fromDate | date : "dd/MM/yyyy") }}
+        </td>
+        <td class="px-6 py-4 xl:hidden">
+          {{ req.toTime + " - " + (req.toDate | date : "dd/MM/yyyy") }}
+        </td>
         <td class="px-6 py-4 flex justify-center gap-2">
           <app-request-details-button
             (click)="setActiveItemDetails(req)"
