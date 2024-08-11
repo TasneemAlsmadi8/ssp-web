@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
   LeaveRequest,
@@ -43,6 +43,9 @@ export class LeaveRequestDetailsComponent extends RequestDetailsComponentTemplat
   LeaveRequestUpdate
 > {
   leaveTypes!: LeaveRequestType[];
+
+  paidDays!: number;
+  unpaidDays!: number;
 
   constructor(private leaveRequestService: LeaveRequestService) {
     super(leaveRequestService, {
@@ -121,6 +124,36 @@ export class LeaveRequestDetailsComponent extends RequestDetailsComponentTemplat
     }
 
     return null;
+  }
+
+  override ngOnChanges(changes: SimpleChanges): void {
+    super.ngOnChanges(changes);
+    if (changes['item']) {
+      this.paidDays = this.item.paidDays;
+      this.unpaidDays = this.item.unpaidDays;
+    }
+  }
+
+  override updateCalculatedValues(): void {
+    this.updateLeaveDays();
+  }
+
+  private updateLeaveDays() {
+    const fromDate = this.form.get('fromDate')?.value;
+    const toDate = this.form.get('toDate')?.value;
+    const fromTime = this.form.get('fromTime')?.value;
+    const toTime = this.form.get('toTime')?.value;
+    const leaveType = this.form.get('leaveType')?.value;
+
+    if (fromDate === toDate && fromTime === toTime) return;
+    if (fromDate && toDate && fromTime && toTime && leaveType) {
+      this.leaveRequestService
+        .getLeaveDays(leaveType, fromDate, toDate, fromTime, toTime)
+        .pipe(takeUntil(this.destroy$))
+        .subscribe((value) => {
+          [this.paidDays, this.unpaidDays] = value;
+        });
+    }
   }
 
   isTimeInputHidden() {
