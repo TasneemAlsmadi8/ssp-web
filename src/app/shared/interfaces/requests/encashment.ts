@@ -28,7 +28,6 @@ export interface EncashmentRequestUpdate {
 export interface EncashmentRequestAdd {
   encashCode: string;
   date: string;
-  unitPrice: number;
   unitCount: number;
   projectCode: string;
   remarks?: string;
@@ -84,12 +83,12 @@ export interface EncashmentRequestAddApi {
   u_EmployeeID: string;
   u_EncashType: string;
   u_Date: string;
-  u_UnitPrice: string;
   u_UnitCount: string;
   u_ProjectCode: string;
   u_Remarks?: string;
-
+  
   u_EncashValue?: string;
+  u_UnitPrice?: string;
 
   u_AttachFile?: string;
   u_ValueTranDocEntry?: string;

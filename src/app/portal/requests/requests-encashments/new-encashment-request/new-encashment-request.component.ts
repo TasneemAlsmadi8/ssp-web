@@ -66,7 +66,6 @@ export class NewEncashmentRequestComponent extends NewRequestComponentTemplate<
     const today = new Date().toISOString().slice(0, 10);
     super(encashmentRequestService, {
       encashmentType: ['', [Validators.required]],
-      unitPrice: [0, [Validators.min(0)]],
       unitCount: [1, [Validators.required, Validators.min(1)]],
       date: [today, [Validators.required]],
       project: [''],
@@ -80,7 +79,6 @@ export class NewEncashmentRequestComponent extends NewRequestComponentTemplate<
       // TODO: should I send it?
       encashCode: formValues.encashmentType,
       date: formValues.date,
-      unitPrice: formValues.unitPrice,
       unitCount: formValues.unitCount,
       projectCode: formValues.project,
       remarks: formValues.remarks ?? undefined,
@@ -121,12 +119,10 @@ export class NewEncashmentRequestComponent extends NewRequestComponentTemplate<
 
   override resetInvalidInputs(): void {
     const unitCountControl = this.form.get('unitCount');
-    const unitPriceControl = this.form.get('unitPrice');
-    if (!unitCountControl || !unitPriceControl)
+    if (!unitCountControl)
       throw new Error('Invalid form Control');
 
     limitNumberInput(unitCountControl);
-    limitNumberInput(unitPriceControl);
   }
 
   private updateEncashValue(

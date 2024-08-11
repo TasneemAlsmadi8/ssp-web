@@ -51,7 +51,6 @@ export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTe
   ) {
     super(encashmentRequestService, {
       encashmentType: ['', [Validators.required]],
-      unitPrice: ['', [Validators.min(0)]],
       date: ['', [Validators.required]],
       unitCount: ['', [Validators.required, Validators.min(1)]],
       project: [''],
@@ -133,7 +132,6 @@ export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTe
   ): FormValues<typeof this.formControls> {
     return {
       encashmentType: item.encashCode,
-      unitPrice: item.unitPrice,
       unitCount: item.unitCount,
       date: item.date,
       project: item.projectCode,
@@ -149,7 +147,6 @@ export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTe
       // TODO: should I send it?
       encashCode: formValues.encashmentType ?? undefined,
       date: formValues.date ?? undefined,
-      unitPrice: formValues.unitPrice?.toString() ?? undefined,
       unitCount: formValues.unitCount?.toString() ?? undefined,
       projectCode: formValues.project ?? undefined,
       remarks: formValues.remarks ?? undefined,
@@ -159,11 +156,8 @@ export class EncashmentRequestDetailsComponent extends RequestDetailsComponentTe
   }
   override resetInvalidInputs(): void {
     const unitCountControl = this.form.get('unitCount');
-    const unitPriceControl = this.form.get('unitPrice');
-    if (!unitCountControl || !unitPriceControl)
-      throw new Error('Invalid form Control');
+    if (!unitCountControl) throw new Error('Invalid form Control');
 
     limitNumberInput(unitCountControl);
-    limitNumberInput(unitPriceControl);
   }
 }

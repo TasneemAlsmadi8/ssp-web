@@ -68,26 +68,6 @@
           <h3
             class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
           >
-            {{ "Unit Price" | translate }}
-          </h3>
-          <div class="relative h-11 w-full min-w-[200px]">
-            <input
-              formControlName="unitPrice"
-              type="number"
-              class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-base font-normal transition-all disabled:bg-gray-100"
-              [ngClass]="{
-                'invalid-input': shouldDisplayError('unitPrice')
-              }"
-            />
-            <span *ngIf="shouldDisplayError('unitPrice')" class="error-message">
-              {{ getErrorMessage("unitPrice") }}
-            </span>
-          </div>
-        </div>
-        <div class="col-span-3 flex flex-col">
-          <h3
-            class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
-          >
             {{ "Date" | translate }}
           </h3>
           <div class="relative h-11 w-full min-w-[200px]">

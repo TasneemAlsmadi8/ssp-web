@@ -194,7 +194,6 @@ class EncashmentRequestAdapter {
       u_EmployeeID: employeeId,
       u_EncashType: addSchema.encashCode,
       u_Date: addSchema.date.replaceAll('-', ''),
-      u_UnitPrice: addSchema.unitPrice.toString(),
       u_UnitCount: addSchema.unitCount.toString(),
       u_ProjectCode: addSchema.projectCode,
       u_Remarks: addSchema.remarks,
