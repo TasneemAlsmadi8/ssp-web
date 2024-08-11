@@ -47,7 +47,6 @@ export class LeaveRequestService
     super();
 
     this.leaveRequestsStore.setDefaultSortByKeys([
-      { key: 'fromDate', ascending: false },
       { key: 'id', ascending: false },
     ]);
   }
