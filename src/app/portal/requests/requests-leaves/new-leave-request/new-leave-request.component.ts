@@ -81,7 +81,7 @@ export class NewLeaveRequestComponent extends NewRequestComponentTemplate<
         [Validators.required, smallerThanOrEqual('toDate', 'To Time')],
       ],
       toDate: [
-        today,
+        '',
         [Validators.required, greaterThanOrEqual('fromDate', 'To Time')],
       ],
       remarks: [''],
@@ -166,11 +166,16 @@ export class NewLeaveRequestComponent extends NewRequestComponentTemplate<
   ): string | null {
     for (let error in relativeErrorMessages) {
       if (control.hasError(error))
-        return `${this.translate.instant(
-          relativeErrorMessages[error]
-        )} ${control.getError(error)?.otherControlTitle}`;
+        return `${this.translate.instant(relativeErrorMessages[error])} ${
+          control.getError(error)?.otherControlTitle
+        }`;
     }
 
     return null;
+  }
+
+  isTimeInputHidden() {
+    const { fromDate, toDate } = this.form.value;
+    return fromDate !== toDate;
   }
 }

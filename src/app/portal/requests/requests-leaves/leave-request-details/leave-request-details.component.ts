@@ -7,7 +7,11 @@ import {
 } from 'src/app/shared/interfaces/requests/leave';
 import { ModalComponent } from 'src/app/shared/components/modal/modal.component';
 import { FontAwesomeModule } from '@fortawesome/angular-fontawesome';
-import { AbstractControl, ReactiveFormsModule, Validators } from '@angular/forms';
+import {
+  AbstractControl,
+  ReactiveFormsModule,
+  Validators,
+} from '@angular/forms';
 import { LeaveRequestService } from 'src/app/shared/services/requests/leave.service';
 import { takeUntil } from 'rxjs';
 import {
@@ -111,11 +115,16 @@ export class LeaveRequestDetailsComponent extends RequestDetailsComponentTemplat
   ): string | null {
     for (let error in relativeErrorMessages) {
       if (control.hasError(error))
-        return `${this.translate.instant(
-          relativeErrorMessages[error]
-        )} ${control.getError(error)?.otherControlTitle}`;
+        return `${this.translate.instant(relativeErrorMessages[error])} ${
+          control.getError(error)?.otherControlTitle
+        }`;
     }
 
     return null;
+  }
+
+  isTimeInputHidden() {
+    const { fromDate, toDate } = this.form.value;
+    return fromDate !== toDate;
   }
 }

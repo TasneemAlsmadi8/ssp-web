@@ -86,42 +86,6 @@
         <h3
           class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
         >
-          {{ "From Time" | translate }}
-        </h3>
-        <div class="relative h-11 w-full min-w-[200px]">
-          <input
-            formControlName="fromTime"
-            type="time"
-            class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-base font-normal transition-all disabled:bg-gray-100"
-            [ngClass]="{ 'invalid-input': shouldDisplayError('fromTime') }"
-          />
-          <span *ngIf="shouldDisplayError('fromTime')" class="error-message">
-            {{ getErrorMessage("fromTime") }}
-          </span>
-        </div>
-      </div>
-      <div class="col-span-3 flex flex-col">
-        <h3
-          class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
-        >
-          {{ "To Time" | translate }}
-        </h3>
-        <div class="relative h-11 w-full min-w-[200px]">
-          <input
-            formControlName="toTime"
-            type="time"
-            class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-base font-normal transition-all disabled:bg-gray-100"
-            [ngClass]="{ 'invalid-input': shouldDisplayError('toTime') }"
-          />
-          <span *ngIf="shouldDisplayError('toTime')" class="error-message">
-            {{ getErrorMessage("toTime") }}
-          </span>
-        </div>
-      </div>
-      <div class="col-span-3 flex flex-col">
-        <h3
-          class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
-        >
           {{ "From Date" | translate }}
         </h3>
         <div class="relative h-11 w-full min-w-[200px]">
@@ -151,6 +115,52 @@
           />
           <span *ngIf="shouldDisplayError('toDate')" class="error-message">
             {{ getErrorMessage("toDate") }}
+          </span>
+        </div>
+      </div>
+      <div
+        class="col-span-3 flex flex-col"
+        [ngClass]="{
+          hidden: isTimeInputHidden()
+        }"
+      >
+        <h3
+          class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
+        >
+          {{ "From Time" | translate }}
+        </h3>
+        <div class="relative h-11 w-full min-w-[200px]">
+          <input
+            formControlName="fromTime"
+            type="time"
+            class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-base font-normal transition-all disabled:bg-gray-100"
+            [ngClass]="{ 'invalid-input': shouldDisplayError('fromTime') }"
+          />
+          <span *ngIf="shouldDisplayError('fromTime')" class="error-message">
+            {{ getErrorMessage("fromTime") }}
+          </span>
+        </div>
+      </div>
+      <div
+        class="col-span-3 flex flex-col"
+        [ngClass]="{
+          hidden: isTimeInputHidden()
+        }"
+      >
+        <h3
+          class="text-lg pb-1 antialiased font-semibold leading-relaxed tracking-normal text-blue-gray-900"
+        >
+          {{ "To Time" | translate }}
+        </h3>
+        <div class="relative h-11 w-full min-w-[200px]">
+          <input
+            formControlName="toTime"
+            type="time"
+            class="h-full w-full rounded-md border-2 border-gray-200 bg-transparent px-3 py-3 font-sans text-base font-normal transition-all disabled:bg-gray-100"
+            [ngClass]="{ 'invalid-input': shouldDisplayError('toTime') }"
+          />
+          <span *ngIf="shouldDisplayError('toTime')" class="error-message">
+            {{ getErrorMessage("toTime") }}
           </span>
         </div>
       </div>
