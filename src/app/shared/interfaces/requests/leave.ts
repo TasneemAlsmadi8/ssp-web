@@ -11,6 +11,7 @@ export interface LeaveRequest extends Item {
   remarks?: string;
   paidDays: number;
   unpaidDays: number;
+  original?: LeaveRequestApi;
 }
 
 export interface LeaveRequestUpdate {
@@ -54,6 +55,7 @@ export interface LeaveRequestApi {
   u_AttachFile: string;
   sortFromDate: string;
   sortToDate: string;
+  createDate: string;
 }
 
 export interface LeaveRequestGetById {

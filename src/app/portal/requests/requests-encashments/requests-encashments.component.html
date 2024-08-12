@@ -13,6 +13,9 @@
       <tr>
         <th scope="col" class="px-6 py-3">{{ "ID" | translate }}</th>
         <th scope="col" class="px-6 py-3">{{ "Status" | translate }}</th>
+        <th scope="col" class="px-6 py-3">
+          {{ "Submitted Date" | translate }}
+        </th>
         <th scope="col" class="px-6 py-3">{{ "Date" | translate }}</th>
         <th scope="col" class="px-6 py-3">{{ "Type" | translate }}</th>
         <th scope="col" class="px-6 py-3">{{ "Unit Count" | translate }}</th>
@@ -34,6 +37,9 @@
           {{ req.id }}
         </th>
         <td class="px-6 py-4">{{ req.status }}</td>
+        <td class="px-6 py-4">
+          {{ req.original!.createDate | date : "dd/MM/yyyy" }}
+        </td>
         <td class="px-6 py-4">{{ req.date | date : "dd/MM/yyyy" }}</td>
         <td class="px-6 py-4">{{ req.encashName || req.encashCode }}</td>
         <td class="px-6 py-4">{{ req.unitCount | number : "1.2-4" }}</td>

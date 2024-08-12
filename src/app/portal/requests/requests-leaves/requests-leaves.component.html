@@ -13,6 +13,9 @@
       <tr>
         <th scope="col" class="px-6 py-3">{{ "ID" | translate }}</th>
         <th scope="col" class="px-6 py-3">{{ "Status" | translate }}</th>
+        <th scope="col" class="px-6 py-3">
+          {{ "Submitted Date" | translate }}
+        </th>
         <th scope="col" class="px-6 py-3">{{ "Type" | translate }}</th>
         <th scope="col" class="px-6 py-3 xl:hidden">
           {{ "From" | translate }}
@@ -46,7 +49,10 @@
           {{ req.id }}
         </th>
         <td class="px-6 py-4">{{ req.status }}</td>
-        <td class="px-6 py-4">{{ req.leaveType }}</td>
+        <td class="px-6 py-4">
+          {{ req.original!.createDate | date : "dd/MM/yyyy" }}
+        </td>
+        <td class="px-6 py-4">{{ req.leaveType || req.leaveCode }}</td>
 
         <td class="px-6 py-4 hidden xl:table-cell">
           {{ req.fromDate | date : "dd/MM/yyyy" }}

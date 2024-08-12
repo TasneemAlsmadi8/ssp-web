@@ -181,6 +181,7 @@ class OvertimeRequestAdapter {
       remarks: apiSchema.remarks,
       projectCode: apiSchema.projectCode,
       projectName: apiSchema.projectName,
+      original: apiSchema,
     };
     return obj;
   }

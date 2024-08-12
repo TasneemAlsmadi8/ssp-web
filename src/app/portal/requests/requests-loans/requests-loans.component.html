@@ -13,6 +13,9 @@
       <tr>
         <th scope="col" class="px-6 py-3">{{ "ID" | translate }}</th>
         <th scope="col" class="px-6 py-3">{{ "Status" | translate }}</th>
+        <th scope="col" class="px-6 py-3">
+          {{ "Submitted Date" | translate }}
+        </th>
         <th scope="col" class="px-6 py-3">{{ "Start Date" | translate }}</th>
         <th scope="col" class="px-6 py-3">{{ "Loan Type" | translate }}</th>
         <th scope="col" class="px-6 py-3">{{ "Total Amount" | translate }}</th>
@@ -37,6 +40,7 @@
           {{ req.id }}
         </th>
         <td class="px-6 py-4">{{ req.status }}</td>
+        <td class="px-6 py-4">{{ req.dateSubmitted | date : "dd/MM/yyyy" }}</td>
         <td class="px-6 py-4">{{ req.startDate | date : "dd/MM/yyyy" }}</td>
         <td class="px-6 py-4">{{ req.loanName || req.loanCode }}</td>
         <td class="px-6 py-4">{{ req.totalAmount | number : "1.2-4" }}</td>

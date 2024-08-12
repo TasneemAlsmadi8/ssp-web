@@ -13,10 +13,10 @@
       <tr>
         <th scope="col" class="px-6 py-3">{{ "ID" | translate }}</th>
         <th scope="col" class="px-6 py-3">{{ "Status" | translate }}</th>
-        <th scope="col" class="px-6 py-3">{{ "Date" | translate }}</th>
         <th scope="col" class="px-6 py-3">
           {{ "Submitted Date" | translate }}
         </th>
+        <th scope="col" class="px-6 py-3">{{ "Date" | translate }}</th>
         <th scope="col" class="px-6 py-3">{{ "Type" | translate }}</th>
         <th scope="col" class="px-6 py-3">{{ "Total Amount" | translate }}</th>
         <th scope="col" class="px-6 py-3"></th>
@@ -36,8 +36,8 @@
           {{ req.id }}
         </th>
         <td class="px-6 py-4">{{ req.status }}</td>
-        <td class="px-6 py-4">{{ req.date | date : "dd/MM/yyyy" }}</td>
         <td class="px-6 py-4">{{ req.createDate | date : "dd/MM/yyyy" }}</td>
+        <td class="px-6 py-4">{{ req.date | date : "dd/MM/yyyy" }}</td>
         <td class="px-6 py-4">{{ req.valueTranName || req.valueTranCode }}</td>
         <td class="px-6 py-4">{{ req.value | number : "1.2-4" }}</td>
         <td class="px-6 py-4 flex justify-center gap-2">

@@ -13,6 +13,9 @@
       <tr>
         <th scope="col" class="px-6 py-3">{{ "ID" | translate }}</th>
         <th scope="col" class="px-6 py-3">{{ "Status" | translate }}</th>
+        <th scope="col" class="px-6 py-3">
+          {{ "Submitted Date" | translate }}
+        </th>
         <th scope="col" class="px-6 py-3">{{ "Date" | translate }}</th>
         <!-- <th scope="col" class="px-6 py-3">{{ "From Date" | translate }}</th> -->
         <!-- <th scope="col" class="px-6 py-3">{{ "To Date" | translate }}</th> -->
@@ -41,6 +44,9 @@
           {{ req.id }}
         </th>
         <td class="px-6 py-4">{{ req.status }}</td>
+        <td class="px-6 py-4">
+          {{ req.original!.dateSubmitted | date : "dd/MM/yyyy" }}
+        </td>
         <td class="px-6 py-4">
           {{ req.date | date : "dd/MM/yyyy" }}
         </td>

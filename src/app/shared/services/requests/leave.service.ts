@@ -213,6 +213,7 @@ class LeaveRequestAdapter {
       remarks: apiSchema.remarks ?? '',
       paidDays: parseFloat(apiSchema.u_PaidDays),
       unpaidDays: parseFloat(apiSchema.u_UnpaidDays),
+      original: apiSchema,
     };
     return obj;
   }

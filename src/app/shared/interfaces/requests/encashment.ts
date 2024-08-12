@@ -12,6 +12,7 @@ export interface EncashmentRequest extends Item {
   unitPrice: number;
   unitCount: number;
   loanId: string | null;
+  original?: EncashmentRequestApi;
 }
 
 export interface EncashmentRequestUpdate {
@@ -74,7 +75,7 @@ export interface EncashmentRequestUpdateApi {
   u_ProjectCode?: string;
   u_Remarks?: string;
   u_Status?: string;
-  
+
   u_EncashValue?: string;
   u_AttachFile?: string;
 }
@@ -86,7 +87,7 @@ export interface EncashmentRequestAddApi {
   u_UnitCount: string;
   u_ProjectCode: string;
   u_Remarks?: string;
-  
+
   u_EncashValue?: string;
   u_UnitPrice?: string;
 

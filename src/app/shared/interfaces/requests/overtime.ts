@@ -11,6 +11,7 @@ export interface OvertimeRequest extends Item {
   remarks: string;
   projectCode: string;
   projectName: string;
+  original?: OvertimeRequestApi;
 }
 
 export interface OvertimeRequestUpdate {
@@ -58,6 +59,7 @@ export interface OvertimeRequestApi {
   sortFromDate: string;
   sortToDate: string;
   u_AttachFile: string | null;
+  dateSubmitted: string;
 }
 
 export interface OvertimeRequestType extends ItemType {

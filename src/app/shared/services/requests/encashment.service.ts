@@ -182,6 +182,7 @@ class EncashmentRequestAdapter {
       unitPrice: parseFloat(apiSchema.unitPrice),
       unitCount: parseFloat(apiSchema.unitCount),
       loanId: apiSchema.loanID,
+      original: apiSchema,
     };
     return obj;
   }
