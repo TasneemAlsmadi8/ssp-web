@@ -127,6 +127,7 @@ export class LeaveRequestDetailsComponent extends RequestDetailsComponentTemplat
     if (changes['item']) {
       this.paidDays = this.item.paidDays;
       this.unpaidDays = this.item.unpaidDays;
+      this.updateLeaveDays();
     }
   }
 
@@ -144,7 +145,15 @@ export class LeaveRequestDetailsComponent extends RequestDetailsComponentTemplat
     if (fromDate === toDate && fromTime === toTime) return;
     if (fromDate && toDate && fromTime && toTime && leaveType) {
       this.leaveRequestService
-        .getLeaveDays(leaveType, fromDate, toDate, fromTime, toTime)
+        .getLeaveDays({
+          employeeId: this.item.employeeId,
+          employeeCode: this.item.employeeCode,
+          leaveCode: leaveType,
+          fromDate,
+          toDate,
+          fromTime,
+          toTime,
+        })
         .pipe(takeUntil(this.destroy$))
         .subscribe((value) => {
           [this.paidDays, this.unpaidDays] = value;

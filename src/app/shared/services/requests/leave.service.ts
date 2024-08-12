@@ -162,24 +162,31 @@ export class LeaveRequestService
     return this.http.get<LeaveRequestBalance[]>(url, this.httpOptions);
   }
 
-  getLeaveDays(
-    leaveCode: string,
-    fromDate: string,
-    toDate: string,
-    fromTime: string,
-    toTime: string
-  ): Observable<number[]> {
+  getLeaveDays(data: {
+    employeeId?: string;
+    employeeCode?: string;
+    leaveCode: string;
+    fromDate: string;
+    toDate: string;
+    fromTime: string;
+    toTime: string;
+  }): Observable<number[]> {
+    let {
+      employeeId,
+      employeeCode,
+      leaveCode,
+      fromDate,
+      toDate,
+      fromTime,
+      toTime,
+    } = data;
+    if (!employeeId) employeeId = this.user.id;
+    if (!employeeCode) employeeCode = this.user.code;
     fromDate = fromDate.replaceAll('-', '');
     toDate = toDate.replaceAll('-', '');
     fromTime = fromTime.replaceAll(':', '');
     toTime = toTime.replaceAll(':', '');
-    const url = `${this.url}/GetLeaveDays?EmpCode=${
-      this.user.code
-    }&EmployeeID=${
-      this.user.id
-    }&LeaveCode=${leaveCode}&FromDate=${fromDate}&ToDate=${toDate}&FromTime=${encodeURIComponent(
-      fromTime
-    )}&ToTime=${encodeURIComponent(toTime)}`;
+    const url = `${this.url}/GetLeaveDays?EmpCode=${employeeCode}&EmployeeID=${employeeId}&LeaveCode=${leaveCode}&FromDate=${fromDate}&ToDate=${toDate}&FromTime=${fromTime}&ToTime=${toTime}`;
     return this.http
       .get(url, { responseType: 'text' })
       .pipe(map((value) => value.split(',').map(Number)));

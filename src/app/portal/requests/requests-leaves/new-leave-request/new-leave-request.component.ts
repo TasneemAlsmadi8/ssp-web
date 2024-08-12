@@ -136,7 +136,13 @@ export class NewLeaveRequestComponent extends NewRequestComponentTemplate<
     if (fromDate === toDate && fromTime === toTime) return;
     if (fromDate && toDate && fromTime && toTime && leaveType) {
       this.leaveRequestService
-        .getLeaveDays(leaveType, fromDate, toDate, fromTime, toTime)
+        .getLeaveDays({
+          leaveCode: leaveType,
+          fromDate,
+          toDate,
+          fromTime,
+          toTime,
+        })
         .pipe(takeUntil(this.destroy$))
         .subscribe((value) => {
           [this.paidDays, this.unPaidDays] = value;
