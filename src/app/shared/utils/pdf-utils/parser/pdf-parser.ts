@@ -62,8 +62,8 @@ export class PdfParser {
   }
 
   async parse(pdfJson: PdfJson): Promise<PdfBuilder> {
-    const { templateFileName, fileName, data, input } = pdfJson;
-    let { template, variables, styles, pageOptions } = pdfJson;
+    const { templateFileName, data, input } = pdfJson;
+    let { template, variables, styles, pageOptions, fileName } = pdfJson;
 
     if (!variables)
       variables = {
@@ -113,6 +113,9 @@ export class PdfParser {
         ...styles,
       };
     }
+
+    const resolver = new PdfVariableResolver(variables);
+    fileName = resolver.resolveText(fileName);
 
     const builder = new PdfBuilder(fileName, pageOptions, templateBuilder);
     if (styles) builder.setStyles(styles);
