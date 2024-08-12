@@ -30,6 +30,7 @@
           {{ "Submitted Date" | translate }}
         </th>
         <th scope="col" class="px-6 py-3">{{ "Date" | translate }}</th>
+        <th scope="col" class="px-6 py-3">{{ "Type" | translate }}</th>
         <th scope="col" class="px-6 py-3">{{ "Total Time" | translate }}</th>
         <th scope="col" class="px-6 py-3">{{ "Project Name" | translate }}</th>
         <th scope="col" class="px-6 py-3"></th>
@@ -68,6 +69,7 @@
         <td class="px-6 py-4">
           {{ req.fromDate | date : "dd/MM/yyyy" }}
         </td>
+        <td class="px-6 py-4">{{ req.overtimeType || req.overtimeCode }}</td>
         <td class="px-6 py-4">
           {{
             (req.hour | number : "2.0") + ":" + (req.minute | number : "2.0")
