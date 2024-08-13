@@ -40,9 +40,7 @@ export class SalaryHistoryReportService extends BaseService {
       tap((data) => {
         if (download) {
           this.downloadPdf(data).then(() => {
-            this.userAlertService.showSuccess(
-              'Report Downloaded Successfully.'
-            );
+            this.userAlertService.showSuccess('Report Generated Successfully.');
           });
         }
       })

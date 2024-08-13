@@ -71,9 +71,7 @@ export class SalarySlipReportService extends BaseService {
       tap((data) => {
         if (download) {
           this.downloadPdf(input, data).then(() => {
-            this.userAlertService.showSuccess(
-              'Report Downloaded Successfully.'
-            );
+            this.userAlertService.showSuccess('Report Generated Successfully.');
           });
         }
       })

@@ -52,7 +52,7 @@ export class HourlyTransactionReportService extends BaseService {
           if (download) {
             this.downloadPdf(input, data).then(() => {
               this.userAlertService.showSuccess(
-                'Report Downloaded Successfully.'
+                'Report Generated Successfully.'
               );
             });
           }
