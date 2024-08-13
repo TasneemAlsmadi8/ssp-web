@@ -23,7 +23,7 @@ export class LayoutComponent extends DestroyBaseComponent implements OnInit {
   faBars = faBars;
   faUser = faUser;
   faGears = faUserGear;
-  isSideBarDefault = false;
+  isSideBarDefault = true;
   isProfileMenuOpen = false;
 
   isLoggedIn = false;
