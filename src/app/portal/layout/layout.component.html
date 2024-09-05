@@ -116,3 +116,41 @@
     </main>
   </div>
 </section>
+
+<!-- 
+<div *ngIf="isLoggedIn" [dir]="selectedLangDir">
+  <button
+    class="w-9 h-9 border-[2px] rounded-full text-xl"
+    (click)="toggleProfileMenuOpen()"
+  >
+    <img
+      src="/assets/icons/user.png"
+      class="m-auto"
+      width="37"
+      height="37"
+      alt=""
+    />
+
+  </button>
+  <ul
+    class="from-secondary-400 to-primary-400 bg-gradient-to-bl w-52 py-1 px-2 border border-gray-400 absolute top-12 right-12 z-10 rounded flex-col hi"
+    ngClass="{{ isProfileMenuOpen ? 'flex' : 'hidden' }}"
+  >
+    <li class="text-white font-bold border-b mb-2 pb-2 capitalize">
+      {{ user.fullName }}
+    </li>
+    <li>
+      <button
+        (click)="logout()"
+        class="text-white hover:text-gray-200 font-semibold w-fit"
+      >
+        {{ "Logout" | translate }}
+      </button>
+    </li>
+    <li>
+      <app-change-password
+        class="text-white hover:text-gray-200 font-semibold"
+      />
+    </li>
+  </ul>
+</div> -->
